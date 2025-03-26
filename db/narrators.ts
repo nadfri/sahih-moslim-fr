@@ -51,5 +51,3 @@ export const narrators = [
   "Zayd ibn Thabit",
   "Zubair ibn al-Awwam"
 ] as const;
-
-export type NarratorType = typeof narrators[number];

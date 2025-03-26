@@ -1,4 +1,5 @@
-import { HadithType } from '@/types/HadithType';
+import { HadithType } from '@/types/types';
+import ReactMarkdown from 'react-markdown';
 
 export function Hadith({ hadith }: { hadith: HadithType }) {
   return (
@@ -9,23 +10,13 @@ export function Hadith({ hadith }: { hadith: HadithType }) {
 
         {hadith.sahabas && hadith.sahabas.length > 0 && (
           <div className='sahabas'>
-            <p>Sahabas:</p>
-            <ul>
-              {hadith.sahabas.map((sahaba, index) => (
-                <li key={index}>{sahaba}</li>
-              ))}
-            </ul>
+            <p>Sahabas: {hadith.sahabas.join(', ')}</p>
           </div>
         )}
       </div>
 
-      <div className='hadith-body'>
-        {hadith.text ? (
-          <p className='hadith-text'>{hadith.text}</p>
-        ) : (
-          <p className='empty-text'>Aucun texte disponible pour ce hadith.</p>
-        )}
-      </div>
+      <hr />
+      <ReactMarkdown>{hadith.matn}</ReactMarkdown>
     </div>
   );
 }

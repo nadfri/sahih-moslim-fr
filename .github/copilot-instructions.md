@@ -1,3 +1,4 @@
+-use NextJS 15, React 19, Tailwind v4
 -For new component, use export function only
 -params are promised in NextJs 15
 // Before

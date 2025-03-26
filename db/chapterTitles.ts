@@ -33,6 +33,3 @@ export const chapterTitles = [
   "Jihad et Expéditions",
   "Commandements",
 ] as const;
-
-
-export type ChapterType = typeof chapterTitles[number];

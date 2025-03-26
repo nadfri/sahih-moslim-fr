@@ -7,6 +7,24 @@ import { Metadata } from 'next';
 
 export type ParamsType = Promise<{ id: string }>;
 
+
+export default async function PageById({ params }: { params: ParamsType }) {
+  const id = Number((await params).id);
+
+  const hadith = moslim_fr.find((hadith) => hadith.id === id);
+
+  if (!hadith) {
+    return notFound();
+  }
+
+  return (
+    <div>
+      <h1>N°{id} - {hadith.narrator}</h1>
+      <Hadith hadith={hadith} />
+    </div>
+  );
+}
+
 /*Generate metadata for each hadith*/
 export async function generateMetadata({
   params,
@@ -25,24 +43,8 @@ export async function generateMetadata({
 
   return {
     title: `N°${id} - ${hadith.narrator}`,
-    description: hadith.text.substring(0, 160) + '...',
+    description: hadith.matn.substring(0, 160) + '...',
   };
-}
-export default async function PageById({ params }: { params: ParamsType }) {
-  const id = Number((await params).id);
-
-  const hadith = moslim_fr.find((hadith) => hadith.id === id);
-
-  if (!hadith) {
-    return notFound();
-  }
-
-  return (
-    <div>
-      <h1>N°{id} - {hadith.narrator}</h1>
-      <Hadith hadith={hadith} />
-    </div>
-  );
 }
 
 /*Generate static paths for all hadiths*/

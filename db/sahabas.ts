@@ -20,5 +20,3 @@ export const sahabas = [
   "Houmayd ibn Abder Rahman Al Houmayri",
   'Abdallah ibn Omar',
 ] as const;
-
-export type SahabaType = (typeof sahabas)[number];
