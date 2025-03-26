@@ -1,9 +1,10 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 
-import { moslim_fr } from '@/db/fr';
-import { Hadith } from '../ui/Hadith/Hadith';
+import { moslim_fr } from '@/db/moslim_fr';
+import { Hadith } from '../../ui/Hadith/Hadith';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import { getHadithById } from '@/services/services';
 
 export type ParamsType = Promise<{ id: string }>;
 
@@ -11,7 +12,7 @@ export type ParamsType = Promise<{ id: string }>;
 export default async function PageById({ params }: { params: ParamsType }) {
   const id = Number((await params).id);
 
-  const hadith = moslim_fr.find((hadith) => hadith.id === id);
+  const hadith = getHadithById(id);
 
   if (!hadith) {
     return notFound();
@@ -33,7 +34,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const id = Number((await params).id);
 
-  const hadith = moslim_fr.find((hadith) => hadith.id === id);
+  const hadith = getHadithById(id);
 
   if (!hadith) {
     return {

@@ -3,7 +3,7 @@ import { HadithType } from '@/types/types';
 export const moslim_fr: HadithType[] = [
   {
     id: 7,
-    chapter: 'La Foi',
+    chapterSlug: 'la-foi',
     narrator: 'Abu Huraira',
     sahabas: [],
     matn: `Le Prophète sws a dit: 
@@ -11,7 +11,7 @@ export const moslim_fr: HadithType[] = [
   },
   {
     id: 8,
-    chapter: 'La Foi',
+    chapterSlug: 'la-foi',
     narrator: "Yahya ibn Ma'mar",
     sahabas: [
       "Ma'bad Al Jouhani",
@@ -23,7 +23,7 @@ export const moslim_fr: HadithType[] = [
 
   {
     id: 9,
-    chapter: 'La Foi',
+    chapterSlug: 'la-foi',
     narrator: 'Abu Huraira',
     sahabas: [],
     matn: '',

@@ -50,4 +50,4 @@ export const narrators = [
   "Yazid al-Faqir",
   "Zayd ibn Thabit",
   "Zubair ibn al-Awwam"
-] as const;
+];
