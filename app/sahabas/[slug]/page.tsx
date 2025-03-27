@@ -9,6 +9,7 @@ import {
   getHadithByNarratorSlug,
 } from '@/services/services';
 import { NarratorSlugType } from '@/types/types';
+import { slugify } from '@/utils/slugify';
 
 export type ParamsType = Promise<{ slug: string }>;
 
@@ -26,7 +27,7 @@ export default async function PageBySahabas(props: { params: ParamsType }) {
 
   return (
     <div className='container mx-auto p-4'>
-      <h1 className='text-2xl font-bold mb-6'>Narrateur: {narrator.name}</h1>
+      <h1 className='text-2xl font-bold mb-6'>Narrateur: {narrator}</h1>
 
       <div className='space-y-8'>
         {hadiths.map((hadith) => (
@@ -50,8 +51,8 @@ export async function generateMetadata(props: { params: ParamsType }): Promise<M
   }
 
   return {
-    title: `Narrateur: ${narrator.name}`,
-    description: `Collection de hadiths rapportés par ${narrator.name} - Sahih Moslim`,
+    title: `Narrateur: ${narrator}`,
+    description: `Collection de hadiths rapportés par ${narrator} - Sahih Moslim`,
   };
 }
 
@@ -59,7 +60,7 @@ export async function generateMetadata(props: { params: ParamsType }): Promise<M
 export async function generateStaticParams() {
   const narrators = getAllNarrators();
 
-  const slugs = narrators.map((narrator) => narrator.slug);
+  const slugs = narrators.map((narrator) => slugify(narrator));
 
   return slugs.map((slug: string) => ({
     slug,

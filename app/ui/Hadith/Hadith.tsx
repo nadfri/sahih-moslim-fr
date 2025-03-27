@@ -9,8 +9,8 @@ export function Hadith({ hadith }: HadithProps) {
   return (
     <div className='hadith-container'>
       <div className='hadith-header'>
-        <h2>Chapitre: {hadith.chapterSlug}</h2>
-        <p className='narrator'>Narrateur: {hadith.narratorSlug}</p>
+        <h2>Chapitre: {hadith.chapter}</h2>
+        <p className='narrator'>Narrateur: {hadith.narrator}</p>
 
         {hadith.sahabas && hadith.sahabas.length > 0 && (
           <div className='sahabas'>

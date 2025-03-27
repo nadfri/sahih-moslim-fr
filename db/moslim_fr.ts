@@ -3,8 +3,8 @@ import { HadithType } from '@/types/types';
 export const moslim_fr: HadithType[] = [
   {
     id: 1,
-    chapterSlug: 'introduction',
-    narratorSlug: 'abou-bakr-ibn-abou-shaiba',
+    chapter: 'Introduction',
+    narrator: 'Abou Bakr ibn Abou Shaiba',
     sahabas: [],
     matn: '',
     isnad: '',
@@ -14,16 +14,16 @@ export const moslim_fr: HadithType[] = [
 
   {
     id: 7,
-    chapterSlug: 'la-foi',
-    narratorSlug: 'abou-huraira',
+    chapter: 'La Foi',
+    narrator: 'Abou Huraira',
     sahabas: [],
     matn: `Le Prophète sws a dit: 
     « Il y aura à la fin des temps des grands imposteurs, des grands menteurs qui vont vous apporter des ahadiths que ni vous ni vos ancêtres n'ont entendus auparavant. Faites très attention à eux afin qu'ils ne vous égarent pas et qu'ils ne soient pas une source de troubles pour vous ».`,
   },
   {
     id: 8,
-    chapterSlug: 'la-foi',
-    narratorSlug: "yahya-ibn-mamar",
+    chapter: 'La Foi',
+    narrator: "Yahya ibn Ma'mar",
     sahabas: [
       "Ma'bad Al Jouhani",
       'Houmayd ibn Abder Rahman Al Houmayri',
@@ -34,8 +34,8 @@ export const moslim_fr: HadithType[] = [
 
   {
     id: 9,
-    chapterSlug: 'la-foi',
-    narratorSlug: 'abou-huraira',
+    chapter: 'La Foi',
+    narrator: 'Abou Huraira',
     sahabas: [],
     matn: '',
   },

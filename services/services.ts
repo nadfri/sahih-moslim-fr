@@ -2,14 +2,8 @@ import { chapters } from '@/db/chapterTitles';
 import { moslim_fr } from '@/db/moslim_fr';
 import { narrators } from '@/db/narrators';
 import { sahabas } from '@/db/sahabas';
-import {
-  ChapterSlugType,
-  ChapterType,
-  HadithType,
-  NarratorSlugType,
-  NarratorType,
-  SahabaType,
-} from '@/types/types';
+import { slugify } from '@/utils/slugify';
+import { ChapterType, HadithType, NarratorType, SahabaType } from '@/types/types';
 
 /*Get By Hadith*/
 export function getAllHadiths() {
@@ -25,32 +19,30 @@ export function getHadithCount(): number {
 }
 
 /* Get by Chapter */
-export function getHadithByChapterSlug(chapterSlug: ChapterSlugType): HadithType[] {
-  return moslim_fr.filter((hadith) => hadith.chapterSlug === chapterSlug);
+export function getHadithByChapterSlug(chapterSlug: string): HadithType[] {
+  return moslim_fr.filter((hadith) => slugify(hadith.chapter) === chapterSlug);
 }
 
 export function getAllChapters(): ChapterType[] {
   return [...chapters];
 }
 
-export function getChapterBySlug(chapterSlug: ChapterSlugType): ChapterType | undefined {
-  const chapter = chapters.find((chapter) => chapter.slug === chapterSlug);
+export function getChapterBySlug(chapterSlug: string): ChapterType | undefined {
+  const chapter = chapters.find((chapter) => slugify(chapter.title) === chapterSlug);
   return chapter;
 }
 
 /*Get By Narrator*/
-export function getHadithByNarratorSlug(narratorSlug: NarratorSlugType): HadithType[] {
-  return moslim_fr.filter((hadith) => hadith.narratorSlug === narratorSlug);
+export function getHadithByNarratorSlug(narratorSlug: string): HadithType[] {
+  return moslim_fr.filter((hadith) => slugify(hadith.narrator) === narratorSlug);
 }
 
 export function getAllNarrators(): NarratorType[] {
   return [...narrators];
 }
 
-export function getNarratorBySlug(
-  narratorSlug: NarratorSlugType
-): NarratorType | undefined {
-  return narrators.find((narrator) => narrator.slug === narratorSlug);
+export function getNarratorBySlug(narratorSlug: string): NarratorType | undefined {
+  return narrators.find((narrator) => slugify(narrator) === narratorSlug);
 }
 
 /**Get By Sahaba*/
@@ -60,4 +52,9 @@ export function getHadithBySahaba(sahaba: SahabaType): HadithType[] {
 
 export function getAllSahabas(): SahabaType[] {
   return sahabas;
+}
+
+export function getChapterTitleBySlug(chapterSlug: string): string | undefined {
+  const chapter = chapters.find((chapter) => slugify(chapter.title) === chapterSlug);
+  return chapter?.title;
 }
