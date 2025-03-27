@@ -4,30 +4,33 @@ import { Hadith } from '../../ui/Hadith/Hadith';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import {
-  getAllNarrators,
-  getNarratorBySlug,
-  getHadithByNarratorSlug,
+  getAllChapters,
+  getChapterBySlug,
+  getHadithBySahabaSlug,
+  getSahabaBySlug,
 } from '@/services/services';
-import { NarratorSlugType } from '@/types/types';
 import { slugify } from '@/utils/slugify';
+import { sahabas } from '@/db/sahabas';
 
 export type ParamsType = Promise<{ slug: string }>;
 
 export default async function PageBySahabas(props: { params: ParamsType }) {
   const params = await props.params;
-  const slug = params.slug as NarratorSlugType;
+  const slug = params.slug;
 
-  const narrator = getNarratorBySlug(slug);
+  const sahaba = getSahabaBySlug(slug);
 
-  if (!narrator) {
+  if (!sahaba) {
     return notFound();
   }
 
-  const hadiths = getHadithByNarratorSlug(slug);
+  const hadiths = getHadithBySahabaSlug(slug);
 
   return (
     <div className='container mx-auto p-4'>
-      <h1 className='text-2xl font-bold mb-6'>Narrateur: {narrator}</h1>
+      <h1 className='text-2xl font-bold mb-6'>Compagnon: {sahaba}</h1>
+
+      <p className='text-lg mb-4'>Nombre de hadiths: {hadiths.length}</p>
 
       <div className='space-y-8'>
         {hadiths.map((hadith) => (
@@ -38,31 +41,31 @@ export default async function PageBySahabas(props: { params: ParamsType }) {
   );
 }
 
-/*Generate metadata for each narrator*/
+/*Generate metadata for each hadith*/
 export async function generateMetadata(props: { params: ParamsType }): Promise<Metadata> {
   const params = await props.params;
-  const slug = params.slug as NarratorSlugType;
-  const narrator = getNarratorBySlug(slug);
 
-  if (!narrator) {
+  const slug = params.slug;
+
+  const sahaba = getSahabaBySlug(slug);
+
+  if (!sahaba) {
     return {
-      title: 'Narrateur non trouvé',
+      title: 'Compagon non trouvé',
     };
   }
 
   return {
-    title: `Narrateur: ${narrator}`,
-    description: `Collection de hadiths rapportés par ${narrator} - Sahih Moslim`,
+    title: `Compagnon: ${sahaba}`,
+    description: `Collection de hadiths du compagnon ${sahaba} - Sahih Moslim`,
   };
 }
 
-/*Generate static paths for all narrators*/
+/*Generate static paths for all hadiths*/
 export async function generateStaticParams() {
-  const narrators = getAllNarrators();
+  const chapters = getAllChapters();
 
-  const slugs = narrators.map((narrator) => slugify(narrator));
-
-  return slugs.map((slug: string) => ({
-    slug,
+  return chapters.map((chapter: { title: string }) => ({
+    slug: slugify(chapter.title),
   }));
 }

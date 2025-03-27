@@ -19,12 +19,12 @@ export function getHadithCount(): number {
 }
 
 /* Get by Chapter */
-export function getHadithByChapterSlug(chapterSlug: string): HadithType[] {
-  return moslim_fr.filter((hadith) => slugify(hadith.chapter) === chapterSlug);
-}
-
 export function getAllChapters(): ChapterType[] {
   return [...chapters];
+}
+
+export function getHadithByChapterSlug(chapterSlug: string): HadithType[] {
+  return moslim_fr.filter((hadith) => slugify(hadith.chapter) === chapterSlug);
 }
 
 export function getChapterBySlug(chapterSlug: string): ChapterType | undefined {
@@ -33,12 +33,12 @@ export function getChapterBySlug(chapterSlug: string): ChapterType | undefined {
 }
 
 /*Get By Narrator*/
-export function getHadithByNarratorSlug(narratorSlug: string): HadithType[] {
-  return moslim_fr.filter((hadith) => slugify(hadith.narrator) === narratorSlug);
-}
-
 export function getAllNarrators(): NarratorType[] {
   return [...narrators];
+}
+
+export function getHadithByNarratorSlug(narratorSlug: string): HadithType[] {
+  return moslim_fr.filter((hadith) => slugify(hadith.narrator) === narratorSlug);
 }
 
 export function getNarratorBySlug(narratorSlug: string): NarratorType | undefined {
@@ -46,15 +46,22 @@ export function getNarratorBySlug(narratorSlug: string): NarratorType | undefine
 }
 
 /**Get By Sahaba*/
-export function getHadithBySahaba(sahaba: SahabaType): HadithType[] {
-  return moslim_fr.filter((hadith) => hadith.sahabas.includes(sahaba));
-}
-
 export function getAllSahabas(): SahabaType[] {
   return sahabas;
 }
 
-export function getChapterTitleBySlug(chapterSlug: string): string | undefined {
-  const chapter = chapters.find((chapter) => slugify(chapter.title) === chapterSlug);
-  return chapter?.title;
+export function getHadithBySahabaSlug(sahabaSlug: string): HadithType[] {
+  return moslim_fr.filter((hadith) => {
+    const sahabas = hadith.sahabas;
+
+    if (sahabas.length === 0) return false;
+
+    const sahabasSlugs = sahabas.map((sahaba) => slugify(sahaba));
+
+    return sahabasSlugs.includes(sahabaSlug);
+  });
+}
+
+export function getSahabaBySlug(sahabaSlug: string): SahabaType | undefined {
+  return sahabas.find((sahaba) => slugify(sahaba) === sahabaSlug);
 }
