@@ -12,8 +12,9 @@ import { ChapterSlugType } from '@/types/types';
 
 export type ParamsType = Promise<{ slug: string }>;
 
-export default async function PageByChapter({ params }: { params: ParamsType }) {
-  const { slug } = await params as { slug: ChapterSlugType };
+export default async function PageByChapters(props: { params: ParamsType }) {
+  const params = await props.params;
+  const slug = params.slug as ChapterSlugType;
 
   const chapter = getChapterBySlug(slug);
 
@@ -37,12 +38,9 @@ export default async function PageByChapter({ params }: { params: ParamsType }) 
 }
 
 /*Generate metadata for each hadith*/
-export async function generateMetadata({
-  params,
-}: {
-  params: ParamsType;
-}): Promise<Metadata> {
-  const { slug } = await params as { slug: ChapterSlugType };
+export async function generateMetadata(props: { params: ParamsType }): Promise<Metadata> {
+  const params = await props.params;
+  const slug = params.slug as ChapterSlugType;
   const chapter = getChapterBySlug(slug);
 
   if (!chapter) {

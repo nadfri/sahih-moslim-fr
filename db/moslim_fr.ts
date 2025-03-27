@@ -2,9 +2,20 @@ import { HadithType } from '@/types/types';
 
 export const moslim_fr: HadithType[] = [
   {
+    id: 1,
+    chapterSlug: 'introduction',
+    narratorSlug: 'abou-bakr-ibn-abou-shaiba',
+    sahabas: [],
+    matn: '',
+    isnad: '',
+    arabic:
+      'وَحَدَّثَنَا أَبُو بَكْرِ بْنُ أَبِي شَيْبَةَ، حَدَّثَنَا غُنْدَرٌ، عَنْ شُعْبَةَ، ح وَحَدَّثَنَا مُحَمَّدُ بْنُ الْمُثَنَّى، وَابْنُ، بَشَّارٍ قَالاَ حَدَّثَنَا مُحَمَّدُ بْنُ جَعْفَرٍ، حَدَّثَنَا شُعْبَةُ، عَنْ مَنْصُورٍ، عَنْ رِبْعِيِّ بْنِ حِرَاشٍ، أَنَّهُ سَمِعَ عَلِيًّا، - رضى الله عنه - يَخْطُبُ قَالَ قَالَ رَسُولُ اللَّهِ صلى الله عليه وسلم ‏ "‏ لاَ تَكْذِبُوا عَلَىَّ فَإِنَّهُ مَنْ يَكْذِبْ عَلَىَّ يَلِجِ النَّارَ ‏"‏ ‏',
+  },
+
+  {
     id: 7,
     chapterSlug: 'la-foi',
-    narrator: 'Abu Huraira',
+    narratorSlug: 'abou-huraira',
     sahabas: [],
     matn: `Le Prophète sws a dit: 
     « Il y aura à la fin des temps des grands imposteurs, des grands menteurs qui vont vous apporter des ahadiths que ni vous ni vos ancêtres n'ont entendus auparavant. Faites très attention à eux afin qu'ils ne vous égarent pas et qu'ils ne soient pas une source de troubles pour vous ».`,
@@ -12,7 +23,7 @@ export const moslim_fr: HadithType[] = [
   {
     id: 8,
     chapterSlug: 'la-foi',
-    narrator: "Yahya ibn Ma'mar",
+    narratorSlug: "yahya-ibn-mamar",
     sahabas: [
       "Ma'bad Al Jouhani",
       'Houmayd ibn Abder Rahman Al Houmayri',
@@ -24,7 +35,7 @@ export const moslim_fr: HadithType[] = [
   {
     id: 9,
     chapterSlug: 'la-foi',
-    narrator: 'Abu Huraira',
+    narratorSlug: 'abou-huraira',
     sahabas: [],
     matn: '',
   },

@@ -1,5 +1,5 @@
 export const chapters = [
-  { title: 'Introduction', slug: 'la-foi', range: [1, 7] },
+  { title: 'Introduction', slug: 'introduction', range: [1, 7] },
   { title: 'La Foi', slug: 'la-foi', range: [8, 222] },
   { title: 'Purification', slug: 'purification', range: [223, 292] },
   { title: 'Menstruations', slug: 'menstruations', range: [293, 376] },
