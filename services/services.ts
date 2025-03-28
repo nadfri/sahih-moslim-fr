@@ -45,6 +45,10 @@ export function getNarratorBySlug(narratorSlug: string): NarratorType | undefine
   return narrators.find((narrator) => slugify(narrator) === narratorSlug);
 }
 
+export function getCountHadithsByNarratorSlug(narratorSlug: string): number {
+  return getHadithByNarratorSlug(narratorSlug).length;
+}
+
 /**Get By Sahaba*/
 export function getAllSahabas(): SahabaType[] {
   return sahabas;
@@ -64,4 +68,8 @@ export function getHadithBySahabaSlug(sahabaSlug: string): HadithType[] {
 
 export function getSahabaBySlug(sahabaSlug: string): SahabaType | undefined {
   return sahabas.find((sahaba) => slugify(sahaba) === sahabaSlug);
+}
+
+export function getCountHadithsBySahabaSlug(sahabaSlug: string): number {
+  return getHadithBySahabaSlug(sahabaSlug).length;
 }

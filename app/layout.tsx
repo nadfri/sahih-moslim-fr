@@ -29,11 +29,13 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen bg-gray-100 text-gray-800`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen text-gray-800`}
         suppressHydrationWarning
       >
         <Header />
-        <main className="p-3 flex-1">{children}</main>
+        <main className="bg-gradient-to-br from-emerald-50 via-stone-50 to-amber-50 py-12 px-4 sm:px-6 lg:px-8 flex-1">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>

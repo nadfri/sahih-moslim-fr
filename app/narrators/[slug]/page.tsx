@@ -23,7 +23,9 @@ export default async function PageByNarrators(props: { params: ParamsType }) {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Narrateur: {narrator}</h1>
+      <h1 className="text-4xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-12 md:mb-16 tracking-tight">
+        Hadiths rapporté par {narrator}
+      </h1>
 
       <div className="space-y-8">
         {hadiths.map((hadith) => (

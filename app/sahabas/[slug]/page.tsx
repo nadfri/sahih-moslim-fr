@@ -22,7 +22,9 @@ export default async function PageBySahabas(props: { params: ParamsType }) {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Compagnon: {sahaba}</h1>
+      <h1 className="text-4xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-12 md:mb-16 tracking-tight">
+        Hadiths mentionnant {sahaba}
+      </h1>
 
       <p className="text-lg mb-4">Nombre de hadiths: {hadiths.length}</p>
 
