@@ -1,14 +1,11 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 
-import { Hadith } from '../../ui/Hadith/Hadith';
-import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
-import {
-  getAllChapters,
-  getChapterBySlug,
-  getHadithByChapterSlug,
-} from '@/services/services';
-import { slugify } from '@/utils/slugify';
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+
+import { getAllChapters, getChapterBySlug, getHadithByChapterSlug } from "@/services/services";
+import { slugify } from "@/utils/slugify";
+import { Hadith } from "../../ui/Hadith/Hadith";
 
 export type ParamsType = Promise<{ slug: string }>;
 
@@ -25,14 +22,19 @@ export default async function PageByChapters(props: { params: ParamsType }) {
   const hadiths = getHadithByChapterSlug(slug);
 
   return (
-    <div className='container mx-auto p-4'>
-      <h1 className='text-2xl font-bold mb-6'>Chapitre: {chapter.title}</h1>
-      <h2 className='text-xl mb-4'>De {chapter.range[0]} à {chapter.range[1]}</h2>
-      <p className='text-lg mb-4'>Nombre de hadiths: {hadiths.length}</p>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-6">Chapitre: {chapter.title}</h1>
+      <h2 className="text-xl mb-4">
+        De {chapter.range[0]} à {chapter.range[1]}
+      </h2>
+      <p className="text-lg mb-4">Nombre de hadiths: {hadiths.length}</p>
 
-      <div className='space-y-8'>
+      <div className="space-y-8">
         {hadiths.map((hadith) => (
-          <Hadith key={hadith.id} hadith={hadith} />
+          <Hadith
+            key={hadith.id}
+            hadith={hadith}
+          />
         ))}
       </div>
     </div>
@@ -47,7 +49,7 @@ export async function generateMetadata(props: { params: ParamsType }): Promise<M
 
   if (!chapter) {
     return {
-      title: 'Chapitre non trouvé',
+      title: "Chapitre non trouvé",
     };
   }
 

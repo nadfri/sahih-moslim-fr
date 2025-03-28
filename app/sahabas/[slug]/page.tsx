@@ -1,16 +1,10 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
-import { Hadith } from '../../ui/Hadith/Hadith';
-import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
-import {
-  getAllChapters,
-  getChapterBySlug,
-  getHadithBySahabaSlug,
-  getSahabaBySlug,
-} from '@/services/services';
-import { slugify } from '@/utils/slugify';
-import { sahabas } from '@/db/sahabas';
+import { getAllChapters, getHadithBySahabaSlug, getSahabaBySlug } from "@/services/services";
+import { slugify } from "@/utils/slugify";
+import { Hadith } from "../../ui/Hadith/Hadith";
 
 export type ParamsType = Promise<{ slug: string }>;
 
@@ -27,14 +21,17 @@ export default async function PageBySahabas(props: { params: ParamsType }) {
   const hadiths = getHadithBySahabaSlug(slug);
 
   return (
-    <div className='container mx-auto p-4'>
-      <h1 className='text-2xl font-bold mb-6'>Compagnon: {sahaba}</h1>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-6">Compagnon: {sahaba}</h1>
 
-      <p className='text-lg mb-4'>Nombre de hadiths: {hadiths.length}</p>
+      <p className="text-lg mb-4">Nombre de hadiths: {hadiths.length}</p>
 
-      <div className='space-y-8'>
+      <div className="space-y-8">
         {hadiths.map((hadith) => (
-          <Hadith key={hadith.id} hadith={hadith} />
+          <Hadith
+            key={hadith.id}
+            hadith={hadith}
+          />
         ))}
       </div>
     </div>
@@ -51,7 +48,7 @@ export async function generateMetadata(props: { params: ParamsType }): Promise<M
 
   if (!sahaba) {
     return {
-      title: 'Compagon non trouvé',
+      title: "Compagon non trouvé",
     };
   }
 

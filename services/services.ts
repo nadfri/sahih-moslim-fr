@@ -1,9 +1,9 @@
-import { chapters } from '@/db/chapterTitles';
-import { moslim_fr } from '@/db/moslim_fr';
-import { narrators } from '@/db/narrators';
-import { sahabas } from '@/db/sahabas';
-import { slugify } from '@/utils/slugify';
-import { ChapterType, HadithType, NarratorType, SahabaType } from '@/types/types';
+import { chapters } from "@/db/chapterTitles";
+import { moslim_fr } from "@/db/moslim_fr";
+import { narrators } from "@/db/narrators";
+import { sahabas } from "@/db/sahabas";
+import { ChapterType, HadithType, NarratorType, SahabaType } from "@/types/types";
+import { slugify } from "@/utils/slugify";
 
 /*Get By Hadith*/
 export function getAllHadiths() {

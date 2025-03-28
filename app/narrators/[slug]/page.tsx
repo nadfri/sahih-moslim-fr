@@ -1,15 +1,11 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 
-import { Hadith } from '../../ui/Hadith/Hadith';
-import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
-import {
-  getAllNarrators,
-  getNarratorBySlug,
-  getHadithByNarratorSlug,
-} from '@/services/services';
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
-import { slugify } from '@/utils/slugify';
+import { getAllNarrators, getHadithByNarratorSlug, getNarratorBySlug } from "@/services/services";
+import { slugify } from "@/utils/slugify";
+import { Hadith } from "../../ui/Hadith/Hadith";
 
 export type ParamsType = Promise<{ slug: string }>;
 
@@ -26,12 +22,15 @@ export default async function PageByNarrators(props: { params: ParamsType }) {
   const hadiths = getHadithByNarratorSlug(slug);
 
   return (
-    <div className='container mx-auto p-4'>
-      <h1 className='text-2xl font-bold mb-6'>Narrateur: {narrator}</h1>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-6">Narrateur: {narrator}</h1>
 
-      <div className='space-y-8'>
+      <div className="space-y-8">
         {hadiths.map((hadith) => (
-          <Hadith key={hadith.id} hadith={hadith} />
+          <Hadith
+            key={hadith.id}
+            hadith={hadith}
+          />
         ))}
       </div>
     </div>
@@ -48,7 +47,7 @@ export async function generateMetadata(props: { params: ParamsType }): Promise<M
 
   if (!narrator) {
     return {
-      title: 'Narrateur non trouvé',
+      title: "Narrateur non trouvé",
     };
   }
 
