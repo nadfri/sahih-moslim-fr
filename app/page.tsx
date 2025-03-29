@@ -1,7 +1,7 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 
 import { getAllHadiths } from "@/services/services";
-import { Hadith } from "./ui/Hadith/Hadith";
+import { Hadith } from "../ui/Hadith/Hadith";
 
 export default function Home() {
   const hadiths = getAllHadiths();

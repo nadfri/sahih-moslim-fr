@@ -25,7 +25,7 @@ export const chapters = [
   { title: "Successions", range: [1614, 1619] },
   { title: "Donations", range: [1620, 1626] },
   { title: "Testaments", range: [1627, 1637] },
-  { title: "Voeux", range: [1638, 1645] },
+  { title: "Vœux", range: [1638, 1645] },
   { title: "Serments", range: [1646, 1668] },
   { title: "Serments collectifs", range: [1669, 1683] },
   { title: "Peines légales", range: [1684, 1710] },

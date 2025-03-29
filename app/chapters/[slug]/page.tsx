@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 
 import { getAllChapters, getChapterBySlug, getHadithByChapterSlug } from "@/services/services";
 import { slugify } from "@/utils/slugify";
-import { Hadith } from "../../ui/Hadith/Hadith";
+import { Hadith } from "../../../ui/Hadith/Hadith";
 
 export type ParamsType = Promise<{ slug: string }>;
 

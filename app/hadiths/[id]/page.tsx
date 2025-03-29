@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 
 import { moslim_fr } from "@/db/moslim_fr";
 import { getHadithById } from "@/services/services";
-import { Hadith } from "../../ui/Hadith/Hadith";
+import { Hadith } from "../../../ui/Hadith/Hadith";
 
 export type ParamsType = Promise<{ id: string }>;
 
