@@ -1,20 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+
+import { amiriFont, geistMono, geistSans } from "@/fonts/fonts";
 
 import "./globals.css";
 
-import { Footer } from "./ui/Footer";
-import { Header } from "./ui/Header/Header";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { Footer } from "../ui/Footer";
+import { Header } from "../ui/Header/Header";
 
 export const metadata: Metadata = {
   title: "Sahih Moslim en français",
@@ -27,9 +18,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr">
+    <html
+      lang="fr"
+      className={`${geistSans.variable} ${geistMono.variable} ${amiriFont.variable}`}
+    >
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen text-gray-800`}
+        className="antialiased flex flex-col min-h-screen text-gray-800"
         suppressHydrationWarning
       >
         <Header />
