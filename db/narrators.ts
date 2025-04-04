@@ -23,6 +23,7 @@ export const narrators = [
   "Abou Umama",
   "Aisha bint Abi Bakr",
   "Ali ibn Abi Talib",
+  "Ali ibn Rabi'ah",
   "Amr ibn al-Aas",
   "Anas ibn Malik",
   "Asma bint Abi Bakr",

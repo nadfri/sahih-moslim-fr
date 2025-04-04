@@ -22,6 +22,13 @@ export default function RootLayout({
       lang="fr"
       className={`${geistSans.variable} ${geistMono.variable} ${amiriFont.variable}`}
     >
+      <head>
+        <link
+          rel="icon"
+          href="/favicon.svg"
+          type="image/svg+xml"
+        />
+      </head>
       <body
         className="antialiased flex flex-col min-h-screen text-gray-800"
         suppressHydrationWarning

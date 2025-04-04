@@ -19,4 +19,5 @@ export const sahabas = [
   "Ma'bad Al Jouhani",
   "Houmayd ibn Abder Rahman Al Houmayri",
   "Abdallah ibn Omar",
+  "Al Mughirah ibn Shu'bah",
 ];
