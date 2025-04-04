@@ -1,3 +1,4 @@
+/*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 import Link from "next/link";
 
 import { getAllNarrators, getCountHadithsByNarratorSlug } from "@/services/services";

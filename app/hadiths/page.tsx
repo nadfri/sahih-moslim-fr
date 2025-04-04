@@ -1,8 +1,8 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 import { getAllHadiths } from "@/services/services";
-import { Hadith } from "../ui/hadith/Hadith";
+import { Hadith } from "@/ui/hadith/Hadith";
 
-export default function Home() {
+export default function HadithsPage() {
   const hadiths = getAllHadiths();
   return (
     <div>
