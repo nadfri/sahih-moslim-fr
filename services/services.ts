@@ -73,3 +73,7 @@ export function getSahabaBySlug(sahabaSlug: string): SahabaType | undefined {
 export function getCountHadithsBySahabaSlug(sahabaSlug: string): number {
   return getHadithBySahabaSlug(sahabaSlug).length;
 }
+
+export function getIds() {
+  return moslim_fr.map((hadith) => hadith.id);
+}
