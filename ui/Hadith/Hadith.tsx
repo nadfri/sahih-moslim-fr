@@ -8,41 +8,13 @@ import ReactMarkdown from "react-markdown";
 import { HadithType } from "@/types/types";
 import { slugify } from "@/utils/slugify";
 
-// Icône SVG simple pour l'œil (vous pouvez utiliser une bibliothèque comme Heroicons si préféré)
-// const EyeIcon = (props: React.SVGProps<SVGSVGElement>) => (
-//   <svg
-//     xmlns="http://www.w3.org/2000/svg"
-//     fill="none"
-//     viewBox="0 0 24 24"
-//     strokeWidth={1.5}
-//     stroke="currentColor"
-//     {...props}
-//   >
-//     <path
-//       strokeLinecap="round"
-//       strokeLinejoin="round"
-//       d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
-//     />
-//     <path
-//       strokeLinecap="round"
-//       strokeLinejoin="round"
-//       d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-//     />
-//   </svg>
-// );
-
-type HadithProps = {
-  hadith: HadithType;
-};
-
-export function Hadith({ hadith }: HadithProps) {
+export function Hadith({ hadith }: { hadith: HadithType }) {
   const [isArabicVisible, setIsArabicVisible] = useState(false);
 
   const toggleArabicVisibility = () => {
     setIsArabicVisible(!isArabicVisible);
   };
 
-  // ID unique pour lier le bouton au contenu (accessibilité)
   const arabicContentId = `arabic-content-${hadith.id}`;
 
   return (
@@ -72,7 +44,6 @@ export function Hadith({ hadith }: HadithProps) {
 
         {/* Section Matn (Texte principal en Français) */}
         <div className="space-y-3 text-gray-700 leading-relaxed font-serif italic">
-          {/* Utilisez ReactMarkdown ou affichez simplement le texte si c'est du simple texte */}
           <ReactMarkdown>{hadith.matn}</ReactMarkdown>
         </div>
 
@@ -99,7 +70,6 @@ export function Hadith({ hadith }: HadithProps) {
         {/* Section Arabe avec bouton de bascule et animation adaptative */}
         {hadith.arabic && (
           <div className="mt-5 pt-4 border-t border-emerald-100">
-            {/* Bouton pour afficher/masquer */}
             <button
               onClick={toggleArabicVisibility}
               className="flex items-center space-x-2 
