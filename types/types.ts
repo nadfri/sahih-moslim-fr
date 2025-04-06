@@ -13,6 +13,6 @@ export type HadithType = {
   narrator: NarratorType;
   sahabas: SahabaType[];
   matn: string;
+  arabic: string;
   isnad?: string;
-  arabic?: string;
 };

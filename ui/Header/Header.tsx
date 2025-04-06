@@ -3,7 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bars3BottomRightIcon, BookOpenIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  Bars3BottomRightIcon,
+  BookOpenIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 
 const navLinks = [
   { href: "/", label: "Accueil" },
@@ -38,7 +42,10 @@ export function Header() {
         <nav className="hidden md:block">
           <ul className="flex space-x-6 items-center">
             {navLinks.map((link) => {
-              const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+              const isActive =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(link.href);
               return (
                 <li key={link.href}>
                   <Link
@@ -68,7 +75,11 @@ export function Header() {
             aria-expanded={isMobileMenuOpen}
             className="text-emerald-700 hover:text-emerald-900 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1"
           >
-            {isMobileMenuOpen ? <XMarkIcon className="h-8" /> : <Bars3BottomRightIcon className="h-8" />}
+            {isMobileMenuOpen ? (
+              <XMarkIcon className="h-8" />
+            ) : (
+              <Bars3BottomRightIcon className="h-8" />
+            )}
           </button>
         </div>
       </div>
@@ -81,7 +92,10 @@ export function Header() {
         <nav className="container mx-auto px-4 pt-2 pb-4 border-t border-gray-100">
           <ul className="flex flex-col space-y-1">
             {navLinks.map((link) => {
-              const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+              const isActive =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(link.href);
               return (
                 <li key={`mobile-${link.href}`}>
                   <Link

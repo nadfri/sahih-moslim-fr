@@ -5,7 +5,12 @@ import { NextRequest } from "next/server";
 import { chapters } from "@/db/chapterTitles";
 import { narrators } from "@/db/narrators";
 import { sahabas } from "@/db/sahabas";
-import { ChapterTitleType, HadithType, NarratorType, SahabaType } from "@/types/types";
+import {
+  ChapterTitleType,
+  HadithType,
+  NarratorType,
+  SahabaType,
+} from "@/types/types";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,24 +18,41 @@ export async function POST(request: NextRequest) {
     const newHadith: HadithType = await request.json();
 
     // Validation des données
-    if (!newHadith.id || !newHadith.chapter || !newHadith.narrator || !newHadith.matn) {
-      return Response.json({ success: false, message: "Données incomplètes" }, { status: 400 });
+    if (
+      !newHadith.id ||
+      !newHadith.chapter ||
+      !newHadith.narrator ||
+      !newHadith.matn
+    ) {
+      return Response.json(
+        { success: false, message: "Données incomplètes" },
+        { status: 400 }
+      );
     }
 
     // Validation supplémentaire des types
     const chapterTitles = chapters.map((c) => c.title);
     if (!chapterTitles.includes(newHadith.chapter as ChapterTitleType)) {
-      return Response.json({ success: false, message: "Chapitre invalide" }, { status: 400 });
+      return Response.json(
+        { success: false, message: "Chapitre invalide" },
+        { status: 400 }
+      );
     }
 
     if (!narrators.includes(newHadith.narrator as NarratorType)) {
-      return Response.json({ success: false, message: "Narrateur invalide" }, { status: 400 });
+      return Response.json(
+        { success: false, message: "Narrateur invalide" },
+        { status: 400 }
+      );
     }
 
     // Vérifier que tous les sahabas sont valides
     for (const sahaba of newHadith.sahabas) {
       if (!sahabas.includes(sahaba as SahabaType)) {
-        return Response.json({ success: false, message: `Sahaba invalide: ${sahaba}` }, { status: 400 });
+        return Response.json(
+          { success: false, message: `Sahaba invalide: ${sahaba}` },
+          { status: 400 }
+        );
       }
     }
 
@@ -62,16 +84,23 @@ export async function POST(request: NextRequest) {
     matn: ${JSON.stringify(newHadith.matn)},
     isnad: ${newHadith.isnad ? JSON.stringify(newHadith.isnad) : '""'},
     arabic: ${newHadith.arabic ? JSON.stringify(newHadith.arabic) : '""'},
-  },`;
+  },
+`; // Ajout d'un saut de ligne après la virgule
 
     // Trouver l'endroit où insérer le nouveau hadith (avant le dernier crochet fermant)
     const insertPosition = fileContent.lastIndexOf("];");
     if (insertPosition === -1) {
-      return Response.json({ success: false, message: "Structure de fichier non reconnue" }, { status: 500 });
+      return Response.json(
+        { success: false, message: "Structure de fichier non reconnue" },
+        { status: 500 }
+      );
     }
 
     // Insérer le nouveau hadith
-    const updatedContent = fileContent.slice(0, insertPosition) + hadithToAdd + fileContent.slice(insertPosition);
+    const updatedContent =
+      fileContent.slice(0, insertPosition) +
+      hadithToAdd +
+      fileContent.slice(insertPosition);
 
     // Écrire le fichier mis à jour
     await fs.writeFile(filePath, updatedContent, "utf8");

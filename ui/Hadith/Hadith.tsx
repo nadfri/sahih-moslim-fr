@@ -50,7 +50,7 @@ export function Hadith({ hadith }: { hadith: HadithType }) {
         </div>
 
         {/* Matn Section (Main text in French) */}
-        <div className="space-y-3 text-gray-700 leading-relaxed font-serif italic">
+        <div className="space-y-3 text-gray-700 leading-relaxed text-pretty">
           <ReactMarkdown>{hadith.matn}</ReactMarkdown>
         </div>
 
@@ -58,7 +58,9 @@ export function Hadith({ hadith }: { hadith: HadithType }) {
         {hadith.sahabas && hadith.sahabas.length > 0 && (
           <div className="mt-5 pt-4 border-t border-emerald-100">
             <p className="text-sm text-gray-600">
-              <span className="font-semibold text-emerald-700">Sahaba(s) mentionné(s) :</span>
+              <span className="font-semibold text-emerald-700">
+                Sahaba(s) mentionné(s) :
+              </span>
             </p>
 
             <div className="flex flex-wrap gap-x-2 gap-y-2 mt-2">
@@ -100,7 +102,11 @@ export function Hadith({ hadith }: { hadith: HadithType }) {
                   aria-hidden="true"
                 />
               )}
-              <span>{isArabicVisible ? "Masquer la version arabe" : "Voir la version arabe"}</span>
+              <span>
+                {isArabicVisible
+                  ? "Masquer la version arabe"
+                  : "Voir la version arabe"}
+              </span>
             </button>
 
             <div
@@ -115,7 +121,7 @@ export function Hadith({ hadith }: { hadith: HadithType }) {
             >
               <div className="overflow-hidden">
                 <div
-                  className="pt-2 text-right font-arabic text-xl leading-loose"
+                  className="pt-2 text-right font-arabic text-xl leading-loose text-pretty"
                   dir="rtl"
                 >
                   {hadith.arabic}
