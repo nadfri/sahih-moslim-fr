@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 
 type SearchSelectProps = {
@@ -10,7 +10,6 @@ type SearchSelectProps = {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  required?: boolean;
   name?: string;
   error?: boolean;
   errorMessage?: string;
@@ -28,67 +27,64 @@ export function SearchSelect({
   errorMessage,
 }: SearchSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [inputValue, setInputValue] = useState(value);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const listboxId = `${id}-listbox`;
 
-  // Filter options based on search term
   const filteredOptions = options.filter((option) =>
-    option.toLowerCase().includes(searchTerm.toLowerCase())
+    option.toLowerCase().includes(inputValue.toLowerCase())
   );
 
-  // Handle option selection
-  const handleSelectOption = (option: string) => {
-    // Ensure option is in the list before passing it
-    if (options.includes(option)) {
-      onChange(option);
-    }
-    setSearchTerm("");
-    setIsOpen(false);
-  };
+  const handleSelectOption = useCallback(
+    (option: string) => {
+      if (options.includes(option)) {
+        onChange(option);
+        setInputValue(option);
+        setIsOpen(false);
+        inputRef.current?.focus();
+      }
+    },
+    [options, onChange]
+  );
 
-  // Handle input change with validation
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setSearchTerm(newValue);
-
-    // If the user types in a valid option and then moves away,
-    // we want to update the value
-    if (options.includes(newValue)) {
-      onChange(newValue);
+    const currentInput = e.target.value;
+    setInputValue(currentInput);
+    if (!isOpen) {
+      setIsOpen(true);
     }
   };
 
-  // Close dropdown when clicking outside
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
+    if (options.includes(inputValue)) {
+      if (inputValue !== value) {
+        onChange(inputValue);
+      }
+    } else {
+      setInputValue(value);
+    }
+  }, [options, inputValue, value, onChange]);
+
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
       ) {
-        setIsOpen(false);
-
-        // When closing by clicking outside, verify if current search term is valid
-        if (options.includes(searchTerm)) {
-          onChange(searchTerm);
-        } else if (searchTerm !== "" && value !== "") {
-          // Reset to current valid value if search term is invalid
-          setSearchTerm(value);
-        }
+        handleClose();
       }
-    }
-
+    };
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [options, onChange, searchTerm, value]);
+  }, [handleClose]);
 
-  // Update search term when value changes
   useEffect(() => {
-    // Don't update if input has focus to avoid disrupting typing
     if (document.activeElement !== inputRef.current) {
-      setSearchTerm(value);
+      setInputValue(value);
     }
   }, [value]);
 
@@ -116,24 +112,24 @@ export function SearchSelect({
             ref={inputRef}
             id={id}
             type="text"
-            className={`w-full p-2 rounded-md focus:outline-none ${error ? "bg-red-50" : ""}`}
+            className={`w-full p-2 rounded-l-md focus:outline-none ${error ? "bg-red-50" : ""}`}
             placeholder={placeholder}
-            value={searchTerm}
+            value={inputValue}
             onChange={handleInputChange}
             onFocus={() => setIsOpen(true)}
-            onBlur={() => {
-              // On blur, keep the valid value or reset to previous valid value
-              setTimeout(() => {
-                if (!options.includes(searchTerm)) {
-                  setSearchTerm(value);
-                }
-              }, 100);
-            }}
+            onBlur={handleClose}
+            role="combobox"
+            aria-expanded={isOpen}
+            aria-controls={listboxId}
+            aria-autocomplete="list"
+            autoComplete="off"
           />
           <button
             type="button"
-            className="p-2 text-gray-500 hover:text-emerald-700"
+            className="p-2 text-gray-500 hover:text-emerald-700 rounded-r-md"
             onClick={() => setIsOpen(!isOpen)}
+            aria-label={isOpen ? "Fermer la liste" : "Ouvrir la liste"}
+            tabIndex={-1}
           >
             {isOpen ? (
               <ChevronUpIcon className="h-5 w-5" />
@@ -143,33 +139,45 @@ export function SearchSelect({
           </button>
         </div>
 
-        {/* Dropdown list */}
         {isOpen && (
-          <ul className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white border border-gray-300 rounded-md shadow-lg">
+          <ul
+            id={listboxId}
+            className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white border border-gray-300 rounded-md shadow-lg"
+            role="listbox"
+            aria-label={label}
+          >
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <li
                   key={option}
+                  id={`${id}-option-${option.replace(/\s+/g, "-")}`}
                   className={`p-2 cursor-pointer hover:bg-emerald-100 ${
                     value === option ? "bg-emerald-50 font-medium" : ""
                   }`}
                   onClick={() => handleSelectOption(option)}
+                  role="option"
+                  aria-selected={value === option}
                 >
                   {option}
                 </li>
               ))
             ) : (
-              <li className="p-2 text-gray-500">Aucun résultat trouvé</li>
+              <li
+                className="p-2 text-gray-500 italic"
+                role="option"
+                aria-selected="false"
+                aria-disabled="true"
+              >
+                Aucun résultat trouvé
+              </li>
             )}
           </ul>
         )}
 
-        {/* Error message */}
         {error && errorMessage && (
           <p className="mt-1 text-sm text-red-600">{errorMessage}</p>
         )}
 
-        {/* Hidden field for React Hook Form */}
         {name && (
           <input
             type="hidden"
