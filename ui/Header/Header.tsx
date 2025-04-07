@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   Bars3BottomRightIcon,
   BookOpenIcon,
+  PlusIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 
@@ -19,6 +20,8 @@ const navLinks = [
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  // Check if we're in development mode
+  const isDevelopment = process.env.NODE_ENV === "development";
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
@@ -65,6 +68,19 @@ export function Header() {
                 </li>
               );
             })}
+
+            {/* Admin link - visible only in development mode */}
+            {isDevelopment && (
+              <li>
+                <Link
+                  href="/hadith/add"
+                  className="flex items-center gap-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-800 px-3 py-1.5 rounded-md transition-colors"
+                >
+                  <PlusIcon className="h-4 w-4" />
+                  <span>Ajouter</span>
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
         {/* Bouton Hamburger */}
@@ -116,6 +132,20 @@ export function Header() {
                 </li>
               );
             })}
+
+            {/* Admin link in mobile menu - visible only in development mode */}
+            {isDevelopment && (
+              <li>
+                <Link
+                  href="/hadith/add"
+                  className="flex items-center gap-2 py-2.5 px-3 rounded-md text-base font-medium bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-800 transition-colors"
+                  onClick={closeMobileMenu}
+                >
+                  <PlusIcon className="h-5 w-5" />
+                  <span>Ajouter un hadith</span>
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
       </div>
