@@ -6,8 +6,8 @@ export const moslim_fr: HadithType[] = [
     id: 1,
     chapter: "Introduction",
     narrator: "Ali ibn Abi Talib",
-    matn: "L'Envoyé d'Allah ﷺ dit: Ne m'attribuez pas des paroles mensongères! Certes, quiconque le fait, ira en Enfer",
     sahabas: [],
+    matn: "L'Envoyé d'Allah ﷺ dit: \n\nNe m'attribuez pas des paroles mensongères ! \n\nCertes, quiconque le fait, ira en Enfer.",
     isnad: "",
     arabic:
       'وَحَدَّثَنَا أَبُو بَكْرِ بْنُ أَبِي شَيْبَةَ، حَدَّثَنَا غُنْدَرٌ، عَنْ شُعْبَةَ، ح وَحَدَّثَنَا مُحَمَّدُ بْنُ الْمُثَنَّى، وَابْنُ، بَشَّارٍ قَالاَ حَدَّثَنَا مُحَمَّدُ بْنُ جَعْفَرٍ، حَدَّثَنَا شُعْبَةُ، عَنْ مَنْصُورٍ، عَنْ رِبْعِيِّ بْنِ حِرَاشٍ، أَنَّهُ سَمِعَ عَلِيًّا، - رضى الله عنه - يَخْطُبُ قَالَ قَالَ رَسُولُ اللَّهِ صلى الله عليه وسلم  " لاَ تَكْذِبُوا عَلَىَّ فَإِنَّهُ مَنْ يَكْذِبْ عَلَىَّ يَلِجِ النَّارَ " ',
@@ -17,8 +17,8 @@ export const moslim_fr: HadithType[] = [
     id: 2,
     chapter: "Introduction",
     narrator: "Anas ibn Malik",
-    matn: "En effet, ce qui m'empêche de vous rapporter un grand nombre de Ḥadīth, c'est que le Messager d'Allah ﷺ, a dit : « Celui qui a l'intention de mentir à mon sujet, qu'il prépare sa place en Enfer",
     sahabas: [],
+    matn: "En effet, ce qui m'empêche de vous rapporter un grand nombre de Ḥadīth, c'est que le Messager d'Allah ﷺ, a dit : \n\n\"Celui qui a l'intention de mentir à mon sujet, qu'il prépare sa place en Enfer.\"",
     isnad: "",
     arabic:
       ' وَحَدَّثَنَا أَبُو بَكْرِ بْنُ أَبِي شَيْبَةَ، حَدَّثَنَا غُنْدَرٌ، عَنْ شُعْبَةَ، ح وَحَدَّثَنَا مُحَمَّدُ بْنُ الْمُثَنَّى، وَابْنُ، بَشَّارٍ قَالاَ حَدَّثَنَا مُحَمَّدُ بْنُ جَعْفَرٍ، حَدَّثَنَا شُعْبَةُ، عَنْ مَنْصُورٍ، عَنْ رِبْعِيِّ بْنِ حِرَاشٍ، أَنَّهُ سَمِعَ عَلِيًّا، - رضى الله عنه - يَخْطُبُ قَالَ قَالَ رَسُولُ اللَّهِ صلى الله عليه وسلم  " لاَ تَكْذِبُوا عَلَىَّ فَإِنَّهُ مَنْ يَكْذِبْ عَلَىَّ يَلِجِ النَّارَ " .',
@@ -29,7 +29,7 @@ export const moslim_fr: HadithType[] = [
     chapter: "Introduction",
     narrator: "Abou Huraira",
     sahabas: [],
-    matn: "Le Prophète sws a dit: « Celui qui ment volontairement sur moi qu'il prépare sa place en enfer ».",
+    matn: "Le Prophète ﷺ a dit: \n\n« Celui qui ment volontairement sur moi qu'il prépare sa place en enfer ».",
     isnad: "",
     arabic:
       'وَحَدَّثَنِي زُهَيْرُ بْنُ حَرْبٍ، حَدَّثَنَا إِسْمَاعِيلُ، - يَعْنِي ابْنَ عُلَيَّةَ - عَنْ عَبْدِ الْعَزِيزِ بْنِ صُهَيْبٍ، عَنْ أَنَسِ بْنِ مَالِكٍ، أَنَّهُ قَالَ إِنَّهُ لَيَمْنَعُنِي أَنْ أُحَدِّثَكُمْ حَدِيثًا كَثِيرًا أَنَّ رَسُولَ اللَّهِ صلى الله عليه وسلم قَالَ  " مَنْ تَعَمَّدَ عَلَىَّ كَذِبًا فَلْيَتَبَوَّأْ مَقْعَدَهُ مِنَ النَّارِ " .',
@@ -42,15 +42,16 @@ export const moslim_fr: HadithType[] = [
     sahabas: ["Al Mughirah ibn Shu'bah"],
     matn: "Je suis arrivé à la mosquée, et **Al Mughirah**, l'Amīr de al-Kūfah, a dit : « J'ai entendu le Messager d'Allah sws, dire : ‘En vérité, un mensonge à mon sujet n'est pas comme un mensonge sur n'importe qui d'autre, car celui qui ment intentionnellement à mon sujet, qu'il prépare sa place en Enfer.’ »",
     isnad: "",
-    arabic: "",
+    arabic:
+      'وَحَدَّثَنَا مُحَمَّدُ بْنُ عَبْدِ اللَّهِ بْنِ نُمَيْرٍ، حَدَّثَنَا أَبِي، حَدَّثَنَا سَعِيدُ بْنُ عُبَيْدٍ، حَدَّثَنَا عَلِيُّ بْنُ رَبِيعَةَ، قَالَ أَتَيْتُ الْمَسْجِدَ وَالْمُغِيرَةُ أَمِيرُ الْكُوفَةِ قَالَ فَقَالَ الْمُغِيرَةُ سَمِعْتُ رَسُولَ اللَّهِ صلى الله عليه وسلم يَقُولُ ‏ "‏ إِنَّ كَذِبًا عَلَىَّ لَيْسَ كَكَذِبٍ عَلَى أَحَدٍ فَمَنْ كَذَبَ عَلَىَّ مُتَعَمِّدًا فَلْيَتَبَوَّأْ مَقْعَدَهُ مِنَ النَّارِ ‏"‏ ‏.‏\n',
   },
 
   {
     id: 5,
     chapter: "Introduction",
     narrator: "Abou Huraira",
-    matn: "Le Prophète sws a dit: « Il suffit à la personne comme mensonge de transmettre tout ce qu'elle entend »",
     sahabas: [],
+    matn: "Le Prophète sws a dit: « Il suffit à la personne comme mensonge de transmettre tout ce qu'elle entend »",
     isnad: "",
     arabic:
       "عن أبي هريرة رضي الله عنه قال رسول الله صلى الله عليه و سلم : كفى بالمرء كذبا أن يحدث بكل ما سمع",

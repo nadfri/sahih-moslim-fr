@@ -2,7 +2,12 @@ import { chapters } from "@/db/chapterTitles";
 import { moslim_fr } from "@/db/moslim_fr";
 import { narrators } from "@/db/narrators";
 import { sahabas } from "@/db/sahabas";
-import { ChapterType, HadithType, NarratorType, SahabaType } from "@/types/types";
+import {
+  ChapterType,
+  HadithType,
+  NarratorType,
+  SahabaType,
+} from "@/types/types";
 import { slugify } from "@/utils/slugify";
 
 /*Get By Hadith*/
@@ -28,7 +33,9 @@ export function getHadithByChapterSlug(chapterSlug: string): HadithType[] {
 }
 
 export function getChapterBySlug(chapterSlug: string): ChapterType | undefined {
-  const chapter = chapters.find((chapter) => slugify(chapter.title) === chapterSlug);
+  const chapter = chapters.find(
+    (chapter) => slugify(chapter.title) === chapterSlug
+  );
   return chapter;
 }
 
@@ -38,10 +45,14 @@ export function getAllNarrators(): NarratorType[] {
 }
 
 export function getHadithByNarratorSlug(narratorSlug: string): HadithType[] {
-  return moslim_fr.filter((hadith) => slugify(hadith.narrator) === narratorSlug);
+  return moslim_fr.filter(
+    (hadith) => slugify(hadith.narrator) === narratorSlug
+  );
 }
 
-export function getNarratorBySlug(narratorSlug: string): NarratorType | undefined {
+export function getNarratorBySlug(
+  narratorSlug: string
+): NarratorType | undefined {
   return narrators.find((narrator) => slugify(narrator) === narratorSlug);
 }
 

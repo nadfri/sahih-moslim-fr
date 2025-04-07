@@ -23,6 +23,7 @@ type InputProps = {
   dir?: "ltr" | "rtl";
   register?: unknown; // For react-hook-form
   helperText?: string;
+  readOnly?: boolean;
 };
 
 export function Input({
@@ -44,6 +45,7 @@ export function Input({
   dir = "ltr",
   register,
   helperText,
+  readOnly,
 }: InputProps) {
   // Common class names for styling
   const inputClasses = `w-full p-2 border rounded-md ${
@@ -74,6 +76,7 @@ export function Input({
           rows={rows}
           required={required}
           {...(register || {})}
+          readOnly={readOnly}
         />
       ) : (
         <input
@@ -90,6 +93,7 @@ export function Input({
           required={required}
           dir={dir}
           {...(register || {})}
+          readOnly={readOnly}
         />
       )}
 

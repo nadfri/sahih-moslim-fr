@@ -3,13 +3,16 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { moslim_fr } from "@/db/moslim_fr";
 import { getHadithById } from "@/services/services";
-import { Hadith } from "../../../ui/hadith/Hadith";
+import { EditHadithForm } from "@/ui/hadith/EditHadithForm";
 
 export type ParamsType = Promise<{ id: string }>;
 
-export default async function PageById({ params }: { params: ParamsType }) {
+export default async function EditHadithPage({
+  params,
+}: {
+  params: ParamsType;
+}) {
   const id = Number((await params).id);
 
   const hadith = getHadithById(id);
@@ -19,11 +22,11 @@ export default async function PageById({ params }: { params: ParamsType }) {
   }
 
   return (
-    <div>
-      <h1>
-        N°{id} - {hadith.narrator}
+    <div className="container mx-auto py-8">
+      <h1 className="text-3xl font-bold text-emerald-700 mb-8">
+        Modifier le hadith #{id}
       </h1>
-      <Hadith hadith={hadith} />
+      <EditHadithForm hadith={hadith} />
     </div>
   );
 }
@@ -48,11 +51,4 @@ export async function generateMetadata({
     title: `N°${id} - ${hadith.narrator}`,
     description: hadith.matn.substring(0, 160) + "...",
   };
-}
-
-/*Generate static paths for all hadiths*/
-export async function generateStaticParams() {
-  return moslim_fr.map((hadith) => ({
-    id: hadith.id.toString(),
-  }));
 }
