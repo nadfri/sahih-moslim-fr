@@ -5,7 +5,7 @@ import { amiriFont, geistMono, geistSans } from "@/fonts/fonts";
 import "./globals.css";
 
 import { Footer } from "../ui/Footer";
-import { Header } from "../ui/Header/Header";
+import { Header } from "../ui/Header";
 
 export const metadata: Metadata = {
   title: "Sahih Moslim en français",

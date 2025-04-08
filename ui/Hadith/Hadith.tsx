@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import {
-  ClipboardDocumentIcon,
   ExclamationTriangleIcon,
   EyeIcon,
   EyeSlashIcon,
@@ -12,6 +11,7 @@ import {
 import ReactMarkdown from "react-markdown";
 
 import { HadithType } from "@/types/types";
+import { CopyBoard } from "@/ui/CopyBoard";
 import { slugify } from "@/utils/slugify";
 import ArabicIcon from "../icons/ArabicIcon";
 
@@ -147,17 +147,13 @@ export function Hadith({
 
         {/* Action buttons section */}
         <div className="flex flex-wrap items-center gap-3 justify-end">
-          <button
-            className="inline-flex items-center gap-1.5 text-sm font-medium bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-md hover:bg-emerald-100 hover:text-emerald-700 transition-all duration-200"
-            title="Copier le hadith"
-            aria-label="Copier le contenu du hadith"
-          >
-            <ClipboardDocumentIcon
-              className="h-4 w-4"
-              aria-hidden="true"
-            />
-            <span>Copier</span>
-          </button>
+          <CopyBoard
+            frenchText={hadith.matn}
+            arabicText={hadith.arabic}
+            hadithNumber={hadith.id}
+            narrator={hadith.narrator}
+            chapter={hadith.chapter}
+          />
 
           <button
             className="inline-flex items-center gap-1.5 text-sm font-medium bg-amber-50 text-amber-600 px-3 py-1.5 rounded-md hover:bg-amber-100 hover:text-amber-700 transition-all duration-200"
