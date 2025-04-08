@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 type MultiSelectProps = {
   id: string;
@@ -30,6 +32,8 @@ export function MultiSelect({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  useClickOutside(dropdownRef, () => setIsOpen(false));
+
   // Filter options based on search term and already selected items
   const filteredOptions = options.filter(
     (option) =>
@@ -53,23 +57,6 @@ export function MultiSelect({
     const updatedSelected = selected.filter((item) => item !== itemToRemove);
     onChange(updatedSelected);
   };
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   return (
     <div className="w-full">
