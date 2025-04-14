@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-import { useClickOutside } from "@/hooks/useClickOutside";
+import { useClickOutside } from "@/src/hooks/useClickOutside";
 
 type MultiSelectProps = {
   id: string;

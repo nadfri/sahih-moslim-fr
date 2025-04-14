@@ -1,8 +1,11 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 import Link from "next/link";
 
-import { getAllNarrators, getCountHadithsByNarratorSlug } from "@/services/services";
-import { slugify } from "@/utils/slugify";
+import {
+  getAllNarrators,
+  getCountHadithsByNarratorSlug,
+} from "@/src/services/services";
+import { slugify } from "@/src/utils/slugify";
 
 export default function NarratorsPage() {
   const narrators = getAllNarrators();

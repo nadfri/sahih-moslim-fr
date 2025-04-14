@@ -3,8 +3,8 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { getHadithById } from "@/services/services";
-import { EditHadithForm } from "@/ui/hadith/EditHadithForm";
+import { getHadithById } from "@/src/services/services";
+import { EditHadithForm } from "@/src/ui/hadith/EditHadithForm";
 
 export type ParamsType = Promise<{ id: string }>;
 

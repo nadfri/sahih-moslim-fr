@@ -2,9 +2,13 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { getAllChapters, getChapterBySlug, getHadithByChapterSlug } from "@/services/services";
-import { slugify } from "@/utils/slugify";
-import { Hadith } from "../../../ui/hadith/Hadith";
+import {
+  getAllChapters,
+  getChapterBySlug,
+  getHadithByChapterSlug,
+} from "@/src/services/services";
+import { slugify } from "@/src/utils/slugify";
+import { Hadith } from "../../../src/ui/hadith/Hadith";
 
 export type ParamsType = Promise<{ slug: string }>;
 
@@ -41,7 +45,9 @@ export default async function PageByChapters(props: { params: ParamsType }) {
 }
 
 /*Generate metadata for each hadith*/
-export async function generateMetadata(props: { params: ParamsType }): Promise<Metadata> {
+export async function generateMetadata(props: {
+  params: ParamsType;
+}): Promise<Metadata> {
   const params = await props.params;
   const slug = params.slug;
   const chapter = getChapterBySlug(slug);

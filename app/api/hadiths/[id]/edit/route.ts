@@ -12,7 +12,7 @@ import {
   HadithType,
   NarratorType,
   SahabaType,
-} from "@/types/types";
+} from "@/src/types/types";
 
 type UpdateHadithRequestBody = Omit<HadithType, "id">;
 

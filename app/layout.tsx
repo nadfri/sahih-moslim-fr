@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 
-import { amiriFont, geistMono, geistSans } from "@/fonts/fonts";
+import { amiriFont, geistMono, geistSans } from "@/src/fonts/fonts";
 
 import "./globals.css";
 
-import { Footer } from "../ui/Footer";
-import { Header } from "../ui/Header";
+import { SessionWrapper } from "@/src/authentification/SessionWrapper";
+import { Footer } from "../src/ui/Footer";
+import { Header } from "../src/ui/Header";
 
 export const metadata: Metadata = {
   title: "Sahih Moslim en français",
@@ -33,11 +34,13 @@ export default function RootLayout({
         className="antialiased flex flex-col min-h-screen text-gray-800"
         suppressHydrationWarning
       >
-        <Header />
-        <main className="bg-gradient-to-br from-emerald-50 via-stone-50 to-amber-50 py-12 px-4 sm:px-6 lg:px-8 flex-1">
-          {children}
-        </main>
-        <Footer />
+        <SessionWrapper>
+          <Header />
+          <main className="bg-gradient-to-br from-emerald-50 via-stone-50 to-amber-50 py-12 px-4 sm:px-6 lg:px-8 flex-1">
+            {children}
+          </main>
+          <Footer />
+        </SessionWrapper>
       </body>
     </html>
   );

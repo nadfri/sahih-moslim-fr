@@ -7,8 +7,8 @@ import {
   HadithType,
   NarratorType,
   SahabaType,
-} from "@/types/types";
-import { slugify } from "@/utils/slugify";
+} from "@/src/types/types";
+import { slugify } from "@/src/utils/slugify";
 
 /*Get By Hadith*/
 export function getAllHadiths() {

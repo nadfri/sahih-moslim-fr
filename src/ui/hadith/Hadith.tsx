@@ -10,10 +10,10 @@ import {
 } from "@heroicons/react/24/solid";
 import ReactMarkdown from "react-markdown";
 
-import { HadithType } from "@/types/types";
-import { CopyBoard } from "@/ui/CopyBoard";
-import { slugify } from "@/utils/slugify";
-import ArabicIcon from "../icons/ArabicIcon";
+import { HadithType } from "@/src/types/types";
+import { CopyBoard } from "@/src/ui/CopyBoard";
+import { ArabicIcon } from "@/src/ui/icons/ArabicIcon";
+import { slugify } from "@/src/utils/slugify";
 
 export function Hadith({
   hadith,
@@ -95,34 +95,36 @@ export function Hadith({
 
         {/* Arabic Section with toggle button and adaptive animation */}
         <div className="mt-5 pt-4 border-t border-emerald-100">
-          <button
-            onClick={toggleArabicVisibility}
-            className="flex items-center space-x-2 
+          {!update && (
+            <button
+              onClick={toggleArabicVisibility}
+              className="flex items-center space-x-2 
                 text-sm font-medium 
                 text-emerald-700 hover:text-emerald-900 
                 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 
                 rounded mb-3 
                 transition-colors duration-200"
-            aria-expanded={isArabicVisible}
-            aria-controls={arabicContentId}
-          >
-            {isArabicVisible || update ? (
-              <EyeSlashIcon
-                className="w-5 h-5"
-                aria-hidden="true"
-              />
-            ) : (
-              <EyeIcon
-                className="w-5 h-5"
-                aria-hidden="true"
-              />
-            )}
-            <span>
-              {isArabicVisible || update
-                ? "Masquer la version arabe"
-                : "Voir la version arabe"}
-            </span>
-          </button>
+              aria-expanded={isArabicVisible}
+              aria-controls={arabicContentId}
+            >
+              {isArabicVisible ? (
+                <EyeSlashIcon
+                  className="w-5 h-5"
+                  aria-hidden="true"
+                />
+              ) : (
+                <EyeIcon
+                  className="w-5 h-5"
+                  aria-hidden="true"
+                />
+              )}
+              <span>
+                {isArabicVisible
+                  ? "Masquer la version arabe"
+                  : "Voir la version arabe"}
+              </span>
+            </button>
+          )}
 
           <div
             id={arabicContentId}

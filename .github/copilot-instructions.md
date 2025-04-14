@@ -1,6 +1,6 @@
--use NextJS 15, React 19, Tailwind v4
+-use NextJS 15, React 19, Tailwind v4, pnpm
 -For new component, use export function only
--comments are always in english
+-comments are always in english!
 -params are promised in NextJs 15:
 // Before
 type Params = { slug: string }

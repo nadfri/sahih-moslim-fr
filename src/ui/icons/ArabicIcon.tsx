@@ -43,5 +43,3 @@ export function ArabicIcon({
     </svg>
   );
 }
-
-export default ArabicIcon;

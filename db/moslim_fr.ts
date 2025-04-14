@@ -1,4 +1,4 @@
-import { HadithType } from "@/types/types";
+import { HadithType } from "@/src/types/types";
 
 export const moslim_fr: HadithType[] = [
   /*Introduction*/

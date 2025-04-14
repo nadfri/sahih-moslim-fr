@@ -1,8 +1,8 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 import Link from "next/link";
 
-import { getAllChapters } from "@/services/services";
-import { slugify } from "@/utils/slugify";
+import { getAllChapters } from "@/src/services/services";
+import { slugify } from "@/src/utils/slugify";
 
 export default function ChaptersPage() {
   const chapters = getAllChapters();

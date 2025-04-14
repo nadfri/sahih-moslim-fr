@@ -1,6 +1,6 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
-import { getAllHadiths } from "@/services/services";
-import { Hadith } from "../ui/hadith/Hadith";
+import { getAllHadiths } from "@/src/services/services";
+import { Hadith } from "../src/ui/hadith/Hadith";
 
 export default function Home() {
   const hadiths = getAllHadiths();
@@ -10,8 +10,9 @@ export default function Home() {
         Sahih Moslim en français
       </h1>
       <p className="text-center mb-4">
-        Bienvenue sur le site dédié à la collection de hadiths Sahih Moslim en français. Vous trouverez ici une
-        sélection de hadiths authentiques du Prophète Muhammad (sws).
+        Bienvenue sur le site dédié à la collection de hadiths Sahih Moslim en
+        français. Vous trouverez ici une sélection de hadiths authentiques du
+        Prophète Muhammad (sws).
       </p>
       <p className="text-lg mb-4">Nombre de hadiths: {hadiths.length}</p>
 

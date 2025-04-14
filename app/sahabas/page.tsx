@@ -1,8 +1,8 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 import Link from "next/link";
 
-import { getAllSahabas, getCountHadithsBySahabaSlug } from "@/services/services";
-import { slugify } from "@/utils/slugify";
+import { getAllSahabas, getCountHadithsBySahabaSlug } from "@/src/services/services";
+import { slugify } from "@/src/utils/slugify";
 
 export default function SahabasPage() {
   const sahabas = getAllSahabas();

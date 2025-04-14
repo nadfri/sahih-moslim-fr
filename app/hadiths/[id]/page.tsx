@@ -4,8 +4,8 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { moslim_fr } from "@/db/moslim_fr";
-import { getHadithById } from "@/services/services";
-import { Hadith } from "../../../ui/hadith/Hadith";
+import { getHadithById } from "@/src/services/services";
+import { Hadith } from "../../../src/ui/hadith/Hadith";
 
 export type ParamsType = Promise<{ id: string }>;
 

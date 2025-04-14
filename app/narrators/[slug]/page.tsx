@@ -3,9 +3,13 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { getAllNarrators, getHadithByNarratorSlug, getNarratorBySlug } from "@/services/services";
-import { slugify } from "@/utils/slugify";
-import { Hadith } from "../../../ui/hadith/Hadith";
+import {@/src/services/services
+  getAllNarrators,
+  getHadithByNarratorSlug,
+  getNarratorBySlug,
+} from "@/services/services";
+import { slugify } from "@/src/utils/slugify";
+import { Hadith } from "../../../src/ui/hadith/Hadith";
 
 export type ParamsType = Promise<{ slug: string }>;
 
@@ -40,7 +44,9 @@ export default async function PageByNarrators(props: { params: ParamsType }) {
 }
 
 /*Generate metadata for each narrator*/
-export async function generateMetadata(props: { params: ParamsType }): Promise<Metadata> {
+export async function generateMetadata(props: {
+  params: ParamsType;
+}): Promise<Metadata> {
   const params = await props.params;
 
   const slug = params.slug;

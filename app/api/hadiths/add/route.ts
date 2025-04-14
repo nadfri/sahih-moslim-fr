@@ -10,7 +10,7 @@ import {
   HadithType,
   NarratorType,
   SahabaType,
-} from "@/types/types";
+} from "@/src/types/types";
 
 export async function POST(request: NextRequest) {
   try {
