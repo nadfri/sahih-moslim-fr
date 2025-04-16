@@ -1,7 +1,7 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { getHadithById } from "@/src/services/services";
 import { EditHadithForm } from "@/src/ui/hadith/EditHadithForm";
@@ -13,6 +13,11 @@ export default async function EditHadithPage({
 }: {
   params: ParamsType;
 }) {
+  // Check if we are in production and redirect if true
+  if (process.env.NODE_ENV === "production") {
+    redirect("/");
+  }
+
   const id = Number((await params).id);
 
   const hadith = getHadithById(id);

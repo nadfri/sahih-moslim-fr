@@ -1,6 +1,12 @@
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 import { AddHadithForm } from "@/src/ui/hadith/AddHadithForm";
+
+// Check if we are in production and redirect if true
+if (process.env.NODE_ENV === "production") {
+  redirect("/");
+}
 
 export const metadata: Metadata = {
   title: "Ajouter un hadith",

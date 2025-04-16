@@ -13,6 +13,7 @@ import { useSession } from "next-auth/react";
 
 import { ButtonSignOut } from "./connexion/ButtonSignOut";
 
+// Navigation links
 const navLinks = [
   { href: "/", label: "Accueil" },
   { href: "/chapters", label: "Chapitres" },
@@ -24,6 +25,7 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   // Check if we're in development mode
+  const isDev = process.env.NODE_ENV !== "production";
 
   // Get session status to show/hide sign out button
   const { status } = useSession();
@@ -42,7 +44,6 @@ export function Header() {
           onClick={closeMobileMenu}
         >
           <BookOpenIcon className="text-emerald-600 group-hover:text-emerald-700 transition-colors" />
-
           <span>
             Sahih Muslim <span className="text-emerald-600">FR</span>
           </span>
@@ -75,27 +76,28 @@ export function Header() {
               );
             })}
 
-            {/* Admin link - visible only in development mode */}
+            {/* Add button - only visible in development mode */}
+            {isDev && (
+              <li>
+                <Link
+                  href="/hadiths/add"
+                  className="flex items-center gap-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-800 px-3 py-1.5 rounded-md transition-colors"
+                >
+                  <PlusIcon className="h-4 w-4" />
+                  <span>Ajouter</span>
+                </Link>
+              </li>
+            )}
 
-            <li>
-              <Link
-                href="/hadiths/add"
-                className="flex items-center gap-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-800 px-3 py-1.5 rounded-md transition-colors"
-              >
-                <PlusIcon className="h-4 w-4" />
-                <span>Ajouter</span>
-              </Link>
-            </li>
-
-            {/* Sign out button - visible only when authenticated */}
-            {isAuthenticated && (
+            {/* Sign out button - only visible when authenticated and in development mode */}
+            {isAuthenticated && isDev && (
               <li>
                 <ButtonSignOut />
               </li>
             )}
           </ul>
         </nav>
-        {/* Bouton Hamburger */}
+        {/* Hamburger button */}
         <div className="md:hidden">
           <button
             onClick={toggleMobileMenu}
@@ -114,7 +116,7 @@ export function Header() {
       <div
         className={`
           overflow-hidden md:hidden transition-[max-height] duration-300 ease-in-out bg-white
-          ${isMobileMenuOpen ? "max-h-96" : "max-h-0"} {/* Contrôle la hauteur */}
+          ${isMobileMenuOpen ? "max-h-96" : "max-h-0"}
         `}
       >
         <nav className="container mx-auto px-4 pt-2 pb-4 border-t border-gray-100">
@@ -145,19 +147,22 @@ export function Header() {
               );
             })}
 
-            <li>
-              <Link
-                href="/hadiths/add"
-                className="flex items-center gap-2 py-2.5 px-3 rounded-md text-base font-medium bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-800 transition-colors"
-                onClick={closeMobileMenu}
-              >
-                <PlusIcon className="h-5 w-5" />
-                <span>Ajouter un hadith</span>
-              </Link>
-            </li>
+            {/* Add button - only visible in development mode */}
+            {isDev && (
+              <li>
+                <Link
+                  href="/hadiths/add"
+                  className="flex items-center gap-2 py-2.5 px-3 rounded-md text-base font-medium bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-800 transition-colors"
+                  onClick={closeMobileMenu}
+                >
+                  <PlusIcon className="h-5 w-5" />
+                  <span>Ajouter un hadith</span>
+                </Link>
+              </li>
+            )}
 
-            {/* Sign out button in mobile menu - visible only when authenticated */}
-            {isAuthenticated && (
+            {/* Sign out button in mobile menu - only visible when authenticated and in development mode */}
+            {isAuthenticated && isDev && (
               <li className="mt-3 px-2">
                 <ButtonSignOut />
               </li>
