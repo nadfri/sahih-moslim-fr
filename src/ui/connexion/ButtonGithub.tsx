@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { Github } from "lucide-react";
 import { signIn } from "next-auth/react";
 
 export function ButtonGithub() {
@@ -13,6 +14,11 @@ export function ButtonGithub() {
       onClick={() => signIn("github", { callbackUrl, redirect: true })}
       className="flex items-center justify-center gap-2 w-full rounded-md bg-emerald-700 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-emerald-800 active:bg-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all duration-200"
     >
+      {/* Add the Github icon */}
+      <Github
+        className="h-5 w-5"
+        aria-hidden="true"
+      />
       <span>Connexion avec Github</span>
     </button>
   );

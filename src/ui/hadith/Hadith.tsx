@@ -2,12 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import {
-  ExclamationTriangleIcon,
-  EyeIcon,
-  EyeSlashIcon,
-  PencilIcon,
-} from "@heroicons/react/24/solid";
+import { Eye, EyeOff, Pencil, TriangleAlert } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 import { HadithType } from "@/src/types/types";
@@ -108,12 +103,12 @@ export function Hadith({
               aria-controls={arabicContentId}
             >
               {isArabicVisible ? (
-                <EyeSlashIcon
+                <EyeOff
                   className="w-5 h-5"
                   aria-hidden="true"
                 />
               ) : (
-                <EyeIcon
+                <Eye
                   className="w-5 h-5"
                   aria-hidden="true"
                 />
@@ -162,7 +157,7 @@ export function Hadith({
             title="Signaler une erreur"
             aria-label="Signaler une erreur dans ce hadith"
           >
-            <ExclamationTriangleIcon
+            <TriangleAlert
               className="h-4 w-4"
               aria-hidden="true"
             />
@@ -176,7 +171,7 @@ export function Hadith({
               title="Modifier ce hadith"
               aria-label="Éditer le hadith"
             >
-              <PencilIcon
+              <Pencil
                 className="h-4 w-4"
                 aria-hidden="true"
               />

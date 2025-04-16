@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 type SearchSelectProps = {
   id: string;
@@ -132,9 +132,9 @@ export function SearchSelect({
             tabIndex={-1}
           >
             {isOpen ? (
-              <ChevronUpIcon className="h-5 w-5" />
+              <ChevronUp className="h-5 w-5" />
             ) : (
-              <ChevronDownIcon className="h-5 w-5" />
+              <ChevronDown className="h-5 w-5" />
             )}
           </button>
         </div>

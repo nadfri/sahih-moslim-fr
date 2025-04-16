@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { X } from "lucide-react";
 
 import { useClickOutside } from "@/src/hooks/useClickOutside";
 
@@ -90,7 +90,7 @@ export function MultiSelect({
                 onClick={() => handleRemove(item)}
                 className="ml-1 text-emerald-600 hover:text-emerald-800 focus:outline-none"
               >
-                <XMarkIcon className="h-4 w-4" />
+                <X className="h-4 w-4" />
               </button>
             </div>
           ))}

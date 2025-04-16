@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { CheckIcon, ClipboardDocumentIcon } from "@heroicons/react/24/solid";
+import { Check, Files } from "lucide-react";
 
 import { useClickOutside } from "../hooks/useClickOutside";
 
@@ -66,12 +66,12 @@ export function CopyBoard({
         aria-haspopup="true"
       >
         {copied ? (
-          <CheckIcon
+          <Check
             className="h-4 w-4"
             aria-hidden="true"
           />
         ) : (
-          <ClipboardDocumentIcon
+          <Files
             className="h-4 w-4"
             aria-hidden="true"
           />
