@@ -3,7 +3,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { moslim_fr } from "@/db/moslim_fr";
 import { getHadithById } from "@/src/services/services";
 import { Hadith } from "../../../src/ui/hadith/Hadith";
 
@@ -51,8 +50,8 @@ export async function generateMetadata({
 }
 
 /*Generate static paths for all hadiths*/
-export async function generateStaticParams() {
-  return moslim_fr.map((hadith) => ({
-    id: hadith.id.toString(),
-  }));
-}
+// export async function generateStaticParams() {
+//   return moslim_fr.map((hadith) => ({
+//     id: hadith.id.toString(),
+//   }));
+// }
