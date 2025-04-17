@@ -13,7 +13,7 @@ export default function NarratorsPage() {
 
   return (
     <div className="container mx-auto max-w-5xl">
-      <h1 className="text-4xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-12 md:mb-16 tracking-tight">
+      <h1 className="text-4xl md:text-5xl font-bold text-center text-emerald-800 mb-12 md:mb-16 tracking-tight">
         Narrateurs des Hadiths
       </h1>
 
@@ -31,7 +31,7 @@ export default function NarratorsPage() {
               </span>
 
               {/* Nom du Narrateur */}
-              <p className="text-lg font-medium font-serif text-gray-800 group-hover:text-emerald-700 transition-colors flex-grow break-words">
+              <p className="text-lg text-gray-800 group-hover:text-emerald-700 transition-colors flex-grow break-words">
                 {narrator}
               </p>
 
