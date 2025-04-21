@@ -5,9 +5,9 @@ export const cleanArabicText = (text: string): string => {
 
   let cleanedText = text;
 
-  cleanedText = cleanedText.replace(/[\u200B-\u200F\uFEFF]/g, "");
+  cleanedText = cleanedText.replace(/[\u200B-\u200F\uFEFF]/gi, "");
 
-  cleanedText = cleanedText.replace(/\u0640/g, "");
+  cleanedText = cleanedText.replace(/\u0640/gi, "");
 
   cleanedText = cleanedText.replace(/["'«»]/g, "");
 

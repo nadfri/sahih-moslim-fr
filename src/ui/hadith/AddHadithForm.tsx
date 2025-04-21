@@ -14,7 +14,7 @@ import {
   getIds,
 } from "@/src/services/services";
 /*Types*/
-import { ChapterTitleType, HadithType, NarratorType } from "@/src/types/types";
+import { HadithType } from "@/src/types/types";
 /*UI*/
 import { Hadith } from "@/src/ui/hadith/Hadith";
 import { Input } from "@/src/ui/inputs/Input";
@@ -115,8 +115,8 @@ export function AddHadithForm() {
 
         reset({
           id: Math.max(...existingIds, data.id) + 1,
-          chapter: "La Foi" as ChapterTitleType,
-          narrator: "Abou Huraira" as NarratorType,
+          chapter: "La Foi",
+          narrator: "Abou Huraira",
           sahabas: [],
           matn: "",
           isnad: "",

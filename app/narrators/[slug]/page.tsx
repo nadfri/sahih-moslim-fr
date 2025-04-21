@@ -3,13 +3,13 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import {@/src/services/services
+import {
   getAllNarrators,
   getHadithByNarratorSlug,
   getNarratorBySlug,
-} from "@/services/services";
+} from "@/src/services/services";
 import { slugify } from "@/src/utils/slugify";
-import { Hadith } from "../../../src/ui/hadith/Hadith";
+import { Hadith } from "@/ui/hadith/Hadith";
 
 export type ParamsType = Promise<{ slug: string }>;
 

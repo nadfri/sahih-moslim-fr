@@ -1,7 +1,10 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 import Link from "next/link";
 
-import { getAllSahabas, getCountHadithsBySahabaSlug } from "@/src/services/services";
+import {
+  getAllSahabas,
+  getCountHadithsBySahabaSlug,
+} from "@/src/services/services";
 import { slugify } from "@/src/utils/slugify";
 
 export default function SahabasPage() {

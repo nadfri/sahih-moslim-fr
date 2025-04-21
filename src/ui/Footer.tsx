@@ -8,12 +8,16 @@ export function Footer() {
       <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="text-center text-sm text-gray-600">
           <p>
-            © {currentYear} <span className="font-semibold text-emerald-800">Sahih Muslim FR</span>. Tous droits
-            réservés.
+            © {currentYear}{" "}
+            <span className="font-semibold text-emerald-800">
+              Sahih Muslim FR
+            </span>
+            . Tous droits réservés.
           </p>
 
           <p className="mt-2 text-xs text-gray-500">
-            Faciliter l'accès aux enseignements authentiques rapportés par l'Imam Muslim.
+            Faciliter l'accès aux enseignements authentiques rapportés par
+            l'Imam Muslim.
           </p>
 
           <nav className="mt-4">

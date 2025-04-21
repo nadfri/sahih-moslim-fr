@@ -6,9 +6,9 @@ import {
   getAllChapters,
   getHadithBySahabaSlug,
   getSahabaBySlug,
-} from "@/services/services";
+} from "@/src/services/services";
 import { slugify } from "@/src/utils/slugify";
-import { Hadith } from "../../../src/ui/hadith/Hadith";
+import { Hadith } from "@/ui/hadith/Hadith";
 
 export type ParamsType = Promise<{ slug: string }>;
 
