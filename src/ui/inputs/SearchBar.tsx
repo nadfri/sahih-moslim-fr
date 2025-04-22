@@ -1,40 +1,65 @@
 "use client";
 
-// SearchBar component for advanced hadith search
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
 import { SearchSelect } from "./SearchSelect";
 
+// Props now only include initial values and data lists
 type SearchBarProps = {
-  filterMode: "word" | "narrator" | "sahaba";
-  setFilterMode: (mode: "word" | "narrator" | "sahaba") => void;
-  word: string;
-  setWord: (v: string) => void;
+  initialFilterMode?: "word" | "narrator" | "sahaba";
+  initialWord?: string;
+  initialNarrator?: string;
+  initialSahaba?: string;
   narrators: string[];
-  selectedNarrator: string;
-  setSelectedNarrator: (v: string) => void;
   sahabas: string[];
-  selectedSahaba: string;
-  setSelectedSahaba: (v: string) => void;
-  onSubmit: (e: React.FormEvent) => void;
 };
 
 export function SearchBar({
-  filterMode,
-  setFilterMode,
-  word,
-  setWord,
+  initialFilterMode = "word",
+  initialWord = "",
+  initialNarrator = "",
+  initialSahaba = "",
   narrators,
-  selectedNarrator,
-  setSelectedNarrator,
   sahabas,
-  selectedSahaba,
-  setSelectedSahaba,
-  onSubmit,
 }: SearchBarProps) {
+  // Internal state management
+  const [filterMode, setFilterMode] = useState(initialFilterMode);
+  const [word, setWord] = useState(initialWord);
+  const [selectedNarrator, setSelectedNarrator] = useState(initialNarrator);
+  const [selectedSahaba, setSelectedSahaba] = useState(initialSahaba);
+
+  const router = useRouter();
+
+  // Handle form submission internally
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    params.set("filterMode", filterMode);
+    // Only add params if they have a value to keep URL clean
+    if (filterMode === "word" && word) params.set("query", word);
+    if (filterMode === "narrator" && selectedNarrator)
+      params.set("narrator", selectedNarrator);
+    if (filterMode === "sahaba" && selectedSahaba)
+      params.set("sahaba", selectedSahaba);
+    // Use push for navigation, updating the URL and triggering re-render of the server component
+    router.push(`/search?${params.toString()}`);
+  }
+
+  // Function to handle radio change and reset other inputs
+  const handleModeChange = (newMode: "word" | "narrator" | "sahaba") => {
+    setFilterMode(newMode);
+    // Reset other fields when mode changes
+    if (newMode !== "word") setWord("");
+    if (newMode !== "narrator") setSelectedNarrator("");
+    if (newMode !== "sahaba") setSelectedSahaba("");
+  };
+
   return (
     <form
       className="mb-6"
       method="GET"
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit} // Use internal handler
       autoComplete="off"
     >
       {/* Filter mode radio */}
@@ -45,11 +70,7 @@ export function SearchBar({
             name="filterMode"
             value="word"
             checked={filterMode === "word"}
-            onChange={() => {
-              setFilterMode("word");
-              setSelectedNarrator("");
-              setSelectedSahaba("");
-            }}
+            onChange={() => handleModeChange("word")} // Use internal handler
             className="accent-emerald-600"
           />
           <span className="text-sm">Par mot</span>
@@ -60,11 +81,7 @@ export function SearchBar({
             name="filterMode"
             value="narrator"
             checked={filterMode === "narrator"}
-            onChange={() => {
-              setFilterMode("narrator");
-              setWord("");
-              setSelectedSahaba("");
-            }}
+            onChange={() => handleModeChange("narrator")} // Use internal handler
             className="accent-emerald-600"
           />
           <span className="text-sm">Par Narrateur</span>
@@ -75,11 +92,7 @@ export function SearchBar({
             name="filterMode"
             value="sahaba"
             checked={filterMode === "sahaba"}
-            onChange={() => {
-              setFilterMode("sahaba");
-              setWord("");
-              setSelectedNarrator("");
-            }}
+            onChange={() => handleModeChange("sahaba")} // Use internal handler
             className="accent-emerald-600"
           />
           <span className="text-sm">Par Rapporteur</span>
@@ -91,8 +104,8 @@ export function SearchBar({
           <input
             type="text"
             name="query"
-            value={word}
-            onChange={(e) => setWord(e.target.value)}
+            value={word} // Use internal state
+            onChange={(e) => setWord(e.target.value)} // Use internal setter
             placeholder="Rechercher par mot, narrateur ou rapporteur..."
             className="flex-1 border border-emerald-500 rounded-l px-4 py-2 focus:outline-none focus:ring-1 focus:ring-emerald-600 bg-white"
             autoFocus
@@ -104,8 +117,8 @@ export function SearchBar({
               id="narrator-select"
               label=""
               options={narrators}
-              value={selectedNarrator}
-              onChange={setSelectedNarrator}
+              value={selectedNarrator} // Use internal state
+              onChange={setSelectedNarrator} // Use internal setter
               placeholder="Choisir un narrateur"
               name="narrator"
             />
@@ -117,8 +130,8 @@ export function SearchBar({
               id="sahaba-select"
               label=""
               options={sahabas}
-              value={selectedSahaba}
-              onChange={setSelectedSahaba}
+              value={selectedSahaba} // Use internal state
+              onChange={setSelectedSahaba} // Use internal setter
               placeholder="Choisir un rapporteur"
               name="sahaba"
             />
