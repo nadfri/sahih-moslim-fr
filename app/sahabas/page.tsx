@@ -12,7 +12,7 @@ export default function SahabasPage() {
 
   return (
     <div className="container mx-auto max-w-5xl">
-      <h1 className="text-4xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-12 md:mb-16 tracking-tight">
+      <h1 className="text-3xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
         Hadiths mentionnant des Compagnons
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 auto-rows-fr">

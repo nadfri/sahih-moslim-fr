@@ -7,9 +7,8 @@ import { slugify } from "@/src/utils/slugify";
 export default function ChaptersPage() {
   const chapters = getAllChapters();
   return (
-    <div className="container mx-auto max-w-6xl">
-      {/* Un peu plus large */}
-      <h1 className="text-4xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-12 md:mb-16 tracking-tight">
+    <div className="container mx-auto max-w-5xl">
+      <h1 className="text-3xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
         Chapitres de Sahih Muslim
       </h1>
       {/* Grille pour les cartes de chapitre */}

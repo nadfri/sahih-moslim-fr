@@ -26,7 +26,9 @@ export default async function PageByChapters(props: { params: ParamsType }) {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Chapitre: {chapter.title}</h1>
+      <h1 className="text-3xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
+        {chapter.title}
+      </h1>
       <h2 className="text-xl mb-4">
         De {chapter.range[0]} à {chapter.range[1]}
       </h2>

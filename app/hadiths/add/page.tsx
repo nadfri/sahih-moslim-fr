@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default async function AddHadithPage() {
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold text-emerald-700 mb-8">
+      <h1 className="text-3xl md:text-4xl font-bold text-emerald-700 mb-6 md:mb-8">
         Ajouter un nouveau hadith
       </h1>
       <AddHadithForm />

@@ -6,7 +6,7 @@ export default function HadithsPage() {
   const hadiths = getAllHadiths();
   return (
     <div>
-      <h1 className="text-4xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-10 md:mb-16 tracking-tight">
+      <h1 className="text-3xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
         Sahih Moslim en français
       </h1>
       <p className="text-center mb-4">

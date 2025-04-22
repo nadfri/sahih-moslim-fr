@@ -19,7 +19,7 @@ export default async function PageById({ params }: { params: ParamsType }) {
 
   return (
     <div>
-      <h1>
+      <h1 className="text-3xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
         N°{id} - {hadith.narrator}
       </h1>
       <Hadith hadith={hadith} />

@@ -1,3 +1,5 @@
+import { Metadata } from "next";
+
 import { getAllHadiths } from "@/src/services/services";
 import { HadithType } from "@/src/types/types";
 import { Hadith } from "@/src/ui/hadith/Hadith";
@@ -14,6 +16,18 @@ function getUnique(hadiths: HadithType[]) {
     new Set(hadiths.flatMap((hadith) => hadith.sahabas || []))
   );
   return { narrators, sahabas };
+}
+
+// Generate static metadata
+export async function generateMetadata(): Promise<Metadata> {
+  const title = "Rechercher dans Moslim";
+  const description =
+    "Recherchez des hadiths authentiques dans la collection Sahih Moslim.";
+
+  return {
+    title,
+    description,
+  };
 }
 
 export default async function SearchPage(props: {
@@ -79,7 +93,7 @@ export default async function SearchPage(props: {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <h1 className="text-4xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-10 md:mb-16 tracking-tight">
+      <h1 className="text-3xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
         Rechercher un Hadith
       </h1>
 

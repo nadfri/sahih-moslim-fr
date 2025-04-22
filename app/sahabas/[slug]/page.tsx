@@ -26,7 +26,7 @@ export default async function PageBySahabas(props: { params: ParamsType }) {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-4xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-12 md:mb-16 tracking-tight">
+      <h1 className="text-3xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
         Hadiths mentionnant {sahaba}
       </h1>
 

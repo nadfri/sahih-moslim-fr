@@ -13,7 +13,7 @@ export default function NarratorsPage() {
 
   return (
     <div className="container mx-auto max-w-5xl">
-      <h1 className="text-4xl md:text-5xl font-bold text-center text-emerald-800 mb-12 md:mb-16 tracking-tight">
+      <h1 className="text-3xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
         Narrateurs des Hadiths
       </h1>
 
