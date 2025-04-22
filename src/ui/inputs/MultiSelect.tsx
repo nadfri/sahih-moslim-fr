@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { X } from "lucide-react";
+import { ChevronDown, ChevronUp, X } from "lucide-react";
 
 import { useClickOutside } from "@/src/hooks/useClickOutside";
 
@@ -58,65 +58,111 @@ export function MultiSelect({
     onChange(updatedSelected);
   };
 
+  // Determine if the label should be shown (not empty string)
+  const showLabel = label && label.trim() !== "";
+
   return (
     <div className="w-full">
-      <label
-        htmlFor={id}
-        className="block text-sm font-medium text-gray-700 mb-1"
-      >
-        {label}
-      </label>
+      {showLabel && (
+        <label
+          htmlFor={id}
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          {label}
+        </label>
+      )}
 
       <div
         ref={dropdownRef}
         className="relative"
       >
-        {/* Selected items display */}
         <div
-          className={`w-full min-h-[42px] p-1 border rounded-md ${
+          className={`flex items-center w-full border rounded-md ${
             error
-              ? "border-red-500 focus-within:ring-red-500 focus-within:border-red-500"
-              : "border-gray-300 focus-within:ring-blue-500 focus-within:border-blue-500"
-          } focus-within:ring-2 flex flex-wrap gap-1`}
+              ? "border-red-500 bg-red-50 focus-within:ring-red-500 focus-within:border-red-500"
+              : "border-gray-300 focus-within:ring-emerald-600 focus-within:border-emerald-600 bg-white"
+          } focus-within:ring-1`}
+          // Add onClick to open dropdown if not already open, mimicking input focus behavior
+          onClick={() => !isOpen && setIsOpen(true)}
         >
-          {selected.map((item) => (
-            <div
-              key={item}
-              className="inline-flex items-center bg-emerald-50 text-emerald-700 px-2 py-1 rounded-md text-sm"
-            >
-              <span>{item}</span>
-              <button
-                type="button"
-                onClick={() => handleRemove(item)}
-                className="ml-1 text-emerald-600 hover:text-emerald-800 focus:outline-none"
+          {/* Removed p-2 from this div, rely on gap and element padding */}
+          <div className="flex-1 flex flex-wrap items-center gap-1 px-2 py-1.5">
+            {" "}
+            {/* Adjusted padding slightly px-2 py-1.5 */}
+            {selected.map((item) => (
+              <div
+                key={item}
+                className="inline-flex items-center bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded text-sm"
               >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          ))}
+                <span>{item}</span>
+                <button
+                  type="button"
+                  // Prevent click propagation to the outer div's onClick
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemove(item);
+                  }}
+                  className="ml-1 text-emerald-600 hover:text-emerald-800 focus:outline-none"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+            {/* Ensure input has some vertical padding if needed, or adjust container padding */}
+            <input
+              id={id}
+              type="text"
+              className={`flex-grow p-0.5 border-none focus:ring-0 focus:outline-none min-w-[100px] ${
+                // Added p-0.5 for slight vertical space
+                error ? "bg-red-50" : "bg-white"
+              }`}
+              placeholder={selected.length === 0 ? placeholder : ""}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              // Prevent click propagation to the outer div's onClick
+              onClick={(e) => e.stopPropagation()}
+              onFocus={() => setIsOpen(true)}
+            />
+          </div>
 
-          <input
-            id={id}
-            type="text"
-            className={`flex-grow min-w-[120px] p-1 focus:outline-none ${
-              error ? "bg-red-50" : ""
+          {/* Dropdown toggle button */}
+          <button
+            type="button"
+            // Standard padding, match background, prevent input blur
+            className={`p-2 text-gray-500 hover:text-emerald-700 rounded-r-md border-none ${
+              error ? "bg-red-50" : "bg-white"
             }`}
-            placeholder={selected.length === 0 ? placeholder : ""}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onFocus={() => setIsOpen(true)}
-          />
+            onMouseDown={(e) => e.preventDefault()} // Prevent focus shift
+            // Prevent click propagation to the outer div's onClick and toggle dropdown
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsOpen(!isOpen);
+            }}
+            aria-label={isOpen ? "Fermer la liste" : "Ouvrir la liste"}
+            tabIndex={-1}
+          >
+            {isOpen ? (
+              <ChevronUp className="h-5 w-5" />
+            ) : (
+              <ChevronDown className="h-5 w-5" />
+            )}
+          </button>
         </div>
 
-        {/* Dropdown */}
+        {/* Dropdown list */}
         {isOpen && (
-          <ul className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white border border-gray-300 rounded-md shadow-lg">
+          <ul
+            className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white border border-gray-300 rounded-md shadow-lg"
+            // Prevent input blur when clicking inside the list
+            onMouseDown={(e) => e.preventDefault()}
+          >
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <li
                   key={option}
                   className="p-2 cursor-pointer hover:bg-emerald-100"
-                  onClick={() => handleSelect(option)}
+                  // Use onMouseDown for selection to avoid blur issues
+                  onMouseDown={() => handleSelect(option)}
                 >
                   {option}
                 </li>

@@ -150,7 +150,7 @@ export function EditHadithForm({ hadith }: { hadith: HadithType }) {
         {/* Form */}
         <form
           onSubmit={handleFormSubmit(onSubmit)}
-          className="flex flex-col gap-5"
+          className="flex flex-col gap-4"
         >
           {/* ID (not editable) */}
           <Input

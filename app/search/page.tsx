@@ -3,7 +3,6 @@ import { HadithType } from "@/src/types/types";
 import { Hadith } from "@/src/ui/hadith/Hadith";
 import { SearchBar } from "@/src/ui/inputs/SearchBar"; // SearchBar is now a Client Component
 
-// Type for awaited searchParams
 type SearchParams = { [key: string]: string | string[] | undefined };
 type FilterType = "word" | "narrator" | "sahaba";
 
@@ -29,8 +28,13 @@ export default async function SearchPage(props: {
     typeof searchParams.query === "string" ? searchParams.query.trim() : "";
   const initialNarrator =
     typeof searchParams.narrator === "string" ? searchParams.narrator : "";
-  const initialSahaba =
-    typeof searchParams.sahaba === "string" ? searchParams.sahaba : "";
+  // Handle potential array of sahabas from searchParams
+  const initialSahabasParam = searchParams.sahaba;
+  const initialSahabas = Array.isArray(initialSahabasParam)
+    ? initialSahabasParam
+    : typeof initialSahabasParam === "string"
+      ? [initialSahabasParam]
+      : [];
 
   const hadiths = getAllHadiths();
   const { narrators, sahabas } = getUnique(hadiths);
@@ -47,9 +51,11 @@ export default async function SearchPage(props: {
       break;
 
     case "sahaba":
-      if (initialSahaba) {
-        filtered = hadiths.filter((hadith) =>
-          hadith.sahabas.includes(initialSahaba)
+      if (initialSahabas.length > 0) {
+        filtered = hadiths.filter(
+          (hadith) =>
+            Array.isArray(hadith.sahabas) &&
+            hadith.sahabas.some((sahaba) => initialSahabas.includes(sahaba))
         );
       }
       break;
@@ -72,18 +78,21 @@ export default async function SearchPage(props: {
   }
 
   return (
-    <div className="max-w-3xl mx-auto py-8 px-4">
-      {/* Pass initial values and data to the Client Component SearchBar */}
+    <div className="max-w-3xl mx-auto">
+      <h1 className="text-4xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-10 md:mb-16 tracking-tight">
+        Rechercher un Hadith
+      </h1>
+
       <SearchBar
         initialFilterMode={initialFilterMode}
         initialWord={initialQuery}
         initialNarrator={initialNarrator}
-        initialSahaba={initialSahaba}
+        initialSahabas={initialSahabas} // Pass array
         narrators={narrators}
         sahabas={sahabas}
       />
       {/* Display filtered hadiths (rendered on the server) */}
-      <div className="space-y-8">
+      <div className="space-y-8 mt-8">
         {initialFilterMode === "word" &&
           initialQuery &&
           initialQuery.length < 3 && (
@@ -99,7 +108,7 @@ export default async function SearchPage(props: {
         ))}
         {/* Optional: Add message if filters are active but no results */}
         {filtered.length === 0 &&
-          (initialQuery || initialNarrator || initialSahaba) &&
+          (initialQuery || initialNarrator || initialSahabas.length > 0) && // Check initialSahabas length
           !(
             initialFilterMode === "word" &&
             initialQuery &&

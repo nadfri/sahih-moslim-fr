@@ -47,15 +47,14 @@ export function Input({
   helperText,
   readOnly,
 }: InputProps) {
-  // Common class names for styling
   const inputClasses = `w-full p-2 border rounded-md ${
     error
       ? "border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500"
-      : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-  } focus:ring-2 focus:outline-none ${className}`;
+      : "border-gray-300 focus:border-emerald-600 focus:ring-emerald-600 bg-white"
+  } focus:ring-1 focus:outline-none ${className}`;
 
   return (
-    <div className="mb-0">
+    <div>
       <label
         htmlFor={id}
         className="block text-sm font-medium text-gray-700 mb-1"

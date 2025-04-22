@@ -157,7 +157,7 @@ export function AddHadithForm() {
 
         <form
           onSubmit={handleFormSubmit(onSubmit)}
-          className="flex flex-col gap-6"
+          className="flex flex-col gap-4"
         >
           {/* ID */}
           <Input

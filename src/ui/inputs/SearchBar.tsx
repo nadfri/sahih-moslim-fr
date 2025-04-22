@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { MultiSelect } from "./MultiSelect";
 import { SearchSelect } from "./SearchSelect";
 
-// Props now only include initial values and data lists
 type SearchBarProps = {
   initialFilterMode?: "word" | "narrator" | "sahaba";
   initialWord?: string;
   initialNarrator?: string;
-  initialSahaba?: string;
+  initialSahabas?: string[];
   narrators: string[];
   sahabas: string[];
 };
@@ -19,127 +19,144 @@ export function SearchBar({
   initialFilterMode = "word",
   initialWord = "",
   initialNarrator = "",
-  initialSahaba = "",
+  initialSahabas = [],
   narrators,
   sahabas,
 }: SearchBarProps) {
-  // Internal state management
   const [filterMode, setFilterMode] = useState(initialFilterMode);
   const [word, setWord] = useState(initialWord);
   const [selectedNarrator, setSelectedNarrator] = useState(initialNarrator);
-  const [selectedSahaba, setSelectedSahaba] = useState(initialSahaba);
+  const [selectedSahabas, setSelectedSahabas] = useState(initialSahabas);
 
   const router = useRouter();
 
-  // Handle form submission internally
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const params = new URLSearchParams();
     params.set("filterMode", filterMode);
-    // Only add params if they have a value to keep URL clean
     if (filterMode === "word" && word) params.set("query", word);
     if (filterMode === "narrator" && selectedNarrator)
       params.set("narrator", selectedNarrator);
-    if (filterMode === "sahaba" && selectedSahaba)
-      params.set("sahaba", selectedSahaba);
-    // Use push for navigation, updating the URL and triggering re-render of the server component
+    if (filterMode === "sahaba" && selectedSahabas.length > 0) {
+      selectedSahabas.forEach((sahaba) => params.append("sahaba", sahaba));
+    }
     router.push(`/search?${params.toString()}`);
   }
 
-  // Function to handle radio change and reset other inputs
   const handleModeChange = (newMode: "word" | "narrator" | "sahaba") => {
     setFilterMode(newMode);
-    // Reset other fields when mode changes
     if (newMode !== "word") setWord("");
     if (newMode !== "narrator") setSelectedNarrator("");
-    if (newMode !== "sahaba") setSelectedSahaba("");
+    if (newMode !== "sahaba") setSelectedSahabas([]);
   };
 
   return (
     <form
       className="mb-6"
       method="GET"
-      onSubmit={handleSubmit} // Use internal handler
+      onSubmit={handleSubmit}
       autoComplete="off"
     >
-      {/* Filter mode radio */}
-      <div className="flex gap-6 mb-4">
-        <label className="flex items-center gap-2 cursor-pointer">
+      {/* Radio buttons container - Use grid for better mobile layout */}
+      <div className="grid grid-cols-3 gap-2 mb-4">
+        {/* Style each radio option */}
+        <label
+          className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
+            filterMode === "word"
+              ? "bg-emerald-100 border-emerald-300 text-emerald-800 font-medium"
+              : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+          }`}
+        >
           <input
             type="radio"
             name="filterMode"
             value="word"
             checked={filterMode === "word"}
-            onChange={() => handleModeChange("word")} // Use internal handler
-            className="accent-emerald-600"
+            onChange={() => handleModeChange("word")}
+            className="sr-only" // Hide the actual radio button
           />
-          <span className="text-sm">Par mot</span>
+          <span>Par mot</span>
         </label>
-        <label className="flex items-center gap-2 cursor-pointer">
+        <label
+          className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
+            filterMode === "narrator"
+              ? "bg-emerald-100 border-emerald-300 text-emerald-800 font-medium"
+              : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+          }`}
+        >
           <input
             type="radio"
             name="filterMode"
             value="narrator"
             checked={filterMode === "narrator"}
-            onChange={() => handleModeChange("narrator")} // Use internal handler
-            className="accent-emerald-600"
+            onChange={() => handleModeChange("narrator")}
+            className="sr-only" // Hide the actual radio button
           />
-          <span className="text-sm">Par Narrateur</span>
+          <span>Par Narrateur</span>
         </label>
-        <label className="flex items-center gap-2 cursor-pointer">
+        <label
+          className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
+            filterMode === "sahaba"
+              ? "bg-emerald-100 border-emerald-300 text-emerald-800 font-medium"
+              : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+          }`}
+        >
           <input
             type="radio"
             name="filterMode"
             value="sahaba"
             checked={filterMode === "sahaba"}
-            onChange={() => handleModeChange("sahaba")} // Use internal handler
-            className="accent-emerald-600"
+            onChange={() => handleModeChange("sahaba")}
+            className="sr-only" // Hide the actual radio button
           />
-          <span className="text-sm">Par Rapporteur</span>
+          <span>Par Compagnons</span>
         </label>
       </div>
-      {/* Dynamic input depending on filter mode */}
-      <div className="flex gap-2">
-        {filterMode === "word" && (
-          <input
-            type="text"
-            name="query"
-            value={word} // Use internal state
-            onChange={(e) => setWord(e.target.value)} // Use internal setter
-            placeholder="Rechercher par mot, narrateur ou rapporteur..."
-            className="flex-1 border border-emerald-500 rounded-l px-4 py-2 focus:outline-none focus:ring-1 focus:ring-emerald-600 bg-white"
-            autoFocus
-          />
-        )}
-        {filterMode === "narrator" && (
-          <div className="flex-1">
+
+      {/* Input/Select and Button container - Stack vertically on small screens */}
+      <div className="flex flex-col sm:flex-row sm:space-x-2 sm:items-start gap-2 sm:gap-0">
+        <div className="flex-1 w-full">
+          {" "}
+          {/* Ensure input container takes full width when stacked */}
+          {filterMode === "word" && (
+            <input
+              type="text"
+              name="query"
+              value={word}
+              onChange={(e) => setWord(e.target.value)}
+              placeholder="Rechercher par mot..."
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:border-emerald-600 bg-white"
+              autoFocus
+            />
+          )}
+          {filterMode === "narrator" && (
             <SearchSelect
               id="narrator-select"
               label=""
               options={narrators}
-              value={selectedNarrator} // Use internal state
-              onChange={setSelectedNarrator} // Use internal setter
+              value={selectedNarrator}
+              onChange={setSelectedNarrator}
               placeholder="Choisir un narrateur"
               name="narrator"
             />
-          </div>
-        )}
-        {filterMode === "sahaba" && (
-          <div className="flex-1">
-            <SearchSelect
-              id="sahaba-select"
+          )}
+          {filterMode === "sahaba" && (
+            <MultiSelect
+              id="sahaba-multiselect"
               label=""
               options={sahabas}
-              value={selectedSahaba} // Use internal state
-              onChange={setSelectedSahaba} // Use internal setter
-              placeholder="Choisir un rapporteur"
+              selected={selectedSahabas}
+              onChange={setSelectedSahabas}
+              placeholder="Choisir un ou plusieurs rapporteurs"
               name="sahaba"
             />
-          </div>
-        )}
+          )}
+        </div>
+
+        {/* Button takes full width when stacked, auto width otherwise */}
         <button
           type="submit"
-          className="bg-emerald-600 text-white px-6 py-2 rounded hover:bg-emerald-700 transition"
+          className="w-full sm:w-auto p-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
         >
           Rechercher
         </button>
