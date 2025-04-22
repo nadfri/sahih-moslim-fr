@@ -12,7 +12,7 @@ export default function Home() {
       <p className="text-center mb-4">
         Bienvenue sur le site dédié à la collection de hadiths Sahih Moslim en
         français. Vous trouverez ici une sélection de hadiths authentiques du
-        Prophète Muhammad (sws).
+        Prophète Muhammad ﷺ.
       </p>
       <p className="text-lg mb-4">Nombre de hadiths: {hadiths.length}</p>
 

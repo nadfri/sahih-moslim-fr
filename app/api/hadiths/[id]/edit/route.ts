@@ -7,12 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { chapters } from "@/db/chapterTitles";
 import { narrators } from "@/db/narrators";
 import { sahabas } from "@/db/sahabas";
-import {
-  ChapterTitleType,
-  HadithType,
-  NarratorType,
-  SahabaType,
-} from "@/src/types/types";
+import { HadithType } from "@/src/types/types";
 
 type UpdateHadithRequestBody = Omit<HadithType, "id">;
 
@@ -43,22 +38,20 @@ export async function PUT(
       );
     }
     const chapterTitles = chapters.map((c) => c.title);
-    if (
-      !chapterTitles.includes(updatedHadithData.chapter as ChapterTitleType)
-    ) {
+    if (!chapterTitles.includes(updatedHadithData.chapter)) {
       return NextResponse.json(
         { success: false, message: "Chapitre invalide" },
         { status: 400 }
       );
     }
-    if (!narrators.includes(updatedHadithData.narrator as NarratorType)) {
+    if (!narrators.includes(updatedHadithData.narrator)) {
       return NextResponse.json(
         { success: false, message: "Narrateur invalide" },
         { status: 400 }
       );
     }
     for (const sahaba of updatedHadithData.sahabas) {
-      if (!sahabas.includes(sahaba as SahabaType)) {
+      if (!sahabas.includes(sahaba)) {
         return NextResponse.json(
           { success: false, message: `Sahaba invalide: ${sahaba}` },
           { status: 400 }

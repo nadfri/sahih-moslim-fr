@@ -33,4 +33,4 @@ export const chapters = [
   { title: "Objets trouvés", range: [1722, 1729] },
   { title: "Jihad et Expéditions", range: [1730, 1817] },
   { title: "Commandements", range: [1818, 1928] },
-] as const;
+];

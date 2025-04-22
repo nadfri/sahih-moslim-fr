@@ -121,7 +121,7 @@ export function SearchSelect({
             id={id}
             type="text"
             // Input styling
-            className={`w-full p-2 rounded-l-md focus:outline-none ${error ? "bg-red-50" : ""}`}
+            className={`w-full p-2 rounded-l-md focus:outline-none ${error ? "bg-red-50" : "bg-white"}`}
             placeholder={placeholder}
             value={inputValue}
             onChange={handleInputChange}
@@ -137,7 +137,7 @@ export function SearchSelect({
           {/* Dropdown toggle button */}
           <button
             type="button"
-            className="p-2 text-gray-500 hover:text-emerald-700 rounded-r-md"
+            className="p-2 text-gray-500 hover:text-emerald-700 rounded-r-md bg-white"
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => setIsOpen(!isOpen)}
             aria-label={isOpen ? "Fermer la liste" : "Ouvrir la liste"}

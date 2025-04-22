@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { BookOpen, Menu, PlusIcon, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 
@@ -14,11 +14,13 @@ const navLinks = [
   { href: "/chapters", label: "Chapitres" },
   { href: "/narrators", label: "Narrateurs" },
   { href: "/sahabas", label: "Compagnons" },
+  { href: "/search", label: "Recherche" },
 ];
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   // Check if we're in development mode
   const isDev = process.env.NODE_ENV !== "production";
 
@@ -28,6 +30,12 @@ export function Header() {
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
+  // Helper to build the search link with current params
+  function getSearchLink() {
+    const params = searchParams?.toString();
+    return params ? `/search?${params}` : "/search";
+  }
 
   return (
     <header className="bg-white text-emerald-800 shadow-sm sticky top-0 z-50">
@@ -60,6 +68,9 @@ export function Header() {
         <nav className="hidden md:block ml-6">
           <ul className="flex space-x-6 items-center">
             {navLinks.map((link) => {
+              // If link is search, add params
+              const href =
+                link.href === "/search" ? getSearchLink() : link.href;
               const isActive =
                 link.href === "/"
                   ? pathname === "/"
@@ -67,7 +78,7 @@ export function Header() {
               return (
                 <li key={link.href}>
                   <Link
-                    href={link.href}
+                    href={href}
                     className={`
                       text-base font-medium transition-colors pb-1
                       ${
@@ -130,6 +141,9 @@ export function Header() {
         <nav className="container mx-auto px-4 pt-2 pb-4 border-t border-gray-100">
           <ul className="flex flex-col space-y-1">
             {navLinks.map((link) => {
+              // If link is search, add params
+              const href =
+                link.href === "/search" ? getSearchLink() : link.href;
               const isActive =
                 link.href === "/"
                   ? pathname === "/"
@@ -137,7 +151,7 @@ export function Header() {
               return (
                 <li key={`mobile-${link.href}`}>
                   <Link
-                    href={link.href}
+                    href={href}
                     className={`
                       block py-2.5 px-3 rounded-md text-base font-medium transition-colors
                       ${
