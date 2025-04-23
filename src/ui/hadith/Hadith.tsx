@@ -25,7 +25,7 @@ export function Hadith({
     setIsArabicVisible(!isArabicVisible);
   };
 
-  const arabicContentId = `arabic-content-${hadith.id}`;
+  const arabicContentId = `matn_ar-content-${hadith.id}`;
 
   return (
     <div
@@ -60,9 +60,9 @@ export function Hadith({
           </p>
         </div>
 
-        {/* Matn Section (Main text in French) */}
+        {/* matn_fr Section (Main text in French) */}
         <div className="space-y-3 text-gray-700 leading-relaxed text-pretty">
-          <ReactMarkdown>{hadith.matn}</ReactMarkdown>
+          <ReactMarkdown>{hadith.matn_fr}</ReactMarkdown>
         </div>
 
         {/* Mentioned Sahabas Section */}
@@ -88,7 +88,7 @@ export function Hadith({
           </div>
         )}
 
-        {/* Arabic Section with toggle button and adaptive animation */}
+        {/* matn_ar Section with toggle button and adaptive animation */}
         <div className="mt-5 pt-4 border-t border-emerald-100">
           {!update && (
             <button
@@ -133,10 +133,10 @@ export function Hadith({
           >
             <div className="overflow-hidden">
               <div
-                className="pt-2 text-right font-arabic text-xl leading-loose text-pretty"
+                className="pt-2 text-right font-matn_ar text-xl leading-loose text-pretty"
                 dir="rtl"
               >
-                {hadith.arabic}
+                {hadith.matn_ar}
               </div>
             </div>
           </div>
@@ -145,8 +145,8 @@ export function Hadith({
         {/* Action buttons section */}
         <div className="flex flex-wrap items-center gap-3 justify-end">
           <CopyBoard
-            frenchText={hadith.matn}
-            arabicText={hadith.arabic}
+            frenchText={hadith.matn_fr}
+            arabicText={hadith.matn_ar}
             hadithNumber={hadith.id}
             narrator={hadith.narrator}
             chapter={hadith.chapter}

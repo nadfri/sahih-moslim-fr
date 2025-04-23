@@ -1,4 +1,4 @@
-import { chapters } from "@/db/chapterTitles";
+import { chapters } from "@/db/chapters";
 import { moslim_fr } from "@/db/moslim_fr";
 import { narrators } from "@/db/narrators";
 import { sahabas } from "@/db/sahabas";

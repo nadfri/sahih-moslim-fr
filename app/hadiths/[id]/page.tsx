@@ -45,7 +45,7 @@ export async function generateMetadata({
 
   return {
     title: `N°${id} - ${hadith.narrator}`,
-    description: hadith.matn.substring(0, 160) + "...",
+    description: hadith.matn_fr.substring(0, 160) + "...",
   };
 }
 

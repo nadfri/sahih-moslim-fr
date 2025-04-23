@@ -78,8 +78,8 @@ export default async function SearchPage(props: {
         const q = initialQuery.toLowerCase();
         filtered = hadiths.filter(
           (hadith) =>
-            hadith.matn.toLowerCase().includes(q) ||
-            hadith.arabic.includes(q) ||
+            hadith.matn_fr.toLowerCase().includes(q) ||
+            hadith.matn_ar.includes(q) ||
             hadith.narrator.toLowerCase().includes(q) ||
             hadith.sahabas.some((sahaba) => sahaba.toLowerCase().includes(q))
         );

@@ -37,8 +37,8 @@ const editHadithSchema = z.object({
   chapter: z.string().min(1, "Le chapitre est requis"),
   narrator: z.string().min(1, "Le narrateur est requis"),
   sahabas: z.array(z.string()),
-  matn: z.string().min(1, "Le texte du hadith est requis"),
-  arabic: z.string().min(1, "Le texte arabe est requis"),
+  matn_fr: z.string().min(1, "Le texte du hadith est requis"),
+  matn_ar: z.string().min(1, "Le texte arabe est requis"),
   isnad: z.string().optional(),
 });
 
@@ -72,9 +72,9 @@ export function EditHadithForm({ hadith }: { hadith: HadithType }) {
       chapter: hadith.chapter,
       narrator: hadith.narrator,
       sahabas: hadith.sahabas || [],
-      matn: hadith.matn,
+      matn_fr: hadith.matn_fr,
       isnad: hadith.isnad || "",
-      arabic: hadith.arabic || "",
+      matn_ar: hadith.matn_ar || "",
     },
   });
 
@@ -217,33 +217,33 @@ export function EditHadithForm({ hadith }: { hadith: HadithType }) {
             )}
           />
 
-          {/* Matn FR */}
+          {/* matn_fr FR */}
           <MdTextArea
-            id="matn"
-            name="matn"
-            label="Matn (Texte français) *"
+            id="matn_fr"
+            name="matn_fr"
+            label="matn_fr (Texte français) *"
             control={control}
-            error={!!errors.matn}
-            errorMessage={errors.matn?.message}
+            error={!!errors.matn_fr}
+            errorMessage={errors.matn_fr?.message}
             onValueChange={(value) => replaceSWS(value)}
             placeholder="Saisir le texte du hadith en français..."
             height={200}
           />
 
-          {/* Matn AR */}
+          {/* matn_fr AR */}
           <Input
-            id="arabic"
-            label="Matn (Texte arabe) *"
+            id="matn_ar"
+            label="matn_fr (Texte arabe) *"
             type="textarea"
             rows={5}
             dir="rtl"
-            className="font-arabic text-lg "
-            error={!!errors.arabic}
-            errorMessage={errors.arabic?.message}
-            register={register("arabic")}
+            className="font-matn_ar text-lg "
+            error={!!errors.matn_ar}
+            errorMessage={errors.matn_ar?.message}
+            register={register("matn_ar")}
             onChange={(e) => {
               const cleanedText = cleanArabicText(e.target.value);
-              setValue("arabic", cleanedText);
+              setValue("matn_ar", cleanedText);
             }}
             helperText="Le texte sera automatiquement nettoyé"
           />

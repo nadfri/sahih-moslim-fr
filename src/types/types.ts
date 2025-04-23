@@ -3,8 +3,8 @@ export type HadithType = {
   chapter: string;
   narrator: string;
   sahabas: string[];
-  matn: string;
-  arabic: string;
+  matn_fr: string;
+  matn_ar: string;
   isnad?: string;
 };
 

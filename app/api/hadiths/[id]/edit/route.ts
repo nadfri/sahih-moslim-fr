@@ -4,7 +4,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { NextRequest, NextResponse } from "next/server";
 
-import { chapters } from "@/db/chapterTitles";
+import { chapters } from "@/db/chapters";
 import { sahabas } from "@/db/sahabas";
 import { HadithType } from "@/src/types/types";
 
@@ -31,7 +31,7 @@ export async function PUT(
     if (
       !updatedHadithData.chapter ||
       !updatedHadithData.narrator ||
-      !updatedHadithData.matn ||
+      !updatedHadithData.matn_fr ||
       !Array.isArray(updatedHadithData.sahabas)
     ) {
       return NextResponse.json(
@@ -104,9 +104,9 @@ export async function PUT(
     chapter: "${updatedHadithData.chapter}",
     narrator: "${updatedHadithData.narrator}",
     sahabas: [${updatedHadithData.sahabas.map((s) => `"${s}"`).join(", ")}],
-    matn: ${JSON.stringify(updatedHadithData.matn)},
+    matn_fr: ${JSON.stringify(updatedHadithData.matn_fr)},
     isnad: ${updatedHadithData.isnad ? JSON.stringify(updatedHadithData.isnad) : '""'},
-    arabic: ${updatedHadithData.arabic ? JSON.stringify(updatedHadithData.arabic) : '""'},
+    matn_ar: ${updatedHadithData.matn_ar ? JSON.stringify(updatedHadithData.matn_ar) : '""'},
   }`;
     const updatedContent =
       fileContent.substring(0, startIndex) +

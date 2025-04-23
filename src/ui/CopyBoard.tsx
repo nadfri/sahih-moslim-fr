@@ -5,7 +5,7 @@ import { Check, Files } from "lucide-react";
 
 import { useClickOutside } from "../hooks/useClickOutside";
 
-type CopyOption = "french" | "arabic" | "both";
+type CopyOption = "french" | "matn_ar" | "both";
 
 export function CopyBoard({
   frenchText,
@@ -37,7 +37,7 @@ export function CopyBoard({
       case "french":
         textToCopy = `${header}${frenchText}`;
         break;
-      case "arabic":
+      case "matn_ar":
         textToCopy = `${header}${arabicText}`;
         break;
       case "both":
@@ -88,7 +88,7 @@ export function CopyBoard({
             Français
           </button>
           <button
-            onClick={() => handleCopy("arabic")}
+            onClick={() => handleCopy("matn_ar")}
             className="text-left px-3 py-2 text-sm text-emerald-700 bg-emerald-100 hover:bg-emerald-100 hover:text-emerald-800 transition-colors border-l-2 border-transparent hover:border-emerald-500"
           >
             Arabe

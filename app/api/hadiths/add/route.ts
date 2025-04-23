@@ -2,7 +2,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { NextRequest } from "next/server";
 
-import { chapters } from "@/db/chapterTitles";
+import { chapters } from "@/db/chapters";
 import { narrators } from "@/db/narrators";
 import { sahabas } from "@/db/sahabas";
 import { HadithType } from "@/src/types/types";
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
       !newHadith.id ||
       !newHadith.chapter ||
       !newHadith.narrator ||
-      !newHadith.matn
+      !newHadith.matn_fr
     ) {
       return Response.json(
         { success: false, message: "Données incomplètes" },
@@ -75,9 +75,9 @@ export async function POST(request: NextRequest) {
     chapter: "${newHadith.chapter}",
     narrator: "${newHadith.narrator}",
     sahabas: [${newHadith.sahabas.map((s) => `"${s}"`).join(", ")}],
-    matn: ${JSON.stringify(newHadith.matn)},
+    matn_fr: ${JSON.stringify(newHadith.matn_fr)},
     isnad: ${newHadith.isnad ? JSON.stringify(newHadith.isnad) : '""'},
-    arabic: ${newHadith.arabic ? JSON.stringify(newHadith.arabic) : '""'},
+    matn_ar: ${newHadith.matn_ar ? JSON.stringify(newHadith.matn_ar) : '""'},
   },
 `; // Ajout d'un saut de ligne après la virgule
 

@@ -16,8 +16,6 @@ export function ButtonSignOut() {
         className="w-5 h-5"
         aria-hidden="true"
       />
-
-      <span>Déconnexion</span>
     </button>
   );
 }
