@@ -57,13 +57,11 @@ export function SearchBar({
       onSubmit={handleSubmit}
       autoComplete="off"
     >
-      {/* Radio buttons container - Use grid for better mobile layout */}
       <div className="grid grid-cols-3 gap-2 mb-4">
-        {/* Style each radio option */}
         <label
           className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
             filterMode === "word"
-              ? "bg-emerald-100 border-emerald-300 text-emerald-800 font-medium"
+              ? "bg-emerald-100 border-emerald-300 text-emerald-600 font-medium"
               : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
           }`}
         >
@@ -73,14 +71,14 @@ export function SearchBar({
             value="word"
             checked={filterMode === "word"}
             onChange={() => handleModeChange("word")}
-            className="sr-only" // Hide the actual radio button
+            className="sr-only"
           />
           <span>Par mot</span>
         </label>
         <label
           className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
             filterMode === "narrator"
-              ? "bg-emerald-100 border-emerald-300 text-emerald-800 font-medium"
+              ? "bg-emerald-100 border-emerald-300 text-emerald-600 font-medium"
               : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
           }`}
         >
@@ -90,14 +88,14 @@ export function SearchBar({
             value="narrator"
             checked={filterMode === "narrator"}
             onChange={() => handleModeChange("narrator")}
-            className="sr-only" // Hide the actual radio button
+            className="sr-only"
           />
           <span>Par Narrateur</span>
         </label>
         <label
           className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
             filterMode === "sahaba"
-              ? "bg-emerald-100 border-emerald-300 text-emerald-800 font-medium"
+              ? "bg-emerald-100 border-emerald-300 text-emerald-600 font-medium"
               : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
           }`}
         >
@@ -107,7 +105,7 @@ export function SearchBar({
             value="sahaba"
             checked={filterMode === "sahaba"}
             onChange={() => handleModeChange("sahaba")}
-            className="sr-only" // Hide the actual radio button
+            className="sr-only"
           />
           <span>Par Compagnons</span>
         </label>
@@ -116,8 +114,6 @@ export function SearchBar({
       {/* Input/Select and Button container - Stack vertically on small screens */}
       <div className="flex flex-col sm:flex-row sm:space-x-2 sm:items-start gap-2 sm:gap-0">
         <div className="flex-1 w-full">
-          {" "}
-          {/* Ensure input container takes full width when stacked */}
           {filterMode === "word" && (
             <input
               type="text"

@@ -31,34 +31,31 @@ export function MultiSelect({
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useClickOutside(dropdownRef, () => setIsOpen(false));
 
-  // Filter options based on search term and already selected items
   const filteredOptions = options.filter(
     (option) =>
       option.toLowerCase().includes(searchTerm.toLowerCase()) &&
       !selected.includes(option)
   );
 
-  // Handle selection of an option
   const handleSelect = (option: string) => {
-    // Ensure the option is valid before adding it
     if (options.includes(option) && !selected.includes(option)) {
       const newSelected = [...selected, option];
       onChange(newSelected);
     }
     setSearchTerm("");
+    inputRef.current?.blur();
     setIsOpen(false);
   };
 
-  // Handle removal of a selected item
   const handleRemove = (itemToRemove: string) => {
     const updatedSelected = selected.filter((item) => item !== itemToRemove);
     onChange(updatedSelected);
   };
 
-  // Determine if the label should be shown (not empty string)
   const showLabel = label && label.trim() !== "";
 
   return (
@@ -82,13 +79,9 @@ export function MultiSelect({
               ? "border-red-500 bg-red-50 focus-within:ring-red-500 focus-within:border-red-500"
               : "border-gray-300 focus-within:ring-emerald-600 focus-within:border-emerald-600 bg-white"
           } focus-within:ring-1`}
-          // Add onClick to open dropdown if not already open, mimicking input focus behavior
           onClick={() => !isOpen && setIsOpen(true)}
         >
-          {/* Removed p-2 from this div, rely on gap and element padding */}
           <div className="flex-1 flex flex-wrap items-center gap-1 px-2 py-1.5">
-            {" "}
-            {/* Adjusted padding slightly px-2 py-1.5 */}
             {selected.map((item) => (
               <div
                 key={item}
@@ -97,7 +90,6 @@ export function MultiSelect({
                 <span>{item}</span>
                 <button
                   type="button"
-                  // Prevent click propagation to the outer div's onClick
                   onClick={(e) => {
                     e.stopPropagation();
                     handleRemove(item);
@@ -108,32 +100,27 @@ export function MultiSelect({
                 </button>
               </div>
             ))}
-            {/* Ensure input has some vertical padding if needed, or adjust container padding */}
             <input
+              ref={inputRef}
               id={id}
               type="text"
               className={`flex-grow p-0.5 border-none focus:ring-0 focus:outline-none min-w-[100px] ${
-                // Added p-0.5 for slight vertical space
                 error ? "bg-red-50" : "bg-white"
               }`}
               placeholder={selected.length === 0 ? placeholder : ""}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              // Prevent click propagation to the outer div's onClick
               onClick={(e) => e.stopPropagation()}
               onFocus={() => setIsOpen(true)}
             />
           </div>
 
-          {/* Dropdown toggle button */}
           <button
             type="button"
-            // Standard padding, match background, prevent input blur
             className={`p-2 text-gray-500 hover:text-emerald-700 rounded-r-md border-none ${
               error ? "bg-red-50" : "bg-white"
             }`}
-            onMouseDown={(e) => e.preventDefault()} // Prevent focus shift
-            // Prevent click propagation to the outer div's onClick and toggle dropdown
+            onMouseDown={(e) => e.preventDefault()}
             onClick={(e) => {
               e.stopPropagation();
               setIsOpen(!isOpen);
@@ -149,11 +136,9 @@ export function MultiSelect({
           </button>
         </div>
 
-        {/* Dropdown list */}
         {isOpen && (
           <ul
             className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white border border-gray-300 rounded-md shadow-lg"
-            // Prevent input blur when clicking inside the list
             onMouseDown={(e) => e.preventDefault()}
           >
             {filteredOptions.length > 0 ? (
@@ -161,7 +146,6 @@ export function MultiSelect({
                 <li
                   key={option}
                   className="p-2 cursor-pointer hover:bg-emerald-100"
-                  // Use onMouseDown for selection to avoid blur issues
                   onMouseDown={() => handleSelect(option)}
                 >
                   {option}
@@ -177,12 +161,10 @@ export function MultiSelect({
           </ul>
         )}
 
-        {/* Error message */}
         {error && errorMessage && (
           <p className="mt-1 text-sm text-red-600">{errorMessage}</p>
         )}
 
-        {/* Hidden field for form handling */}
         {name &&
           selected.map((item, index) => (
             <input
