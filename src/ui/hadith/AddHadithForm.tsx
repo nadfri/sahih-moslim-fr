@@ -54,7 +54,6 @@ export function AddHadithForm() {
   const narrators = getAllNarrators();
   const sahabas = getAllSahabas();
   const chapters = getAllChapters();
-  const chapterOptions = chapters.map((chapter) => chapter.title);
 
   const [existingIds, setExistingIds] = useState<number[]>(ids || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -178,7 +177,7 @@ export function AddHadithForm() {
               <Select
                 id="chapter"
                 label="Chapitre"
-                options={chapterOptions}
+                options={chapters}
                 error={!!errors.chapter}
                 errorMessage={errors.chapter?.message}
                 {...field}

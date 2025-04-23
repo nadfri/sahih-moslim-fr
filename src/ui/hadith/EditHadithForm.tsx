@@ -50,7 +50,6 @@ export function EditHadithForm({ hadith }: { hadith: HadithType }) {
   const narrators = getAllNarrators();
   const sahabas = getAllSahabas();
   const chapters = getAllChapters();
-  const chapterOptions = chapters.map((chapter) => chapter.title);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<{
@@ -172,7 +171,7 @@ export function EditHadithForm({ hadith }: { hadith: HadithType }) {
               <Select
                 id="chapter"
                 label="Chapitre *"
-                options={chapterOptions}
+                options={chapters}
                 error={!!errors.chapter}
                 errorMessage={errors.chapter?.message}
                 {...field}

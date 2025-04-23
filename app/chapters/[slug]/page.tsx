@@ -7,8 +7,8 @@ import {
   getChapterBySlug,
   getHadithByChapterSlug,
 } from "@/src/services/services";
+import { Hadith } from "@/src/ui/hadith/Hadith";
 import { slugify } from "@/src/utils/slugify";
-import { Hadith } from "../../../src/ui/hadith/Hadith";
 
 export type ParamsType = Promise<{ slug: string }>;
 
@@ -27,11 +27,9 @@ export default async function PageByChapters(props: { params: ParamsType }) {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
-        {chapter.title}
+        {chapter}
       </h1>
-      <h2 className="text-xl mb-4">
-        De {chapter.range[0]} à {chapter.range[1]}
-      </h2>
+
       <p className="text-lg mb-4">Nombre de hadiths: {hadiths.length}</p>
 
       <div className="space-y-8">
@@ -61,8 +59,8 @@ export async function generateMetadata(props: {
   }
 
   return {
-    title: `Chapitre: ${chapter.title}`,
-    description: `Collection de hadiths du chapitre ${chapter.title} - Sahih Moslim`,
+    title: `Chapitre: ${chapter}`,
+    description: `Collection de hadiths du chapitre ${chapter} - Sahih Moslim`,
   };
 }
 
@@ -70,7 +68,7 @@ export async function generateMetadata(props: {
 export async function generateStaticParams() {
   const chapters = getAllChapters();
 
-  return chapters.map((chapter: { title: string }) => ({
-    slug: slugify(chapter.title),
+  return chapters.map((chapter) => ({
+    slug: slugify(chapter),
   }));
 }

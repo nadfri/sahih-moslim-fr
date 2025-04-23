@@ -5,12 +5,7 @@ import { NextRequest } from "next/server";
 import { chapters } from "@/db/chapterTitles";
 import { narrators } from "@/db/narrators";
 import { sahabas } from "@/db/sahabas";
-import {
-  ChapterTitleType,
-  HadithType,
-  NarratorType,
-  SahabaType,
-} from "@/src/types/types";
+import { HadithType } from "@/src/types/types";
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,15 +26,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Validation supplémentaire des types
-    const chapterTitles = chapters.map((c) => c.title);
-    if (!chapterTitles.includes(newHadith.chapter as ChapterTitleType)) {
+    if (!chapters.includes(newHadith.chapter)) {
       return Response.json(
         { success: false, message: "Chapitre invalide" },
         { status: 400 }
       );
     }
 
-    if (!narrators.includes(newHadith.narrator as NarratorType)) {
+    if (!narrators.includes(newHadith.narrator)) {
       return Response.json(
         { success: false, message: "Narrateur invalide" },
         { status: 400 }
@@ -48,7 +42,7 @@ export async function POST(request: NextRequest) {
 
     // Vérifier que tous les sahabas sont valides
     for (const sahaba of newHadith.sahabas) {
-      if (!sahabas.includes(sahaba as SahabaType)) {
+      if (!sahabas.includes(sahaba)) {
         return Response.json(
           { success: false, message: `Sahaba invalide: ${sahaba}` },
           { status: 400 }

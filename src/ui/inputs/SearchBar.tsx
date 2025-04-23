@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { FilterType } from "@/src/types/types";
 import { MultiSelect } from "./MultiSelect";
 import { SearchSelect } from "./SearchSelect";
 
 type SearchBarProps = {
-  initialFilterMode?: "word" | "narrator" | "sahaba";
+  initialFilterMode?: FilterType;
   initialWord?: string;
   initialNarrator?: string;
   initialSahabas?: string[];

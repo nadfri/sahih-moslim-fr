@@ -1,12 +1,11 @@
 import { Metadata } from "next";
 
 import { getAllHadiths } from "@/src/services/services";
-import { HadithType } from "@/src/types/types";
+import { FilterType, HadithType } from "@/src/types/types";
 import { Hadith } from "@/src/ui/hadith/Hadith";
 import { SearchBar } from "@/src/ui/inputs/SearchBar"; // SearchBar is now a Client Component
 
 type SearchParams = { [key: string]: string | string[] | undefined };
-type FilterType = "word" | "narrator" | "sahaba";
 
 function getUnique(hadiths: HadithType[]) {
   const narrators = Array.from(

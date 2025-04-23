@@ -46,14 +46,15 @@ export const moslim_fr: HadithType[] = [
       'وَحَدَّثَنَا مُحَمَّدُ بْنُ عَبْدِ اللَّهِ بْنِ نُمَيْرٍ، حَدَّثَنَا أَبِي، حَدَّثَنَا سَعِيدُ بْنُ عُبَيْدٍ، حَدَّثَنَا عَلِيُّ بْنُ رَبِيعَةَ، قَالَ أَتَيْتُ الْمَسْجِدَ وَالْمُغِيرَةُ أَمِيرُ الْكُوفَةِ قَالَ فَقَالَ الْمُغِيرَةُ سَمِعْتُ رَسُولَ اللَّهِ صلى الله عليه وسلم يَقُولُ" إِنَّ كَذِبًا عَلَىَّ لَيْسَ كَكَذِبٍ عَلَى أَحَدٍ فَمَنْ كَذَبَ عَلَىَّ مُتَعَمِّدًا فَلْيَتَبَوَّأْ مَقْعَدَهُ مِنَ النَّارِ".',
   },
 
-    {
+  {
     id: 5,
     chapter: "Introduction",
     narrator: "Abou Huraira",
     sahabas: [],
     matn: "Le Prophète ﷺ a dit: « Il suffit à la personne comme mensonge de transmettre tout ce qu'elle entend »",
     isnad: "",
-    arabic: "عن أبي هريرة رضي الله عنه قال رسول الله صلى الله عليه و سلم : كفى بالمرء كذبا أن يحدث بكل ما سمع",
+    arabic:
+      "عن أبي هريرة رضي الله عنه قال رسول الله صلى الله عليه و سلم : كفى بالمرء كذبا أن يحدث بكل ما سمع",
   },
 
   {
@@ -67,14 +68,15 @@ export const moslim_fr: HadithType[] = [
       "سَيَكُونُ فِي آخِرِ أُمَّتِي أُنَاسٌ يُحَدِّثُونَكُمْ مَا لَمْ تَسْمَعُوا أَنْتُمْ وَلاَ آبَاؤُكُمْ فَإِيَّاكُمْ وَإِيَّاهُمْ",
   },
 
-    {
+  {
     id: 7,
     chapter: "Introduction",
     narrator: "Abou Huraira",
     sahabas: [],
     matn: "Le Prophète ﷺ a dit: \n    « Il y aura à la fin des temps des grands imposteurs, des grands menteurs qui vont vous apporter des ahadiths que ni vous ni vos ancêtres n'ont entendus auparavant. Faites très attention à eux afin qu'ils ne vous égarent pas et qu'ils ne soient pas une source de troubles pour vous ».",
     isnad: "",
-    arabic: "عن أبي هريرة رضي الله عنه قال النبي صلى الله عليه و سلم : يكون في آخر الزمان دجالون كذابون . يأتونكم من الأحاديث بما لم تسمعوا أنتم ولا آباؤكم فإياكم وإياهم لا يضلونكم ولا يفتنونكم",
+    arabic:
+      "عن أبي هريرة رضي الله عنه قال النبي صلى الله عليه و سلم : يكون في آخر الزمان دجالون كذابون . يأتونكم من الأحاديث بما لم تسمعوا أنتم ولا آباؤكم فإياكم وإياهم لا يضلونكم ولا يفتنونكم",
   },
   /*La Foi*/
   {

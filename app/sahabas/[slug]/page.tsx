@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import {
-  getAllChapters,
+  getAllSahabas,
   getHadithBySahabaSlug,
   getSahabaBySlug,
 } from "@/src/services/services";
@@ -68,9 +68,9 @@ export async function generateMetadata(props: {
 
 /*Generate static paths for all hadiths*/
 export async function generateStaticParams() {
-  const chapters = getAllChapters();
+  const sahabas = getAllSahabas();
 
-  return chapters.map((chapter: { title: string }) => ({
-    slug: slugify(chapter.title),
+  return sahabas.map((sahaba: string) => ({
+    slug: slugify(sahaba),
   }));
 }

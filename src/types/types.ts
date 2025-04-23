@@ -7,3 +7,5 @@ export type HadithType = {
   arabic: string;
   isnad?: string;
 };
+
+export type FilterType = "word" | "narrator" | "sahaba";

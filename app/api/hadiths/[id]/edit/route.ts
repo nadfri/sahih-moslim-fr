@@ -5,20 +5,22 @@ import path from "path";
 import { NextRequest, NextResponse } from "next/server";
 
 import { chapters } from "@/db/chapterTitles";
-import { narrators } from "@/db/narrators";
 import { sahabas } from "@/db/sahabas";
 import { HadithType } from "@/src/types/types";
 
 type UpdateHadithRequestBody = Omit<HadithType, "id">;
 
+type RouteParams = Promise<{ id: string }>;
+
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: RouteParams }
 ) {
   try {
-    const targetId = parseInt(params.id, 10);
+    const resolvedParams = await params;
+    const hadithId = parseInt(resolvedParams.id, 10);
 
-    if (isNaN(targetId)) {
+    if (isNaN(hadithId)) {
       return NextResponse.json(
         { success: false, message: "ID invalide fourni dans l'URL" },
         { status: 400 }
@@ -37,19 +39,14 @@ export async function PUT(
         { status: 400 }
       );
     }
-    const chapterTitles = chapters.map((c) => c.title);
-    if (!chapterTitles.includes(updatedHadithData.chapter)) {
-      return NextResponse.json(
-        { success: false, message: "Chapitre invalide" },
-        { status: 400 }
-      );
-    }
-    if (!narrators.includes(updatedHadithData.narrator)) {
+
+    if (!chapters.includes(updatedHadithData.chapter)) {
       return NextResponse.json(
         { success: false, message: "Narrateur invalide" },
         { status: 400 }
       );
     }
+
     for (const sahaba of updatedHadithData.sahabas) {
       if (!sahabas.includes(sahaba)) {
         return NextResponse.json(
@@ -62,14 +59,14 @@ export async function PUT(
     const filePath = path.join(process.cwd(), "db", "moslim_fr.ts");
     const fileContent = await fs.readFile(filePath, "utf8");
 
-    const startRegex = new RegExp(`\\{\\s*id:\\s*${targetId}\\b`);
+    const startRegex = new RegExp(`\\{\\s*id:\\s*${hadithId}\\b`);
     const match = fileContent.match(startRegex);
 
     if (!match || typeof match.index === "undefined") {
       return NextResponse.json(
         {
           success: false,
-          message: `Hadith avec l'ID ${targetId} non trouvé (début)`,
+          message: `Hadith avec l'ID ${hadithId} non trouvé (début)`,
         },
         { status: 404 }
       );
@@ -103,7 +100,7 @@ export async function PUT(
     }
 
     const updatedHadithString = `  {
-    id: ${targetId},
+    id: ${hadithId},
     chapter: "${updatedHadithData.chapter}",
     narrator: "${updatedHadithData.narrator}",
     sahabas: [${updatedHadithData.sahabas.map((s) => `"${s}"`).join(", ")}],
@@ -119,13 +116,13 @@ export async function PUT(
     await fs.writeFile(filePath, updatedContent, "utf8");
 
     const finalUpdatedHadith: HadithType = {
-      id: targetId,
+      id: hadithId,
       ...updatedHadithData,
     };
 
     return NextResponse.json({
       success: true,
-      message: `Hadith #${targetId} modifié avec succès`,
+      message: `Hadith #${hadithId} modifié avec succès`,
       data: finalUpdatedHadith,
     });
   } catch (error) {

@@ -1,11 +1,16 @@
 "use client";
 
+import { use } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 
-export default function ErrorPage() {
-  const searchParams = useSearchParams();
-  const error = searchParams.get("error");
+// Define the type for the searchParams prop (as a Promise)
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+
+// Update the function signature to accept props
+export default function ErrorPage(props: { searchParams: SearchParams }) {
+  // Use the 'use' hook to resolve the searchParams promise
+  const searchParams = use(props.searchParams);
+  const error = searchParams?.error;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] p-4">
@@ -16,9 +21,12 @@ export default function ErrorPage() {
 
         <div className="bg-red-50 border border-red-200 rounded p-4 mb-6">
           <p className="text-gray-800">
+            {/* Ensure error is treated as string or string[] */}
             {error === "Configuration"
               ? "There is a problem with the server configuration. Please contact the administrator."
-              : error || "An unknown error occurred during authentication."}
+              : typeof error === "string"
+                ? error
+                : "An unknown error occurred during authentication."}
           </p>
         </div>
 
