@@ -28,7 +28,11 @@ export default async function PageByChapters(props: { params: ParamsType }) {
         {chapter.title}
       </h1>
 
-      <p className="text-lg mb-4">Nombre de hadiths: {hadiths.length}</p>
+      <div className="mb-6">
+        <span className="inline-block bg-emerald-100 text-emerald-800 text-sm font-medium px-3 py-1 rounded-full">
+          Nombre de hadiths: {hadiths.length}
+        </span>
+      </div>
 
       <div className="space-y-8">
         {hadiths.map((hadith) => (
@@ -70,6 +74,6 @@ export async function generateStaticParams() {
   const chapters = await getAllChapters();
 
   return chapters.map((chapter) => ({
-    slug: slugify(chapter.title), // Generate the URL slug from the title
+    slug: slugify(chapter.title),
   }));
 }

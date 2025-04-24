@@ -43,7 +43,6 @@ export default async function ChaptersPage() {
               <div className="mt-4 pt-3 border-t border-gray-100">
                 <p className="text-sm font-medium text-emerald-600 flex items-center group-hover:text-emerald-700 transition-colors">
                   Explorer
-                  {/* Replace SVG with Lucide icon component */}
                   <MoveRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
                 </p>
               </div>

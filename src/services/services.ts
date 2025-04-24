@@ -1,4 +1,4 @@
-import { Chapter } from "@prisma/client"; // Ensure Chapter type is imported
+import { Chapter, Sahaba } from "@prisma/client";
 
 import { prisma } from "@/prisma/prisma";
 import { HadithType } from "../types/types";
@@ -32,10 +32,6 @@ export async function getHadithByNumero(
   });
   return hadith || undefined;
 }
-
-// export function getHadithCount(): number {
-//   return moslim_fr.length;
-// }
 
 /* Get by Chapter */
 export async function getAllChapters() {
@@ -129,16 +125,60 @@ export async function getChapterWithHadiths(slug: string): Promise<{
   return { chapter, hadiths };
 }
 
-// export function getChapterBySlug(chapterSlug: string): string | undefined { // This function is replaced by getChapterByTitle
-// ...existing code...
-// }
+//Get Hadiths by Sahabas
+export async function getAllSahabas() {
+  // Get all sahabas with the count of hadiths that mention them
+  const sahabas = await prisma.sahaba.findMany({
+    select: {
+      name: true,
+      _count: {
+        select: { mentionedInHadiths: true },
+      },
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
 
-// /*Get By Narrator*/
-// ...existing code...
+  return sahabas.map((sahaba) => ({
+    name: sahaba.name,
+    hadithCount: sahaba._count.mentionedInHadiths,
+  }));
+}
 
-// /**Get By Sahaba*/
-// ...existing code...
+export async function getSahabaWithHadiths(
+  slug: string
+): Promise<{ sahaba: Sahaba | null; hadiths: HadithType[] }> {
+  // Get all sahabas to find the one matching the slug
+  const allSahabas = await prisma.sahaba.findMany();
 
-// export function getIds() {
-// ...existing code...
-// }
+  // Find the sahaba where the slugified name matches the provided slug
+  const sahaba = allSahabas.find((sahaba) => slugify(sahaba.name) === slug);
+
+  if (!sahaba) {
+    return { sahaba: null, hadiths: [] };
+  }
+
+  // Get hadiths that mention this sahaba
+  const hadiths = await prisma.hadith.findMany({
+    where: { mentionedSahabas: { some: { name: sahaba.name } } },
+    include: {
+      chapter: true,
+      narrator: true,
+      mentionedSahabas: true,
+    },
+    orderBy: {
+      numero: "asc",
+    },
+  });
+
+  return { sahaba, hadiths };
+}
+
+export async function getSahabaBySlug(slug: string): Promise<Sahaba | null> {
+  const allSahabas = await prisma.sahaba.findMany();
+
+  const sahaba = allSahabas.find((sahaba) => slugify(sahaba.name) === slug);
+
+  return sahaba || null;
+}
