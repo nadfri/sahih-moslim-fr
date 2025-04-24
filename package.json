@@ -13,7 +13,8 @@
     "prisma:migrate": "pnpx prisma migrate dev",
     "prisma:generate": "pnpx prisma generate",
     "prisma:studio": "pnpx prisma studio",
-    "prisma:format": "pnpx prisma format"
+    "prisma:format": "pnpx prisma format",
+    "prisma:seed": "node prisma/seed.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.8.0",
@@ -50,5 +51,8 @@
     "prisma": "6.2.1",
     "tailwindcss": "^4.0.17",
     "typescript": "^5.8.2"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.ts"
   }
 }

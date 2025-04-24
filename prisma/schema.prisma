@@ -2,16 +2,19 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
- 
+
 generator client {
   provider = "prisma-client-js"
 }
 
+/**
+ * Authentication models
+ */
 enum Role {
   USER
   ADMIN
 }
- 
+
 model User {
   id            String          @id @default(cuid())
   name          String?
@@ -21,13 +24,12 @@ model User {
   accounts      Account[]
   sessions      Session[]
   role          Role            @default(USER)
-  // Optional for WebAuthn support
   Authenticator Authenticator[]
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -41,35 +43,34 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
- 
+
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
- 
+  updatedAt DateTime @default(now())
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@unique([provider, providerAccountId])
 }
- 
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@unique([identifier, token])
 }
- 
-// Optional for WebAuthn support
+
 model Authenticator {
   credentialID         String  @unique
   userId               String
@@ -79,8 +80,65 @@ model Authenticator {
   credentialDeviceType String
   credentialBackedUp   Boolean
   transports           String?
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([userId, credentialID])
+}
+
+/**
+ * Hadith models
+ */
+model Hadith {
+  id      String  @id @default(cuid())
+  numero  Int     @unique
+  matn_fr String
+  matn_ar String
+  isnad   String?
+
+  // Relations
+  chapterId String
+  chapter   Chapter @relation(fields: [chapterId], references: [id])
+
+  narratorId String
+  narrator   Narrator @relation(fields: [narratorId], references: [id])
+
+  mentionedSahabas Sahaba[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Index
+  @@index([chapterId])
+  @@index([narratorId])
+  @@index([numero])
+}
+
+model Chapter {
+  id      String   @id @default(cuid())
+  title   String   @unique
+  hadiths Hadith[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Narrator {
+  id              String   @id @default(cuid())
+  name            String   @unique
+  nameArabic      String? // Nom du narrateur en arabe
+  narratedHadiths Hadith[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Sahaba {
+  id                 String   @id @default(cuid())
+  name               String   @unique
+  nameArabic         String? // Nom du compagnon en arabe
+  mentionedInHadiths Hadith[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

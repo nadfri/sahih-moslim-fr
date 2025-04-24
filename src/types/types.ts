@@ -1,11 +1,11 @@
-export type HadithType = {
-  id: number;
-  chapter: string;
-  narrator: string;
-  sahabas: string[];
-  matn_fr: string;
-  matn_ar: string;
-  isnad?: string;
-};
+import { Prisma } from "@prisma/client";
+
+export type HadithType = Prisma.HadithGetPayload<{
+  include: {
+    chapter: true;
+    narrator: true;
+    mentionedSahabas: true;
+  };
+}>;
 
 export type FilterType = "word" | "narrator" | "sahaba";

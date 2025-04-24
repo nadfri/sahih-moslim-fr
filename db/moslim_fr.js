@@ -1,9 +1,7 @@
-import { HadithType } from "@/src/types/types";
-
-export const moslim_fr: HadithType[] = [
+export const moslim_fr = [
   /*Introduction*/
   {
-    id: 1,
+    numero: 1,
     chapter: "Introduction",
     narrator: "Ali ibn Abi Talib",
     sahabas: [],
@@ -15,7 +13,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 2,
+    numero: 2,
     chapter: "Introduction",
     narrator: "Anas ibn Malik",
     sahabas: [],
@@ -27,7 +25,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 3,
+    numero: 3,
     chapter: "Introduction",
     narrator: "Abou Huraira",
     sahabas: [],
@@ -39,7 +37,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 4,
+    numero: 4,
     chapter: "Introduction",
     narrator: "Ali ibn Rabi'ah",
     sahabas: ["Al Mughirah ibn Shu'bah"],
@@ -51,7 +49,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 5,
+    numero: 5,
     chapter: "Introduction",
     narrator: "Abou Huraira",
     sahabas: [],
@@ -63,7 +61,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 6,
+    numero: 6,
     chapter: "Introduction",
     narrator: "Abou Huraira",
     matn_fr:
@@ -75,7 +73,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 7,
+    numero: 7,
     chapter: "Introduction",
     narrator: "Abou Huraira",
     sahabas: [],
@@ -87,7 +85,7 @@ export const moslim_fr: HadithType[] = [
   },
   /*La Foi*/
   {
-    id: 8,
+    numero: 8,
     chapter: "La Foi",
     narrator: "Yahya ibn Ma'mar",
     sahabas: [
@@ -102,7 +100,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 9,
+    numero: 9,
     chapter: "La Foi",
     narrator: "Abou Huraira",
     sahabas: [],
@@ -114,7 +112,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 10,
+    numero: 10,
     chapter: "La Foi",
     narrator: "Abou Huraira",
     sahabas: [],
@@ -126,7 +124,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 11,
+    numero: 11,
     chapter: "La Foi",
     narrator: "Talha ibn Ubayd Allah",
     sahabas: [],
@@ -138,7 +136,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 12,
+    numero: 12,
     chapter: "La Foi",
     narrator: "Anas ibn Malik",
     sahabas: [],
@@ -150,7 +148,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 13,
+    numero: 13,
     chapter: "La Foi",
     narrator: "Abou Ayyub al Ansari",
     sahabas: [],
@@ -162,7 +160,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 14,
+    numero: 14,
     chapter: "La Foi",
     narrator: "Abou Ayyub al Ansari",
     sahabas: [],
@@ -174,7 +172,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 15,
+    numero: 15,
     chapter: "La Foi",
     narrator: "Jabir ibn Abdallah",
     sahabas: ["Nou'man ibn Qawqal"],
@@ -186,7 +184,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 16,
+    numero: 16,
     chapter: "La Foi",
     narrator: "Abdallah ibn Omar",
     sahabas: [],
@@ -198,7 +196,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 17,
+    numero: 17,
     chapter: "La Foi",
     narrator: "Abdallah ibn Abbas",
     sahabas: ["Al-Ashajj Abd al-Qays"],
@@ -210,7 +208,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 18,
+    numero: 18,
     chapter: "La Foi",
     narrator: "Abou Sa'id al-Khudri",
     sahabas: [],
@@ -222,7 +220,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 19,
+    numero: 19,
     chapter: "La Foi",
     narrator: "Muadh ibn Jabal",
     sahabas: [],
@@ -234,7 +232,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 20,
+    numero: 20,
     chapter: "La Foi",
     narrator: "Abou Huraira",
     sahabas: ["Abou Bakr As-Siddiq", "Omar ibn al-Khattab"],
@@ -246,7 +244,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 21,
+    numero: 21,
     chapter: "La Foi",
     narrator: "Abou Huraira",
     sahabas: [],
@@ -258,7 +256,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 22,
+    numero: 22,
     chapter: "La Foi",
     narrator: "Abdallah ibn Mas'ud",
     sahabas: [],
@@ -270,7 +268,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 23,
+    numero: 23,
     chapter: "La Foi",
     narrator: "Tariq ibn Ouchaym",
     sahabas: [],
@@ -282,7 +280,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 24,
+    numero: 24,
     chapter: "La Foi",
     narrator: "Mousayib ibn Hazan",
     sahabas: ["Abou Talib", "Abdallah ibn Abi Umayya"],
@@ -294,7 +292,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 25,
+    numero: 25,
     chapter: "La Foi",
     narrator: "Abou Huraira",
     sahabas: ["Abou Talib"],
@@ -306,7 +304,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 26,
+    numero: 26,
     chapter: "La Foi",
     narrator: "Othman ibn Affan",
     sahabas: [],
@@ -318,7 +316,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 27,
+    numero: 27,
     chapter: "La Foi",
     narrator: "Abou Huraira",
     sahabas: ["Omar ibn al-Khattab", "Mujahid ibn Jabr"],
@@ -330,7 +328,7 @@ export const moslim_fr: HadithType[] = [
   },
 
   {
-    id: 28,
+    numero: 28,
     chapter: "La Foi",
     narrator: "Oubada ibn as-Samit",
     sahabas: [],
