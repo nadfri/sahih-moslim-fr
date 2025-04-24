@@ -1,4 +1,5 @@
 import { prisma } from "@/prisma/prisma";
+import { HadithType } from "../types/types";
 
 /*Get By Hadith*/
 export function getAllHadiths() {
@@ -15,9 +16,19 @@ export function getAllHadiths() {
   return hadiths;
 }
 
-// export function getHadithById(id: number): HadithType | undefined {
-//   return moslim_fr.find((hadith) => hadith.id === id);
-// }
+export async function getHadithByNumero(
+  numero: string
+): Promise<HadithType | undefined> {
+  const hadith = await prisma.hadith.findUnique({
+    where: { numero: parseInt(numero) },
+    include: {
+      chapter: true,
+      narrator: true,
+      mentionedSahabas: true,
+    },
+  });
+  return hadith || undefined;
+}
 
 // export function getHadithCount(): number {
 //   return moslim_fr.length;

@@ -3,15 +3,15 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { getHadithById } from "@/src/services/services";
+import { getHadithByNumero } from "@/src/services/services";
 import { Hadith } from "../../../src/ui/hadith/Hadith";
 
-export type ParamsType = Promise<{ id: string }>;
+export type ParamsType = Promise<{ numero: string }>;
 
-export default async function PageById({ params }: { params: ParamsType }) {
-  const id = Number((await params).id);
+export default async function PageByNumero({ params }: { params: ParamsType }) {
+  const numero = (await params).numero;
 
-  const hadith = getHadithById(id);
+  const hadith = await getHadithByNumero(numero);
 
   if (!hadith) {
     return notFound();
@@ -20,7 +20,7 @@ export default async function PageById({ params }: { params: ParamsType }) {
   return (
     <div>
       <h1 className="text-3xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
-        N°{id} - {hadith.narrator}
+        N°{numero} - {hadith.narrator.name}
       </h1>
       <Hadith hadith={hadith} />
     </div>
@@ -33,9 +33,9 @@ export async function generateMetadata({
 }: {
   params: ParamsType;
 }): Promise<Metadata> {
-  const id = Number((await params).id);
+  const numero = (await params).numero;
 
-  const hadith = getHadithById(id);
+  const hadith = await getHadithByNumero(numero);
 
   if (!hadith) {
     return {
@@ -44,7 +44,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `N°${id} - ${hadith.narrator}`,
+    title: `N°${numero} - ${hadith.narrator.name}`,
     description: hadith.matn_fr.substring(0, 160) + "...",
   };
 }
