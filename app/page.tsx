@@ -2,8 +2,8 @@
 import { getAllHadiths } from "@/src/services/services";
 import { Hadith } from "../src/ui/hadith/Hadith";
 
-export default function Home() {
-  const hadiths = getAllHadiths();
+export default async function Home() {
+  const hadiths = await getAllHadiths();
   return (
     <div>
       <h1 className="text-3xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">

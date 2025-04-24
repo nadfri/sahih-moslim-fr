@@ -37,25 +37,25 @@ export function Hadith({
         <div className="mb-5">
           <div className="flex items-center justify-between mb-2">
             <Link
-              href={`/chapters/${slugify(hadith.chapter)}`}
+              href={`/chapters/${slugify(hadith.chapter.title)}`}
               className="text-sm font-medium text-amber-700 tracking-wide uppercase inline-flex items-center hover:text-amber-900 hover:underline transition-colors duration-200"
             >
-              <ArabicIcon className="mr-1 h-5" /> {hadith.chapter}
+              <ArabicIcon className="mr-1 h-5" /> {hadith.chapter.title}
             </Link>
 
             <div className="flex items-center gap-2">
               <span className="bg-emerald-600 text-white text-sm font-semibold rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">
-                {hadith.id}
+                {hadith.numero}
               </span>
             </div>
           </div>
           <p className="text-sm text-gray-600 ">
             Rapporté par{" "}
             <Link
-              href={`/narrators/${slugify(hadith.narrator)}`}
+              href={`/narrators/${slugify(hadith.narrator.name)}`}
               className="font-medium text-emerald-700 hover:text-emerald-800 hover:underline transition-colors duration-200"
             >
-              {hadith.narrator}
+              {hadith.narrator.name}
             </Link>
           </p>
         </div>
@@ -66,7 +66,7 @@ export function Hadith({
         </div>
 
         {/* Mentioned Sahabas Section */}
-        {hadith.sahabas && hadith.sahabas.length > 0 && (
+        {hadith.mentionedSahabas && hadith.mentionedSahabas.length > 0 && (
           <div className="mt-5 pt-4 border-t border-emerald-100">
             <p className="text-sm text-gray-600">
               <span className="font-semibold text-emerald-700">
@@ -75,13 +75,13 @@ export function Hadith({
             </p>
 
             <div className="flex flex-wrap gap-x-2 gap-y-2 mt-2">
-              {hadith.sahabas.map((sahaba) => (
+              {hadith.mentionedSahabas.map((sahaba) => (
                 <Link
-                  key={sahaba}
-                  href={`/sahabas/${slugify(sahaba)}`}
+                  key={sahaba.id}
+                  href={`/sahabas/${slugify(sahaba.name)}`}
                   className="text-sm bg-emerald-50 text-emerald-700 hover:text-emerald-900 px-2 py-1 rounded-md transition-colors duration-200 hover:bg-emerald-200"
                 >
-                  {sahaba}
+                  {sahaba.name}
                 </Link>
               ))}
             </div>
@@ -148,8 +148,8 @@ export function Hadith({
             frenchText={hadith.matn_fr}
             arabicText={hadith.matn_ar}
             hadithNumber={hadith.id}
-            narrator={hadith.narrator}
-            chapter={hadith.chapter}
+            narrator={hadith.narrator.name}
+            chapter={hadith.chapter.title}
           />
 
           <button
