@@ -21,7 +21,7 @@ export default async function SignInPage() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold text-emerald-700 mb-8">Se connecter</h1>
+      <h1 className="text-2xl font-bold text-emerald-700 mb-8">Se connecter</h1>
       <p className="mb-6 text-slate-600">
         Connectez-vous avec votre compte GitHub pour accéder aux fonctionnalités
         d'administration.

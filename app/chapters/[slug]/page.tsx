@@ -7,6 +7,7 @@ import {
   getChapterBySlug,
   getChapterWithHadiths,
 } from "@/src/services/services";
+import { BadgeNumberOfHadith } from "@/src/ui/BadgeNumberOfHadith";
 import { Hadith } from "@/src/ui/hadith/Hadith";
 import { slugify } from "@/src/utils/slugify";
 
@@ -23,16 +24,15 @@ export default async function PageByChapters(props: { params: ParamsType }) {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
+    <>
+      <h1 className="text-2xl md:text-4xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
         {chapter.title}
       </h1>
 
-      <div className="mb-6">
-        <span className="inline-block bg-emerald-100 text-emerald-800 text-sm font-medium px-3 py-1 rounded-full">
-          Nombre de hadiths: {hadiths.length}
-        </span>
-      </div>
+      <BadgeNumberOfHadith
+        count={hadiths.length}
+        size="large"
+      />
 
       <div className="space-y-8">
         {hadiths.map((hadith) => (
@@ -42,7 +42,7 @@ export default async function PageByChapters(props: { params: ParamsType }) {
           />
         ))}
       </div>
-    </div>
+    </>
   );
 }
 

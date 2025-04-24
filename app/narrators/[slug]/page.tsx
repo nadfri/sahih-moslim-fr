@@ -26,8 +26,8 @@ export default async function PageByNarrators(props: { params: ParamsType }) {
   const hadiths = getHadithByNarratorSlug(slug);
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
+    <>
+      <h1 className="text-2xl md:text-4xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
         Hadiths rapporté par {narrator}
       </h1>
 
@@ -39,7 +39,7 @@ export default async function PageByNarrators(props: { params: ParamsType }) {
           />
         ))}
       </div>
-    </div>
+    </>
   );
 }
 

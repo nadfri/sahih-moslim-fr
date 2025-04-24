@@ -10,7 +10,7 @@ export default async function SahabasPage() {
 
   return (
     <div className="container mx-auto max-w-5xl">
-      <h1 className="text-3xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
+      <h1 className="text-2xl md:text-4xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
         Hadiths mentionnant des Compagnons
       </h1>
       {/* Grid */}

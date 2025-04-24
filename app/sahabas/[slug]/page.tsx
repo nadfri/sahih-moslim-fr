@@ -7,6 +7,7 @@ import {
   getSahabaBySlug,
   getSahabaWithHadiths,
 } from "@/src/services/services";
+import { BadgeNumberOfHadith } from "@/src/ui/BadgeNumberOfHadith";
 import { slugify } from "@/src/utils/slugify";
 import { Hadith } from "@/ui/hadith/Hadith";
 
@@ -23,16 +24,18 @@ export default async function PageBySahabas(props: { params: ParamsType }) {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
-        Hadiths mentionnant {sahaba.name}
+    <>
+      <h1 className="text-2xl md:text-4xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
+        Hadiths mentionnant{" "}
+        <span className="text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded">
+          {sahaba.name}
+        </span>
       </h1>
 
-      <div className="mb-6">
-        <span className="inline-block bg-emerald-100 text-emerald-800 text-sm font-medium px-3 py-1 rounded-full">
-          Nombre de hadiths: {hadiths.length}
-        </span>
-      </div>
+      <BadgeNumberOfHadith
+        count={hadiths.length}
+        size="large"
+      />
 
       <div className="space-y-8">
         {hadiths.map((hadith) => (
@@ -42,7 +45,7 @@ export default async function PageBySahabas(props: { params: ParamsType }) {
           />
         ))}
       </div>
-    </div>
+    </>
   );
 }
 

@@ -18,12 +18,12 @@ export default async function PageByNumero({ params }: { params: ParamsType }) {
   }
 
   return (
-    <div>
-      <h1 className="text-3xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
+    <>
+      <h1 className="text-2xl md:text-4xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
         N°{numero} - {hadith.narrator.name}
       </h1>
       <Hadith hadith={hadith} />
-    </div>
+    </>
   );
 }
 
