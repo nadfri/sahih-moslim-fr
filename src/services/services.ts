@@ -1,5 +1,8 @@
+import { Chapter } from "@prisma/client"; // Ensure Chapter type is imported
+
 import { prisma } from "@/prisma/prisma";
 import { HadithType } from "../types/types";
+import { slugify } from "../utils/slugify";
 
 /*Get By Hadith*/
 export function getAllHadiths() {
@@ -34,64 +37,108 @@ export async function getHadithByNumero(
 //   return moslim_fr.length;
 // }
 
-// /* Get by Chapter */
-// export function getAllChapters() {
-//   return [...chapters];
-// }
+/* Get by Chapter */
+export async function getAllChapters() {
+  const chaptersWithCount = await prisma.chapter.findMany({
+    select: {
+      title: true,
+      _count: {
+        select: { hadiths: true },
+      },
+    },
+  });
 
-// export function getHadithByChapterSlug(chapterSlug: string): HadithType[] {
-//   return moslim_fr.filter((hadith) => slugify(hadith.chapter) === chapterSlug);
-// }
+  return chaptersWithCount.map((chapter) => ({
+    title: chapter.title,
+    hadithCount: chapter._count.hadiths,
+  }));
+}
 
-// export function getChapterBySlug(chapterSlug: string): string | undefined {
-//   const chapter = chapters.find((chapter) => slugify(chapter) === chapterSlug);
-//   return chapter;
+export async function getChapterBySlug(slug: string): Promise<Chapter | null> {
+  const allChapters = await prisma.chapter.findMany();
+
+  const chapter = allChapters.find(
+    (chapter) => slugify(chapter.title) === slug
+  );
+
+  return chapter || null;
+}
+
+export async function getChapterByTitle(
+  chapterTitle: string
+): Promise<Chapter | null> {
+  const chapter = await prisma.chapter.findUnique({
+    where: { title: chapterTitle },
+  });
+  return chapter;
+}
+
+export async function getHadithByChapterSlug(
+  slug: string
+): Promise<HadithType[]> {
+  const chapter = await getChapterBySlug(slug);
+
+  if (!chapter) {
+    return [];
+  }
+
+  const hadithsByChapter = await prisma.hadith.findMany({
+    where: { chapter: { title: chapter.title } },
+    include: {
+      chapter: true,
+      narrator: true,
+      mentionedSahabas: true,
+    },
+    orderBy: {
+      numero: "asc",
+    },
+  });
+
+  return hadithsByChapter;
+}
+
+export async function getChapterWithHadiths(slug: string): Promise<{
+  chapter: Chapter | null;
+  hadiths: HadithType[];
+}> {
+  // Get all chapters to find the one matching the slug
+  const allChapters = await prisma.chapter.findMany();
+
+  // Find the chapter where the slugified title matches the provided slug
+  const chapter = allChapters.find(
+    (chapter) => slugify(chapter.title) === slug
+  );
+
+  if (!chapter) {
+    return { chapter: null, hadiths: [] };
+  }
+
+  // Get hadiths for this chapter
+  const hadiths = await prisma.hadith.findMany({
+    where: { chapter: { title: chapter.title } },
+    include: {
+      chapter: true,
+      narrator: true,
+      mentionedSahabas: true,
+    },
+    orderBy: {
+      numero: "asc",
+    },
+  });
+
+  return { chapter, hadiths };
+}
+
+// export function getChapterBySlug(chapterSlug: string): string | undefined { // This function is replaced by getChapterByTitle
+// ...existing code...
 // }
 
 // /*Get By Narrator*/
-// export function getAllNarrators() {
-//   return narrators;
-// }
-
-// export function getHadithByNarratorSlug(narratorSlug: string): HadithType[] {
-//   return moslim_fr.filter(
-//     (hadith) => slugify(hadith.narrator) === narratorSlug
-//   );
-// }
-
-// export function getNarratorBySlug(narratorSlug: string): string | undefined {
-//   return narrators.find((narrator) => slugify(narrator) === narratorSlug);
-// }
-
-// export function getCountHadithsByNarratorSlug(narratorSlug: string): number {
-//   return getHadithByNarratorSlug(narratorSlug).length;
-// }
+// ...existing code...
 
 // /**Get By Sahaba*/
-// export function getAllSahabas() {
-//   return sahabas;
-// }
-
-// export function getHadithBySahabaSlug(sahabaSlug: string): HadithType[] {
-//   return moslim_fr.filter((hadith) => {
-//     const sahabas = hadith.sahabas;
-
-//     if (sahabas.length === 0) return false;
-
-//     const sahabasSlugs = sahabas.map((sahaba) => slugify(sahaba));
-
-//     return sahabasSlugs.includes(sahabaSlug);
-//   });
-// }
-
-// export function getSahabaBySlug(sahabaSlug: string): string | undefined {
-//   return sahabas.find((sahaba) => slugify(sahaba) === sahabaSlug);
-// }
-
-// export function getCountHadithsBySahabaSlug(sahabaSlug: string): number {
-//   return getHadithBySahabaSlug(sahabaSlug).length;
-// }
+// ...existing code...
 
 // export function getIds() {
-//   return moslim_fr.map((hadith) => hadith.id);
+// ...existing code...
 // }

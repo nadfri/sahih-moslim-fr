@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import {
   getAllChapters,
   getChapterBySlug,
-  getHadithByChapterSlug,
+  getChapterWithHadiths,
 } from "@/src/services/services";
 import { Hadith } from "@/src/ui/hadith/Hadith";
 import { slugify } from "@/src/utils/slugify";
@@ -16,18 +16,16 @@ export default async function PageByChapters(props: { params: ParamsType }) {
   const params = await props.params;
   const slug = params.slug;
 
-  const chapter = getChapterBySlug(slug);
+  const { chapter, hadiths } = await getChapterWithHadiths(slug);
 
   if (!chapter) {
-    return notFound();
+    notFound();
   }
-
-  const hadiths = getHadithByChapterSlug(slug);
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl md:text-5xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
-        {chapter}
+        {chapter.title}
       </h1>
 
       <p className="text-lg mb-4">Nombre de hadiths: {hadiths.length}</p>
@@ -44,31 +42,34 @@ export default async function PageByChapters(props: { params: ParamsType }) {
   );
 }
 
-/*Generate metadata for each hadith*/
+/*Generate metadata for each chapter*/
 export async function generateMetadata(props: {
   params: ParamsType;
 }): Promise<Metadata> {
   const params = await props.params;
   const slug = params.slug;
-  const chapter = getChapterBySlug(slug);
+
+  // For metadata we can keep using the separate function
+  const chapter = await getChapterBySlug(slug);
 
   if (!chapter) {
     return {
       title: "Chapitre non trouvé",
+      description: "Ce chapitre n'existe pas.",
     };
   }
 
   return {
-    title: `Chapitre: ${chapter}`,
-    description: `Collection de hadiths du chapitre ${chapter} - Sahih Moslim`,
+    title: `Chapitre: ${chapter.title}`,
+    description: `Collection de hadiths du chapitre ${chapter.title} - Sahih Moslim`,
   };
 }
 
-/*Generate static paths for all hadiths*/
+/*Generate static paths for all chapters using slugified titles*/
 export async function generateStaticParams() {
-  const chapters = getAllChapters();
+  const chapters = await getAllChapters();
 
   return chapters.map((chapter) => ({
-    slug: slugify(chapter),
+    slug: slugify(chapter.title), // Generate the URL slug from the title
   }));
 }
