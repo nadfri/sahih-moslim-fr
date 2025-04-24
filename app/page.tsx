@@ -1,6 +1,6 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 import { getAllHadiths } from "@/src/services/services";
-import { Hadith } from "../src/ui/hadith/Hadith";
+import { Hadith } from "@/src/ui/hadith/Hadith";
 
 export default async function Home() {
   const hadiths = await getAllHadiths();
@@ -14,7 +14,12 @@ export default async function Home() {
         français. Vous trouverez ici une sélection de hadiths authentiques du
         Prophète Muhammad ﷺ.
       </p>
-      <p className="text-lg mb-4">Nombre de hadiths: {hadiths.length}</p>
+      {/* Replace the paragraph with a styled badge */}
+      <div className="mb-6">
+        <span className="inline-block bg-emerald-100 text-emerald-800 text-sm font-medium px-3 py-1 rounded-full">
+          Nombre de hadiths: {hadiths.length}
+        </span>
+      </div>
 
       <div className="space-y-8">
         {hadiths.map((hadith) => (
