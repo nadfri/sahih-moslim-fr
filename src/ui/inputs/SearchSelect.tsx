@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, X } from "lucide-react";
 
 type SearchSelectProps = {
   id: string;
@@ -36,16 +36,14 @@ export function SearchSelect({
     option.toLowerCase().includes(inputValue.toLowerCase())
   );
 
-  const handleSelectOption = useCallback(
-    (option: string) => {
-      if (options.includes(option)) {
-        onChange(option);
-        setInputValue(option);
-        setIsOpen(false);
-      }
-    },
-    [options, onChange]
-  );
+  // Simplification: Retiré useCallback car cette fonction n'est pas transmise à des enfants
+  const handleSelectOption = (option: string) => {
+    if (options.includes(option)) {
+      onChange(option);
+      setInputValue(option);
+      setIsOpen(false);
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const currentInput = e.target.value;
@@ -55,6 +53,14 @@ export function SearchSelect({
     }
   };
 
+  // Simplification: Retiré useCallback car cette fonction n'est pas transmise à des enfants
+  const handleClear = () => {
+    onChange("");
+    setInputValue("");
+    inputRef.current?.focus();
+  };
+
+  // On garde useCallback ici car cette fonction est utilisée dans un useEffect
   const handleClose = useCallback(() => {
     setIsOpen(false);
     if (options.includes(inputValue)) {
@@ -128,6 +134,17 @@ export function SearchSelect({
             aria-autocomplete="list"
             autoComplete="off"
           />
+          {inputValue && (
+            <button
+              type="button"
+              className="p-2 text-gray-500 hover:text-red-700"
+              onClick={handleClear}
+              aria-label="Effacer"
+              tabIndex={-1}
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
           <button
             type="button"
             className={`p-2 text-gray-500 hover:text-emerald-700 rounded-r-md border-none ${
