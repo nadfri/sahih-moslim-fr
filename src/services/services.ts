@@ -1,4 +1,5 @@
-import { Chapter, Sahaba } from "@prisma/client";
+import { notFound } from "next/navigation";
+import { Chapter, Narrator, Sahaba } from "@prisma/client";
 
 import { prisma } from "@/prisma/prisma";
 import { HadithType } from "../types/types";
@@ -181,4 +182,67 @@ export async function getSahabaBySlug(slug: string): Promise<Sahaba | null> {
   const sahaba = allSahabas.find((sahaba) => slugify(sahaba.name) === slug);
 
   return sahaba || null;
+}
+
+//Get hadiths by Narrators
+export async function getAllNarrators() {
+  // Get all narrators with the count of hadiths that mention them
+  const narrators = await prisma.narrator.findMany({
+    select: {
+      name: true,
+      _count: {
+        select: { narratedHadiths: true },
+      },
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+
+  return narrators.map((narrator) => ({
+    name: narrator.name,
+    hadithCount: narrator._count.narratedHadiths,
+  }));
+}
+
+export async function getNarratorWithHadiths(
+  slug: string
+): Promise<{ narrator: Narrator | null; hadiths: HadithType[] }> {
+  // Get all narrators to find the one matching the slug
+  const allNarrators = await prisma.narrator.findMany();
+
+  // Find the narrator where the slugified name matches the provided slug
+  const narrator = allNarrators.find(
+    (narrator) => slugify(narrator.name) === slug
+  );
+
+  if (!narrator) {
+    return notFound();
+  }
+
+  const hadiths = await prisma.hadith.findMany({
+    where: { narrator: { name: narrator.name } },
+    include: {
+      chapter: true,
+      narrator: true,
+      mentionedSahabas: true,
+    },
+    orderBy: {
+      numero: "asc",
+    },
+  });
+
+  return { narrator, hadiths };
+}
+
+export async function getNarratorBySlug(
+  slug: string
+): Promise<Narrator | null> {
+  const allNarrators = await prisma.narrator.findMany();
+
+  const narrator = allNarrators.find(
+    (narrator) => slugify(narrator.name) === slug
+  );
+
+  return narrator || null;
 }

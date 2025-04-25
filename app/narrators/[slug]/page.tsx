@@ -5,9 +5,10 @@ import { notFound } from "next/navigation";
 
 import {
   getAllNarrators,
-  getHadithByNarratorSlug,
   getNarratorBySlug,
+  getNarratorWithHadiths,
 } from "@/src/services/services";
+import { BadgeNumberOfHadith } from "@/src/ui/BadgeNumberOfHadith";
 import { slugify } from "@/src/utils/slugify";
 import { Hadith } from "@/ui/hadith/Hadith";
 
@@ -17,19 +18,25 @@ export default async function PageByNarrators(props: { params: ParamsType }) {
   const params = await props.params;
   const slug = params.slug;
 
-  const narrator = getNarratorBySlug(slug);
+  const { narrator, hadiths } = await getNarratorWithHadiths(slug);
 
   if (!narrator) {
     return notFound();
   }
 
-  const hadiths = getHadithByNarratorSlug(slug);
-
   return (
     <>
       <h1 className="text-2xl md:text-4xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
-        Hadiths rapporté par {narrator}
+        Hadiths mentionnant{" "}
+        <span className="text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded">
+          {narrator.name}
+        </span>
       </h1>
+
+      <BadgeNumberOfHadith
+        count={hadiths.length}
+        size="large"
+      />
 
       <div className="space-y-8">
         {hadiths.map((hadith) => (
@@ -51,7 +58,7 @@ export async function generateMetadata(props: {
 
   const slug = params.slug;
 
-  const narrator = getNarratorBySlug(slug);
+  const narrator = await getNarratorBySlug(slug);
 
   if (!narrator) {
     return {
@@ -60,14 +67,14 @@ export async function generateMetadata(props: {
   }
 
   return {
-    title: `Narrateur: ${narrator}`,
-    description: `Collection de hadiths rapportés par ${narrator} - Sahih Moslim`,
+    title: `Narrateur: ${narrator.name}`,
+    description: `Collection de hadiths rapportés par ${narrator.name} - Sahih Moslim`,
   };
 }
 
 /*Generate static paths for all narrators*/
 export async function generateStaticParams() {
-  const narrators = getAllNarrators();
+  const narrators = await getAllNarrators();
 
-  return narrators.map((narrator) => ({ slug: slugify(narrator) }));
+  return narrators.map((narrator) => ({ slug: slugify(narrator.name) }));
 }
