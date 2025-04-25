@@ -11,7 +11,6 @@ import {
   getAllChapters,
   getAllNarrators,
   getAllSahabas,
-  getIds,
 } from "@/src/services/services";
 /*Types*/
 import { HadithType } from "@/src/types/types";
@@ -28,19 +27,19 @@ import { replaceSWS } from "@/src/utils/replaceSWS";
 
 const createHadithSchema = (existingIds: number[]) => {
   return z.object({
-    id: z.coerce
+    numero: z.coerce
       .number({
-        required_error: "L'ID est requis",
-        invalid_type_error: "L'ID doit être un nombre",
+        required_error: "Le numéro est requis",
+        invalid_type_error: "Le numéro doit être un nombre",
       })
-      .int({ message: "L'ID doit être un nombre entier" })
-      .positive({ message: "L'ID doit être un nombre positif" })
-      .refine((id) => !existingIds.includes(id), {
-        message: "Cet ID existe déjà. Veuillez en choisir un autre.",
+      .int({ message: "Le numéro doit être un nombre entier" })
+      .positive({ message: "Le numéro doit être un nombre positif" })
+      .refine((numero) => !existingIds.includes(numero), {
+        message: "Cet numéro existe déjà. Veuillez en choisir un autre.",
       }),
     chapter: z.string().min(1, "Le chapitre est requis"),
     narrator: z.string().min(1, "Le narrateur est requis"),
-    sahabas: z.array(z.string()),
+    mentionedSahabas: z.array(z.string()),
     matn_fr: z.string().min(1, "Le texte du hadith est requis"),
     matn_ar: z.string().min(1, "Le texte arabe est requis"),
     isnad: z.string().optional(),
@@ -50,19 +49,21 @@ const createHadithSchema = (existingIds: number[]) => {
 type HadithFormValues = z.infer<ReturnType<typeof createHadithSchema>>;
 
 export function AddHadithForm() {
-  const ids = getIds();
+  const numeros = getNumeros();
   const narrators = getAllNarrators();
   const sahabas = getAllSahabas();
   const chapters = getAllChapters();
 
-  const [existingIds, setExistingIds] = useState<number[]>(ids || []);
+  const [existingNumeros, setExistingNumeros] = useState<number[]>(
+    numeros || []
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
 
-  const hadithSchema = createHadithSchema(existingIds);
+  const hadithSchema = createHadithSchema(existingNumeros);
 
   const {
     register,
@@ -76,10 +77,10 @@ export function AddHadithForm() {
     resolver: zodResolver(hadithSchema),
     mode: "onChange",
     defaultValues: {
-      id: existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1,
+      numero: existingNumeros.length > 0 ? Math.max(...existingNumeros) + 1 : 1,
       chapter: "La Foi",
       narrator: "Abou Huraira",
-      sahabas: [],
+      mentionedSahabas: [],
       matn_fr: "",
       isnad: "",
       matn_ar: "",
@@ -110,13 +111,13 @@ export function AddHadithForm() {
           text: result.message || "Hadith ajouté avec succès!",
         });
 
-        setExistingIds((prev) => [...prev, data.id]);
+        setExistingNumeros((prev) => [...prev, data.id]);
 
         reset({
-          id: Math.max(...existingIds, data.id) + 1,
+          numero: Math.max(...existingNumeros, data.id) + 1,
           chapter: "La Foi",
           narrator: "Abou Huraira",
-          sahabas: [],
+          mentionedSahabas: [],
           matn_fr: "",
           isnad: "",
           matn_ar: "",
@@ -160,13 +161,13 @@ export function AddHadithForm() {
         >
           {/* ID */}
           <Input
-            id="id"
-            label="ID*"
+            id="numero"
+            label="Numero*"
             type="number"
             min={1}
-            error={!!errors.id}
-            errorMessage={errors.id?.message}
-            register={register("id")}
+            error={!!errors.numero}
+            errorMessage={errors.numero?.message}
+            register={register("numero")}
           />
 
           {/* Chapter */}
@@ -210,15 +211,15 @@ export function AddHadithForm() {
             control={control}
             render={({ field }) => (
               <MultiSelect
-                id="sahabas"
+                id="mentionedSahabas"
                 label="Sahabas mentionnés"
                 options={sahabas}
                 selected={field.value}
                 onChange={field.onChange}
                 placeholder="Rechercher des sahabas..."
                 name={field.name}
-                error={!!errors.sahabas}
-                errorMessage={errors.sahabas?.message}
+                error={!!errors.mentionedSahabas}
+                errorMessage={errors.mentionedSahabas?.message}
               />
             )}
           />
