@@ -147,7 +147,7 @@ export function Hadith({
           <CopyBoard
             frenchText={hadith.matn_fr}
             arabicText={hadith.matn_ar}
-            hadithNumber={hadith.id}
+            hadithNumber={hadith.numero}
             narrator={hadith.narrator.name}
             chapter={hadith.chapter.title}
           />
@@ -166,7 +166,7 @@ export function Hadith({
 
           {isDevelopment && (
             <Link
-              href={`/hadiths/${hadith.id}/edit`}
+              href={`/hadiths/${hadith.numero}/edit`}
               className="inline-flex items-center gap-1.5 text-sm font-medium bg-orange-50 text-orange-600 px-3 py-1.5 rounded-md hover:bg-orange-100 hover:text-orange-700 transition-all duration-200"
               title="Modifier ce hadith"
               aria-label="Éditer le hadith"

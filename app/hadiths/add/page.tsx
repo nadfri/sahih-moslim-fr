@@ -20,7 +20,6 @@ export default async function AddHadithPage() {
     redirect("/");
   }
 
-  // Fetch data on the server
   const [initialNumeros, chaptersData, narratorsData, sahabasData] =
     await Promise.all([
       getHadithNumeros(),
