@@ -1,8 +1,7 @@
 "use client";
 
-// EditHadithForm: form for editing an existing hadith
-// Comments are always in english!
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -16,6 +15,7 @@ import { SearchSelect } from "@/src/ui/inputs/SearchSelect";
 import { Select } from "@/src/ui/inputs/Select";
 import { cleanArabicText } from "@/src/utils/cleanArabicText";
 import { replaceSWS } from "@/src/utils/replaceSWS";
+import { ConfirmDeleteModal } from "../ConfirmDeleteModal";
 
 const createEditHadithSchema = (
   existingNumeros: number[],
@@ -67,6 +67,9 @@ export function EditHadithForm({
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
 
   const hadithSchema = createEditHadithSchema(existingNumeros, hadith.numero);
 
@@ -157,6 +160,41 @@ export function EditHadithForm({
       console.error("Erreur lors de la modification du hadith:", error);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Handle hadith deletion
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    setSubmitMessage(null);
+    try {
+      const response = await fetch(`/api/hadiths/delete/${hadith.id}`, {
+        method: "DELETE",
+      });
+      const result = await response.json();
+      if (response.ok) {
+        setSubmitMessage({
+          type: "success",
+          text: result.message || "Hadith supprimé avec succès!",
+        });
+        setTimeout(() => {
+          router.push("/");
+        }, 1000);
+      } else {
+        setSubmitMessage({
+          type: "error",
+          text: result.message || "Erreur lors de la suppréssion",
+        });
+      }
+    } catch (error) {
+      setSubmitMessage({
+        type: "error",
+        text: "Server connection error",
+      });
+      console.error("Erreur lors de la suppréssion:", error);
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteModal(false);
     }
   };
 
@@ -321,6 +359,15 @@ export function EditHadithForm({
               : "Enregistrer les modifications"}
           </button>
         </form>
+
+        <ConfirmDeleteModal
+          open={showDeleteModal}
+          onCancel={() => setShowDeleteModal(false)}
+          onConfirm={handleDelete}
+          loading={isDeleting}
+          title="Supprimer ce hadith ?"
+          description="Êtes-vous sûr de vouloir supprimer ce hadith? Cette action est irréversible."
+        />
       </div>
       {/* Preview Section */}
       <div className="rounded-xl">
@@ -330,6 +377,16 @@ export function EditHadithForm({
             update
           />
         </div>
+
+        {/* Delete Button */}
+        <button
+          type="button"
+          onClick={() => setShowDeleteModal(true)}
+          disabled={isDeleting}
+          className="w-full bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:bg-red-300 disabled:cursor-not-allowed mt-4"
+        >
+          {isDeleting ? "Suppression..." : "Supprimer le hadith"}
+        </button>
       </div>
     </div>
   );
