@@ -361,11 +361,7 @@ export function AddHadithForm({
 
       {/* Preview Section */}
       <div className="rounded-xl">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
-          Aperçu en temps réel
-        </h3>
         <div className="bg-gray-100 rounded-lg p-1">
-          {/* Pass the constructed preview object */}
           <Hadith
             hadith={previewHadith}
             update

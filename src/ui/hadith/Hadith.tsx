@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Eye, EyeOff, Pencil, TriangleAlert } from "lucide-react";
+import { Eye, EyeOff, Pencil, ScanEye, TriangleAlert } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 import { HadithType } from "@/src/types/types";
@@ -143,41 +143,54 @@ export function Hadith({
         </div>
 
         {/* Action buttons section */}
-        <div className="flex flex-wrap items-center gap-3 justify-end">
-          <CopyBoard
-            frenchText={hadith.matn_fr}
-            arabicText={hadith.matn_ar}
-            hadithNumber={hadith.numero}
-            narrator={hadith.narrator.name}
-            chapter={hadith.chapter.title}
-          />
+        <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
+          {/* Preview badge shown only in update mode */}
+          {update && (
+            <span className="text-sm font-medium bg-gray-200 text-gray-500 px-2 py-1 rounded inline-flex items-center gap-1">
+              <ScanEye
+                className="h-3.5 w-3.5"
+                aria-hidden="true"
+              />
+              Aperçu
+            </span>
+          )}
 
-          <button
-            className="inline-flex items-center gap-1.5 text-sm font-medium bg-amber-50 text-amber-600 px-3 py-1.5 rounded-md hover:bg-amber-100 hover:text-amber-700 transition-all duration-200"
-            title="Signaler une erreur"
-            aria-label="Signaler une erreur dans ce hadith"
-          >
-            <TriangleAlert
-              className="h-4 w-4"
-              aria-hidden="true"
+          <div className="flex flex-wrap items-center gap-3 ml-auto">
+            <CopyBoard
+              frenchText={hadith.matn_fr}
+              arabicText={hadith.matn_ar}
+              hadithNumber={hadith.numero}
+              narrator={hadith.narrator.name}
+              chapter={hadith.chapter.title}
             />
-            <span>Signaler</span>
-          </button>
 
-          {isDevelopment && (
-            <Link
-              href={`/hadiths/${hadith.numero}/edit`}
-              className="inline-flex items-center gap-1.5 text-sm font-medium bg-orange-50 text-orange-600 px-3 py-1.5 rounded-md hover:bg-orange-100 hover:text-orange-700 transition-all duration-200"
-              title="Modifier ce hadith"
-              aria-label="Éditer le hadith"
+            <button
+              className="inline-flex items-center gap-1.5 text-sm font-medium bg-amber-50 text-amber-600 px-3 py-1.5 rounded-md hover:bg-amber-100 hover:text-amber-700 transition-all duration-200"
+              title="Signaler une erreur"
+              aria-label="Signaler une erreur dans ce hadith"
             >
-              <Pencil
+              <TriangleAlert
                 className="h-4 w-4"
                 aria-hidden="true"
               />
-              <span>Éditer</span>
-            </Link>
-          )}
+              <span>Signaler</span>
+            </button>
+
+            {isDevelopment && (
+              <Link
+                href={`/hadiths/${hadith.numero}/edit`}
+                className="inline-flex items-center gap-1.5 text-sm font-medium bg-orange-50 text-orange-600 px-3 py-1.5 rounded-md hover:bg-orange-100 hover:text-orange-700 transition-all duration-200"
+                title="Modifier ce hadith"
+                aria-label="Éditer le hadith"
+              >
+                <Pencil
+                  className="h-4 w-4"
+                  aria-hidden="true"
+                />
+                <span>Éditer</span>
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </div>
