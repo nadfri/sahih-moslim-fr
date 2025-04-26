@@ -15,7 +15,7 @@ import { SearchSelect } from "@/src/ui/inputs/SearchSelect";
 import { Select } from "@/src/ui/inputs/Select";
 import { cleanArabicText } from "@/src/utils/cleanArabicText";
 import { replaceSWS } from "@/src/utils/replaceSWS";
-import { ConfirmDeleteModal } from "../ConfirmDeleteModal";
+import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 
 const createEditHadithSchema = (
   existingNumeros: number[],
@@ -360,6 +360,16 @@ export function EditHadithForm({
           </button>
         </form>
 
+        {/* Delete Button */}
+        <button
+          type="button"
+          onClick={() => setShowDeleteModal(true)}
+          disabled={isDeleting}
+          className="w-full bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:bg-red-300 disabled:cursor-not-allowed mt-4"
+        >
+          {isDeleting ? "Suppression..." : "Supprimer le hadith"}
+        </button>
+
         <ConfirmDeleteModal
           open={showDeleteModal}
           onCancel={() => setShowDeleteModal(false)}
@@ -377,16 +387,6 @@ export function EditHadithForm({
             update
           />
         </div>
-
-        {/* Delete Button */}
-        <button
-          type="button"
-          onClick={() => setShowDeleteModal(true)}
-          disabled={isDeleting}
-          className="w-full bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:bg-red-300 disabled:cursor-not-allowed mt-4"
-        >
-          {isDeleting ? "Suppression..." : "Supprimer le hadith"}
-        </button>
       </div>
     </div>
   );
