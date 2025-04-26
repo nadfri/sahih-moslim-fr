@@ -14,9 +14,11 @@ export type PersonType = {
   id: string;
   name: string;
   nameArabic?: string | null;
+  hadithCount: number;
 };
 
 export type ChapterType = {
   id: string;
   title: string;
+  hadithCount: number;
 };

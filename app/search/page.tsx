@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Metadata } from "next";
 
 import { SearchBar } from "@/app/search/SearchBar";
@@ -29,11 +30,14 @@ export default async function SearchPage() {
       <h1 className="text-2xl md:text-4xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
         Rechercher un Hadith
       </h1>
-      <SearchBar
-        hadiths={hadiths}
-        narrators={narratorNames}
-        sahabas={sahabaNames}
-      />
+
+      <Suspense fallback={<p>Chargement...</p>}>
+        <SearchBar
+          hadiths={hadiths}
+          narrators={narratorNames}
+          sahabas={sahabaNames}
+        />
+      </Suspense>
     </div>
   );
 }

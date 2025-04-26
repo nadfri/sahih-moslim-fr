@@ -5,15 +5,15 @@ import { prisma } from "@/prisma/prisma";
 // DELETE /api/hadiths/delete/[id]
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const hadithId = params.id;
-  if (!hadithId) {
+  const { id } = await params;
+  if (!id) {
     return NextResponse.json({ message: "Missing hadith ID" }, { status: 400 });
   }
   try {
     await prisma.hadith.delete({
-      where: { id: hadithId },
+      where: { id },
     });
     return NextResponse.json(
       { message: "Hadith deleted successfully" },

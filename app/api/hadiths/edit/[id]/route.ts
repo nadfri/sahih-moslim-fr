@@ -15,8 +15,9 @@ const editHadithPayloadSchema = z.object({
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const body = await request.json();
     const validation = editHadithPayloadSchema.safeParse(body);
@@ -41,7 +42,7 @@ export async function PATCH(
     } = validation.data;
     // Find hadith by id
     const hadith = await prisma.hadith.findUnique({
-      where: { id: params.id },
+      where: { id },
       select: { id: true, numero: true },
     });
     if (!hadith) {
@@ -54,7 +55,7 @@ export async function PATCH(
     const existingNumero = await prisma.hadith.findFirst({
       where: {
         numero,
-        NOT: { id: params.id },
+        NOT: { id },
       },
       select: { id: true },
     });
@@ -111,7 +112,7 @@ export async function PATCH(
     }
     // Update hadith
     const updatedHadith = await prisma.hadith.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         numero,
         matn_fr,

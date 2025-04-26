@@ -46,15 +46,21 @@ export async function getHadithByNumero(
 
 /* Get by Chapter */
 export async function getAllChapters(): Promise<
-  { id: string; title: string }[]
+  { id: string; title: string; hadithCount: number }[]
 > {
   const chapters = await prisma.chapter.findMany({
     select: {
       id: true,
       title: true,
+      _count: { select: { hadiths: true } },
     },
   });
-  return chapters;
+
+  return chapters.map((chapter) => ({
+    id: chapter.id,
+    title: chapter.title,
+    hadithCount: chapter._count.hadiths,
+  }));
 }
 
 export async function getChapterBySlug(slug: string): Promise<Chapter | null> {
@@ -133,17 +139,24 @@ export async function getChapterWithHadiths(slug: string): Promise<{
 }
 
 //Get Hadiths by Sahabas
-export async function getAllSahabas(): Promise<{ id: string; name: string }[]> {
+export async function getAllSahabas(): Promise<
+  { id: string; name: string; hadithCount: number }[]
+> {
   const sahabas = await prisma.sahaba.findMany({
     select: {
       id: true,
       name: true,
+      _count: { select: { mentionedInHadiths: true } },
     },
     orderBy: {
       name: "asc",
     },
   });
-  return sahabas;
+  return sahabas.map((sahaba) => ({
+    id: sahaba.id,
+    name: sahaba.name,
+    hadithCount: sahaba._count.mentionedInHadiths,
+  }));
 }
 
 export async function getSahabaWithHadiths(
@@ -185,18 +198,23 @@ export async function getSahabaBySlug(slug: string): Promise<Sahaba | null> {
 
 //Get hadiths by Narrators
 export async function getAllNarrators(): Promise<
-  { id: string; name: string }[]
+  { id: string; name: string; hadithCount: number }[]
 > {
   const narrators = await prisma.narrator.findMany({
     select: {
       id: true,
       name: true,
+      _count: { select: { narratedHadiths: true } },
     },
     orderBy: {
       name: "asc",
     },
   });
-  return narrators;
+  return narrators.map((narrator) => ({
+    id: narrator.id,
+    name: narrator.name,
+    hadithCount: narrator._count.narratedHadiths,
+  }));
 }
 
 export async function getNarratorWithHadiths(
