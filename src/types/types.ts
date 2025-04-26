@@ -9,3 +9,9 @@ export type HadithType = Prisma.HadithGetPayload<{
 }>;
 
 export type FilterType = "word" | "narrator" | "sahaba";
+
+export type PersonType = {
+  id: string;
+  name: string;
+  nameArabic?: string | null;
+};

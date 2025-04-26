@@ -246,3 +246,30 @@ export async function getNarratorBySlug(
 
   return narrator || null;
 }
+
+// New functions for search page
+export async function getNarratorNames(): Promise<string[]> {
+  const narrators = await prisma.narrator.findMany({
+    select: {
+      name: true,
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+
+  return narrators.map((narrator) => narrator.name);
+}
+
+export async function getSahabaNames(): Promise<string[]> {
+  const sahabas = await prisma.sahaba.findMany({
+    select: {
+      name: true,
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+
+  return sahabas.map((sahaba) => sahaba.name);
+}
