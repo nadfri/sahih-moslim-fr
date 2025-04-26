@@ -1,61 +1,74 @@
 "use client";
 
-/*Libs*/
+// EditHadithForm: form for editing an existing hadith
+// Comments are always in english!
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-/*Services*/
-import {
-  getAllChapters,
-  getAllNarrators,
-  getAllSahabas,
-} from "@/src/services/services";
-/*Types*/
-import { HadithType } from "@/src/types/types";
-/*UI*/
+import { ChapterType, HadithType, PersonType } from "@/src/types/types";
 import { Hadith } from "@/src/ui/hadith/Hadith";
 import { Input } from "@/src/ui/inputs/Input";
 import { MdTextArea } from "@/src/ui/inputs/MdTextArea";
 import { MultiSelect } from "@/src/ui/inputs/MultiSelect";
 import { SearchSelect } from "@/src/ui/inputs/SearchSelect";
 import { Select } from "@/src/ui/inputs/Select";
-/*Utils*/
 import { cleanArabicText } from "@/src/utils/cleanArabicText";
 import { replaceSWS } from "@/src/utils/replaceSWS";
 
-const editHadithSchema = z.object({
-  id: z.coerce
-    .number({
-      required_error: "L'ID est requis",
-      invalid_type_error: "L'ID doit être un nombre",
-    })
-    .int({ message: "L'ID doit être un nombre entier" })
-    .positive({ message: "L'ID doit être un nombre positif" }),
-  chapter: z.string().min(1, "Le chapitre est requis"),
-  narrator: z.string().min(1, "Le narrateur est requis"),
-  sahabas: z.array(z.string()),
-  matn_fr: z.string().min(1, "Le texte du hadith est requis"),
-  matn_ar: z.string().min(1, "Le texte arabe est requis"),
-  isnad: z.string().optional(),
-});
+const createEditHadithSchema = (
+  existingNumeros: number[],
+  initialNumero: number
+) => {
+  return z.object({
+    numero: z.coerce
+      .number({
+        required_error: "Le numéro est requis",
+        invalid_type_error: "Le numéro doit être un nombre",
+      })
+      .int({ message: "Le numéro doit être un nombre entier" })
+      .positive({ message: "Le numéro doit être un nombre positif" })
+      .refine(
+        (numero) =>
+          numero === initialNumero || !existingNumeros.includes(numero),
+        {
+          message: "Ce numéro existe déjà. Veuillez en choisir un autre.",
+        }
+      ),
+    chapter: z.string().min(1, "Le chapitre est requis"),
+    narrator: z.string().min(1, "Le narrateur est requis"),
+    mentionedSahabas: z.array(z.string()),
+    matn_fr: z.string().min(1, "Le texte du hadith est requis"),
+    matn_ar: z.string().min(1, "Le texte arabe est requis"),
+    isnad: z.string().optional(),
+  });
+};
 
-type HadithFormValues = z.infer<typeof editHadithSchema>;
+type HadithFormValues = z.infer<ReturnType<typeof createEditHadithSchema>>;
 
-export function EditHadithForm({ hadith }: { hadith: HadithType }) {
-  const router = useRouter();
+type EditHadithFormProps = {
+  hadith: HadithType;
+  existingNumeros: number[];
+  chaptersData: ChapterType[];
+  narratorsData: PersonType[];
+  sahabasData: PersonType[];
+};
 
-  const narrators = getAllNarrators();
-  const sahabas = getAllSahabas();
-  const chapters = getAllChapters();
-
+export function EditHadithForm({
+  hadith,
+  existingNumeros,
+  chaptersData,
+  narratorsData,
+  sahabasData,
+}: EditHadithFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
+
+  const hadithSchema = createEditHadithSchema(existingNumeros, hadith.numero);
 
   const {
     register,
@@ -65,104 +78,141 @@ export function EditHadithForm({ hadith }: { hadith: HadithType }) {
     setValue,
     formState: { errors },
   } = useForm<HadithFormValues>({
-    resolver: zodResolver(editHadithSchema),
+    resolver: zodResolver(hadithSchema),
     mode: "onChange",
     defaultValues: {
-      id: hadith.id,
-      chapter: hadith.chapter,
-      narrator: hadith.narrator,
-      sahabas: hadith.sahabas || [],
+      numero: hadith.numero,
+      chapter: hadith.chapter.title,
+      narrator: hadith.narrator.name,
+      mentionedSahabas: hadith.mentionedSahabas.map((s) => s.name),
       matn_fr: hadith.matn_fr,
       isnad: hadith.isnad || "",
-      matn_ar: hadith.matn_ar || "",
+      matn_ar: hadith.matn_ar,
     },
   });
 
   const formValues = watch();
 
+  const chapterOptions = chaptersData.map((c) => c.title);
+  const narratorOptions = narratorsData.map((n) => n.name);
+  const sahabaOptions = sahabasData.map((s) => s.name);
+
+  // Handle form submission for editing
   const onSubmit = async (data: HadithFormValues) => {
     setIsSubmitting(true);
     setSubmitMessage(null);
 
+    const selectedChapter = chaptersData.find((c) => c.title === data.chapter);
+    const selectedNarrator = narratorsData.find(
+      (n) => n.name === data.narrator
+    );
+    const selectedSahabas = sahabasData.filter((s) =>
+      data.mentionedSahabas.includes(s.name)
+    );
+
+    if (!selectedChapter || !selectedNarrator) {
+      setSubmitMessage({
+        type: "error",
+        text: "Chapitre ou narrateur sélectionné invalide.",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    const payload = {
+      numero: data.numero,
+      matn_fr: data.matn_fr,
+      matn_ar: data.matn_ar,
+      isnad: data.isnad,
+      chapterTitle: selectedChapter.title,
+      narratorName: selectedNarrator.name,
+      mentionedSahabasNames: selectedSahabas.map((s) => s.name),
+    };
+
     try {
-      const response = await fetch(`/api/hadiths/${data.id}/edit`, {
-        method: "PUT",
+      const response = await fetch(`/api/hadiths/edit/${hadith.id}`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
-
       const result = await response.json();
-
-      if (response.ok && result.success) {
+      if (response.ok) {
         setSubmitMessage({
           type: "success",
-          text: result.message || `Hadith #${data.id} modifié avec succès!`,
+          text: result.message || "Hadith modifié avec succès!",
         });
-
-        setTimeout(() => {
-          router.push(`/`);
-        }, 500);
       } else {
-        let errorMessage = "Une erreur est survenue lors de la modification.";
-
-        if (result && result.message) {
-          errorMessage = result.message;
-        } else if (!response.ok) {
-          errorMessage = `Erreur ${response.status}: ${response.statusText || "Problème serveur"}`;
-        }
         setSubmitMessage({
           type: "error",
-          text: errorMessage,
+          text: result.message || "Une erreur est survenue",
         });
-        console.error("Erreur API ou HTTP:", result || response.statusText);
       }
     } catch (error) {
-      console.error("Erreur lors de la soumission:", error);
       setSubmitMessage({
         type: "error",
-        text: "Erreur de connexion ou réponse invalide du serveur.",
+        text: "Erreur de connexion au serveur",
       });
+      console.error("Erreur lors de la modification du hadith:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Construct preview object for live preview
+  const previewHadith: HadithType = {
+    ...hadith,
+    numero: formValues.numero || 0,
+    chapter: {
+      ...hadith.chapter,
+      title: formValues.chapter || hadith.chapter.title,
+    },
+    narrator: {
+      ...hadith.narrator,
+      name: formValues.narrator || hadith.narrator.name,
+    },
+    mentionedSahabas: (formValues.mentionedSahabas || []).map((name, i) => ({
+      id: `preview-sahaba-id-${i}`,
+      name: name,
+      nameArabic: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })),
+    matn_fr: formValues.matn_fr || "...",
+    matn_ar: formValues.matn_ar || "...",
+    isnad: formValues.isnad || null,
+  };
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-4 md:p-6">
-      <div className="bg-white rounded-xl shadow-md p-6">
-        {/* Server Message */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Server Message & Form */}
+      <div className="bg-white rounded-xl shadow-lg p-6">
         {submitMessage && (
           <div
-            className={`mb-6 p-4 rounded-md text-sm ${
+            className={`mb-6 p-4 rounded-md ${
               submitMessage.type === "success"
-                ? "bg-green-100 text-green-800 border border-green-200"
-                : "bg-red-100 text-red-800 border border-red-200"
+                ? "bg-green-100 text-green-800"
+                : "bg-red-100 text-red-800"
             }`}
-            role="alert"
           >
             {submitMessage.text}
           </div>
         )}
-
-        {/* Form */}
         <form
           onSubmit={handleFormSubmit(onSubmit)}
           className="flex flex-col gap-4"
         >
-          {/* ID (not editable) */}
+          {/* Numero (ID) */}
           <Input
-            id="id"
-            label="ID du Hadith"
+            id="numero"
+            label="Numero*"
             type="number"
-            readOnly
-            error={!!errors.id}
-            errorMessage={errors.id?.message}
-            register={register("id")}
-            className="bg-gray-100 cursor-not-allowed"
+            min={1}
+            error={!!errors.numero}
+            errorMessage={errors.numero?.message}
+            register={register("numero")}
           />
-
           {/* Chapter */}
           <Controller
             name="chapter"
@@ -170,15 +220,14 @@ export function EditHadithForm({ hadith }: { hadith: HadithType }) {
             render={({ field }) => (
               <Select
                 id="chapter"
-                label="Chapitre *"
-                options={chapters}
+                label="Chapitre*"
+                options={chapterOptions}
                 error={!!errors.chapter}
                 errorMessage={errors.chapter?.message}
                 {...field}
               />
             )}
           />
-
           {/* Narrator */}
           <Controller
             name="narrator"
@@ -186,8 +235,8 @@ export function EditHadithForm({ hadith }: { hadith: HadithType }) {
             render={({ field }) => (
               <SearchSelect
                 id="narrator"
-                label="Narrateur *"
-                options={narrators}
+                label="Narrateur*"
+                options={narratorOptions}
                 value={field.value}
                 onChange={field.onChange}
                 placeholder="Rechercher un narrateur..."
@@ -197,47 +246,48 @@ export function EditHadithForm({ hadith }: { hadith: HadithType }) {
               />
             )}
           />
-
           {/* Sahabas */}
           <Controller
-            name="sahabas"
+            name="mentionedSahabas"
             control={control}
             render={({ field }) => (
               <MultiSelect
-                id="sahabas"
+                id="mentionedSahabas"
                 label="Sahabas mentionnés"
-                options={sahabas}
+                options={sahabaOptions}
                 selected={field.value}
                 onChange={field.onChange}
                 placeholder="Rechercher des sahabas..."
                 name={field.name}
-                error={!!errors.sahabas}
-                errorMessage={errors.sahabas?.message}
+                error={!!errors.mentionedSahabas}
+                errorMessage={errors.mentionedSahabas?.message}
               />
             )}
           />
-
-          {/* matn_fr FR */}
+          {/* matn_fr (French text) */}
           <MdTextArea
             id="matn_fr"
             name="matn_fr"
-            label="matn_fr (Texte français) *"
+            label="Texte français*"
             control={control}
             error={!!errors.matn_fr}
             errorMessage={errors.matn_fr?.message}
-            onValueChange={(value) => replaceSWS(value)}
-            placeholder="Saisir le texte du hadith en français..."
+            onValueChange={(value) => {
+              const processedValue = replaceSWS(value);
+              setValue("matn_fr", processedValue);
+              return processedValue;
+            }}
+            placeholder="Saisir le texte du hadith..."
             height={200}
           />
-
-          {/* matn_fr AR */}
+          {/* matn_ar (Arabic text) */}
           <Input
             id="matn_ar"
-            label="matn_fr (Texte arabe) *"
+            label="Texte arabe*"
             type="textarea"
             rows={5}
             dir="rtl"
-            className="font-matn_ar text-lg "
+            className="font-matn_ar text-lg"
             error={!!errors.matn_ar}
             errorMessage={errors.matn_ar?.message}
             register={register("matn_ar")}
@@ -247,37 +297,36 @@ export function EditHadithForm({ hadith }: { hadith: HadithType }) {
             }}
             helperText="Le texte sera automatiquement nettoyé"
           />
-
+          {/* Isnad (optional) */}
+          {/* <Input
+            id="isnad"
+            label="Isnad (Chaîne de transmission)"
+            type="textarea"
+            rows={3}
+            dir="rtl"
+            className="font-matn_ar"
+            error={!!errors.isnad}
+            errorMessage={errors.isnad?.message}
+            register={register("isnad")}
+            placeholder="Saisir l'isnad (optionnel)..."
+          /> */}
           {/* Submit Button */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-4">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full sm:w-auto flex-1 bg-emerald-600 text-white py-2.5 px-6 rounded-md shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150 ease-in-out"
-            >
-              {isSubmitting ? "Modification..." : "Mettre à jour le hadith"}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => router.back()}
-              disabled={isSubmitting}
-              className="w-full sm:w-auto flex-1 bg-gray-200 text-gray-800 py-2.5 px-6 rounded-md shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 disabled:opacity-50 transition duration-150 ease-in-out"
-            >
-              Annuler
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:bg-emerald-300 disabled:cursor-not-allowed mt-2"
+          >
+            {isSubmitting
+              ? "Modification en cours..."
+              : "Enregistrer les modifications"}
+          </button>
         </form>
       </div>
-
       {/* Preview Section */}
       <div className="rounded-xl">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
-          Aperçu en temps réel
-        </h3>
-        <div className="bg-gray-100 rounded-lg">
+        <div className="bg-gray-100 rounded-lg p-1">
           <Hadith
-            hadith={formValues as HadithType}
+            hadith={previewHadith}
             update
           />
         </div>

@@ -1,59 +1,59 @@
-/*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
-
 import { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
-import { getHadithById } from "@/src/services/services";
+import {
+  getAllChapters,
+  getAllNarrators,
+  getAllSahabas,
+  getHadithByNumero,
+  getHadithNumeros,
+} from "@/src/services/services";
 import { EditHadithForm } from "@/src/ui/hadith/EditHadithForm";
 
-export type ParamsType = Promise<{ id: string }>;
+export const metadata: Metadata = {
+  title: "Modifier un hadith",
+  description: "Modifiez un hadith existant dans la base de données.",
+};
 
-export default async function EditHadithPage({
-  params,
-}: {
-  params: ParamsType;
-}) {
-  // Check if we are in production and redirect if true
+type Params = Promise<{ numero: string }>;
+
+export default async function EditPage(props: { params: Params }) {
+  const params = await props.params;
   if (process.env.NODE_ENV === "production") {
     redirect("/");
   }
-
-  const id = Number((await params).id);
-
-  const hadith = getHadithById(id);
+  const numero = params.numero;
+  const [hadith, existingNumeros, chaptersData, narratorsData, sahabasData] =
+    await Promise.all([
+      getHadithByNumero(numero),
+      getHadithNumeros(),
+      getAllChapters(),
+      getAllNarrators(),
+      getAllSahabas(),
+    ]);
 
   if (!hadith) {
-    return notFound();
+    redirect("/hadiths");
   }
+
+  const otherNumeros = existingNumeros.filter((n) => n !== hadith.numero);
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-2xl md:text-4xl font-bold text-emerald-700 mb-6 md:mb-8">
-        Modifier le hadith #{id}
+    <>
+      <h1 className="text-2xl md:text-4xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
+        Modifier le hadith{" "}
+        <span className="text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded">
+          {hadith.numero}
+        </span>
       </h1>
-      <EditHadithForm hadith={hadith} />
-    </div>
+
+      <EditHadithForm
+        hadith={hadith}
+        existingNumeros={otherNumeros}
+        chaptersData={chaptersData}
+        narratorsData={narratorsData}
+        sahabasData={sahabasData}
+      />
+    </>
   );
-}
-
-/*Generate metadata for each hadith*/
-export async function generateMetadata({
-  params,
-}: {
-  params: ParamsType;
-}): Promise<Metadata> {
-  const id = Number((await params).id);
-
-  const hadith = getHadithById(id);
-
-  if (!hadith) {
-    return {
-      title: "Hadith non trouvé",
-    };
-  }
-
-  return {
-    title: `N°${id} - ${hadith.narrator}`,
-    description: hadith.matn_fr.substring(0, 160) + "...",
-  };
 }
