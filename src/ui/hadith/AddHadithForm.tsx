@@ -7,13 +7,10 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
 /*Services*/
-import {
-  getAllChapters,
-  getAllNarrators,
-  getAllSahabas,
-} from "@/src/services/services";
+// Removed service imports as data is passed via props
 /*Types*/
-import { HadithType } from "@/src/types/types";
+import { ChapterType, HadithType, PersonType } from "@/src/types/types"; // Keep HadithType
+
 /*UI*/
 import { Hadith } from "@/src/ui/hadith/Hadith";
 import { Input } from "@/src/ui/inputs/Input";
@@ -25,7 +22,8 @@ import { Select } from "@/src/ui/inputs/Select";
 import { cleanArabicText } from "@/src/utils/cleanArabicText";
 import { replaceSWS } from "@/src/utils/replaceSWS";
 
-const createHadithSchema = (existingIds: number[]) => {
+// Schema validation remains largely based on input strings for simplicity
+const createHadithSchema = (existingNumeros: number[]) => {
   return z.object({
     numero: z.coerce
       .number({
@@ -34,12 +32,12 @@ const createHadithSchema = (existingIds: number[]) => {
       })
       .int({ message: "Le numéro doit être un nombre entier" })
       .positive({ message: "Le numéro doit être un nombre positif" })
-      .refine((numero) => !existingIds.includes(numero), {
-        message: "Cet numéro existe déjà. Veuillez en choisir un autre.",
+      .refine((numero) => !existingNumeros.includes(numero), {
+        message: "Ce numéro existe déjà. Veuillez en choisir un autre.",
       }),
-    chapter: z.string().min(1, "Le chapitre est requis"),
-    narrator: z.string().min(1, "Le narrateur est requis"),
-    mentionedSahabas: z.array(z.string()),
+    chapter: z.string().min(1, "Le chapitre est requis"), // Validate selected chapter title
+    narrator: z.string().min(1, "Le narrateur est requis"), // Validate selected narrator name
+    mentionedSahabas: z.array(z.string()), // Validate selected sahaba names
     matn_fr: z.string().min(1, "Le texte du hadith est requis"),
     matn_ar: z.string().min(1, "Le texte arabe est requis"),
     isnad: z.string().optional(),
@@ -48,22 +46,30 @@ const createHadithSchema = (existingIds: number[]) => {
 
 type HadithFormValues = z.infer<ReturnType<typeof createHadithSchema>>;
 
-export function AddHadithForm() {
-  const numeros = getNumeros();
-  const narrators = getAllNarrators();
-  const sahabas = getAllSahabas();
-  const chapters = getAllChapters();
+// Define props for the component
+type AddHadithFormProps = {
+  initialNumeros: number[];
+  chaptersData: ChapterType[];
+  narratorsData: PersonType[];
+  sahabasData: PersonType[];
+};
 
-  const [existingNumeros, setExistingNumeros] = useState<number[]>(
-    numeros || []
-  );
+export function AddHadithForm({
+  initialNumeros,
+  chaptersData,
+  narratorsData,
+  sahabasData,
+}: AddHadithFormProps) {
+  const [existingNumeros, setExistingNumeros] =
+    useState<number[]>(initialNumeros);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
 
-  const hadithSchema = createHadithSchema(existingNumeros);
+  const hadithSchema = createHadithSchema(existingNumeros); // Use existingNumeros state here
 
   const {
     register,
@@ -76,9 +82,10 @@ export function AddHadithForm() {
   } = useForm<HadithFormValues>({
     resolver: zodResolver(hadithSchema),
     mode: "onChange",
+    // Set default values based on props
     defaultValues: {
-      numero: existingNumeros.length > 0 ? Math.max(...existingNumeros) + 1 : 1,
-      chapter: "La Foi",
+      numero: initialNumeros.length > 0 ? Math.max(...initialNumeros) + 1 : 1,
+      chapter: "Introduction",
       narrator: "Abou Huraira",
       mentionedSahabas: [],
       matn_fr: "",
@@ -89,10 +96,43 @@ export function AddHadithForm() {
 
   const formValues = watch();
 
+  // Prepare options for select components directly from props
+  const chapterOptions = chaptersData.map((c) => c.title);
+  const narratorOptions = narratorsData.map((n) => n.name);
+  const sahabaOptions = sahabasData.map((s) => s.name);
+
   // Gestion de la soumission du formulaire
   const onSubmit = async (data: HadithFormValues) => {
     setIsSubmitting(true);
     setSubmitMessage(null);
+
+    // Find IDs corresponding to selected names/titles using props
+    const selectedChapter = chaptersData.find((c) => c.title === data.chapter);
+    const selectedNarrator = narratorsData.find(
+      (n) => n.name === data.narrator
+    );
+    const selectedSahabas = sahabasData.filter((s) =>
+      data.mentionedSahabas.includes(s.name)
+    );
+
+    if (!selectedChapter || !selectedNarrator) {
+      setSubmitMessage({
+        type: "error",
+        text: "Chapitre ou narrateur sélectionné invalide.",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    const payload = {
+      numero: data.numero,
+      matn_fr: data.matn_fr,
+      matn_ar: data.matn_ar,
+      isnad: data.isnad,
+      chapterTitle: selectedChapter.title, // Send title to API
+      narratorName: selectedNarrator.name, // Send name to API
+      mentionedSahabasNames: selectedSahabas.map((s) => s.name), // Send names to API
+    };
 
     try {
       const response = await fetch("/api/hadiths/add", {
@@ -100,7 +140,7 @@ export function AddHadithForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload), // Send payload with names/titles
       });
 
       const result = await response.json();
@@ -111,12 +151,16 @@ export function AddHadithForm() {
           text: result.message || "Hadith ajouté avec succès!",
         });
 
-        setExistingNumeros((prev) => [...prev, data.id]);
+        // Update local state and reset form
+        const newNumero = data.numero;
+        // Important: Update the state used for schema validation *before* resetting
+        const updatedNumeros = [...existingNumeros, newNumero];
+        setExistingNumeros(updatedNumeros); // Update the list of existing numbers
 
         reset({
-          numero: Math.max(...existingNumeros, data.id) + 1,
-          chapter: "La Foi",
-          narrator: "Abou Huraira",
+          numero: Math.max(...updatedNumeros) + 1,
+          chapter: chaptersData.length > 0 ? chaptersData[0].title : "", // Reset to default/first
+          narrator: narratorsData.length > 0 ? narratorsData[0].name : "", // Reset to default/first
           mentionedSahabas: [],
           matn_fr: "",
           isnad: "",
@@ -139,10 +183,48 @@ export function AddHadithForm() {
     }
   };
 
+  // Construct preview object matching HadithType exactly
+  const previewHadith: HadithType = {
+    id: "preview-id", // Placeholder
+    numero: formValues.numero || 0,
+    chapter: {
+      // Provide all fields expected by Chapter type in Prisma schema
+      id: "preview-chapter-id",
+      title: formValues.chapter || "Sélectionnez un chapitre...",
+      createdAt: new Date(), // Placeholder
+      updatedAt: new Date(), // Placeholder
+    },
+    narrator: {
+      // Provide all fields expected by Narrator type in Prisma schema
+      id: "preview-narrator-id",
+      name: formValues.narrator || "Sélectionnez un narrateur...",
+      nameArabic: null, // Placeholder or fetch if needed
+      createdAt: new Date(), // Placeholder
+      updatedAt: new Date(), // Placeholder
+    },
+    mentionedSahabas: (formValues.mentionedSahabas || []).map((name, i) => ({
+      // Provide all fields expected by Sahaba type in Prisma schema
+      id: `preview-sahaba-id-${i}`,
+      name: name,
+      nameArabic: null, // Placeholder or fetch if needed
+      createdAt: new Date(), // Placeholder
+      updatedAt: new Date(), // Placeholder
+    })),
+    matn_fr: formValues.matn_fr || "...",
+    matn_ar: formValues.matn_ar || "...",
+    // Ensure isnad is string | null
+    isnad: formValues.isnad || null,
+    chapterId: "preview-chapter-id", // Match placeholder
+    narratorId: "preview-narrator-id", // Match placeholder
+    createdAt: new Date(), // Placeholder
+    updatedAt: new Date(), // Placeholder
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      {/* Server Message */}
-      <div className="bg-white rounded-xl shadow-lg p-3">
+      {/* Server Message & Form */}
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        {/* ... (submitMessage rendering) ... */}
         {submitMessage && (
           <div
             className={`mb-6 p-4 rounded-md ${
@@ -159,7 +241,7 @@ export function AddHadithForm() {
           onSubmit={handleFormSubmit(onSubmit)}
           className="flex flex-col gap-4"
         >
-          {/* ID */}
+          {/* ID -> Numero */}
           <Input
             id="numero"
             label="Numero*"
@@ -177,11 +259,11 @@ export function AddHadithForm() {
             render={({ field }) => (
               <Select
                 id="chapter"
-                label="Chapitre"
-                options={chapters}
+                label="Chapitre*"
+                options={chapterOptions} // Use string array
                 error={!!errors.chapter}
                 errorMessage={errors.chapter?.message}
-                {...field}
+                {...field} // Pass field props (value, onChange, etc.)
               />
             )}
           />
@@ -193,8 +275,8 @@ export function AddHadithForm() {
             render={({ field }) => (
               <SearchSelect
                 id="narrator"
-                label="Narrateur"
-                options={narrators}
+                label="Narrateur*"
+                options={narratorOptions} // Use string array
                 value={field.value}
                 onChange={field.onChange}
                 placeholder="Rechercher un narrateur..."
@@ -205,17 +287,17 @@ export function AddHadithForm() {
             )}
           />
 
-          {/* Sahabas */}
+          {/* Sahabas -> mentionedSahabas */}
           <Controller
-            name="sahabas"
+            name="mentionedSahabas" // Updated name to match schema
             control={control}
             render={({ field }) => (
               <MultiSelect
                 id="mentionedSahabas"
                 label="Sahabas mentionnés"
-                options={sahabas}
-                selected={field.value}
-                onChange={field.onChange}
+                options={sahabaOptions} // Use string array
+                selected={field.value} // Expects string[]
+                onChange={field.onChange} // Expects (string[]) => void
                 placeholder="Rechercher des sahabas..."
                 name={field.name}
                 error={!!errors.mentionedSahabas}
@@ -224,15 +306,20 @@ export function AddHadithForm() {
             )}
           />
 
-          {/* matn_fr FR */}
+          {/* matn_fr FR - Adjust onValueChange to return the value */}
           <MdTextArea
             id="matn_fr"
             name="matn_fr"
-            label="matn_fr (Texte français)*"
+            label="Texte français*"
             control={control}
             error={!!errors.matn_fr}
             errorMessage={errors.matn_fr?.message}
-            onValueChange={(value) => replaceSWS(value)}
+            // Adjust to return the processed value to match expected type
+            onValueChange={(value) => {
+              const processedValue = replaceSWS(value);
+              setValue("matn_fr", processedValue); // Update form state
+              return processedValue; // Return the value
+            }}
             placeholder="Saisir le texte du hadith..."
             height={200}
           />
@@ -240,7 +327,7 @@ export function AddHadithForm() {
           {/* matn_fr AR */}
           <Input
             id="matn_ar"
-            label="matn_fr (Texte arabe)*"
+            label="Texte arabe*" // Corrected label
             type="textarea"
             rows={5}
             dir="rtl"
@@ -250,15 +337,29 @@ export function AddHadithForm() {
             register={register("matn_ar")}
             onChange={(e) => {
               const cleanedText = cleanArabicText(e.target.value);
-              setValue("matn_ar", cleanedText);
+              setValue("matn_ar", cleanedText); // Update form state
             }}
             helperText="Le texte sera automatiquement nettoyé"
           />
 
+          {/* Isnad (Optional) */}
+          {/* <Input
+            id="isnad"
+            label="Isnad (Chaîne de transmission)"
+            type="textarea"
+            rows={3}
+            dir="rtl" // Assuming Isnad is often in Arabic
+            className="font-matn_ar" // Optional: style like Arabic text
+            error={!!errors.isnad}
+            errorMessage={errors.isnad?.message}
+            register={register("isnad")}
+            placeholder="Saisir l'isnad (optionnel)..."
+          /> */}
+
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting} // isLoading should always be false now
             className="w-full bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:bg-emerald-300 disabled:cursor-not-allowed mt-2"
           >
             {isSubmitting ? "Ajout en cours..." : "Ajouter le hadith"}
@@ -271,9 +372,10 @@ export function AddHadithForm() {
         <h3 className="text-lg font-medium text-gray-900 mb-4">
           Aperçu en temps réel
         </h3>
-        <div className="bg-gray-100 rounded-lg">
+        <div className="bg-gray-100 rounded-lg p-1">
+          {/* Pass the constructed preview object */}
           <Hadith
-            hadith={formValues as HadithType}
+            hadith={previewHadith}
             update
           />
         </div>

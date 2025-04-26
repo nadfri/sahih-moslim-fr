@@ -1,6 +1,13 @@
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
+// Import services to fetch data
+import {
+  getAllChapters,
+  getAllNarrators,
+  getAllSahabas,
+  getHadithNumeros,
+} from "@/src/services/services";
 import { AddHadithForm } from "@/src/ui/hadith/AddHadithForm";
 
 export const metadata: Metadata = {
@@ -13,12 +20,26 @@ export default async function AddHadithPage() {
     redirect("/");
   }
 
+  // Fetch data on the server
+  const [initialNumeros, chaptersData, narratorsData, sahabasData] =
+    await Promise.all([
+      getHadithNumeros(),
+      getAllChapters(),
+      getAllNarrators(),
+      getAllSahabas(),
+    ]);
+
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-2xl md:text-4xl font-bold text-emerald-700 mb-6 md:mb-8">
         Ajouter un nouveau hadith
       </h1>
-      <AddHadithForm />
+      <AddHadithForm
+        initialNumeros={initialNumeros}
+        chaptersData={chaptersData}
+        narratorsData={narratorsData}
+        sahabasData={sahabasData}
+      />
     </div>
   );
 }

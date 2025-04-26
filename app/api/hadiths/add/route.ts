@@ -1,116 +1,154 @@
-import { promises as fs } from "fs";
-import path from "path";
 import { NextRequest } from "next/server";
+import { z } from "zod";
 
-import { chapters } from "@/db/chapters";
-import { narrators } from "@/db/narrators";
-import { sahabas } from "@/db/sahabas";
-import { HadithType } from "@/src/types/types";
+import { prisma } from "@/prisma/prisma";
+
+const addHadithPayloadSchema = z.object({
+  numero: z.number().int().positive(),
+  matn_fr: z.string().min(1),
+  matn_ar: z.string().min(1),
+  isnad: z.string().optional(),
+  chapterTitle: z.string().min(1),
+  narratorName: z.string().min(1),
+  mentionedSahabasNames: z.array(z.string()),
+});
 
 export async function POST(request: NextRequest) {
   try {
-    // Récupération des données du corps de la requête
-    const newHadith: HadithType = await request.json();
+    const body = await request.json();
+    const validation = addHadithPayloadSchema.safeParse(body);
 
-    // Validation des données
-    if (
-      !newHadith.id ||
-      !newHadith.chapter ||
-      !newHadith.narrator ||
-      !newHadith.matn_fr
-    ) {
-      return Response.json(
-        { success: false, message: "Données incomplètes" },
-        { status: 400 }
-      );
-    }
-
-    // Validation supplémentaire des types
-    if (!chapters.includes(newHadith.chapter)) {
-      return Response.json(
-        { success: false, message: "Chapitre invalide" },
-        { status: 400 }
-      );
-    }
-
-    if (!narrators.includes(newHadith.narrator)) {
-      return Response.json(
-        { success: false, message: "Narrateur invalide" },
-        { status: 400 }
-      );
-    }
-
-    // Vérifier que tous les sahabas sont valides
-    for (const sahaba of newHadith.sahabas) {
-      if (!sahabas.includes(sahaba)) {
-        return Response.json(
-          { success: false, message: `Sahaba invalide: ${sahaba}` },
-          { status: 400 }
-        );
-      }
-    }
-
-    // Chemin du fichier moslim_fr.ts
-    const filePath = path.join(process.cwd(), "db", "moslim_fr.ts");
-
-    // Lecture du contenu actuel du fichier
-    const fileContent = await fs.readFile(filePath, "utf8");
-
-    // Vérifier si l'ID existe déjà
-    const idRegex = new RegExp(`id:\\s*${newHadith.id}\\b`, "g");
-    if (idRegex.test(fileContent)) {
+    if (!validation.success) {
       return Response.json(
         {
           success: false,
-          message: `L'ID ${newHadith.id} existe déjà`,
+          message: "Données invalides",
+          errors: validation.error.flatten().fieldErrors,
         },
-        { status: 409 }
-      ); // 409 Conflict
-    }
-
-    // Préparation du code du nouveau hadith à insérer
-    const hadithToAdd = `
-  {
-    id: ${newHadith.id},
-    chapter: "${newHadith.chapter}",
-    narrator: "${newHadith.narrator}",
-    sahabas: [${newHadith.sahabas.map((s) => `"${s}"`).join(", ")}],
-    matn_fr: ${JSON.stringify(newHadith.matn_fr)},
-    isnad: ${newHadith.isnad ? JSON.stringify(newHadith.isnad) : '""'},
-    matn_ar: ${newHadith.matn_ar ? JSON.stringify(newHadith.matn_ar) : '""'},
-  },
-`; // Ajout d'un saut de ligne après la virgule
-
-    // Trouver l'endroit où insérer le nouveau hadith (avant le dernier crochet fermant)
-    const insertPosition = fileContent.lastIndexOf("];");
-    if (insertPosition === -1) {
-      return Response.json(
-        { success: false, message: "Structure de fichier non reconnue" },
-        { status: 500 }
+        { status: 400 }
       );
     }
 
-    // Insérer le nouveau hadith
-    const updatedContent =
-      fileContent.slice(0, insertPosition) +
-      hadithToAdd +
-      fileContent.slice(insertPosition);
+    const {
+      numero,
+      matn_fr,
+      matn_ar,
+      isnad,
+      chapterTitle,
+      narratorName,
+      mentionedSahabasNames,
+    } = validation.data;
 
-    // Écrire le fichier mis à jour
-    await fs.writeFile(filePath, updatedContent, "utf8");
+    // 2. Check if hadith number already exists
+    const existingHadith = await prisma.hadith.findUnique({
+      where: { numero },
+      select: { id: true }, // Only select id for efficiency
+    });
 
+    if (existingHadith) {
+      return Response.json(
+        {
+          success: false,
+          message: `Le numéro de hadith ${numero} existe déjà.`,
+        },
+        { status: 409 } // 409 Conflict
+      );
+    }
+
+    // 3. Find related records (Chapter, Narrator, Sahabas) by name/title
+    const chapter = await prisma.chapter.findUnique({
+      where: { title: chapterTitle },
+      select: { id: true },
+    });
+
+    const narrator = await prisma.narrator.findUnique({
+      where: { name: narratorName },
+      select: { id: true },
+    });
+
+    if (!chapter) {
+      return Response.json(
+        { success: false, message: `Chapitre "${chapterTitle}" non trouvé.` },
+        { status: 400 }
+      );
+    }
+
+    if (!narrator) {
+      return Response.json(
+        { success: false, message: `Narrateur "${narratorName}" non trouvé.` },
+        { status: 400 }
+      );
+    }
+
+    // Find Sahabas by name and get their IDs
+    const mentionedSahabas = await prisma.sahaba.findMany({
+      where: {
+        name: {
+          in: mentionedSahabasNames,
+        },
+      },
+      select: { id: true, name: true }, // Select name too for error reporting
+    });
+
+    // Verify all mentioned sahabas were found
+    if (mentionedSahabas.length !== mentionedSahabasNames.length) {
+      const foundNames = mentionedSahabas.map((s) => s.name);
+      const notFoundNames = mentionedSahabasNames.filter(
+        (name) => !foundNames.includes(name)
+      );
+      return Response.json(
+        {
+          success: false,
+          message: `Sahaba(s) non trouvé(s): ${notFoundNames.join(", ")}`,
+        },
+        { status: 400 }
+      );
+    }
+
+    // 4. Create the new Hadith record
+    const newHadith = await prisma.hadith.create({
+      data: {
+        numero,
+        matn_fr,
+        matn_ar,
+        isnad: isnad || null, // Use null if isnad is empty/undefined
+        chapter: {
+          connect: { id: chapter.id }, // Connect using chapter ID
+        },
+        narrator: {
+          connect: { id: narrator.id }, // Connect using narrator ID
+        },
+        mentionedSahabas: {
+          // Connect using sahaba IDs
+          connect: mentionedSahabas.map((sahaba) => ({ id: sahaba.id })),
+        },
+      },
+      // Include related data in the response if needed
+      include: {
+        chapter: true,
+        narrator: true,
+        mentionedSahabas: true,
+      },
+    });
+
+    // 5. Return success response
     return Response.json({
       success: true,
-      message: `Hadith #${newHadith.id} ajouté avec succès`,
-      data: newHadith,
+      message: `Hadith #${newHadith.numero} ajouté avec succès`,
+      data: newHadith, // Return the created hadith data
     });
   } catch (error) {
     console.error("Erreur lors de l'ajout du hadith:", error);
+    // Handle potential Prisma errors or other unexpected errors
+    let errorMessage = "Une erreur est survenue lors de l'ajout du hadith";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
     return Response.json(
       {
         success: false,
-        message: "Une erreur est survenue lors de l'ajout du hadith",
-        error: (error as Error).message,
+        message: errorMessage,
+        error: error instanceof Error ? error.message : String(error),
       },
       { status: 500 }
     );

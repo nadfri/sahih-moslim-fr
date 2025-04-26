@@ -5,6 +5,16 @@ import { prisma } from "@/prisma/prisma";
 import { HadithType } from "../types/types";
 import { slugify } from "../utils/slugify";
 
+// --- New function to get existing hadith numbers ---
+export async function getHadithNumeros(): Promise<number[]> {
+  const hadiths = await prisma.hadith.findMany({
+    select: {
+      numero: true,
+    },
+  });
+  return hadiths.map((h) => h.numero);
+}
+
 /*Get By Hadith*/
 export function getAllHadiths() {
   const hadiths = prisma.hadith.findMany({
@@ -35,20 +45,16 @@ export async function getHadithByNumero(
 }
 
 /* Get by Chapter */
-export async function getAllChapters() {
-  const chaptersWithCount = await prisma.chapter.findMany({
+export async function getAllChapters(): Promise<
+  { id: string; title: string }[]
+> {
+  const chapters = await prisma.chapter.findMany({
     select: {
+      id: true,
       title: true,
-      _count: {
-        select: { hadiths: true },
-      },
     },
   });
-
-  return chaptersWithCount.map((chapter) => ({
-    title: chapter.title,
-    hadithCount: chapter._count.hadiths,
-  }));
+  return chapters;
 }
 
 export async function getChapterBySlug(slug: string): Promise<Chapter | null> {
@@ -127,24 +133,17 @@ export async function getChapterWithHadiths(slug: string): Promise<{
 }
 
 //Get Hadiths by Sahabas
-export async function getAllSahabas() {
-  // Get all sahabas with the count of hadiths that mention them
+export async function getAllSahabas(): Promise<{ id: string; name: string }[]> {
   const sahabas = await prisma.sahaba.findMany({
     select: {
+      id: true,
       name: true,
-      _count: {
-        select: { mentionedInHadiths: true },
-      },
     },
     orderBy: {
       name: "asc",
     },
   });
-
-  return sahabas.map((sahaba) => ({
-    name: sahaba.name,
-    hadithCount: sahaba._count.mentionedInHadiths,
-  }));
+  return sahabas;
 }
 
 export async function getSahabaWithHadiths(
@@ -185,24 +184,19 @@ export async function getSahabaBySlug(slug: string): Promise<Sahaba | null> {
 }
 
 //Get hadiths by Narrators
-export async function getAllNarrators() {
-  // Get all narrators with the count of hadiths that mention them
+export async function getAllNarrators(): Promise<
+  { id: string; name: string }[]
+> {
   const narrators = await prisma.narrator.findMany({
     select: {
+      id: true,
       name: true,
-      _count: {
-        select: { narratedHadiths: true },
-      },
     },
     orderBy: {
       name: "asc",
     },
   });
-
-  return narrators.map((narrator) => ({
-    name: narrator.name,
-    hadithCount: narrator._count.narratedHadiths,
-  }));
+  return narrators;
 }
 
 export async function getNarratorWithHadiths(

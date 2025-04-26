@@ -15,3 +15,8 @@ export type PersonType = {
   name: string;
   nameArabic?: string | null;
 };
+
+export type ChapterType = {
+  id: string;
+  title: string;
+};
