@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { Role } from "@prisma/client"; // Import Role enum from Prisma
+import { Role } from "@prisma/client";
 import { getToken } from "next-auth/jwt";
 
-// --- Assurez-vous que NEXTAUTH_SECRET est défini dans vos .env ---
 const secret = process.env.AUTH_SECRET;
 
 export async function middleware(req: NextRequest) {
@@ -17,7 +16,9 @@ export async function middleware(req: NextRequest) {
 
   const pathname = req.nextUrl.pathname;
   const isProtectedRoute =
-    pathname.endsWith("/add") || pathname.endsWith("/edit");
+    pathname.endsWith("/add") ||
+    pathname.endsWith("/edit") ||
+    pathname.includes("/api/hadiths");
 
   if (isProtectedRoute) {
     if (!token) {
@@ -51,5 +52,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/(.*)/add", "/(.*)/edit"],
+  matcher: ["/(.*)/add", "/(.*)/edit", "/api/hadiths/:path*"],
 };

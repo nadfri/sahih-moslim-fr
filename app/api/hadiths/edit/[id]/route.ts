@@ -1,7 +1,9 @@
 import { NextRequest } from "next/server";
+import { Role } from "@prisma/client";
 import { z } from "zod";
 
 import { prisma } from "@/prisma/prisma";
+import { auth } from "@/src/authentification/auth";
 
 const editHadithPayloadSchema = z.object({
   numero: z.number().int().positive(),
@@ -17,6 +19,19 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Admin authentication check for API access
+  const session = await auth();
+  if (!session || session.user.role !== Role.ADMIN) {
+    // Always return error in english for API
+    return Response.json(
+      {
+        success: false,
+        message: "Unauthorized: admin access required.",
+      },
+      { status: 403 }
+    );
+  }
+
   const { id } = await params;
   try {
     const body = await request.json();
