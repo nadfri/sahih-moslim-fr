@@ -35,7 +35,7 @@ export function ListPage({ title, items, basePath }: ListPageProps) {
             <div className="bg-white rounded-xl shadow-lg overflow-hidden h-full flex flex-col p-6 transition-all duration-300 ease-in-out border border-transparent group-hover:shadow-xl group-hover:border-emerald-300 group-hover:-translate-y-1">
               <div className="flex-grow">
                 {/* Name */}
-                <h2 className="text-xl font-semibold font-serif text-emerald-800 mb-2 group-hover:text-emerald-600 transition-colors">
+                <h2 className="text-xl font-semibold font-serif text-emerald-700 mb-2 group-hover:text-emerald-600 transition-colors">
                   {person.name}
                 </h2>
 

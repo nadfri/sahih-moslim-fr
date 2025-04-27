@@ -29,7 +29,7 @@ export default async function ChaptersPage() {
                 </span>
 
                 {/* Titre du Chapitre */}
-                <h2 className="text-xl font-semibold font-serif text-emerald-800 mb-2 group-hover:text-emerald-600 transition-colors">
+                <h2 className="text-xl font-semibold font-serif text-emerald-700 mb-2 group-hover:text-emerald-600 transition-colors">
                   {chapter.title}
                 </h2>
 

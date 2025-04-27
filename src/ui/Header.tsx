@@ -46,7 +46,7 @@ export function Header() {
           <span className="text-xl font-bold font-serif md:hidden">
             Sahih Muslim <span className="text-emerald-600">FR</span>
           </span>
-          {/* New multi-line title structure for desktop */}
+
           <div className="hidden md:flex md:flex-col md:leading-tight">
             <span className="text-xl font-bold font-serif">Sahih</span>
             <span className="text-xl font-bold font-serif">Muslim</span>
@@ -56,8 +56,8 @@ export function Header() {
           </div>
         </Link>
 
-        <nav className="hidden md:block ml-6">
-          <ul className="flex space-x-6 items-center">
+        <nav className="hidden md:block ml-4 mr-2">
+          <ul className="flex gap-5 items-center">
             {navLinks.map((link) => {
               const href = link.href;
               const isActive =
