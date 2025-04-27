@@ -21,9 +21,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function SearchPage() {
-  const hadiths = await getAllHadiths();
-  const narratorNames = await getNarratorNames();
-  const sahabaNames = await getSahabaNames();
+  const [hadiths, narratorNames, sahabaNames] = await Promise.all([
+    getAllHadiths(),
+    getNarratorNames(),
+    getSahabaNames(),
+  ]);
 
   return (
     <div className="max-w-3xl mx-auto">
