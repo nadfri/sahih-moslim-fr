@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Eye, EyeOff, Pencil, ScanEye, TriangleAlert } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import type { Components } from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 
@@ -74,6 +75,18 @@ export function Hadith({
 
   const arabicContentId = `matn_ar-content-${hadith.id}`;
 
+  // Custom renderers for ReactMarkdown
+  const customRenderers: Components = {
+    // Override the default <strong> tag rendering
+    strong: ({ ...props }) => (
+      <span
+        className="text-emerald-600 font-medium"
+        {...props}
+      />
+    ),
+    // You can add other custom renderers here if needed
+  };
+
   return (
     <div
       key={hadith.id}
@@ -112,6 +125,7 @@ export function Hadith({
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeRaw]}
+            components={customRenderers} // Add the custom renderers here
           >
             {processedMatnFr}
           </ReactMarkdown>
