@@ -3,23 +3,20 @@
 import { useRef, useState } from "react";
 import { Check, Files } from "lucide-react";
 
+import { HadithType } from "@/src/types/types";
 import { useClickOutside } from "../hooks/useClickOutside";
 
-type CopyOption = "french" | "matn_ar" | "both";
+type CopyOption = "fr" | "ar" | "both";
 
-export function CopyBoard({
-  frenchText,
-  arabicText,
-  hadithNumber,
-  narrator,
-  chapter,
-}: {
-  frenchText: string;
-  arabicText: string;
-  hadithNumber: number | string;
-  narrator: string;
-  chapter: string;
-}) {
+// Accept hadith as a prop
+export function CopyBoard({ hadith }: { hadith: HadithType }) {
+  // Extract fields from hadith
+  const frenchText = hadith.matn_fr;
+  const arabicText = hadith.matn_ar;
+  const hadithNumber = hadith.numero;
+  const narrator = hadith.narrator.name;
+  const chapter = hadith.chapter.title;
+
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -27,17 +24,18 @@ export function CopyBoard({
   // Use the custom hook to handle clicks outside of the dropdown
   useClickOutside(dropdownRef, () => setIsOpen(false));
 
-  const handleCopy = (option: CopyOption) => {
+  // Make handleCopy async and await clipboard write
+  const handleCopy = async (option: CopyOption) => {
     let textToCopy = "";
 
     // Create header with hadith info
     const header = `Sahih Moslim - Hadith n°${hadithNumber}\nChapitre: ${chapter}\nRapporté par: ${narrator}\n\n`;
 
     switch (option) {
-      case "french":
+      case "fr":
         textToCopy = `${header}${frenchText}`;
         break;
-      case "matn_ar":
+      case "ar":
         textToCopy = `${header}${arabicText}`;
         break;
       case "both":
@@ -45,11 +43,10 @@ export function CopyBoard({
         break;
     }
 
-    navigator.clipboard.writeText(textToCopy).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-      setIsOpen(false);
-    });
+    await navigator.clipboard.writeText(textToCopy);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1000);
+    setIsOpen(false);
   };
 
   return (
@@ -82,13 +79,13 @@ export function CopyBoard({
       {isOpen && (
         <div className="absolute z-50 bottom-0 right-0 bg-white rounded-md shadow-lg border border-emerald-100 flex flex-col min-w-fit overflow-hidden">
           <button
-            onClick={() => handleCopy("french")}
+            onClick={() => handleCopy("fr")}
             className="text-left px-3 py-2 text-sm text-emerald-700 bg-emerald-50 hover:bg-emerald-50 hover:text-emerald-800 transition-colors border-l-2 border-transparent hover:border-emerald-500"
           >
             Français
           </button>
           <button
-            onClick={() => handleCopy("matn_ar")}
+            onClick={() => handleCopy("ar")}
             className="text-left px-3 py-2 text-sm text-emerald-700 bg-emerald-100 hover:bg-emerald-100 hover:text-emerald-800 transition-colors border-l-2 border-transparent hover:border-emerald-500"
           >
             Arabe

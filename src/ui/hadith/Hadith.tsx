@@ -223,13 +223,7 @@ export function Hadith({
           )}
 
           <div className="flex flex-wrap items-center gap-3 ml-auto">
-            <CopyBoard
-              frenchText={hadith.matn_fr}
-              arabicText={hadith.matn_ar}
-              hadithNumber={hadith.numero}
-              narrator={hadith.narrator.name}
-              chapter={hadith.chapter.title}
-            />
+            <CopyBoard hadith={hadith} />
 
             <button
               className="inline-flex items-center gap-1.5 text-sm font-medium bg-amber-50 text-amber-600 px-3 py-1.5 rounded-md hover:bg-amber-100 hover:text-amber-700 transition-all duration-200"
