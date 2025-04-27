@@ -84,7 +84,13 @@ export function Hadith({
         {...props}
       />
     ),
-    // You can add other custom renderers here if needed
+    // Override the default <em> tag rendering
+    em: ({ ...props }) => (
+      <em
+        className="border-l-4 rounded-md border-amber-500 bg-amber-50 p-3 my-4 text-amber-800 italic block"
+        {...props}
+      />
+    ),
   };
 
   return (
