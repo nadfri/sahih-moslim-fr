@@ -66,13 +66,12 @@ function filterHadiths(
   }
   if (filterMode === "word" && query.length >= 3) {
     const q = query.toLowerCase();
-    return hadiths.filter(
-      (h) =>
-        h.matn_fr.toLowerCase().includes(q) ||
-        h.matn_ar.includes(q) ||
-        h.narrator.name.toLowerCase().includes(q) ||
-        h.mentionedSahabas.some((s) => s.name.toLowerCase().includes(q))
-    );
+    return hadiths.filter((h) => {
+      const inMatnFr = h.matn_fr.toLowerCase().includes(q);
+      const inMatnAr = h.matn_ar.toLowerCase().includes(q);
+
+      return inMatnFr || inMatnAr;
+    });
   }
   return [];
 }
@@ -285,6 +284,7 @@ export function SearchBar({
               <Hadith
                 key={hadith.id}
                 hadith={hadith}
+                highlight={filterMode === "word" ? query : undefined}
               />
             ))}
             {results.length === 0 &&

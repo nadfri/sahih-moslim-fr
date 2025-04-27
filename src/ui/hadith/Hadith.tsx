@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { Eye, EyeOff, Pencil, ScanEye, TriangleAlert } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
 
 import { HadithType } from "@/src/types/types";
 import { CopyBoard } from "@/src/ui/CopyBoard";
@@ -13,13 +15,58 @@ import { slugify } from "@/src/utils/slugify";
 export function Hadith({
   hadith,
   update,
+  highlight,
 }: {
   hadith: HadithType;
   update?: boolean;
+  highlight?: string;
 }) {
-  const [isArabicVisible, setIsArabicVisible] = useState(false);
   // Check if we're in development mode
   const isDevelopment = process.env.NODE_ENV === "development";
+
+  const [isArabicVisible, setIsArabicVisible] = useState(false);
+
+  // Helper to escape regex special chars in highlight string
+  const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&");
+  // Build case-insensitive regex for highlighting if a query is provided
+  const highlightRegex = highlight
+    ? new RegExp(`(${escapeRegExp(highlight)})`, "gi")
+    : null;
+  // Split text and wrap matched parts in a <mark> for highlighting
+  const highlightParts = (text: string): (string | React.ReactNode)[] =>
+    highlightRegex
+      ? text.split(highlightRegex).map((part, i) =>
+          highlightRegex.test(part) ? (
+            <mark
+              key={i}
+              className="bg-yellow-200"
+            >
+              {part}
+            </mark>
+          ) : (
+            part
+          )
+        )
+      : [text];
+
+  // Preprocess markdown to wrap highlight matches in <mark> for raw HTML rendering
+  const processedMatnFr = highlight
+    ? hadith.matn_fr.replace(
+        new RegExp(
+          `(${highlight.replace(/[.*+?^${}()|[\\]\\]/g, "$&")})`,
+          "gi"
+        ),
+        '<mark class="bg-yellow-200">$1</mark>'
+      )
+    : hadith.matn_fr;
+
+  // Preprocess Arabic text similarly for raw HTML rendering
+  const processedMatnAr = highlight
+    ? hadith.matn_ar.replace(
+        new RegExp(`(${escapeRegExp(highlight)})`, "gi"),
+        '<mark class="bg-yellow-200">$1</mark>'
+      )
+    : hadith.matn_ar;
 
   const toggleArabicVisibility = () => {
     setIsArabicVisible(!isArabicVisible);
@@ -62,7 +109,12 @@ export function Hadith({
 
         {/* matn_fr Section (Main text in French) */}
         <div className="space-y-3 text-gray-700 leading-relaxed text-pretty">
-          <ReactMarkdown>{hadith.matn_fr}</ReactMarkdown>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw]}
+          >
+            {processedMatnFr}
+          </ReactMarkdown>
         </div>
 
         {/* Mentioned Sahabas Section */}
@@ -81,7 +133,7 @@ export function Hadith({
                   href={`/sahabas/${slugify(sahaba.name)}`}
                   className="text-sm bg-emerald-50 text-emerald-700 hover:text-emerald-900 px-2 py-1 rounded-md transition-colors duration-200 hover:bg-emerald-200"
                 >
-                  {sahaba.name}
+                  {highlight ? highlightParts(sahaba.name) : sahaba.name}
                 </Link>
               ))}
             </div>
@@ -93,12 +145,7 @@ export function Hadith({
           {!update && (
             <button
               onClick={toggleArabicVisibility}
-              className="flex items-center space-x-2 
-                text-sm font-medium 
-                text-emerald-700 hover:text-emerald-900 
-                focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 
-                rounded mb-3 
-                transition-colors duration-200"
+              className="flex items-center space-x-2 text-sm font-medium text-emerald-700 hover:text-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 rounded mb-3 transition-colors duration-200"
               aria-expanded={isArabicVisible}
               aria-controls={arabicContentId}
             >
@@ -135,9 +182,9 @@ export function Hadith({
               <div
                 className="pt-2 text-right font-matn_ar text-xl leading-loose text-pretty"
                 dir="rtl"
-              >
-                {hadith.matn_ar}
-              </div>
+                // Render processed Arabic HTML with highlights
+                dangerouslySetInnerHTML={{ __html: processedMatnAr }}
+              />
             </div>
           </div>
         </div>
