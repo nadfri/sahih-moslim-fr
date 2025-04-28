@@ -1,6 +1,7 @@
 -use NextJS 15, React 19, Tailwind v4, pnpm
 -For new component, use export function only
 -comments are always in english!
+-for test, use vitest, vi, userEvent
 -params are promised in NextJs 15:
 // Before
 type Params = { slug: string }
