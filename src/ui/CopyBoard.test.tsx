@@ -151,9 +151,15 @@ describe("CopyBoard", () => {
       name: /copier le contenu du hadith/i,
     });
     await user.click(button);
+
+    // Vérifier que le dropdown est visible
     expect(await screen.findByText("Français")).toBeInTheDocument();
+
+    // Cliquer à l'extérieur
     const outsideElement = screen.getByTestId("outside");
     await user.click(outsideElement);
+
+    // Attendre que le dropdown disparaisse
     await waitFor(() => {
       expect(screen.queryByText("Français")).not.toBeInTheDocument();
     });
