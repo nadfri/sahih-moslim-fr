@@ -227,58 +227,6 @@ describe("Services", () => {
 
       expect(result).toBeNull();
     });
-
-    it("should get chapter by title", async () => {
-      const mockChapter = createMockChapter("1", "Chapter One");
-      vi.mocked(prisma.chapter.findUnique).mockResolvedValue(mockChapter);
-
-      const result = await services.getChapterByTitle("Chapter One");
-
-      expect(prisma.chapter.findUnique).toHaveBeenCalledWith({
-        where: { title: "Chapter One" },
-      });
-      expect(result).toEqual(mockChapter);
-    });
-
-    it("should get hadiths by chapter slug", async () => {
-      // Mock pour retourner le chapitre directement plutôt que d'appeler la fonction réelle
-      const mockChapter = createMockChapter("1", "Chapter One");
-      vi.mocked(prisma.chapter.findMany).mockResolvedValue([mockChapter]);
-
-      // Assurez-vous que slugify fonctionne correctement pour ce test
-      vi.mocked(slugify).mockReturnValue("chapter-one");
-
-      // Mock pour les hadiths
-      const mockHadiths = [createMockHadith("1", 1, "1", "narrator1")];
-      vi.mocked(prisma.hadith.findMany).mockResolvedValue(mockHadiths);
-
-      const result = await services.getHadithByChapterSlug("chapter-one");
-
-      expect(prisma.chapter.findMany).toHaveBeenCalled();
-      expect(slugify).toHaveBeenCalled();
-      expect(prisma.hadith.findMany).toHaveBeenCalledWith({
-        where: { chapter: { title: mockChapter.title } },
-        include: {
-          chapter: true,
-          narrator: true,
-          mentionedSahabas: true,
-        },
-        orderBy: {
-          numero: "asc",
-        },
-      });
-      expect(result).toEqual(mockHadiths);
-    });
-
-    it("should return empty array when chapter not found for hadiths", async () => {
-      // Mock pour simuler qu'aucun chapitre n'est trouvé
-      vi.mocked(prisma.chapter.findMany).mockResolvedValue([]);
-
-      const result = await services.getHadithByChapterSlug("not-found");
-
-      expect(result).toEqual([]);
-      expect(prisma.hadith.findMany).not.toHaveBeenCalled();
-    });
   });
 
   // --- Sahaba related tests ---

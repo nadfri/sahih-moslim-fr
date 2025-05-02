@@ -5,7 +5,6 @@ import { prisma } from "@/prisma/prisma";
 import { HadithType } from "../types/types";
 import { slugify } from "../utils/slugify";
 
-// --- New function to get existing hadith numbers ---
 export async function getHadithNumeros(): Promise<number[]> {
   const hadiths = await prisma.hadith.findMany({
     select: {
@@ -64,46 +63,11 @@ export async function getAllChapters(): Promise<
 }
 
 export async function getChapterBySlug(slug: string): Promise<Chapter | null> {
-  const allChapters = await prisma.chapter.findMany();
-
-  const chapter = allChapters.find(
-    (chapter) => slugify(chapter.title) === slug
-  );
-
-  return chapter || null;
-}
-
-export async function getChapterByTitle(
-  chapterTitle: string
-): Promise<Chapter | null> {
   const chapter = await prisma.chapter.findUnique({
-    where: { title: chapterTitle },
+    where: { title: slugify(slug) },
   });
+
   return chapter;
-}
-
-export async function getHadithByChapterSlug(
-  slug: string
-): Promise<HadithType[]> {
-  const chapter = await getChapterBySlug(slug);
-
-  if (!chapter) {
-    return [];
-  }
-
-  const hadithsByChapter = await prisma.hadith.findMany({
-    where: { chapter: { title: chapter.title } },
-    include: {
-      chapter: true,
-      narrator: true,
-      mentionedSahabas: true,
-    },
-    orderBy: {
-      numero: "asc",
-    },
-  });
-
-  return hadithsByChapter;
 }
 
 export async function getChapterWithHadiths(slug: string): Promise<{
@@ -189,10 +153,9 @@ export async function getSahabaWithHadiths(
 }
 
 export async function getSahabaBySlug(slug: string): Promise<Sahaba | null> {
-  const allSahabas = await prisma.sahaba.findMany();
-
-  const sahaba = allSahabas.find((sahaba) => slugify(sahaba.name) === slug);
-
+  const sahaba = await prisma.sahaba.findUnique({
+    where: { name: slugify(slug) },
+  });
   return sahaba || null;
 }
 
@@ -250,12 +213,9 @@ export async function getNarratorWithHadiths(
 export async function getNarratorBySlug(
   slug: string
 ): Promise<Narrator | null> {
-  const allNarrators = await prisma.narrator.findMany();
-
-  const narrator = allNarrators.find(
-    (narrator) => slugify(narrator.name) === slug
-  );
-
+  const narrator = await prisma.narrator.findUnique({
+    where: { name: slugify(slug) },
+  });
   return narrator || null;
 }
 
