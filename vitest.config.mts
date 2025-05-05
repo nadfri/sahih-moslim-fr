@@ -9,5 +9,8 @@ export default defineConfig({
     environment: "jsdom",
     // Add this line to run the setup file before tests
     setupFiles: ["src/vitest.setup.ts"],
+    coverage: {
+      provider: 'v8'
+    },
   },
 });

@@ -57,6 +57,7 @@ export function CopyBoard({ hadith }: { hadith: HadithType }) {
     <div
       className="relative"
       ref={dropdownRef}
+      data-testid="copy-board"
     >
       <button
         onClick={() => setIsOpen(!isOpen)}

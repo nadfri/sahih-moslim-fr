@@ -194,6 +194,7 @@ describe("CopyBoard", () => {
     const user = userEvent.setup();
     render(
       <div>
+        {/* This div is used to simulate clicking outside the CopyBoard component */}
         <div data-testid="outside">Outside area</div>
         <CopyBoard hadith={hadith} />
       </div>
@@ -203,14 +204,14 @@ describe("CopyBoard", () => {
     });
     await user.click(button);
 
-    // Vérifier que le dropdown est visible
+    // Check if the dropdown is visible
     expect(await screen.findByText("Français")).toBeInTheDocument();
 
-    // Cliquer à l'extérieur
+    // Click the outside area
     const outsideElement = screen.getByTestId("outside");
     await user.click(outsideElement);
 
-    // Attendre que le dropdown disparaisse
+    // Wait for the dropdown to disappear
     await waitFor(() => {
       expect(screen.queryByText("Français")).not.toBeInTheDocument();
     });
