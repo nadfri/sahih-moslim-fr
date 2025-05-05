@@ -11,7 +11,6 @@ import remarkGfm from "remark-gfm";
 import { HadithType } from "@/src/types/types";
 import { CopyBoard } from "@/src/ui/CopyBoard";
 import { ArabicIcon } from "@/src/ui/icons/ArabicIcon";
-import { slugify } from "@/src/utils/slugify";
 
 export function Hadith({
   hadith,
@@ -103,7 +102,7 @@ export function Hadith({
         <div className="mb-5">
           <div className="flex items-center justify-between mb-2">
             <Link
-              href={`/chapters/${slugify(hadith.chapter.title)}`}
+              href={`/chapters/${hadith.chapter.slug}`}
               className="text-sm font-medium text-amber-700 tracking-wide uppercase inline-flex items-center hover:text-amber-900 hover:underline transition-colors duration-200"
             >
               <ArabicIcon className="mr-1 h-5" /> {hadith.chapter.title}
@@ -118,7 +117,7 @@ export function Hadith({
           <p className="text-sm text-gray-600 ">
             Rapporté par{" "}
             <Link
-              href={`/narrators/${slugify(hadith.narrator.name)}`}
+              href={`/narrators/${hadith.narrator.slug}`}
               className="font-medium text-emerald-700 hover:text-emerald-800 hover:underline transition-colors duration-200"
             >
               {hadith.narrator.name}
@@ -150,7 +149,7 @@ export function Hadith({
               {hadith.mentionedSahabas.map((sahaba) => (
                 <Link
                   key={sahaba.id}
-                  href={`/sahabas/${slugify(sahaba.name)}`}
+                  href={`/sahabas/${sahaba.slug}`}
                   className="text-sm bg-emerald-50 text-emerald-700 hover:text-emerald-900 px-2 py-1 rounded-md transition-colors duration-200 hover:bg-emerald-200"
                 >
                   {highlight ? highlightParts(sahaba.name) : sahaba.name}

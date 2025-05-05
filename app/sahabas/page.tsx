@@ -9,7 +9,7 @@ export default async function SahabasPage() {
   return (
     <ListPage
       title="Hadiths mentionnant des Compagnons"
-      items={sahabas}
+      persons={sahabas}
       basePath="sahabas"
     />
   );

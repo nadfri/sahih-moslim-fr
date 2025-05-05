@@ -117,6 +117,7 @@ model Hadith {
 model Chapter {
   id      String   @id @default(cuid())
   title   String   @unique
+  slug    String   @unique
   hadiths Hadith[]
 
   createdAt DateTime @default(now())
@@ -126,7 +127,8 @@ model Chapter {
 model Narrator {
   id              String   @id @default(cuid())
   name            String   @unique
-  nameArabic      String? // Nom du narrateur en arabe
+  slug            String   @unique
+  nameArabic      String?
   narratedHadiths Hadith[]
 
   createdAt DateTime @default(now())
@@ -136,7 +138,8 @@ model Narrator {
 model Sahaba {
   id                 String   @id @default(cuid())
   name               String   @unique
-  nameArabic         String? // Nom du compagnon en arabe
+  slug               String   @unique
+  nameArabic         String? 
   mentionedInHadiths Hadith[]
 
   createdAt DateTime @default(now())

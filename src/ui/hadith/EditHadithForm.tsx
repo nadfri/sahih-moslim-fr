@@ -205,17 +205,18 @@ export function EditHadithForm({
     chapter: {
       ...hadith.chapter,
       title: formValues.chapter || hadith.chapter.title,
+      slug: hadith.chapter.slug || "preview-chapter-slug", // Ensure slug exists
     },
     narrator: {
       ...hadith.narrator,
       name: formValues.narrator || hadith.narrator.name,
+      slug: hadith.narrator.slug || "preview-narrator-slug", // Ensure slug exists
     },
     mentionedSahabas: (formValues.mentionedSahabas || []).map((name, i) => ({
       id: `preview-sahaba-id-${i}`,
       name: name,
+      slug: `preview-sahaba-slug-${i}`, // Add slug for preview
       nameArabic: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     })),
     matn_fr: formValues.matn_fr || "...",
     matn_ar: formValues.matn_ar || "...",

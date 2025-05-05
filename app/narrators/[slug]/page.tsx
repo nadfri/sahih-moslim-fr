@@ -9,7 +9,6 @@ import {
   getNarratorWithHadiths,
 } from "@/src/services/services";
 import { ListLayoutHadith } from "@/src/ui/hadith/ListLayoutHadith";
-import { slugify } from "@/src/utils/slugify";
 
 export type ParamsType = Promise<{ slug: string }>;
 
@@ -58,5 +57,5 @@ export async function generateMetadata(props: {
 export async function generateStaticParams() {
   const narrators = await getAllNarrators();
 
-  return narrators.map((narrator) => ({ slug: slugify(narrator.name) }));
+  return narrators.map((narrator) => ({ slug: narrator.slug }));
 }

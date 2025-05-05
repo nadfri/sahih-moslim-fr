@@ -35,7 +35,7 @@ const createHadithSchema = (existingNumeros: number[]) => {
     mentionedSahabas: z.array(z.string()),
     matn_fr: z.string().min(1, "Le texte du hadith est requis"),
     matn_ar: z.string().min(1, "Le texte arabe est requis"),
-    isnad: z.string().optional(),
+    isnad: z.string().nullable().optional(),
   });
 };
 
@@ -77,7 +77,6 @@ export function AddHadithForm({
   } = useForm<HadithFormValues>({
     resolver: zodResolver(hadithSchema),
     mode: "onChange",
-    // Set default values based on props
     defaultValues: {
       numero: initialNumeros.length > 0 ? Math.max(...initialNumeros) + 1 : 1,
       chapter: "Introduction",
@@ -184,32 +183,23 @@ export function AddHadithForm({
       // Provide all fields expected by Chapter type in Prisma schema
       id: "preview-chapter-id",
       title: formValues.chapter || "Sélectionnez un chapitre...",
-      createdAt: new Date(), // Placeholder
-      updatedAt: new Date(), // Placeholder
+      slug: "preview-chapter-slug", // Add slug for preview
     },
     narrator: {
       id: "preview-narrator-id",
       name: formValues.narrator || "Sélectionnez un narrateur...",
+      slug: "preview-narrator-slug", // Add slug for preview
       nameArabic: null, // Placeholder or fetch if needed
-      createdAt: new Date(), // Placeholder
-      updatedAt: new Date(), // Placeholder
     },
     mentionedSahabas: (formValues.mentionedSahabas || []).map((name, i) => ({
-      // Provide all fields expected by Sahaba type in Prisma schema
       id: `preview-sahaba-id-${i}`,
       name: name,
-      nameArabic: null, // Placeholder or fetch if needed
-      createdAt: new Date(), // Placeholder
-      updatedAt: new Date(), // Placeholder
+      slug: `preview-sahaba-slug-${i}`, // Add slug for preview
+      nameArabic: null,
     })),
     matn_fr: formValues.matn_fr || "...",
     matn_ar: formValues.matn_ar || "...",
-    // Ensure isnad is string | null
     isnad: formValues.isnad || null,
-    chapterId: "preview-chapter-id", // Match placeholder
-    narratorId: "preview-narrator-id", // Match placeholder
-    createdAt: new Date(), // Placeholder
-    updatedAt: new Date(), // Placeholder
   };
 
   return (

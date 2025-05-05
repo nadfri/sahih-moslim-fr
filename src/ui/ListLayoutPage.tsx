@@ -1,20 +1,15 @@
 import Link from "next/link";
 import { BookOpenText, MoveRight } from "lucide-react";
 
-import { slugify } from "@/src/utils/slugify";
-
-type Person = {
-  name: string;
-  hadithCount: number;
-};
+import { PersonType } from "../types/types";
 
 type ListPageProps = {
   title: string;
-  items: Person[];
+  persons: PersonType[];
   basePath: "narrators" | "sahabas";
 };
 
-export function ListPage({ title, items, basePath }: ListPageProps) {
+export function ListPage({ title, persons, basePath }: ListPageProps) {
   return (
     <div className="container mx-auto max-w-5xl">
       {/*Title*/}
@@ -25,9 +20,9 @@ export function ListPage({ title, items, basePath }: ListPageProps) {
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {/*Links*/}
-        {items.map((person) => (
+        {persons.map((person) => (
           <Link
-            href={`${basePath}/${slugify(person.name)}`}
+            href={`${basePath}/${person.slug}`}
             key={person.name}
             className="group block h-full"
           >

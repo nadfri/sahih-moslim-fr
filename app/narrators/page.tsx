@@ -9,7 +9,7 @@ export default async function NarratorsPage() {
   return (
     <ListPage
       title="Narrateurs des Hadiths"
-      items={narrators}
+      persons={narrators}
       basePath="narrators"
     />
   );

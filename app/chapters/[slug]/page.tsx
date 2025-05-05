@@ -9,7 +9,6 @@ import {
 } from "@/src/services/services";
 import { BadgeNumberOfHadith } from "@/src/ui/BadgeNumberOfHadith";
 import { Hadith } from "@/src/ui/hadith/Hadith";
-import { slugify } from "@/src/utils/slugify";
 
 export type ParamsType = Promise<{ slug: string }>;
 
@@ -74,6 +73,6 @@ export async function generateStaticParams() {
   const chapters = await getAllChapters();
 
   return chapters.map((chapter) => ({
-    slug: slugify(chapter.title),
+    slug: chapter.slug,
   }));
 }

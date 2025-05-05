@@ -8,7 +8,6 @@ import {
   getSahabaWithHadiths,
 } from "@/src/services/services";
 import { ListLayoutHadith } from "@/src/ui/hadith/ListLayoutHadith";
-import { slugify } from "@/src/utils/slugify";
 
 export type ParamsType = Promise<{ slug: string }>;
 
@@ -58,6 +57,6 @@ export async function generateStaticParams() {
   const sahabas = await getAllSahabas();
 
   return sahabas.map((sahaba) => ({
-    slug: slugify(sahaba.name),
+    slug: sahaba.slug,
   }));
 }

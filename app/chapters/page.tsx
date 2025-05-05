@@ -3,7 +3,6 @@ import Link from "next/link";
 import { BookOpenText, MoveRight } from "lucide-react";
 
 import { getAllChapters } from "@/src/services/services";
-import { slugify } from "@/src/utils/slugify";
 
 export default async function ChaptersPage() {
   const chapters = await getAllChapters();
@@ -16,7 +15,7 @@ export default async function ChaptersPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {chapters.map((chapter, index) => (
           <Link
-            href={`/chapters/${slugify(chapter.title)}`}
+            href={`/chapters/${chapter.slug}`}
             key={chapter.title}
             className="group block h-full"
           >
