@@ -24,9 +24,7 @@ export default async function PageByChapters(props: { params: ParamsType }) {
 
   return (
     <>
-      <h1 className="text-2xl md:text-4xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
-        {chapter.title}
-      </h1>
+      <h1 className="title">{chapter.title}</h1>
 
       <BadgeNumberOfHadith
         count={hadiths.length}

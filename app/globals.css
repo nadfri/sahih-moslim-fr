@@ -13,13 +13,6 @@
   --font-arabic: var(--font-amiri);
 }
 
-@layer base {
-  button,
-  [role="button"] {
-    cursor: pointer;
-  }
-}
-
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -30,4 +23,13 @@
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+button {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.title {
+  @apply text-2xl md:text-4xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight;
 }

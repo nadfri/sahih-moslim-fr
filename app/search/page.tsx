@@ -29,9 +29,7 @@ export default async function SearchPage() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <h1 className="text-2xl md:text-4xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight">
-        Rechercher un Hadith
-      </h1>
+      <h1 className="title">Rechercher un Hadith</h1>
 
       <Suspense fallback={<p>Chargement...</p>}>
         <SearchBar
