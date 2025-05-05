@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { BookOpenText, MoveRight } from "lucide-react";
 
-import { PersonType } from "../types/types";
+import { PersonType } from "../../types/types";
 
 type ListPageProps = {
   title: string;

@@ -9,7 +9,7 @@ import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 
 import { HadithType } from "@/src/types/types";
-import { CopyBoard } from "@/src/ui/CopyBoard";
+import { CopyBoard } from "@/src/ui/CopyBoard/CopyBoard";
 import { ArabicIcon } from "@/src/ui/icons/ArabicIcon";
 
 export function Hadith({

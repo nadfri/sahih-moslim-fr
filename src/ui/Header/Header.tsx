@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { BookOpen, Menu, PlusIcon, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 
-import { ButtonSignOut } from "./connexion/ButtonSignOut";
+import { ButtonSignOut } from "../connexion/ButtonSignOut";
 
 // Navigation links
 const navLinks = [

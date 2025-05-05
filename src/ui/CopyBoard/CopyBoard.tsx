@@ -3,8 +3,8 @@
 import { useRef, useState } from "react";
 import { Check, Files } from "lucide-react";
 
+import { useClickOutside } from "@/src/hooks/useClickOutside";
 import { HadithType } from "@/src/types/types";
-import { useClickOutside } from "../hooks/useClickOutside";
 
 type CopyOption = "fr" | "ar" | "both";
 

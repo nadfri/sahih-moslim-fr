@@ -9,11 +9,11 @@ import { z } from "zod";
 import { ChapterType, HadithType, PersonType } from "@/src/types/types";
 /*UI*/
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
-import { Input } from "@/src/ui/inputs/Input";
-import { MdTextArea } from "@/src/ui/inputs/MdTextArea";
-import { MultiSelect } from "@/src/ui/inputs/MultiSelect";
-import { SearchSelect } from "@/src/ui/inputs/SearchSelect";
-import { Select } from "@/src/ui/inputs/Select";
+import { Input } from "@/src/ui/inputs/Input/Input";
+import { MdTextArea } from "@/src/ui/inputs/MdTextArea/MdTextArea";
+import { MultiSelect } from "@/src/ui/inputs/MultiSelect/MultiSelect";
+import { SearchSelect } from "@/src/ui/inputs/SearchSelect/SearchSelect";
+import { Select } from "@/src/ui/inputs/Select/Select";
 /*Utils*/
 import { cleanArabicText } from "@/src/utils/cleanArabicText";
 import { replaceSWS } from "@/src/utils/replaceSWS";
