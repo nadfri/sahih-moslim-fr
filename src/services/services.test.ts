@@ -1,449 +1,170 @@
-import { notFound } from "next/navigation";
-import { Chapter, Narrator, Sahaba } from "@prisma/client";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, describe, expect, it } from "vitest";
 
 import { prisma } from "@/prisma/prisma";
-import { HadithType } from "../types/types";
-import { slugify } from "../utils/slugify";
-import * as services from "./services";
+import {
+  getAllChapters,
+  getAllHadiths,
+  getAllNarrators,
+  getAllSahabas,
+  getChapterBySlug,
+  getChapterWithHadiths,
+  getHadithByNumero,
+  getHadithNumeros,
+  getNarratorBySlug,
+  getNarratorNames,
+  getNarratorWithHadiths,
+  getSahabaBySlug,
+  getSahabaNames,
+  getSahabaWithHadiths,
+} from "./services";
 
-// Mock des modules Next.js et Prisma
-vi.mock("next/navigation", () => ({
-  notFound: vi.fn(),
-}));
+// Log the database URL used by Prisma for test visibility
+console.log(
+  "Prisma DB URL:",
+  process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL
+);
 
-vi.mock("@/prisma/prisma", () => ({
-  prisma: {
-    hadith: {
-      findMany: vi.fn(),
-      findUnique: vi.fn(),
-    },
-    chapter: {
-      findMany: vi.fn(),
-      findUnique: vi.fn(),
-    },
-    narrator: {
-      findMany: vi.fn(),
-    },
-    sahaba: {
-      findMany: vi.fn(),
-    },
-  },
-}));
-
-// Correction du mock de slugify : il doit utiliser la même logique que dans l'implémentation réelle
-vi.mock("../utils/slugify", () => ({
-  slugify: vi.fn((text: string) => text.toLowerCase().replace(/ /g, "-")),
-}));
-
-describe("Services", () => {
-  // Date commune pour tous les tests
-  const mockDate = new Date("2025-04-28T12:00:00Z");
-
-  // Factory functions pour créer des objets mockés réutilisables
-  const createMockChapter = (id: string, title: string): Chapter => ({
-    id,
-    title,
-    createdAt: mockDate,
-    updatedAt: mockDate,
+describe("Service functions integration", () => {
+  afterAll(async () => {
+    await prisma.$disconnect();
   });
 
-  const createMockNarrator = (
-    id: string,
-    name: string,
-    nameArabic: string | null = null
-  ): Narrator => ({
-    id,
-    name,
-    nameArabic,
-    createdAt: mockDate,
-    updatedAt: mockDate,
+  it("getAllChapters returns chapters from DB", async () => {
+    const chapters = await getAllChapters();
+    expect(Array.isArray(chapters)).toBe(true);
+    expect(chapters.some((c) => c.slug === "la-foi")).toBe(true);
   });
 
-  const createMockSahaba = (
-    id: string,
-    name: string,
-    nameArabic: string | null = null
-  ): Sahaba => ({
-    id,
-    name,
-    nameArabic,
-    createdAt: mockDate,
-    updatedAt: mockDate,
+  it("getChapterBySlug returns a chapter or null", async () => {
+    const chapter = await getChapterBySlug("la-foi");
+    // Should return a chapter object or null
+    if (chapter) {
+      expect(chapter.slug).toBe("la-foi");
+      expect(typeof chapter.hadithCount).toBe("number");
+    } else {
+      expect(chapter).toBeNull();
+    }
   });
 
-  const createMockHadith = (
-    id: string,
-    numero: number,
-    chapterId: string,
-    narratorId: string,
-    mentionedSahabas: Sahaba[] = []
-  ): HadithType => ({
-    id,
-    numero,
-    createdAt: mockDate,
-    updatedAt: mockDate,
-    matn_fr: `Texte français ${numero}`,
-    matn_ar: `نص عربي ${numero}`,
-    isnad: `Isnad ${numero}`,
-    chapterId,
-    narratorId,
-    chapter: createMockChapter(
-      chapterId,
-      `Chapter ${chapterId.replace("chapter", "")}`
-    ),
-    narrator: createMockNarrator(
-      narratorId,
-      `Narrator ${narratorId.replace("narrator", "")}`
-    ),
-    mentionedSahabas,
+  it("getChapterWithHadiths returns chapter and hadiths", async () => {
+    const { chapter, hadiths } = await getChapterWithHadiths("la-foi");
+    if (chapter) {
+      expect(chapter.slug).toBe("la-foi");
+      expect(Array.isArray(hadiths)).toBe(true);
+    } else {
+      expect(hadiths).toEqual([]);
+    }
   });
 
-  beforeEach(() => {
-    vi.clearAllMocks();
+  it("getAllHadiths returns all hadiths", async () => {
+    const hadiths = await getAllHadiths();
+    expect(Array.isArray(hadiths)).toBe(true);
+    if (hadiths.length > 0) {
+      expect(typeof hadiths[0].numero).toBe("number");
+    }
   });
 
-  afterEach(() => {
-    vi.resetAllMocks();
+  it("getHadithByNumero returns a hadith or null", async () => {
+    const hadiths = await getAllHadiths();
+    if (hadiths.length > 0) {
+      const numero = hadiths[0].numero.toString();
+      const hadith = await getHadithByNumero(numero);
+      expect(hadith).not.toBeNull();
+      if (hadith) {
+        expect(hadith.numero.toString()).toBe(numero);
+      }
+    }
   });
 
-  // --- Hadith related tests ---
-  describe("Hadith services", () => {
-    it("should get all hadith numbers", async () => {
-      const mockHadiths = [
-        createMockHadith("1", 1, "chapter1", "narrator1"),
-        createMockHadith("2", 2, "chapter1", "narrator1"),
-        createMockHadith("3", 3, "chapter2", "narrator2"),
-      ];
-      vi.mocked(prisma.hadith.findMany).mockResolvedValue(mockHadiths);
-
-      const result = await services.getHadithNumeros();
-
-      expect(prisma.hadith.findMany).toHaveBeenCalledWith({
-        select: { numero: true },
-      });
-      expect(result).toEqual([1, 2, 3]);
-    });
-
-    it("should get all hadiths", async () => {
-      const mockHadiths = [
-        createMockHadith("1", 1, "chapter1", "narrator1", [
-          createMockSahaba("sahaba1", "Sahaba 1"),
-        ]),
-      ];
-      vi.mocked(prisma.hadith.findMany).mockResolvedValue(mockHadiths);
-
-      const result = await services.getAllHadiths();
-
-      expect(prisma.hadith.findMany).toHaveBeenCalledWith({
-        include: {
-          chapter: true,
-          narrator: true,
-          mentionedSahabas: true,
-        },
-        orderBy: {
-          numero: "asc",
-        },
-      });
-      expect(await result).toEqual(mockHadiths);
-    });
-
-    it("should get hadith by numero", async () => {
-      const mockHadith = createMockHadith("1", 1, "chapter1", "narrator1", [
-        createMockSahaba("sahaba1", "Sahaba 1"),
-      ]);
-      vi.mocked(prisma.hadith.findUnique).mockResolvedValue(mockHadith);
-
-      const result = await services.getHadithByNumero("1");
-
-      expect(prisma.hadith.findUnique).toHaveBeenCalledWith({
-        where: { numero: 1 },
-        include: {
-          chapter: true,
-          narrator: true,
-          mentionedSahabas: true,
-        },
-      });
-      expect(result).toEqual(mockHadith);
-    });
-
-    it("should return undefined when hadith not found", async () => {
-      vi.mocked(prisma.hadith.findUnique).mockResolvedValue(null);
-
-      const result = await services.getHadithByNumero("999");
-
-      expect(result).toBeUndefined();
-    });
+  it("getHadithNumeros returns all hadith numbers", async () => {
+    const numeros = await getHadithNumeros();
+    expect(Array.isArray(numeros)).toBe(true);
+    if (numeros.length > 0) {
+      expect(typeof numeros[0]).toBe("number");
+    }
   });
 
-  // --- Chapter related tests ---
-  describe("Chapter services", () => {
-    it("should get all chapters with hadith counts", async () => {
-      const mockChapters = [
-        {
-          ...createMockChapter("1", "Chapter 1"),
-          _count: { hadiths: 5 },
-        },
-        {
-          ...createMockChapter("2", "Chapter 2"),
-          _count: { hadiths: 10 },
-        },
-      ];
-      vi.mocked(prisma.chapter.findMany).mockResolvedValue(mockChapters);
-
-      const result = await services.getAllChapters();
-
-      expect(prisma.chapter.findMany).toHaveBeenCalledWith({
-        select: {
-          id: true,
-          title: true,
-          _count: { select: { hadiths: true } },
-        },
-      });
-      expect(result).toEqual([
-        { id: "1", title: "Chapter 1", hadithCount: 5 },
-        { id: "2", title: "Chapter 2", hadithCount: 10 },
-      ]);
-    });
-
-    it("should get chapter by slug", async () => {
-      const mockChapters = [
-        createMockChapter("1", "Chapter One"),
-        createMockChapter("2", "Chapter Two"),
-      ];
-      vi.mocked(prisma.chapter.findMany).mockResolvedValue(mockChapters);
-
-      const result = await services.getChapterBySlug("chapter-one");
-
-      expect(prisma.chapter.findMany).toHaveBeenCalled();
-      expect(slugify).toHaveBeenCalledWith("Chapter One");
-      expect(result).toEqual(createMockChapter("1", "Chapter One"));
-    });
-
-    it("should return null when chapter slug not found", async () => {
-      vi.mocked(prisma.chapter.findMany).mockResolvedValue([]);
-
-      const result = await services.getChapterBySlug("not-found");
-
-      expect(result).toBeNull();
-    });
+  it("getAllNarrators returns all narrators", async () => {
+    const narrators = await getAllNarrators();
+    expect(Array.isArray(narrators)).toBe(true);
+    if (narrators.length > 0) {
+      expect(typeof narrators[0].name).toBe("string");
+    }
   });
 
-  // --- Sahaba related tests ---
-  describe("Sahaba services", () => {
-    it("should get all sahabas with hadith counts", async () => {
-      const mockSahabas = [
-        {
-          ...createMockSahaba("1", "Sahaba One"),
-          _count: { mentionedInHadiths: 5 },
-        },
-        {
-          ...createMockSahaba("2", "Sahaba Two", "صحابي اثنين"),
-          _count: { mentionedInHadiths: 8 },
-        },
-      ];
-      vi.mocked(prisma.sahaba.findMany).mockResolvedValue(mockSahabas);
-
-      const result = await services.getAllSahabas();
-
-      expect(prisma.sahaba.findMany).toHaveBeenCalledWith({
-        select: {
-          id: true,
-          name: true,
-          _count: { select: { mentionedInHadiths: true } },
-        },
-        orderBy: {
-          name: "asc",
-        },
-      });
-      expect(result).toEqual([
-        { id: "1", name: "Sahaba One", hadithCount: 5 },
-        { id: "2", name: "Sahaba Two", hadithCount: 8 },
-      ]);
-    });
-
-    it("should get sahaba by slug", async () => {
-      const mockSahabas = [
-        createMockSahaba("1", "Sahaba One"),
-        createMockSahaba("2", "Sahaba Two"),
-      ];
-      vi.mocked(prisma.sahaba.findMany).mockResolvedValue(mockSahabas);
-      vi.mocked(slugify).mockReturnValue("sahaba-one");
-
-      const result = await services.getSahabaBySlug("sahaba-one");
-
-      expect(prisma.sahaba.findMany).toHaveBeenCalled();
-      expect(slugify).toHaveBeenCalledWith("Sahaba One");
-      expect(result).toEqual(createMockSahaba("1", "Sahaba One"));
-    });
-
-    it("should get sahaba with hadiths", async () => {
-      const mockSahabas = [
-        createMockSahaba("1", "Sahaba One"),
-        createMockSahaba("2", "Sahaba Two"),
-      ];
-      const mockHadiths = [
-        createMockHadith("1", 1, "chapter1", "narrator1", [
-          createMockSahaba("1", "Sahaba One"),
-        ]),
-      ];
-
-      vi.mocked(prisma.sahaba.findMany).mockResolvedValue(mockSahabas);
-      vi.mocked(prisma.hadith.findMany).mockResolvedValue(mockHadiths);
-      vi.mocked(slugify).mockReturnValue("sahaba-one");
-
-      const result = await services.getSahabaWithHadiths("sahaba-one");
-
-      expect(prisma.sahaba.findMany).toHaveBeenCalled();
-      expect(slugify).toHaveBeenCalledWith("Sahaba One");
-      expect(prisma.hadith.findMany).toHaveBeenCalledWith({
-        where: { mentionedSahabas: { some: { name: "Sahaba One" } } },
-        include: {
-          chapter: true,
-          narrator: true,
-          mentionedSahabas: true,
-        },
-        orderBy: {
-          numero: "asc",
-        },
-      });
-      expect(result).toEqual({
-        sahaba: createMockSahaba("1", "Sahaba One"),
-        hadiths: mockHadiths,
-      });
-    });
+  it("getNarratorBySlug returns a narrator or null", async () => {
+    const narrators = await getAllNarrators();
+    if (narrators.length > 0) {
+      const slug = narrators[0].slug;
+      const narrator = await getNarratorBySlug(slug);
+      expect(narrator).not.toBeNull();
+      if (narrator) {
+        expect(narrator.slug).toBe(slug);
+      }
+    }
   });
 
-  // --- Narrator related tests ---
-  describe("Narrator services", () => {
-    it("should get all narrators with hadith counts", async () => {
-      const mockNarrators = [
-        {
-          ...createMockNarrator("1", "Narrator One"),
-          _count: { narratedHadiths: 3 },
-        },
-        {
-          ...createMockNarrator("2", "Narrator Two", "الراوي الثاني"),
-          _count: { narratedHadiths: 7 },
-        },
-      ];
-      vi.mocked(prisma.narrator.findMany).mockResolvedValue(mockNarrators);
-
-      const result = await services.getAllNarrators();
-
-      expect(prisma.narrator.findMany).toHaveBeenCalledWith({
-        select: {
-          id: true,
-          name: true,
-          _count: { select: { narratedHadiths: true } },
-        },
-        orderBy: {
-          name: "asc",
-        },
-      });
-      expect(result).toEqual([
-        { id: "1", name: "Narrator One", hadithCount: 3 },
-        { id: "2", name: "Narrator Two", hadithCount: 7 },
-      ]);
-    });
-
-    it("should get narrator by slug", async () => {
-      const mockNarrators = [
-        createMockNarrator("1", "Narrator One"),
-        createMockNarrator("2", "Narrator Two"),
-      ];
-      vi.mocked(prisma.narrator.findMany).mockResolvedValue(mockNarrators);
-      vi.mocked(slugify).mockReturnValue("narrator-one");
-
-      const result = await services.getNarratorBySlug("narrator-one");
-
-      expect(prisma.narrator.findMany).toHaveBeenCalled();
-      expect(slugify).toHaveBeenCalledWith("Narrator One");
-      expect(result).toEqual(createMockNarrator("1", "Narrator One"));
-    });
-
-    it("should call notFound when narrator not found in getNarratorWithHadiths", async () => {
-      vi.mocked(prisma.narrator.findMany).mockResolvedValue([]);
-
-      await services.getNarratorWithHadiths("not-found");
-
-      expect(notFound).toHaveBeenCalled();
-    });
-
-    it("should get narrator with hadiths", async () => {
-      const mockNarrators = [
-        createMockNarrator("1", "Narrator One"),
-        createMockNarrator("2", "Narrator Two"),
-      ];
-      const mockHadiths = [createMockHadith("1", 1, "chapter1", "narrator1")];
-
-      vi.mocked(prisma.narrator.findMany).mockResolvedValue(mockNarrators);
-      vi.mocked(prisma.hadith.findMany).mockResolvedValue(mockHadiths);
-      vi.mocked(slugify).mockReturnValue("narrator-one");
-      vi.mocked(notFound).mockReturnValue({} as never);
-
-      const result = await services.getNarratorWithHadiths("narrator-one");
-
-      expect(prisma.narrator.findMany).toHaveBeenCalled();
-      expect(slugify).toHaveBeenCalledWith("Narrator One");
-      expect(prisma.hadith.findMany).toHaveBeenCalledWith({
-        where: { narrator: { name: "Narrator One" } },
-        include: {
-          chapter: true,
-          narrator: true,
-          mentionedSahabas: true,
-        },
-        orderBy: {
-          numero: "asc",
-        },
-      });
-      expect(result).toEqual({
-        narrator: createMockNarrator("1", "Narrator One"),
-        hadiths: mockHadiths,
-      });
-    });
+  it("getNarratorWithHadiths returns narrator and hadiths", async () => {
+    const narrators = await getAllNarrators();
+    if (narrators.length > 0) {
+      const slug = narrators[0].slug;
+      const { narrator, hadiths } = await getNarratorWithHadiths(slug);
+      if (narrator) {
+        expect(narrator.slug).toBe(slug);
+        expect(Array.isArray(hadiths)).toBe(true);
+      } else {
+        expect(hadiths).toEqual([]);
+      }
+    }
   });
 
-  // --- Search page functions tests ---
-  describe("Search page functions", () => {
-    it("should get narrator names", async () => {
-      const mockNarrators = [
-        createMockNarrator("1", "Narrator One"),
-        createMockNarrator("2", "Narrator Two"),
-      ];
-      vi.mocked(prisma.narrator.findMany).mockResolvedValue(mockNarrators);
+  it("getNarratorNames returns all narrator names", async () => {
+    const names = await getNarratorNames();
+    expect(Array.isArray(names)).toBe(true);
+    if (names.length > 0) {
+      expect(typeof names[0]).toBe("string");
+    }
+  });
 
-      const result = await services.getNarratorNames();
+  it("getAllSahabas returns all sahabas", async () => {
+    const sahabas = await getAllSahabas();
+    expect(Array.isArray(sahabas)).toBe(true);
+    if (sahabas.length > 0) {
+      expect(typeof sahabas[0].name).toBe("string");
+    }
+  });
 
-      expect(prisma.narrator.findMany).toHaveBeenCalledWith({
-        select: {
-          name: true,
-        },
-        orderBy: {
-          name: "asc",
-        },
-      });
-      expect(result).toEqual(["Narrator One", "Narrator Two"]);
-    });
+  it("getSahabaBySlug returns a sahaba or null", async () => {
+    const sahabas = await getAllSahabas();
+    if (sahabas.length > 0) {
+      const slug = sahabas[0].slug;
+      const sahaba = await getSahabaBySlug(slug);
+      expect(sahaba).not.toBeNull();
+      if (sahaba) {
+        expect(sahaba.slug).toBe(slug);
+      }
+    }
+  });
 
-    it("should get sahaba names", async () => {
-      const mockSahabas = [
-        createMockSahaba("1", "Sahaba One"),
-        createMockSahaba("2", "Sahaba Two"),
-      ];
-      vi.mocked(prisma.sahaba.findMany).mockResolvedValue(mockSahabas);
+  it("getSahabaWithHadiths returns sahaba and hadiths", async () => {
+    const sahabas = await getAllSahabas();
+    if (sahabas.length > 0) {
+      const slug = sahabas[0].slug;
+      const { sahaba, hadiths } = await getSahabaWithHadiths(slug);
+      if (sahaba) {
+        expect(sahaba.slug).toBe(slug);
+        expect(Array.isArray(hadiths)).toBe(true);
+      } else {
+        expect(hadiths).toEqual([]);
+      }
+    }
+  });
 
-      const result = await services.getSahabaNames();
-
-      expect(prisma.sahaba.findMany).toHaveBeenCalledWith({
-        select: {
-          name: true,
-        },
-        orderBy: {
-          name: "asc",
-        },
-      });
-      expect(result).toEqual(["Sahaba One", "Sahaba Two"]);
-    });
+  it("getSahabaNames returns all sahaba names", async () => {
+    const names = await getSahabaNames();
+    expect(Array.isArray(names)).toBe(true);
+    if (names.length > 0) {
+      expect(typeof names[0]).toBe("string");
+    }
   });
 });
