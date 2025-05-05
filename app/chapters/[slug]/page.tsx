@@ -8,7 +8,7 @@ import {
   getChapterWithHadiths,
 } from "@/src/services/services";
 import { BadgeNumberOfHadith } from "@/src/ui/BadgeNumberOfHadith";
-import { Hadith } from "@/src/ui/hadith/Hadith";
+import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 
 export type ParamsType = Promise<{ slug: string }>;
 

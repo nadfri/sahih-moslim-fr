@@ -8,7 +8,7 @@ import {
   getHadithByNumero,
   getHadithNumeros,
 } from "@/src/services/services";
-import { EditHadithForm } from "@/src/ui/hadith/EditHadithForm";
+import { EditHadithForm } from "@/src/ui/hadith/forms/EditHadithForm";
 
 export const metadata: Metadata = {
   title: "Modifier un hadith",

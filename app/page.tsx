@@ -1,7 +1,7 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 import { getAllHadiths } from "@/src/services/services";
 import { BadgeNumberOfHadith } from "@/src/ui/BadgeNumberOfHadith";
-import { Hadith } from "@/src/ui/hadith/Hadith";
+import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 
 export default async function Home() {
   const hadiths = await getAllHadiths();

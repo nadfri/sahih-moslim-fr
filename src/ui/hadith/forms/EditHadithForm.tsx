@@ -7,7 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { ChapterType, HadithType, PersonType } from "@/src/types/types";
-import { Hadith } from "@/src/ui/hadith/Hadith";
+import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { Input } from "@/src/ui/inputs/Input";
 import { MdTextArea } from "@/src/ui/inputs/MdTextArea";
 import { MultiSelect } from "@/src/ui/inputs/MultiSelect";
@@ -15,7 +15,7 @@ import { SearchSelect } from "@/src/ui/inputs/SearchSelect";
 import { Select } from "@/src/ui/inputs/Select";
 import { cleanArabicText } from "@/src/utils/cleanArabicText";
 import { replaceSWS } from "@/src/utils/replaceSWS";
-import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
+import { ConfirmDeleteModal } from "../ConfirmDeleteModal/ConfirmDeleteModal";
 
 const createEditHadithSchema = (
   existingNumeros: number[],

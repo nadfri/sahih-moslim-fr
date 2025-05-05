@@ -1,6 +1,6 @@
 import { HadithType } from "@/src/types/types";
 import { BadgeNumberOfHadith } from "@/src/ui/BadgeNumberOfHadith";
-import { Hadith } from "@/src/ui/hadith/Hadith";
+import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 
 type ListLayoutHadithProps = {
   title: string;
@@ -8,9 +8,6 @@ type ListLayoutHadithProps = {
   hadiths: HadithType[];
 };
 
-/**
- * Common layout component for displaying a list of hadiths with a title and count
- */
 export function ListLayoutHadith({
   title,
   name,

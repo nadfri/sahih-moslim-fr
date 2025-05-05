@@ -23,7 +23,6 @@ describe("ChaptersPage", () => {
       await screen.findByText("Chapitres de Sahih Muslim")
     ).toBeInTheDocument();
 
-    screen.debug(); // Log the current state of the DOM
     expect(await screen.findByText("Introduction")).toBeInTheDocument();
     expect(await screen.findByText("Faith")).toBeInTheDocument();
     expect(await screen.findByText("5 Hadiths")).toBeInTheDocument();

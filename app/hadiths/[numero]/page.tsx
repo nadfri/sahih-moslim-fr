@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getHadithByNumero } from "@/src/services/services";
-import { Hadith } from "../../../src/ui/hadith/Hadith";
+import { Hadith } from "../../../src/ui/hadith/Hadith/Hadith";
 
 export type ParamsType = Promise<{ numero: string }>;
 

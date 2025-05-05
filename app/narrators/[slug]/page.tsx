@@ -8,7 +8,7 @@ import {
   getNarratorBySlug,
   getNarratorWithHadiths,
 } from "@/src/services/services";
-import { ListLayoutHadith } from "@/src/ui/hadith/ListLayoutHadith";
+import { ListLayoutHadith } from "@/src/ui/hadith/ListLayoutHadith/ListLayoutHadith";
 
 export type ParamsType = Promise<{ slug: string }>;
 

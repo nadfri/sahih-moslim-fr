@@ -8,7 +8,7 @@ import { z } from "zod";
 
 import { ChapterType, HadithType, PersonType } from "@/src/types/types";
 /*UI*/
-import { Hadith } from "@/src/ui/hadith/Hadith";
+import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { Input } from "@/src/ui/inputs/Input";
 import { MdTextArea } from "@/src/ui/inputs/MdTextArea";
 import { MultiSelect } from "@/src/ui/inputs/MultiSelect";

@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 
 import { FilterType, HadithType } from "@/src/types/types";
 import { BadgeNumberOfHadith } from "@/src/ui/BadgeNumberOfHadith";
-import { Hadith } from "@/src/ui/hadith/Hadith";
+import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { MultiSelect } from "@/src/ui/inputs/MultiSelect";
 import { SearchSelect } from "@/src/ui/inputs/SearchSelect";
 

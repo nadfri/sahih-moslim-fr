@@ -42,39 +42,35 @@ describe("Hadith", () => {
     matn_fr: "Ceci est un **test** de hadith en français.",
     matn_ar: "هذا اختبار للحديث باللغة العربية",
     isnad: null,
-    chapterId: "ch1",
-    narratorId: "n1",
     chapter: {
       id: "ch1",
       title: "Test Chapter",
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      slug: "test-chapter",
+      hadithCount: 10,
     },
     narrator: {
       id: "n1",
       name: "Abu Test",
+      slug: "abu-test",
+      hadithCount: 5,
       nameArabic: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     },
     mentionedSahabas: [
       {
         id: "s1",
         name: "Sahaba Test 1",
+        slug: "sahaba-test-1",
+        hadithCount: 3,
         nameArabic: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         id: "s2",
         name: "Sahaba Test 2",
+        slug: "sahaba-test-2",
+        hadithCount: 0,
         nameArabic: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
       },
     ],
-    createdAt: new Date(),
-    updatedAt: new Date(),
   };
 
   // Set NODE_ENV to development for testing the edit link

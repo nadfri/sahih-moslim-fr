@@ -8,7 +8,7 @@ import {
   getAllSahabas,
   getHadithNumeros,
 } from "@/src/services/services";
-import { AddHadithForm } from "@/src/ui/hadith/AddHadithForm";
+import { AddHadithForm } from "@/src/ui/hadith/forms/AddHadithForm";
 
 export const metadata: Metadata = {
   title: "Ajouter un hadith",
