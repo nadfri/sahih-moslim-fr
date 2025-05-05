@@ -1,12 +1,12 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Check, Files } from "lucide-react";
+import { Check, Files, LinkIcon } from "lucide-react";
 
 import { useClickOutside } from "@/src/hooks/useClickOutside";
 import { HadithType } from "@/src/types/types";
 
-type CopyOption = "fr" | "ar" | "both";
+type CopyOption = "fr" | "ar" | "both" | "link";
 
 // Accept hadith as a prop
 export function CopyBoard({ hadith }: { hadith: HadithType }) {
@@ -40,6 +40,10 @@ export function CopyBoard({ hadith }: { hadith: HadithType }) {
         break;
       case "both":
         textToCopy = `${header}${frenchText}\n\n${arabicText}`;
+        break;
+      case "link":
+        // Copy the full absolute URL instead of a relative link
+        textToCopy = `${window.location.origin}/hadiths/${hadithNumber}`;
         break;
     }
 
@@ -80,21 +84,31 @@ export function CopyBoard({ hadith }: { hadith: HadithType }) {
         <div className="absolute z-50 bottom-0 right-0 bg-white rounded-md shadow-lg border border-emerald-100 flex flex-col min-w-fit overflow-hidden">
           <button
             onClick={() => handleCopy("fr")}
-            className="text-left px-3 py-2 text-sm text-emerald-700 bg-emerald-50 hover:bg-emerald-50 hover:text-emerald-800 transition-colors border-l-2 border-transparent hover:border-emerald-500"
+            className="text-left px-3 py-2 text-sm text-emerald-700 bg-emerald-50 transition-colors border-l-2 border-transparent hover:border-emerald-500"
           >
             Français
           </button>
           <button
             onClick={() => handleCopy("ar")}
-            className="text-left px-3 py-2 text-sm text-emerald-700 bg-emerald-100 hover:bg-emerald-100 hover:text-emerald-800 transition-colors border-l-2 border-transparent hover:border-emerald-500"
+            className="text-left px-3 py-2 text-sm text-emerald-700 bg-emerald-100 transition-colors border-l-2 border-transparent hover:border-emerald-500"
           >
             Arabe
           </button>
           <button
             onClick={() => handleCopy("both")}
-            className="text-left px-3 py-2 text-sm text-emerald-700 bg-emerald-200 hover:bg-emerald-100 hover:text-emerald-800 transition-colors border-l-2 border-transparent hover:border-emerald-500"
+            className="text-left px-3 py-2 text-sm text-emerald-700 bg-emerald-200 transition-colors border-l-2 border-transparent hover:border-emerald-500"
           >
             Les deux
+          </button>
+          <button
+            onClick={() => handleCopy("link")}
+            className="text-left px-3 py-2 text-sm text-emerald-700 bg-emerald-300/75 transition-colors border-l-2 border-transparent hover:border-emerald-500 inline-flex items-center gap-1.5"
+          >
+            Le lien
+            <LinkIcon
+              size={12}
+              aria-hidden="true"
+            />
           </button>
         </div>
       )}
