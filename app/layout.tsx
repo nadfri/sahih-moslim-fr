@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 
 import { amiriFont, geistMono, geistSans } from "@/src/fonts/fonts";
 
+import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 
+import { ToastContainer } from "react-toastify";
+
 import { SessionWrapper } from "@/src/authentification/SessionWrapper";
-import { Footer } from "../src/ui/Footer/Footer";
-import { Header } from "../src/ui/Header/Header";
+import { Footer } from "@/src/ui/Footer/Footer";
+import { Header } from "@/src/ui/Header/Header";
 
 export const metadata: Metadata = {
   title: "Sahih Moslim en français",
@@ -41,6 +44,14 @@ export default function RootLayout({
           </main>
           <Footer />
         </SessionWrapper>
+
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          closeOnClick
+          draggable
+          theme="colored"
+        />
       </body>
     </html>
   );

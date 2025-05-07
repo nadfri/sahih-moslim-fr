@@ -3,6 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --toastify-color-success: oklch(69.6% .17 162.48);
 }
 
 @theme inline {

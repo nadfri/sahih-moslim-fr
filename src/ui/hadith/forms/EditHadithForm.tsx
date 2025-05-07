@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { z } from "zod";
 
 import { ChapterType, HadithType, PersonType } from "@/src/types/types";
@@ -63,10 +64,6 @@ export function EditHadithForm({
   sahabasData,
 }: EditHadithFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
@@ -103,8 +100,8 @@ export function EditHadithForm({
   // Handle form submission for editing
   const onSubmit = async (data: HadithFormValues) => {
     setIsSubmitting(true);
-    setSubmitMessage(null);
 
+    // Find IDs corresponding to selected names/titles using props
     const selectedChapter = chaptersData.find((c) => c.title === data.chapter);
     const selectedNarrator = narratorsData.find(
       (n) => n.name === data.narrator
@@ -114,10 +111,7 @@ export function EditHadithForm({
     );
 
     if (!selectedChapter || !selectedNarrator) {
-      setSubmitMessage({
-        type: "error",
-        text: "Chapitre ou narrateur sélectionné invalide.",
-      });
+      toast.error("Chapitre ou narrateur sélectionné invalide.");
       setIsSubmitting(false);
       return;
     }
@@ -142,21 +136,12 @@ export function EditHadithForm({
       });
       const result = await response.json();
       if (response.ok) {
-        setSubmitMessage({
-          type: "success",
-          text: result.message || "Hadith modifié avec succès!",
-        });
+        toast.success("Hadith modifié avec succès!");
       } else {
-        setSubmitMessage({
-          type: "error",
-          text: result.message || "Une erreur est survenue",
-        });
+        toast.error(result.message);
       }
     } catch (error) {
-      setSubmitMessage({
-        type: "error",
-        text: "Erreur de connexion au serveur",
-      });
+      toast.error("Erreur de connexion au serveur");
       console.error("Erreur lors de la modification du hadith:", error);
     } finally {
       setIsSubmitting(false);
@@ -166,31 +151,19 @@ export function EditHadithForm({
   // Handle hadith deletion
   const handleDelete = async () => {
     setIsDeleting(true);
-    setSubmitMessage(null);
     try {
       const response = await fetch(`/api/hadiths/delete/${hadith.id}`, {
         method: "DELETE",
       });
       const result = await response.json();
       if (response.ok) {
-        setSubmitMessage({
-          type: "success",
-          text: result.message || "Hadith supprimé avec succès!",
-        });
-        setTimeout(() => {
-          router.push("/");
-        }, 1000);
+        toast.success("Hadith supprimé avec succès!");
+        router.push("/");
       } else {
-        setSubmitMessage({
-          type: "error",
-          text: result.message || "Erreur lors de la suppréssion",
-        });
+        toast.error(result.message || "Erreur lors de la suppréssion");
       }
     } catch (error) {
-      setSubmitMessage({
-        type: "error",
-        text: "Server connection error",
-      });
+      toast.error("Erreur de connexion au serveur");
       console.error("Erreur lors de la suppréssion:", error);
     } finally {
       setIsDeleting(false);
@@ -227,17 +200,6 @@ export function EditHadithForm({
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Server Message & Form */}
       <div className="bg-white rounded-xl shadow-lg p-6">
-        {submitMessage && (
-          <div
-            className={`mb-6 p-4 rounded-md ${
-              submitMessage.type === "success"
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
-            }`}
-          >
-            {submitMessage.text}
-          </div>
-        )}
         <form
           onSubmit={handleFormSubmit(onSubmit)}
           className="flex flex-col gap-4"

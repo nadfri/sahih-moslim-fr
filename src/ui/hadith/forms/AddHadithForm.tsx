@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { z } from "zod";
 
 import { ChapterType, HadithType, PersonType } from "@/src/types/types";
@@ -59,10 +60,6 @@ export function AddHadithForm({
     useState<number[]>(initialNumeros);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
 
   const hadithSchema = createHadithSchema(existingNumeros);
 
@@ -96,7 +93,6 @@ export function AddHadithForm({
 
   const onSubmit = async (data: HadithFormValues) => {
     setIsSubmitting(true);
-    setSubmitMessage(null);
 
     // Find IDs corresponding to selected names/titles using props
     const selectedChapter = chaptersData.find((c) => c.title === data.chapter);
@@ -108,10 +104,7 @@ export function AddHadithForm({
     );
 
     if (!selectedChapter || !selectedNarrator) {
-      setSubmitMessage({
-        type: "error",
-        text: "Chapitre ou narrateur sélectionné invalide.",
-      });
+      toast.error("Chapitre ou narrateur sélectionné invalide.");
       setIsSubmitting(false);
       return;
     }
@@ -138,10 +131,7 @@ export function AddHadithForm({
       const result = await response.json();
 
       if (response.ok) {
-        setSubmitMessage({
-          type: "success",
-          text: result.message || "Hadith ajouté avec succès!",
-        });
+        toast.success("Hadith ajouté avec succès!");
 
         // Update local state and reset form
         const newNumero = data.numero;
@@ -159,16 +149,10 @@ export function AddHadithForm({
           matn_ar: "",
         });
       } else {
-        setSubmitMessage({
-          type: "error",
-          text: result.message || "Une erreur est survenue",
-        });
+        toast.error(result.message || "Une erreur est survenue");
       }
     } catch (error) {
-      setSubmitMessage({
-        type: "error",
-        text: "Erreur de connexion au serveur",
-      });
+      toast.error("Erreur de connexion au serveur");
       console.error("Erreur lors de l'envoi du hadith:", error);
     } finally {
       setIsSubmitting(false);
@@ -204,21 +188,8 @@ export function AddHadithForm({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      {/* Server Message & Form */}
+      {/* Form */}
       <div className="bg-white rounded-xl shadow-lg p-6">
-        {/* ... (submitMessage rendering) ... */}
-        {submitMessage && (
-          <div
-            className={`mb-6 p-4 rounded-md ${
-              submitMessage.type === "success"
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
-            }`}
-          >
-            {submitMessage.text}
-          </div>
-        )}
-
         <form
           onSubmit={handleFormSubmit(onSubmit)}
           className="flex flex-col gap-4"
