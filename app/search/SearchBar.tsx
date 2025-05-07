@@ -85,7 +85,9 @@ export function SearchBar({
   narrators: string[];
   sahabas: string[];
 }) {
-  const searchParams = useSearchParams();
+  // Safely handle useSearchParams (can be null in test environments)
+  const rawSearchParams = useSearchParams();
+  const searchParams = rawSearchParams ?? new URLSearchParams();
 
   const initialValues = extractInitials(searchParams);
 
@@ -142,27 +144,39 @@ export function SearchBar({
           const params = new URLSearchParams();
           params.set("filterMode", filterMode);
 
+          // Determine sahabas list outside to use in filtering
+          let sahabasToUse: string[] = [];
+
           if (filterMode === "word" && query) {
             params.set("query", query);
           } else if (filterMode === "narrator" && narrator) {
-            params.set("query", narrator); // Use 'query' param for narrator value
-          } else if (filterMode === "sahaba" && selectedSahabas.length > 0) {
-            selectedSahabas.forEach(
-              (sahaba) => params.append("query", sahaba) // Use 'query' param for sahaba values
-            );
+            params.set("query", narrator);
+          } else if (filterMode === "sahaba") {
+            // Collect typed or selected sahabas
+            const inputEl = document.getElementById(
+              "sahaba-multiselect"
+            ) as HTMLInputElement | null;
+            const typed = inputEl?.value?.trim();
+            sahabasToUse =
+              selectedSahabas.length > 0
+                ? selectedSahabas
+                : typed
+                  ? [typed]
+                  : [];
+            sahabasToUse.forEach((sahaba) => params.append("query", sahaba));
           }
 
           // Update URL using pushState to avoid navigation
           const newUrl = `/search?${params.toString()}`;
           window.history.pushState(null, "", newUrl);
 
-          // Filter hadiths using the actual state values, not derived ones
+          // Filter hadiths using the actual state values
           setResults(
             filterHadiths(hadiths, {
               filterMode,
-              query: query, // Pass the actual query state for 'word' mode filtering
-              narrator: narrator, // Pass the actual narrator state for 'narrator' mode filtering
-              sahabas: selectedSahabas, // Pass the actual sahabas state for 'sahaba' mode filtering
+              query,
+              narrator,
+              sahabas: filterMode === "sahaba" ? sahabasToUse : selectedSahabas,
             })
           );
         }}

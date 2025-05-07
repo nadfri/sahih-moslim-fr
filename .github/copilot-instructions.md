@@ -3,6 +3,7 @@
 -comments are always in english!
 -for test, use vitest, vi, userEvent
 -use type, not interface
+-don't use type any
 -params are promised in NextJs 15:
 // Before
 type Params = { slug: string }
