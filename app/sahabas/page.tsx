@@ -1,13 +1,13 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 
 import { getAllSahabas } from "@/src/services/services";
-import { ListPage } from "@/src/ui/ListLayoutPage/ListLayoutPage";
+import { ListLayoutPage } from "@/src/ui/ListLayoutPage/ListLayoutPage";
 
 export default async function SahabasPage() {
   const sahabas = await getAllSahabas();
 
   return (
-    <ListPage
+    <ListLayoutPage
       title="Hadiths mentionnant des Compagnons"
       persons={sahabas}
       basePath="sahabas"

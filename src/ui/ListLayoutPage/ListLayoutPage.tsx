@@ -9,7 +9,7 @@ type ListPageProps = {
   basePath: "narrators" | "sahabas";
 };
 
-export function ListPage({ title, persons, basePath }: ListPageProps) {
+export function ListLayoutPage({ title, persons, basePath }: ListPageProps) {
   return (
     <div className="container mx-auto max-w-5xl">
       {/*Title*/}

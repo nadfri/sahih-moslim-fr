@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { PersonType } from "../../types/types";
-import { ListPage } from "./ListLayoutPage";
+import { ListLayoutPage } from "./ListLayoutPage";
 
 // Mock next/link to render a simple anchor
 vi.mock("next/link", () => ({
@@ -31,10 +31,10 @@ const persons: PersonType[] = [
   { id: "2", name: "Omar", slug: "omar", hadithCount: 5 },
 ];
 
-describe("ListPage", () => {
+describe("ListLayoutPage", () => {
   it("renders the title and all persons", () => {
     render(
-      <ListPage
+      <ListLayoutPage
         title="Test Title"
         persons={persons}
         basePath="narrators"
@@ -56,7 +56,7 @@ describe("ListPage", () => {
 
   it("renders correct links for each person", () => {
     render(
-      <ListPage
+      <ListLayoutPage
         title="Test"
         persons={persons}
         basePath="sahabas"
