@@ -8,10 +8,20 @@ export const prisma =
   new PrismaClient({
     datasources: {
       db: {
-        url: process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL,
+        url: process.env.DATABASE_URL,
       },
     },
   });
+
+// Log the actual database URL used by Prisma (for debug only)
+console.log(
+  "Prisma actual DB URL:",
+  (
+    prisma as PrismaClient & {
+      _engine_config?: { datasources?: { db?: { url?: string } } };
+    }
+  )._engine_config?.datasources?.db?.url || process.env.DATABASE_URL
+);
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;

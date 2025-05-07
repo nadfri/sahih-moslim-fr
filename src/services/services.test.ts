@@ -18,12 +18,6 @@ import {
   getSahabaWithHadiths,
 } from "./services";
 
-// Log the database URL used by Prisma for test visibility
-console.log(
-  "Prisma DB URL:",
-  process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL
-);
-
 describe("Service functions integration", () => {
   afterAll(async () => {
     await prisma.$disconnect();
