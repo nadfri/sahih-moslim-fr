@@ -45,10 +45,12 @@ export default [
       ],
     },
   },
-  ...compat.extends("plugin:@typescript-eslint/recommended", "prettier").map((config) => ({
-    ...config,
-    files: ["**/*.+(ts|tsx)"],
-  })),
+  ...compat
+    .extends("plugin:@typescript-eslint/recommended", "prettier")
+    .map((config) => ({
+      ...config,
+      files: ["**/*.+(ts|tsx)"],
+    })),
   {
     files: ["**/*.+(ts|tsx)"],
     plugins: {
@@ -70,4 +72,6 @@ export default [
       "@typescript-eslint/no-unused-vars": "warn", // Utiliser la version TypeScript
     },
   },
+  // Add ignore patterns for node_modules and .next
+  { ignores: ["node_modules/**", ".next/**", "coverage/**"] },
 ];
