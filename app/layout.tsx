@@ -39,7 +39,7 @@ export default function RootLayout({
       >
         <SessionWrapper>
           <Header />
-          <main className="bg-gradient-to-br from-emerald-50 via-stone-50 to-amber-50 py-4 px-2 md:px-8 flex-1">
+          <main className="bg-gradient-to-br from-emerald-50 via-stone-50 to-amber-50 py-4 px-2 md:px-8 flex-1 dark:from-emerald-900 dark:to-amber-900 dark:via-stone-900">
             {children}
           </main>
           <Footer />

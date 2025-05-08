@@ -3,10 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Menu, PlusIcon, X } from "lucide-react";
+import { Menu, PlusIcon, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 import { ButtonSignOut } from "../connexion/ButtonSignOut";
+import ThemeToggle from "../ThemeToggle/ThemeToggle";
+import { Logo } from "./Logo";
 
 // Navigation links
 const navLinks = [
@@ -30,97 +32,99 @@ export function Header() {
 
   return (
     <header className="bg-white text-emerald-800 shadow-sm sticky top-0 z-50">
-      {/* Added py-2 for consistent vertical padding */}
       <div className="flex justify-between items-center relative px-1 py-2">
         {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center md:items-start space-x-2 hover:text-emerald-600 transition-colors flex-shrink-0"
-          onClick={closeMobileMenu}
-        >
-          <BookOpen
-            className="text-emerald-600 group-hover:text-emerald-700 transition-colors h-8 w-8 md:h-22 md:w-22 flex-shrink-0" // Added flex-shrink-0 to icon
-            strokeWidth="1"
-          />
-          {/* Original title for mobile */}
-          <span className="text-xl font-bold font-serif md:hidden">
-            Sahih Muslim <span className="text-emerald-600">FR</span>
-          </span>
+        <Logo closeMobileMenu={closeMobileMenu} />
 
-          <div className="hidden md:flex md:flex-col md:leading-tight">
-            <span className="text-xl font-bold font-serif">Sahih</span>
-            <span className="text-xl font-bold font-serif">Muslim</span>
-            <span className="text-xl font-bold font-serif text-emerald-600">
-              FR
-            </span>
-          </div>
-        </Link>
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-4">
+          <nav className="mr-2">
+            <ul className="flex gap-5 items-center">
+              {navLinks.map((link) => {
+                const href = link.href;
+                const isActive =
+                  link.href === "/"
+                    ? pathname === "/"
+                    : pathname.startsWith(link.href);
+                return (
+                  <li key={link.href}>
+                    <Link
+                      href={href}
+                      className={`
+                        text-base font-medium transition-colors pb-1
+                        ${
+                          isActive
+                            ? "text-emerald-700 font-semibold border-b-2 border-emerald-500"
+                            : "text-gray-600 hover:text-emerald-700 border-b-2 border-transparent hover:border-emerald-500/30"
+                        }
+                      `}
+                      aria-current={isActive ? "page" : undefined}
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                );
+              })}
 
-        <nav className="hidden md:block ml-4 mr-2">
-          <ul className="flex gap-5 items-center">
-            {navLinks.map((link) => {
-              const href = link.href;
-              const isActive =
-                link.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(link.href);
-              return (
-                <li key={link.href}>
+              {/* Sign in button - only visible when not authenticated */}
+              {!isAuthenticated && (
+                <li>
                   <Link
-                    href={href}
-                    className={`
-                      text-base font-medium transition-colors pb-1
-                      ${
-                        isActive
-                          ? "text-emerald-700 font-semibold border-b-2 border-emerald-500"
-                          : "text-gray-600 hover:text-emerald-700 border-b-2 border-transparent hover:border-emerald-500/30"
-                      }
-                    `}
-                    aria-current={isActive ? "page" : undefined}
+                    href="/connexion"
+                    className="text-base font-medium text-gray-600 hover:text-emerald-700 transition-colors pb-1"
                   >
-                    {link.label}
+                    Connexion
                   </Link>
                 </li>
-              );
-            })}
+              )}
 
-            {/* Add button - only visible in development mode */}
-            {isDev && (
-              <li>
-                <Link
-                  href="/hadiths/add"
-                  className="flex items-center gap-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-800 px-3 py-1.5 rounded-md transition-colors"
-                >
-                  <PlusIcon className="h-4 w-4" />
-                  <span>Ajouter</span>
-                </Link>
-              </li>
-            )}
+              {/* Add button - only visible in development mode */}
+              {isDev && (
+                <li>
+                  <Link
+                    href="/hadiths/add"
+                    className="flex items-center gap-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-800 px-3 py-1.5 rounded-md transition-colors"
+                  >
+                    <PlusIcon className="h-4 w-4" />
+                    <span>Ajouter</span>
+                  </Link>
+                </li>
+              )}
 
-            {/* Sign out button - only visible when authenticated and in development mode */}
-            {isAuthenticated && isDev && (
-              <li>
-                <ButtonSignOut />
-              </li>
-            )}
-          </ul>
-        </nav>
-        {/* Hamburger button */}
-        <div className="md:hidden">
-          <button
-            onClick={toggleMobileMenu}
-            aria-label="Ouvrir le menu principal"
-            aria-expanded={isMobileMenuOpen}
-            className="text-emerald-700 hover:text-emerald-900 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1"
-          >
-            {isMobileMenuOpen ? (
-              <X className="h-8" />
-            ) : (
-              <Menu className="h-8" />
-            )}
-          </button>
+              {/* Sign out button - only visible when authenticated */}
+              {isAuthenticated && (
+                <li>
+                  <ButtonSignOut />
+                </li>
+              )}
+            </ul>
+          </nav>
+        </div>
+
+        {/* Right side container with theme toggle and mobile menu button */}
+        <div className="flex items-center gap-2">
+          {/* Theme toggle - visible on all screen sizes */}
+          <ThemeToggle />
+
+          {/* Mobile Hamburger button */}
+          <div className="block md:hidden">
+            <button
+              onClick={toggleMobileMenu}
+              aria-label="Ouvrir le menu principal"
+              aria-expanded={isMobileMenuOpen}
+              className="text-emerald-700 hover:text-emerald-900 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1"
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-8" />
+              ) : (
+                <Menu className="h-8" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Mobile Menu */}
       <div
         className={`
           overflow-hidden md:hidden transition-[max-height] duration-300 ease-in-out bg-white

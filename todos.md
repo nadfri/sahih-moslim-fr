@@ -1,45 +1,60 @@
 # Sahih Muslim Website Project - TODO List
 
-## Core Development Tasks
+## Core Features
 
-- [ ] **Theme Implementation**
-  - [ ] Design and implement dark theme
-  - [ ] Save user theme preference in local storage
+### Theme
 
-- [ ] **Testing**
-  - [ ] **Slug Page Testing**
-    - [ ] Create unit tests for slug page component
-    - [ ] Test proper data fetching and rendering
-    - [ ] Test error handling for invalid slugs
-    - [ ] Verify proper metadata generation
-    ```typescript
-    // Example test structure for slug page
-    import { render, screen } from '@testing-library/react'
-    import { vi } from 'vitest'
-    import { use } from 'react'
-    import SlugPage from '@/app/[slug]/page'
-    
-    vi.mock('react', async () => {
-      const actual = await vi.importActual('react')
-      return {
-        ...actual,
-        use: vi.fn(promise => promise)
-      }
-    })
-    
-    describe('SlugPage', () => {
-      // Tests will go here
-    })
-    ```
-  
-  - [ ] **Form Testing**
-    - [ ] Test form validation
-    - [ ] Test form submission
-    - [ ] Test error state handling
-    - [ ] Test success state and redirects
+- [ ] Design and implement dark theme
+- [ ] Save user theme preference in local storage
 
-## Additional Tasks
+### Homepage
 
-- [ ] Optimize performance
+- [ ] Add Sahih Muslim Description
+  - [ ] Create concise overview of Sahih Muslim collection
+  - [ ] Add historical context and importance
+  - [ ] Include information about Imam Muslim (compiler)
+  - [ ] Ensure content is accurate and well-referenced
+
+### Pagination
+
+- [ ] Create pagination component for hadith listings
+- [ ] Add page size selector (10/25/50 per page)
+- [ ] Implement page navigation controls
+- [ ] Ensure accessible keyboard navigation
+- [ ] Add proper aria attributes for screen readers
+
+## Footer
+
+- [ ] Design responsive footer layout
+- [ ] Add copyright information and current year
+- [ ] Include attribution for Sahih Muslim sources
+- [ ] Create "About" section with project information
+- [ ] Add contact information or feedback form
+- [ ] Implement social media links (if applicable)
+- [ ] Ensure proper accessibility for all footer elements
+- [ ] Add language selection dropdown (for i18n support)
+
+## Testing
+
+### Slug Page
+
+- [ ] Create unit tests for slug page component
+- [ ] Test proper data fetching and rendering
+- [ ] Test error handling for invalid slugs
+- [ ] Verify proper metadata generation
+
+### Forms
+
+- [ ] Test form validation
+- [ ] Test form submission
+- [ ] Test error state handling
+- [ ] Test success state and redirects
+
+## Internationalization & Performance
+
 - [ ] Implement internationalization (i18n)
+- [ ] Optimize performance
+
+## Documentation
+
 - [ ] Add comprehensive documentation
