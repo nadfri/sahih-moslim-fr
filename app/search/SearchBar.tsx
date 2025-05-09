@@ -275,7 +275,7 @@ export function SearchBar({
 
           <button
             type="submit"
-            className="w-full sm:w-auto p-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+            className="w-full sm:w-auto p-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition focus:outline-none focus:ring-2  focus:ring-emerald-500 dark:bg-emerald-700 dark:hover:bg-emerald-800 dark:focus:ring-emerald-600"
           >
             Rechercher
           </button>

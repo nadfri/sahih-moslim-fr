@@ -7,6 +7,7 @@ import { ButtonSignOut } from "./ButtonSignOut";
 // Mock next-auth/react
 vi.mock("next-auth/react", () => ({
   signOut: vi.fn(),
+  useSession: () => ({ status: "authenticated" }), // Mock useSession
 }));
 
 describe("ButtonSignOut", () => {
