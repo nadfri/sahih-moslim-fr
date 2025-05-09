@@ -1,0 +1,47 @@
+import Link from "next/link";
+import { BookOpenText, MoveRight } from "lucide-react";
+
+import { ChapterType } from "@/src/types/types";
+
+type Props = {
+  chapter: ChapterType;
+  index: number;
+};
+
+export function ChapterCard({ chapter, index }: Props) {
+  return (
+    <Link
+      href={`/chapters/${chapter.slug}`}
+      key={chapter.title}
+      className="group block h-full"
+    >
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden h-full flex flex-col p-6 transition-all duration-300 ease-in-out border border-transparent group-hover:shadow-xl group-hover:border-emerald-300 dark:group-hover:border-emerald-700 group-hover:-translate-y-1">
+        {/* Main card content */}
+        <div className="flex-grow">
+          {/* Styled chapter number */}
+          <span className="inline-block bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+            Chapitre {index + 1}
+          </span>
+
+          {/* Chapter title */}
+          <h2 className="text-xl font-semibold font-serif text-emerald-700 dark:text-emerald-500 mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+            {chapter.title}
+          </h2>
+
+          <p className="text-xs inline-flex items-center font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md px-2 py-0.5">
+            <BookOpenText className="h-3 w-3 mr-1" />
+            {chapter.hadithCount} Hadiths
+          </p>
+        </div>
+
+        {/* Navigation indicator (appears more clearly on hover) */}
+        <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
+          <p className="text-sm font-medium text-emerald-600 dark:text-emerald-500 flex items-center group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+            Explorer
+            <MoveRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+          </p>
+        </div>
+      </div>
+    </Link>
+  );
+}

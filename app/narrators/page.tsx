@@ -1,13 +1,13 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 
 import { getAllNarrators } from "@/src/services/services";
-import { ListLayoutPage } from "@/src/ui/ListLayoutPage/ListLayoutPage";
+import { ListLayoutPerson } from "@/src/ui/ListLayoutPerson/ListLayoutPerson";
 
 export default async function NarratorsPage() {
   const narrators = await getAllNarrators();
 
   return (
-    <ListLayoutPage
+    <ListLayoutPerson
       title="Narrateurs des Hadiths"
       persons={narrators}
       basePath="narrators"

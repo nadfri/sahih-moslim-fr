@@ -9,7 +9,7 @@ type ListPageProps = {
   basePath: "narrators" | "sahabas";
 };
 
-export function ListLayoutPage({ title, persons, basePath }: ListPageProps) {
+export function ListLayoutPerson({ title, persons, basePath }: ListPageProps) {
   return (
     <div className="container mx-auto max-w-5xl">
       {/*Title*/}
@@ -25,23 +25,23 @@ export function ListLayoutPage({ title, persons, basePath }: ListPageProps) {
             className="group block h-full"
           >
             {/* Card Content */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden h-full flex flex-col p-6 transition-all duration-300 ease-in-out border border-transparent group-hover:shadow-xl group-hover:border-emerald-300 group-hover:-translate-y-1">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden h-full flex flex-col p-6 transition-all duration-300 ease-in-out border border-transparent group-hover:shadow-xl group-hover:border-emerald-300 dark:group-hover:border-emerald-700 group-hover:-translate-y-1">
               <div className="flex-grow">
                 {/* Name */}
-                <h2 className="text-xl font-semibold font-serif text-emerald-700 mb-2 group-hover:text-emerald-600 transition-colors">
+                <h2 className="text-xl font-semibold font-serif text-emerald-700 dark:text-emerald-500 mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                   {person.name}
                 </h2>
 
                 {/* Hadith Count */}
-                <p className="text-xs inline-flex items-center font-medium bg-gray-100 text-gray-600 rounded-md px-2 py-0.5">
+                <p className="text-xs inline-flex items-center font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md px-2 py-0.5">
                   <BookOpenText className="h-3 w-3 mr-1" />
                   {person.hadithCount} Hadiths
                 </p>
               </div>
 
               {/* Navigation Indicator */}
-              <div className="mt-4 pt-3 border-t border-gray-100">
-                <p className="text-sm font-medium text-emerald-600 flex items-center group-hover:text-emerald-700 transition-colors">
+              <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
+                <p className="text-sm font-medium text-emerald-600 dark:text-emerald-500 flex items-center group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
                   Explorer
                   <MoveRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
                 </p>

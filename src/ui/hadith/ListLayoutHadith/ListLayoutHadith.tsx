@@ -17,7 +17,7 @@ export function ListLayoutHadith({
     <>
       <h1 className="title">
         {title}{" "}
-        <span className="text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded">
+        <span className="text-emerald-900 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/70 px-2 py-0.5 rounded">
           {name}
         </span>
       </h1>
