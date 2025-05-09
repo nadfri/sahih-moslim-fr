@@ -36,7 +36,6 @@ export function SearchSelect({
     option.toLowerCase().includes(inputValue.toLowerCase())
   );
 
-  // Simplification: Retiré useCallback car cette fonction n'est pas transmise à des enfants
   const handleSelectOption = (option: string) => {
     if (options.includes(option)) {
       onChange(option);
@@ -53,14 +52,12 @@ export function SearchSelect({
     }
   };
 
-  // Simplification: Retiré useCallback car cette fonction n'est pas transmise à des enfants
   const handleClear = () => {
     onChange("");
     setInputValue("");
     inputRef.current?.focus();
   };
 
-  // On garde useCallback ici car cette fonction est utilisée dans un useEffect
   const handleClose = useCallback(() => {
     setIsOpen(false);
     if (options.includes(inputValue)) {
@@ -100,7 +97,7 @@ export function SearchSelect({
       {showLabel && (
         <label
           htmlFor={id}
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
         >
           {label}
         </label>
@@ -111,10 +108,10 @@ export function SearchSelect({
         className="relative"
       >
         <div
-          className={`flex items-center border rounded-md bg-white ${
+          className={`flex items-center border rounded-md ${
             error
               ? "border-red-500 focus-within:ring-red-500 focus-within:border-red-500"
-              : "border-gray-300 focus-within:ring-emerald-600 focus-within:border-emerald-600"
+              : "border-gray-300 dark:border-gray-700 focus-within:ring-emerald-600 focus-within:border-emerald-600"
           } focus-within:ring-1`}
         >
           <input
@@ -122,7 +119,9 @@ export function SearchSelect({
             id={id}
             type="text"
             className={`w-full p-2 border-none rounded-l-md focus:ring-0 focus:outline-none ${
-              error ? "bg-red-50" : "bg-white"
+              error
+                ? "bg-red-50 dark:bg-red-950/30"
+                : "bg-white dark:bg-gray-800 dark:text-gray-200"
             }`}
             placeholder={placeholder}
             value={inputValue}
@@ -137,7 +136,7 @@ export function SearchSelect({
           {inputValue && (
             <button
               type="button"
-              className="p-2 text-gray-500 hover:text-red-700"
+              className="p-2 text-gray-500 dark:text-gray-400 hover:text-red-700 dark:hover:text-red-500"
               onClick={handleClear}
               aria-label="Effacer"
               tabIndex={-1}
@@ -147,8 +146,10 @@ export function SearchSelect({
           )}
           <button
             type="button"
-            className={`p-2 text-gray-500 hover:text-emerald-700 rounded-r-md border-none ${
-              error ? "bg-red-50" : "bg-white"
+            className={`p-2 text-gray-500 dark:text-gray-400 hover:text-emerald-700 dark:hover:text-emerald-500 rounded-r-md border-none ${
+              error
+                ? "bg-red-50 dark:bg-red-950/30"
+                : "bg-white dark:bg-gray-800"
             }`}
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => setIsOpen(!isOpen)}
@@ -166,7 +167,7 @@ export function SearchSelect({
         {isOpen && (
           <ul
             id={listboxId}
-            className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white border border-gray-300 rounded-md shadow-lg"
+            className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-lg"
             role="listbox"
             aria-label={label}
             onMouseDown={(e) => e.preventDefault()}
@@ -176,9 +177,11 @@ export function SearchSelect({
                 <li
                   key={option}
                   id={`${id}-option-${option.replace(/\s+/g, "-")}`}
-                  className={`p-2 cursor-pointer hover:bg-emerald-100 ${
-                    value === option ? "bg-emerald-50 font-medium" : ""
-                  }`}
+                  className={`p-2 cursor-pointer hover:bg-emerald-100 dark:hover:bg-emerald-900/50 ${
+                    value === option
+                      ? "bg-emerald-50 dark:bg-emerald-950/60 font-medium"
+                      : ""
+                  } dark:text-gray-200`}
                   onMouseDown={() => handleSelectOption(option)}
                   role="option"
                   aria-selected={value === option}
@@ -188,7 +191,7 @@ export function SearchSelect({
               ))
             ) : (
               <li
-                className="p-2 text-gray-500 italic"
+                className="p-2 text-gray-500 dark:text-gray-400 italic"
                 role="option"
                 aria-selected="false"
                 aria-disabled="true"
@@ -200,7 +203,9 @@ export function SearchSelect({
         )}
 
         {error && errorMessage && (
-          <p className="mt-1 text-sm text-red-600">{errorMessage}</p>
+          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+            {errorMessage}
+          </p>
         )}
 
         {name && (

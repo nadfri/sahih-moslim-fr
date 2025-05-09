@@ -186,8 +186,8 @@ export function SearchBar({
           <label
             className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
               filterMode === "word"
-                ? "bg-emerald-100 border-emerald-300 text-emerald-600 font-medium"
-                : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                ? "bg-emerald-100 dark:bg-emerald-900/50 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 font-medium"
+                : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
             }`}
           >
             <input
@@ -203,8 +203,8 @@ export function SearchBar({
           <label
             className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
               filterMode === "narrator"
-                ? "bg-emerald-100 border-emerald-300 text-emerald-600 font-medium"
-                : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                ? "bg-emerald-100 dark:bg-emerald-900/50 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 font-medium"
+                : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
             }`}
           >
             <input
@@ -220,8 +220,8 @@ export function SearchBar({
           <label
             className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
               filterMode === "sahaba"
-                ? "bg-emerald-100 border-emerald-300 text-emerald-600 font-medium"
-                : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                ? "bg-emerald-100 dark:bg-emerald-900/50 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 font-medium"
+                : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
             }`}
           >
             <input
@@ -244,8 +244,8 @@ export function SearchBar({
                 name="queryInput"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Rechercher par mot (3 lettres min)..." // Updated placeholder
-                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-emerald-600 focus:border-emerald-600 bg-white"
+                placeholder="Rechercher par mot (3 lettres min)..."
+                className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-1 focus:ring-emerald-600 dark:focus:ring-emerald-500 focus:border-emerald-600 dark:focus:border-emerald-600 bg-white dark:bg-gray-800 dark:text-gray-200"
                 autoFocus
               />
             )}

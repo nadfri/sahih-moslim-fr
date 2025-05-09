@@ -63,7 +63,7 @@ export function MultiSelect({
       {showLabel && (
         <label
           htmlFor={id}
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
         >
           {label}
         </label>
@@ -76,8 +76,8 @@ export function MultiSelect({
         <div
           className={`flex items-center w-full border rounded-md ${
             error
-              ? "border-red-500 bg-red-50 focus-within:ring-red-500 focus-within:border-red-500"
-              : "border-gray-300 focus-within:ring-emerald-600 focus-within:border-emerald-600 bg-white"
+              ? "border-red-500 bg-red-50 dark:bg-red-950/30 focus-within:ring-red-500 focus-within:border-red-500"
+              : "border-gray-300 dark:border-gray-700 focus-within:ring-emerald-600 focus-within:border-emerald-600 bg-white dark:bg-gray-800"
           } focus-within:ring-1`}
           onClick={() => !isOpen && setIsOpen(true)}
         >
@@ -85,7 +85,7 @@ export function MultiSelect({
             {selected.map((item) => (
               <div
                 key={item}
-                className="inline-flex items-center bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded text-sm"
+                className="inline-flex items-center bg-emerald-50 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded text-sm"
               >
                 <span>{item}</span>
                 <button
@@ -94,7 +94,7 @@ export function MultiSelect({
                     e.stopPropagation();
                     handleRemove(item);
                   }}
-                  className="ml-1 text-emerald-600 hover:text-emerald-800 focus:outline-none"
+                  className="ml-1 text-emerald-600 dark:text-emerald-500 hover:text-emerald-800 dark:hover:text-emerald-300 focus:outline-none"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -105,7 +105,9 @@ export function MultiSelect({
               id={id}
               type="text"
               className={`flex-grow p-0.5 border-none focus:ring-0 focus:outline-none min-w-[100px] ${
-                error ? "bg-red-50" : "bg-white"
+                error
+                  ? "bg-red-50 dark:bg-red-950/30"
+                  : "bg-white dark:bg-gray-800 dark:text-gray-200"
               }`}
               placeholder={selected.length === 0 ? placeholder : ""}
               value={searchTerm}
@@ -117,8 +119,10 @@ export function MultiSelect({
 
           <button
             type="button"
-            className={`p-2 text-gray-500 hover:text-emerald-700 rounded-r-md border-none ${
-              error ? "bg-red-50" : "bg-white"
+            className={`p-2 text-gray-500 dark:text-gray-400 hover:text-emerald-700 dark:hover:text-emerald-500 rounded-r-md border-none ${
+              error
+                ? "bg-red-50 dark:bg-red-950/30"
+                : "bg-white dark:bg-gray-800"
             }`}
             onMouseDown={(e) => e.preventDefault()}
             onClick={(e) => {
@@ -138,21 +142,21 @@ export function MultiSelect({
 
         {isOpen && (
           <ul
-            className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white border border-gray-300 rounded-md shadow-lg"
+            className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-lg"
             onMouseDown={(e) => e.preventDefault()}
           >
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <li
                   key={option}
-                  className="p-2 cursor-pointer hover:bg-emerald-100"
+                  className="p-2 cursor-pointer hover:bg-emerald-100 dark:hover:bg-emerald-900/50 dark:text-gray-200"
                   onMouseDown={() => handleSelect(option)}
                 >
                   {option}
                 </li>
               ))
             ) : (
-              <li className="p-2 text-gray-500">
+              <li className="p-2 text-gray-500 dark:text-gray-400">
                 {searchTerm
                   ? "Aucun résultat trouvé"
                   : "Toutes les options sont sélectionnées"}
@@ -162,7 +166,9 @@ export function MultiSelect({
         )}
 
         {error && errorMessage && (
-          <p className="mt-1 text-sm text-red-600">{errorMessage}</p>
+          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+            {errorMessage}
+          </p>
         )}
 
         {name &&

@@ -189,12 +189,12 @@ export function AddHadithForm({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Form */}
-      <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
         <form
           onSubmit={handleFormSubmit(onSubmit)}
           className="flex flex-col gap-4"
         >
-          {/* ID -> Numero */}
+          {/* Numero */}
           <Input
             id="numero"
             label="Numero*"
@@ -240,9 +240,9 @@ export function AddHadithForm({
             )}
           />
 
-          {/* Sahabas -> mentionedSahabas */}
+          {/* MentionedSahabas */}
           <Controller
-            name="mentionedSahabas" // Updated name to match schema
+            name="mentionedSahabas"
             control={control}
             render={({ field }) => (
               <MultiSelect
@@ -313,7 +313,7 @@ export function AddHadithForm({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:bg-emerald-300 disabled:cursor-not-allowed mt-2"
+            className="w-full bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:bg-emerald-300 disabled:dark:bg-emerald-800/50 disabled:cursor-not-allowed mt-2"
           >
             {isSubmitting ? "Ajout en cours..." : "Ajouter le hadith"}
           </button>
@@ -322,7 +322,7 @@ export function AddHadithForm({
 
       {/* Preview Section */}
       <div className="rounded-xl">
-        <div className="bg-gray-100 rounded-lg p-1">
+        <div className="bg-gray-100 dark:bg-gray-900 rounded-lg p-1">
           <Hadith
             hadith={previewHadith}
             update

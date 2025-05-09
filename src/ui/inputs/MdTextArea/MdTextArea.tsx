@@ -33,7 +33,7 @@ export function MdTextArea<T extends FieldValues>({
     <div className="w-full">
       <label
         htmlFor={id}
-        className="block text-sm font-medium text-gray-700 mb-1"
+        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
       >
         {label}
       </label>
@@ -43,11 +43,10 @@ export function MdTextArea<T extends FieldValues>({
             ? "ring-2 ring-red-500"
             : isFocused
               ? "ring-2 ring-blue-500"
-              : "ring-1 ring-gray-300"
+              : "ring-1 ring-gray-300 dark:ring-gray-700"
         }`}
       >
         <div
-          data-color-mode="light"
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
         >
@@ -76,7 +75,9 @@ export function MdTextArea<T extends FieldValues>({
         </div>
       </div>
       {error && errorMessage && (
-        <p className="mt-1 text-sm text-red-600">{errorMessage}</p>
+        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+          {errorMessage}
+        </p>
       )}
     </div>
   );
