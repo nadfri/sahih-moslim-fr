@@ -30,7 +30,7 @@ button {
 }
 
 .title {
-  @apply text-2xl md:text-4xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight dark:text-emerald-600;
+  @apply text-2xl md:text-4xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-12 tracking-tight dark:text-emerald-500;
 }
 
 /* Md Editor */

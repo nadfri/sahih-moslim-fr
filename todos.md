@@ -2,18 +2,6 @@
 
 ## Core Features
 
-### Theme
-
-- [ ] Design and implement dark theme
-- [ ] Save user theme preference in local storage
-
-### Homepage
-
-- [ ] Add Sahih Muslim Description
-  - [ ] Create concise overview of Sahih Muslim collection
-  - [ ] Add historical context and importance
-  - [ ] Include information about Imam Muslim (compiler)
-  - [ ] Ensure content is accurate and well-referenced
 
 ### Pagination
 
@@ -22,6 +10,10 @@
 - [ ] Implement page navigation controls
 - [ ] Ensure accessible keyboard navigation
 - [ ] Add proper aria attributes for screen readers
+
+### UI Improvements
+
+- [ ] Add a SearchBar to chapters, narrators, and sahabas pages
 
 ## Footer
 
