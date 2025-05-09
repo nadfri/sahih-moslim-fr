@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Header } from "./Header";
@@ -52,6 +53,25 @@ describe("Header", () => {
     expect(searchLinks.length).toBeGreaterThan(0);
   });
 
+  it("highlights the active link based on current pathname", () => {
+    // Set pathname to a specific route
+    mockPathname.mockReturnValue("/chapters");
+
+    render(<Header />);
+
+    // Get all chapter links
+    const chaptersLinks = screen.getAllByRole("link", { name: /chapitres/i });
+
+    // At least one of the chapters links should have an active class or attribute
+    const hasActiveChapterLink = chaptersLinks.some(
+      (link) =>
+        link.classList.contains("active") ||
+        link.getAttribute("aria-current") === "page"
+    );
+
+    expect(hasActiveChapterLink).toBeTruthy();
+  });
+
   it("shows 'Ajouter' link in development mode", () => {
     // Set NODE_ENV to development
     vi.stubEnv("NODE_ENV", "development");
@@ -91,5 +111,31 @@ describe("Header", () => {
     // we'll check if there's any button element present when user is authenticated
     const buttons = screen.getAllByRole("button");
     expect(buttons.length).toBeGreaterThan(0);
+  });
+
+  it("toggles mobile menu when hamburger button is clicked", async () => {
+    const user = userEvent.setup();
+
+    render(<Header />);
+
+    // Find the hamburger button with the correct aria-label
+    const hamburgerButton = screen.getByRole("button", {
+      name: /ouvrir le menu/i,
+    });
+
+    // Since we can't easily check CSS classes with RTL directly,
+    // we'll look at the aria-expanded attribute which should reflect the menu state
+    expect(hamburgerButton).toHaveAttribute("aria-expanded", "false");
+
+    // Click the hamburger button
+    await user.click(hamburgerButton);
+
+    // After clicking, the aria-expanded attribute should be true
+    expect(hamburgerButton).toHaveAttribute("aria-expanded", "true");
+
+    // We can also check that menu items are visible after clicking
+    // For example, let's check if the mobile menu links are visible
+    const mobileMenuLinks = screen.getAllByRole("link");
+    expect(mobileMenuLinks.length).toBeGreaterThan(5); // There should be several links visible
   });
 });
