@@ -97,7 +97,7 @@ export function SearchSelect({
       {showLabel && (
         <label
           htmlFor={id}
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-300 sr-only"
         >
           {label}
         </label>
@@ -110,8 +110,8 @@ export function SearchSelect({
         <div
           className={`flex items-center border rounded-md ${
             error
-              ? "border-red-500 focus-within:ring-red-500 focus-within:border-red-500"
-              : "border-gray-300 dark:border-gray-700 focus-within:ring-emerald-600 focus-within:border-emerald-600"
+              ? "border-red-500 focus-within:ring-red-500 focus-within:border-red-500 bg-red-50 dark:bg-red-950/30"
+              : "border-gray-300 dark:border-gray-700 focus-within:ring-emerald-600 focus-within:border-emerald-600 bg-white dark:bg-gray-800"
           } focus-within:ring-1`}
         >
           <input
