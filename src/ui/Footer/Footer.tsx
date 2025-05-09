@@ -4,18 +4,18 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-50 border-t border-gray-200">
+    <footer className="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
       <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="text-center text-sm text-gray-600">
+        <div className="text-center text-sm text-gray-600 dark:text-gray-400">
           <p>
             © {currentYear}{" "}
-            <span className="font-semibold text-emerald-800">
+            <span className="font-semibold text-emerald-800 dark:text-emerald-500">
               Sahih Muslim FR
             </span>
             . Tous droits réservés.
           </p>
 
-          <p className="mt-2 text-xs text-gray-500">
+          <p className="mt-2 text-xs text-gray-500 dark:text-gray-500">
             Faciliter l'accès aux enseignements authentiques rapportés par
             l'Imam Muslim.
           </p>
@@ -25,29 +25,29 @@ export function Footer() {
               <li>
                 <Link
                   href="/about"
-                  className="text-gray-500 hover:text-emerald-700 transition-colors"
+                  className="text-gray-500 dark:text-gray-400 hover:text-emerald-700 dark:hover:text-emerald-500 transition-colors"
                 >
                   À Propos
                 </Link>
               </li>
               <li>
-                <span className="text-gray-300">|</span>
+                <span className="text-gray-300 dark:text-gray-700">|</span>
               </li>
               <li>
                 <Link
                   href="/contact"
-                  className="text-gray-500 hover:text-emerald-700 transition-colors"
+                  className="text-gray-500 dark:text-gray-400 hover:text-emerald-700 dark:hover:text-emerald-500 transition-colors"
                 >
                   Contact
                 </Link>
               </li>
               <li>
-                <span className="text-gray-300">|</span>
+                <span className="text-gray-300 dark:text-gray-700">|</span>
               </li>
               <li>
                 <Link
                   href="/confidentialite"
-                  className="text-gray-500 hover:text-emerald-700 transition-colors"
+                  className="text-gray-500 dark:text-gray-400 hover:text-emerald-700 dark:hover:text-emerald-500 transition-colors"
                 >
                   Politique de confidentialité
                 </Link>

@@ -61,7 +61,7 @@ export function CopyBoard({ hadith }: { hadith: HadithType }) {
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center gap-1.5 text-sm font-medium bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-md hover:bg-emerald-100 hover:text-emerald-700 transition-all duration-200"
+        className="inline-flex items-center gap-1.5 text-sm font-medium bg-emerald-50 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 px-3 py-1.5 rounded-md hover:bg-emerald-100 dark:hover:bg-emerald-800/60 hover:text-emerald-700 dark:hover:text-emerald-300 transition-all duration-200"
         title="Copier le hadith"
         aria-label="Copier le contenu du hadith"
         aria-expanded={isOpen}
@@ -82,28 +82,28 @@ export function CopyBoard({ hadith }: { hadith: HadithType }) {
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 bottom-0 right-0 bg-white rounded-md shadow-lg border border-emerald-100 flex flex-col min-w-fit overflow-hidden">
+        <div className="absolute z-50 bottom-0 right-0 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-emerald-100 dark:border-emerald-900 flex flex-col min-w-fit overflow-hidden">
           <button
             onClick={() => handleCopy("fr")}
-            className="text-left px-3 py-2 text-sm text-emerald-700 bg-emerald-50 transition-colors border-l-2 border-transparent hover:border-emerald-500"
+            className="text-left px-3 py-2 text-sm text-emerald-700 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-950/70 transition-colors border-l-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-600"
           >
             Français
           </button>
           <button
             onClick={() => handleCopy("ar")}
-            className="text-left px-3 py-2 text-sm text-emerald-700 bg-emerald-100 transition-colors border-l-2 border-transparent hover:border-emerald-500"
+            className="text-left px-3 py-2 text-sm text-emerald-700 dark:text-emerald-500 bg-emerald-100 dark:bg-emerald-900/70 transition-colors border-l-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-600"
           >
             Arabe
           </button>
           <button
             onClick={() => handleCopy("both")}
-            className="text-left px-3 py-2 text-sm text-emerald-700 bg-emerald-200 transition-colors border-l-2 border-transparent hover:border-emerald-500"
+            className="text-left px-3 py-2 text-sm text-emerald-700 dark:text-emerald-500 bg-emerald-200 dark:bg-emerald-900/90 transition-colors border-l-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-600"
           >
             Les deux
           </button>
           <button
             onClick={() => handleCopy("link")}
-            className="text-left px-3 py-2 text-sm text-emerald-700 bg-emerald-300/75 transition-colors border-l-2 border-transparent hover:border-emerald-500 inline-flex items-center gap-1.5"
+            className="text-left px-3 py-2 text-sm text-emerald-700 dark:text-emerald-500 bg-emerald-300/75 dark:bg-emerald-800/90 transition-colors border-l-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-600 inline-flex items-center gap-1.5"
           >
             Le lien
             <LinkIcon

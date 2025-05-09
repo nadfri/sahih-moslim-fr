@@ -79,14 +79,14 @@ export function Hadith({
     // Override the default <strong> tag rendering
     strong: ({ ...props }) => (
       <span
-        className="text-emerald-600 font-medium"
+        className="text-emerald-600 dark:text-emerald-400 font-medium"
         {...props}
       />
     ),
     // Override the default <em> tag rendering
     em: ({ ...props }) => (
       <em
-        className="border-l-4 rounded-md border-amber-500 bg-amber-50 p-3 my-4 text-amber-800 italic block"
+        className="border-l-4 rounded-md border-amber-500 dark:border-amber-600 bg-amber-50 dark:bg-amber-900/30 p-3 my-4 text-amber-800 dark:text-amber-400 italic block"
         {...props}
       />
     ),
@@ -95,7 +95,7 @@ export function Hadith({
   return (
     <div
       key={hadith.id}
-      className="bg-white rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl border-l-4 md:border-l-8 border-emerald-600"
+      className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl border-l-4 md:border-l-8 border-emerald-600 dark:border-emerald-700"
     >
       <div className="p-3 md:p-6">
         {/* Metadata Section (Chapter, ID, Narrator) */}
@@ -103,22 +103,22 @@ export function Hadith({
           <div className="flex items-center justify-between mb-2">
             <Link
               href={`/chapters/${hadith.chapter.slug}`}
-              className="text-sm font-medium text-amber-700 tracking-wide uppercase inline-flex items-center hover:text-amber-900 hover:underline transition-colors duration-200"
+              className="text-sm font-medium text-amber-700 dark:text-amber-500 tracking-wide uppercase inline-flex items-center hover:text-amber-900 dark:hover:text-amber-400 hover:underline transition-colors duration-200"
             >
               <ArabicIcon className="mr-1 h-5" /> {hadith.chapter.title}
             </Link>
 
             <div className="flex items-center gap-2">
-              <span className="bg-emerald-600 text-white text-sm font-semibold rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">
+              <span className="bg-emerald-600 dark:bg-emerald-700 text-white text-sm font-semibold rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">
                 {hadith.numero}
               </span>
             </div>
           </div>
-          <p className="text-sm text-gray-600 ">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Rapporté par{" "}
             <Link
               href={`/narrators/${hadith.narrator.slug}`}
-              className="font-medium text-emerald-700 hover:text-emerald-800 hover:underline transition-colors duration-200"
+              className="font-medium text-emerald-700 dark:text-emerald-500 hover:text-emerald-800 dark:hover:text-emerald-400 hover:underline transition-colors duration-200"
             >
               {hadith.narrator.name}
             </Link>
@@ -126,7 +126,7 @@ export function Hadith({
         </div>
 
         {/* matn_fr Section (Main text in French) */}
-        <div className="space-y-3 text-gray-700 leading-relaxed text-pretty">
+        <div className="space-y-3 text-gray-700 dark:text-gray-300 leading-relaxed text-pretty">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeRaw]}
@@ -138,9 +138,9 @@ export function Hadith({
 
         {/* Mentioned Sahabas Section */}
         {hadith.mentionedSahabas && hadith.mentionedSahabas.length > 0 && (
-          <div className="mt-5 pt-4 border-t border-emerald-100">
-            <p className="text-sm text-gray-600">
-              <span className="font-semibold text-emerald-700">
+          <div className="mt-5 pt-4 border-t border-emerald-100 dark:border-emerald-900">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="font-semibold text-emerald-700 dark:text-emerald-500">
                 Sahaba(s) mentionné(s) :
               </span>
             </p>
@@ -150,7 +150,7 @@ export function Hadith({
                 <Link
                   key={sahaba.id}
                   href={`/sahabas/${sahaba.slug}`}
-                  className="text-sm bg-emerald-50 text-emerald-700 hover:text-emerald-900 px-2 py-1 rounded-md transition-colors duration-200 hover:bg-emerald-200"
+                  className="text-sm bg-emerald-50 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-300 px-2 py-1 rounded-md transition-colors duration-200 hover:bg-emerald-200 dark:hover:bg-emerald-800/50"
                 >
                   {highlight ? highlightParts(sahaba.name) : sahaba.name}
                 </Link>
@@ -160,11 +160,11 @@ export function Hadith({
         )}
 
         {/* matn_ar Section with toggle button and adaptive animation */}
-        <div className="mt-5 pt-4 border-t border-emerald-100">
+        <div className="mt-5 pt-4 border-t border-emerald-100 dark:border-emerald-900">
           {!update && (
             <button
               onClick={toggleArabicVisibility}
-              className="flex items-center space-x-2 text-sm font-medium text-emerald-700 hover:text-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 rounded mb-3 transition-colors duration-200"
+              className="flex items-center space-x-2 text-sm font-medium text-emerald-700 dark:text-emerald-500 hover:text-emerald-900 dark:hover:text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 rounded mb-3 transition-colors duration-200"
               aria-expanded={isArabicVisible}
               aria-controls={arabicContentId}
             >
@@ -199,7 +199,7 @@ export function Hadith({
           >
             <div className="overflow-hidden">
               <div
-                className="pt-2 text-right font-matn_ar text-xl leading-loose text-pretty"
+                className="pt-2 text-right font-matn_ar text-xl leading-loose text-pretty dark:text-gray-300"
                 dir="rtl"
                 // Render processed Arabic HTML with highlights
                 dangerouslySetInnerHTML={{ __html: processedMatnAr }}
@@ -212,7 +212,7 @@ export function Hadith({
         <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
           {/* Preview badge shown only in update mode */}
           {update && (
-            <span className="text-sm font-medium bg-gray-200 text-gray-500 px-2 py-1 rounded inline-flex items-center gap-1">
+            <span className="text-sm font-medium bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-1 rounded inline-flex items-center gap-1">
               <ScanEye
                 className="h-3.5 w-3.5"
                 aria-hidden="true"
@@ -225,7 +225,7 @@ export function Hadith({
             <CopyBoard hadith={hadith} />
 
             <button
-              className="inline-flex items-center gap-1.5 text-sm font-medium bg-amber-50 text-amber-600 px-3 py-1.5 rounded-md hover:bg-amber-100 hover:text-amber-700 transition-all duration-200"
+              className="inline-flex items-center gap-1.5 text-sm font-medium bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-500 px-3 py-1.5 rounded-md hover:bg-amber-100 dark:hover:bg-amber-900/70 hover:text-amber-700 dark:hover:text-amber-400 transition-all duration-200"
               title="Signaler une erreur"
               aria-label="Signaler une erreur dans ce hadith"
             >
@@ -239,7 +239,7 @@ export function Hadith({
             {isDevelopment && (
               <Link
                 href={`/hadiths/${hadith.numero}/edit`}
-                className="inline-flex items-center gap-1.5 text-sm font-medium bg-orange-50 text-orange-600 px-3 py-1.5 rounded-md hover:bg-orange-100 hover:text-orange-700 transition-all duration-200"
+                className="inline-flex items-center gap-1.5 text-sm font-medium bg-orange-50 dark:bg-orange-700 text-orange-600 dark:text-orange-300 px-3 py-1.5 rounded-md hover:bg-orange-100 dark:hover:bg-orange-900/70 hover:text-orange-700 dark:hover:text-orange-400 transition-all duration-200"
                 title="Modifier ce hadith"
                 aria-label="Éditer le hadith"
               >

@@ -9,7 +9,7 @@ export default async function Home() {
     <>
       <h1 className="title">Sahih Moslim en français</h1>
 
-      <p className="text-center mb-4">
+      <p className="text-center mb-4 dark:text-gray-300">
         Bienvenue sur le site dédié à la collection de hadiths Sahih Moslim en
         français. Vous trouverez ici une sélection de hadiths authentiques du
         Prophète Muhammad ﷺ.

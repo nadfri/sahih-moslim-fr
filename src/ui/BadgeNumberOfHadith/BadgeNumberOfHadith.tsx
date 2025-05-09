@@ -11,8 +11,10 @@ export function BadgeNumberOfHadith({
 }: BadgeNumberOfHadithProps) {
   const baseClasses = "inline-flex items-center font-medium rounded-md";
   const sizeClasses = {
-    small: "text-xs bg-gray-100 text-gray-600 px-2 py-0.5",
-    large: "text-md bg-emerald-100 text-emerald-800 px-3 py-1 mb-4",
+    small:
+      "text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-2 py-0.5",
+    large:
+      "text-md bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-400 px-3 py-1 mb-4",
   };
   const iconSizeClasses = {
     small: "h-3 w-3 mr-1",

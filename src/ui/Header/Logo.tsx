@@ -9,7 +9,7 @@ export function Logo({ closeMobileMenu }: { closeMobileMenu: () => void }) {
       onClick={closeMobileMenu}
     >
       <BookOpen
-        className="text-emerald-600 group-hover:text-emerald-700 transition-colors h-8 w-8 md:h-22 md:w-22 flex-shrink-0" // Added flex-shrink-0 to icon
+        className="text-emerald-600 group-hover:text-emerald-700 transition-colors h-8 w-8 md:h-22 md:w-22 flex-shrink-0"
         strokeWidth="1"
       />
       {/* Original title for mobile */}

@@ -34,12 +34,12 @@ export default function RootLayout({
         />
       </head>
       <body
-        className="antialiased flex flex-col min-h-screen text-gray-800"
+        className="antialiased flex flex-col min-h-screen text-gray-800 dark:text-gray-200 dark:bg-gray-950 transition-colors duration-200"
         suppressHydrationWarning
       >
         <SessionWrapper>
           <Header />
-          <main className="bg-gradient-to-br from-emerald-50 via-stone-50 to-amber-50 py-4 px-2 md:px-8 flex-1 dark:from-emerald-900 dark:to-amber-900 dark:via-stone-900">
+          <main className="bg-gradient-to-br from-emerald-50 via-stone-50 to-amber-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 py-4 px-2 md:px-8 flex-1">
             {children}
           </main>
           <Footer />

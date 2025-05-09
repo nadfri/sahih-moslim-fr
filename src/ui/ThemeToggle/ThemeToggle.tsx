@@ -27,7 +27,7 @@ export default function ThemeToggle() {
       {theme === "light" ? (
         <SunIcon className="size-6 text-yellow-400" />
       ) : (
-        <MoonIcon className="size-6 text-black/80" />
+        <MoonIcon className="size-6 text-white/80" />
       )}
     </button>
   );
