@@ -12,7 +12,7 @@ export function ButtonGithub() {
   return (
     <button
       onClick={() => signIn("github", { callbackUrl, redirect: true })}
-      className="flex items-center justify-center gap-2 w-full rounded-md bg-emerald-700 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-emerald-800 active:bg-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all duration-200"
+      className="flex items-center justify-center gap-2 w-full max-w-[400px] rounded-md bg-emerald-700 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-emerald-800 active:bg-emerald-900 transition-all duration-200"
     >
       {/* Add the Github icon */}
       <Github
