@@ -30,9 +30,7 @@ export default async function AddHadithPage() {
 
   return (
     <>
-      <h1 className="text-center text-2xl md:text-4xl font-bold text-emerald-700 mb-6 md:mb-8">
-        Ajouter un nouveau hadith
-      </h1>
+      <h1 className="title">Ajouter un nouveau hadith</h1>
       <AddHadithForm
         initialNumeros={initialNumeros}
         chaptersData={chaptersData}
