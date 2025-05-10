@@ -45,7 +45,7 @@ describe("POST /api/hadiths/add (integration)", () => {
       numero: 123456,
       matn_fr: "",
       matn_ar: "Some Arabic text",
-      chapterTitle: "Test Chapter",
+      chapterName: "Test Chapter",
       narratorName: "Test Narrator",
       mentionedSahabasNames: [],
     });
@@ -69,7 +69,11 @@ describe("POST /api/hadiths/add (integration)", () => {
         matn_ar: "ar",
         isnad: null,
         chapter: {
-          create: { title: "Chapter Exists", slug: "chapter-exists" },
+          create: {
+            name: "Chapter Exists",
+            slug: "chapter-exists",
+            index: 1001,
+          },
         },
         narrator: {
           create: { name: "Narrator Exists", slug: "narrator-exists" },
@@ -80,7 +84,7 @@ describe("POST /api/hadiths/add (integration)", () => {
       numero: 9999,
       matn_fr: "fr",
       matn_ar: "ar",
-      chapterTitle: "Chapter Exists",
+      chapterName: "Chapter Exists",
       narratorName: "Narrator Exists",
       mentionedSahabasNames: [],
     });
@@ -91,7 +95,7 @@ describe("POST /api/hadiths/add (integration)", () => {
     expect(json.message).toMatch(/existe déjà/);
     // Clean up
     await prisma.hadith.deleteMany({ where: { numero: 9999 } });
-    await prisma.chapter.deleteMany({ where: { title: "Chapter Exists" } });
+    await prisma.chapter.deleteMany({ where: { name: "Chapter Exists" } });
     await prisma.narrator.deleteMany({ where: { name: "Narrator Exists" } });
   });
 
@@ -103,7 +107,7 @@ describe("POST /api/hadiths/add (integration)", () => {
       numero: 123457,
       matn_fr: "fr",
       matn_ar: "ar",
-      chapterTitle: "Chapter Not Found",
+      chapterName: "Chapter Not Found",
       narratorName: "Narrator Exists",
       mentionedSahabasNames: [],
     });
@@ -120,13 +124,17 @@ describe("POST /api/hadiths/add (integration)", () => {
     ).mockResolvedValue({ user: { role: "ADMIN" } });
     // Insert chapter
     const chapter = await prisma.chapter.create({
-      data: { title: "Chapter For Narrator", slug: "chapter-for-narrator" },
+      data: {
+        name: "Chapter For Narrator",
+        slug: "chapter-for-narrator",
+        index: 1002,
+      },
     });
     const req = createNextRequest({
       numero: 123458,
       matn_fr: "fr",
       matn_ar: "ar",
-      chapterTitle: chapter.title,
+      chapterName: chapter.name,
       narratorName: "Narrator Not Found",
       mentionedSahabasNames: [],
     });
@@ -145,7 +153,11 @@ describe("POST /api/hadiths/add (integration)", () => {
     ).mockResolvedValue({ user: { role: "ADMIN" } });
     // Insert chapter and narrator
     const chapter = await prisma.chapter.create({
-      data: { title: "Chapter For Sahaba", slug: "chapter-for-sahaba" },
+      data: {
+        name: "Chapter For Sahaba",
+        slug: "chapter-for-sahaba",
+        index: 1003,
+      },
     });
     const narrator = await prisma.narrator.create({
       data: { name: "Narrator For Sahaba", slug: "narrator-for-sahaba" },
@@ -156,7 +168,7 @@ describe("POST /api/hadiths/add (integration)", () => {
       numero: 123459,
       matn_fr: "fr",
       matn_ar: "ar",
-      chapterTitle: chapter.title,
+      chapterName: chapter.name,
       narratorName: narrator.name,
       mentionedSahabasNames: ["Ali", "Omar"],
     });
@@ -180,7 +192,7 @@ describe("POST /api/hadiths/add (integration)", () => {
     ).mockResolvedValue({ user: { role: "ADMIN" } });
     // Insert chapter, narrator, sahaba
     const chapter = await prisma.chapter.create({
-      data: { title: "Chapter Success", slug: "chapter-success" },
+      data: { name: "Chapter Success", slug: "chapter-success", index: 1004 },
     });
     const narrator = await prisma.narrator.create({
       data: { name: "Narrator Success", slug: "narrator-success" },
@@ -192,7 +204,7 @@ describe("POST /api/hadiths/add (integration)", () => {
       numero: 123460,
       matn_fr: "fr",
       matn_ar: "ar",
-      chapterTitle: chapter.title,
+      chapterName: chapter.name,
       narratorName: narrator.name,
       mentionedSahabasNames: ["Ali Success"],
     });

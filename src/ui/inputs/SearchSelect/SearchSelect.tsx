@@ -13,6 +13,7 @@ type SearchSelectProps = {
   name?: string;
   error?: boolean;
   errorMessage?: string;
+  onInputChange?: (value: string) => void;
 };
 
 export function SearchSelect({
@@ -25,6 +26,7 @@ export function SearchSelect({
   name,
   error = false,
   errorMessage,
+  onInputChange,
 }: SearchSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState(value);
@@ -47,6 +49,7 @@ export function SearchSelect({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const currentInput = e.target.value;
     setInputValue(currentInput);
+    if (onInputChange) onInputChange(currentInput);
     if (!isOpen) {
       setIsOpen(true);
     }

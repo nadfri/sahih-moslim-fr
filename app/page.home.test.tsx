@@ -21,9 +21,7 @@ describe("Home", () => {
     const ui = await Home();
     render(<>{ui}</>);
     expect(
-      screen.getByText(
-        /Bienvenue sur le site dédié à la collection de hadiths Sahih Moslim en français/i
-      )
+      screen.getByText(/soigneusement vérifiés et classés par thèmes/i)
     ).toBeInTheDocument();
   });
 

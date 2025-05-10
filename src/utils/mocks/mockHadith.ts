@@ -8,7 +8,7 @@ export const mockHadith: HadithType = {
   isnad: null,
   chapter: {
     id: "ch1",
-    title: "Test Chapter",
+    name: "Test Chapter",
     slug: "test-chapter",
     hadithCount: 10,
   },

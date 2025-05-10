@@ -7,7 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
-import { ChapterType, HadithType, PersonType } from "@/src/types/types";
+import { HadithType, ItemType } from "@/src/types/types";
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { Input } from "@/src/ui/inputs/Input/Input";
 import { MdTextArea } from "@/src/ui/inputs/MdTextArea/MdTextArea";
@@ -51,9 +51,9 @@ type HadithFormValues = z.infer<ReturnType<typeof createEditHadithSchema>>;
 type EditHadithFormProps = {
   hadith: HadithType;
   existingNumeros: number[];
-  chaptersData: ChapterType[];
-  narratorsData: PersonType[];
-  sahabasData: PersonType[];
+  chaptersData: ItemType[];
+  narratorsData: ItemType[];
+  sahabasData: ItemType[];
 };
 
 export function EditHadithForm({
@@ -82,7 +82,7 @@ export function EditHadithForm({
     mode: "onChange",
     defaultValues: {
       numero: hadith.numero,
-      chapter: hadith.chapter.title,
+      chapter: hadith.chapter.name,
       narrator: hadith.narrator.name,
       mentionedSahabas: hadith.mentionedSahabas.map((s) => s.name),
       matn_fr: hadith.matn_fr,
@@ -93,7 +93,7 @@ export function EditHadithForm({
 
   const formValues = watch();
 
-  const chapterOptions = chaptersData.map((c) => c.title);
+  const chapterOptions = chaptersData.map((chapter) => chapter.name);
   const narratorOptions = narratorsData.map((n) => n.name);
   const sahabaOptions = sahabasData.map((s) => s.name);
 
@@ -102,7 +102,9 @@ export function EditHadithForm({
     setIsSubmitting(true);
 
     // Find IDs corresponding to selected names/titles using props
-    const selectedChapter = chaptersData.find((c) => c.title === data.chapter);
+    const selectedChapter = chaptersData.find(
+      (chapter) => chapter.name === data.chapter
+    );
     const selectedNarrator = narratorsData.find(
       (n) => n.name === data.narrator
     );
@@ -121,7 +123,7 @@ export function EditHadithForm({
       matn_fr: data.matn_fr,
       matn_ar: data.matn_ar,
       isnad: data.isnad,
-      chapterTitle: selectedChapter.title,
+      chapterName: selectedChapter.name,
       narratorName: selectedNarrator.name,
       mentionedSahabasNames: selectedSahabas.map((s) => s.name),
     };
@@ -177,7 +179,7 @@ export function EditHadithForm({
     numero: formValues.numero || 0,
     chapter: {
       ...hadith.chapter,
-      title: formValues.chapter || hadith.chapter.title,
+      name: formValues.chapter || hadith.chapter.name,
       slug: hadith.chapter.slug || "preview-chapter-slug", // Ensure slug exists
     },
     narrator: {

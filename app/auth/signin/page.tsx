@@ -20,15 +20,14 @@ export default async function SignInPage() {
   if (session) redirect("/");
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto py-8 flex flex-col items-center">
       <h1 className="title">Se connecter</h1>
-      <p className="mb-6 text-slate-600">
+      <p className="mb-10 text-slate-600 dark:text-slate-400">
         Connectez-vous avec votre compte GitHub pour accéder aux fonctionnalités
-        d'administration.
+        d'administration
       </p>
-      <div className="flex justify-center">
-        <ButtonGithub />
-      </div>
+
+      <ButtonGithub />
     </div>
   );
 }

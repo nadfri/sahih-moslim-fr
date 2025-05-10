@@ -15,7 +15,7 @@ const hadith = {
   narratorId: "narrator-1",
   chapter: {
     id: "chapter-1",
-    title: "La Foi",
+    name: "La Foi",
     slug: "la-foi",
   },
   narrator: {
@@ -30,6 +30,7 @@ const hadith = {
 describe("CopyBoard", () => {
   // Mock clipboard API
   const mockWriteText = vi.fn().mockImplementation(() => Promise.resolve());
+  let originalLocation: PropertyDescriptor | undefined;
 
   beforeEach(() => {
     // Setup clipboard mock
@@ -44,10 +45,36 @@ describe("CopyBoard", () => {
       );
     }
     vi.clearAllMocks();
+    // Store and mock window.location for link copy
+    originalLocation = Object.getOwnPropertyDescriptor(window, "location");
+    Object.defineProperty(window, "location", {
+      value: {
+        origin: "https://test.com",
+        href: "https://test.com/some/path",
+        pathname: "/some/path",
+        assign: vi.fn(),
+        reload: vi.fn(),
+        replace: vi.fn(),
+        toString: () => "https://test.com/some/path",
+        ancestorOrigins: {} as DOMStringList,
+        hash: "",
+        host: "test.com",
+        hostname: "test.com",
+        port: "",
+        protocol: "https:",
+        search: "",
+      } as Location,
+      writable: true,
+      configurable: true,
+    });
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+    // Restore original window.location
+    if (originalLocation) {
+      Object.defineProperty(window, "location", originalLocation);
+    }
   });
 
   it("renders the copy button correctly", () => {
@@ -130,49 +157,11 @@ describe("CopyBoard", () => {
     await user.click(button);
     const linkOption = screen.getByText("Le lien");
 
-    // Store original location descriptor
-    const originalLocation = Object.getOwnPropertyDescriptor(
-      window,
-      "location"
-    );
-
-    // Mock window.location
-    Object.defineProperty(window, "location", {
-      value: {
-        origin: "https://test.com",
-        // Add other necessary properties from Location if needed by the component
-        // For this test, 'origin' seems sufficient for constructing the URL
-        href: "https://test.com/some/path", // Example, adjust if needed
-        pathname: "/some/path", // Example, adjust if needed
-        assign: vi.fn(),
-        reload: vi.fn(),
-        replace: vi.fn(),
-        toString: () => "https://test.com/some/path",
-        ancestorOrigins: {} as DOMStringList,
-        hash: "",
-        host: "test.com",
-        hostname: "test.com",
-        port: "",
-        protocol: "https:",
-        search: "",
-      } as Location, // Cast to Location to satisfy TypeScript
-      writable: true, // Make it writable if needed, though reassignment is handled by defineProperty
-      configurable: true, // Allow redefining/deleting later
-    });
-
     await user.click(linkOption);
     await waitFor(() => {
       const expectedText = `https://test.com/hadiths/123`;
       expect(mockWriteText).toHaveBeenCalledWith(expectedText);
     });
-
-    // Restore original location
-    if (originalLocation) {
-      Object.defineProperty(window, "location", originalLocation);
-    } else {
-      // If originalLocation was undefined (shouldn't happen in standard envs)
-      // delete window.location; // Or handle appropriately
-    }
   });
 
   it('shows "Copié!" text after successful copy and reverts after 1 second', async () => {
@@ -185,9 +174,13 @@ describe("CopyBoard", () => {
     const frenchOption = screen.getByText("Français");
     await user.click(frenchOption);
     expect(await screen.findByText("Copié!")).toBeInTheDocument();
-    await waitFor(() => {
-      expect(screen.getByText("Copier")).toBeInTheDocument();
-    });
+    // Wait for revert (1s)
+    await waitFor(
+      () => {
+        expect(screen.getByText("Copier")).toBeInTheDocument();
+      },
+      { timeout: 1500 }
+    );
   });
 
   it("closes dropdown when clicking outside", async () => {

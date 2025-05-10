@@ -10,9 +10,6 @@
 - [ ] Ensure accessible keyboard navigation
 - [ ] Add proper aria attributes for screen readers
 
-### UI Improvements
-
-- [ ] Add a SearchBar to chapters, narrators, and sahabas pages
 
 ### Forms
 

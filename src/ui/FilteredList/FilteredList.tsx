@@ -18,13 +18,16 @@ const placeholder = {
 };
 
 export function FilteredList({ items, variant }: Props) {
+  const [inputValue, setInputValue] = useState("");
   const [selected, setSelected] = useState("");
 
-  // Filtered sahabas based on selected value
+  // Dynamically filter items based on input value
   const filteredItems = useMemo(() => {
-    if (!selected) return items;
-    return items.filter((item) => item.name === selected);
-  }, [items, selected]);
+    if (!inputValue) return items;
+    return items.filter((item) =>
+      item.name.toLowerCase().includes(inputValue.toLowerCase())
+    );
+  }, [items, inputValue]);
 
   // Extract names for SearchSelect options
   const options = useMemo(() => items.map((item) => item.name), [items]);
@@ -37,8 +40,13 @@ export function FilteredList({ items, variant }: Props) {
           label=""
           options={options}
           value={selected}
-          onChange={setSelected}
+          onChange={(value) => {
+            setSelected(value);
+            setInputValue(value);
+          }}
           placeholder={placeholder[variant]}
+          // Add onInputChange to update inputValue dynamically
+          onInputChange={setInputValue}
         />
       </div>
 

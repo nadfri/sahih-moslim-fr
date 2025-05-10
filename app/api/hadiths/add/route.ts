@@ -10,7 +10,7 @@ const addHadithPayloadSchema = z.object({
   matn_fr: z.string().min(1),
   matn_ar: z.string().min(1),
   isnad: z.string().optional(),
-  chapterTitle: z.string().min(1),
+  chapterName: z.string().min(1),
   narratorName: z.string().min(1),
   mentionedSahabasNames: z.array(z.string()),
 });
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
       matn_fr,
       matn_ar,
       isnad,
-      chapterTitle,
+      chapterName,
       narratorName,
       mentionedSahabasNames,
     } = validation.data;
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
 
     // 3. Find related records (Chapter, Narrator, Sahabas) by name/title
     const chapter = await prisma.chapter.findUnique({
-      where: { title: chapterTitle },
+      where: { name: chapterName },
       select: { id: true },
     });
 
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
 
     if (!chapter) {
       return Response.json(
-        { success: false, message: `Chapitre "${chapterTitle}" non trouvé.` },
+        { success: false, message: `Chapitre "${chapterName}" non trouvé.` },
         { status: 400 }
       );
     }

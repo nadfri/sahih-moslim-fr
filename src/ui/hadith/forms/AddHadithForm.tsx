@@ -7,7 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
-import { ChapterType, HadithType, PersonType } from "@/src/types/types";
+import { HadithType, ItemType } from "@/src/types/types";
 /*UI*/
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { Input } from "@/src/ui/inputs/Input/Input";
@@ -45,9 +45,9 @@ type HadithFormValues = z.infer<ReturnType<typeof createHadithSchema>>;
 // Define props for the component
 type AddHadithFormProps = {
   initialNumeros: number[];
-  chaptersData: ChapterType[];
-  narratorsData: PersonType[];
-  sahabasData: PersonType[];
+  chaptersData: ItemType[];
+  narratorsData: ItemType[];
+  sahabasData: ItemType[];
 };
 
 export function AddHadithForm({
@@ -87,15 +87,17 @@ export function AddHadithForm({
 
   const formValues = watch();
 
-  const chapterOptions = chaptersData.map((c) => c.title);
+  const chapterOptions = chaptersData.map((chapter) => chapter.name);
   const narratorOptions = narratorsData.map((n) => n.name);
   const sahabaOptions = sahabasData.map((s) => s.name);
 
   const onSubmit = async (data: HadithFormValues) => {
     setIsSubmitting(true);
 
-    // Find IDs corresponding to selected names/titles using props
-    const selectedChapter = chaptersData.find((c) => c.title === data.chapter);
+    // Find IDs corresponding to selected names using props
+    const selectedChapter = chaptersData.find(
+      (chapter) => chapter.name === data.chapter
+    );
     const selectedNarrator = narratorsData.find(
       (n) => n.name === data.narrator
     );
@@ -114,7 +116,7 @@ export function AddHadithForm({
       matn_fr: data.matn_fr,
       matn_ar: data.matn_ar,
       isnad: data.isnad,
-      chapterTitle: selectedChapter.title,
+      chapterName: selectedChapter.name,
       narratorName: selectedNarrator.name,
       mentionedSahabasNames: selectedSahabas.map((s) => s.name), // Send names to API
     };
@@ -166,7 +168,7 @@ export function AddHadithForm({
     chapter: {
       // Provide all fields expected by Chapter type in Prisma schema
       id: "preview-chapter-id",
-      title: formValues.chapter || "Sélectionnez un chapitre...",
+      name: formValues.chapter || "Sélectionnez un chapitre...",
       slug: "preview-chapter-slug", // Add slug for preview
     },
     narrator: {

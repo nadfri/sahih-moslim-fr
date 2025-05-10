@@ -15,7 +15,7 @@ export function CopyBoard({ hadith }: { hadith: HadithType }) {
   const arabicText = hadith.matn_ar;
   const hadithNumber = hadith.numero;
   const narrator = hadith.narrator.name;
-  const chapter = hadith.chapter.title;
+  const chapter = hadith.chapter.name;
 
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);

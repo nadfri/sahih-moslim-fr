@@ -26,7 +26,7 @@ describe("DELETE /api/hadiths/delete/[id] (integration)", () => {
     ).mockResolvedValue({ user: { role: "ADMIN" } });
     // Create chapter and narrator for the hadith
     const chapter = await prisma.chapter.create({
-      data: { title: "Delete Chapter", slug: "delete-chapter" },
+      data: { name: "Delete Chapter", slug: "delete-chapter", index: 9999 },
     });
     const narrator = await prisma.narrator.create({
       data: { name: "Delete Narrator", slug: "delete-narrator" },
