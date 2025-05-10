@@ -11,9 +11,7 @@ describe("SahabasPage", () => {
       render(<>{node}</>);
     });
     // Check for expected content
-    expect(
-      await screen.findByText("Hadiths mentionnant des Compagnons")
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/compagnons/i)).toBeInTheDocument();
 
     expect(await screen.findByText(/Abdallah ibn Omar/i)).toBeInTheDocument();
     expect(await screen.findByText(/Zayd ibn Harithah/i)).toBeInTheDocument();

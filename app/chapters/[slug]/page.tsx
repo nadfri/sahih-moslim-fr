@@ -24,7 +24,7 @@ export default async function PageByChapters(props: { params: ParamsType }) {
 
   return (
     <>
-      <h1 className="title">{chapter.title}</h1>
+      <h1 className="title">{chapter.name}</h1>
 
       <BadgeNumberOfHadith
         count={hadiths.length}
@@ -61,12 +61,12 @@ export async function generateMetadata(props: {
   }
 
   return {
-    title: `Chapitre: ${chapter.title}`,
-    description: `Collection de hadiths du chapitre ${chapter.title} - Sahih Moslim`,
+    title: `Chapitre: ${chapter.name}`,
+    description: `Collection de hadiths du chapitre ${chapter.name} - Sahih Moslim`,
   };
 }
 
-/*Generate static paths for all chapters using slugified titles*/
+/*Generate static paths for all chapters using slugified names*/
 export async function generateStaticParams() {
   const chapters = await getAllChapters();
 

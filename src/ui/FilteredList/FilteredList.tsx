@@ -1,0 +1,58 @@
+"use client";
+
+import { useMemo, useState } from "react";
+
+import { ItemType, VariantType } from "@/src/types/types";
+import { Card } from "@/src/ui/Card/Card";
+import { SearchSelect } from "@/src/ui/inputs/SearchSelect/SearchSelect";
+
+type Props = {
+  items: ItemType[];
+  variant: VariantType;
+};
+
+const placeholder = {
+  chapters: "Rechercher un chapitre...",
+  sahabas: "Rechercher un compagnon...",
+  narrators: "Rechercher un narrateur...",
+};
+
+export function FilteredList({ items, variant }: Props) {
+  const [selected, setSelected] = useState("");
+
+  // Filtered sahabas based on selected value
+  const filteredItems = useMemo(() => {
+    if (!selected) return items;
+    return items.filter((item) => item.name === selected);
+  }, [items, selected]);
+
+  // Extract names for SearchSelect options
+  const options = useMemo(() => items.map((item) => item.name), [items]);
+
+  return (
+    <div className="container mx-auto max-w-5xl">
+      <div className="mb-10">
+        <SearchSelect
+          id="search"
+          label=""
+          options={options}
+          value={selected}
+          onChange={setSelected}
+          placeholder={placeholder[variant]}
+        />
+      </div>
+
+      {/* Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        {/*Links*/}
+        {filteredItems.map((item) => (
+          <Card
+            key={item.id}
+            item={item}
+            variant={variant}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}

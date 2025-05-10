@@ -5,8 +5,8 @@ import { describe, expect, it, vi } from "vitest";
 // Mock getAllChapters
 vi.mock("@/src/services/services", () => ({
   getAllChapters: vi.fn().mockResolvedValue([
-    { slug: "intro", title: "Introduction", hadithCount: 5 },
-    { slug: "faith", title: "Faith", hadithCount: 12 },
+    { slug: "intro", name: "Introduction", hadithCount: 5 },
+    { slug: "faith", name: "Faith", hadithCount: 12 },
   ]),
 }));
 

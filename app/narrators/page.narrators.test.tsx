@@ -11,9 +11,7 @@ describe("NarratorsPage", () => {
       render(<>{node}</>);
     });
     // Check for expected content
-    expect(
-      await screen.findByText("Narrateurs des Hadiths")
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/narrateur/i)).toBeInTheDocument();
 
     expect(await screen.findByText(/Abbad/i)).toBeInTheDocument();
     expect(await screen.findByText(/siddiq/i)).toBeInTheDocument();

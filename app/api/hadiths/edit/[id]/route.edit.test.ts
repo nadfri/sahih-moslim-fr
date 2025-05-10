@@ -78,7 +78,7 @@ describe("PATCH /api/hadiths/edit/[id] (integration)", () => {
       numero: 999999,
       matn_fr: "fr",
       matn_ar: "ar",
-      chapterTitle: "Edit Chapter",
+      chapterName: "Edit Chapter",
       narratorName: "Edit Narrator",
       mentionedSahabasNames: [],
     });
@@ -101,7 +101,7 @@ describe("PATCH /api/hadiths/edit/[id] (integration)", () => {
 
     // Create chapter, narrator, sahaba, and hadith
     const chapter = await prisma.chapter.create({
-      data: { title: "Edit Chapter", slug: "edit-chapter" },
+      data: { name: "Edit Chapter", slug: "edit-chapter", index: 9999 },
     });
     const narrator = await prisma.narrator.create({
       data: { name: "Edit Narrator", slug: "edit-narrator" },
@@ -125,7 +125,7 @@ describe("PATCH /api/hadiths/edit/[id] (integration)", () => {
       numero: 654321,
       matn_fr: "new fr",
       matn_ar: "new ar",
-      chapterTitle: chapter.title,
+      chapterName: chapter.name,
       narratorName: narrator.name,
       mentionedSahabasNames: [sahaba.name],
     });
