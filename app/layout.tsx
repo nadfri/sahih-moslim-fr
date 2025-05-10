@@ -5,6 +5,7 @@ import { amiriFont, geistMono, geistSans } from "@/src/fonts/fonts";
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 
+import { cookies } from "next/headers";
 import { ToastContainer } from "react-toastify";
 
 import { SessionWrapper } from "@/src/authentification/SessionWrapper";
@@ -16,11 +17,14 @@ export const metadata: Metadata = {
   description: "Une collection de hadiths authentiques.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const theme = cookieStore.get("theme")?.value || "light";
+
   return (
     <html
       lang="fr"
@@ -36,6 +40,7 @@ export default function RootLayout({
       <body
         className="antialiased flex flex-col min-h-screen text-gray-800 dark:text-gray-200 dark:bg-gray-950 transition-colors duration-200"
         suppressHydrationWarning
+        data-theme={theme}
       >
         <SessionWrapper>
           <Header />

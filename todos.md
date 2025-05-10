@@ -2,7 +2,6 @@
 
 ## Core Features
 
-
 ### Pagination
 
 - [ ] Create pagination component for hadith listings
@@ -14,6 +13,12 @@
 ### UI Improvements
 
 - [ ] Add a SearchBar to chapters, narrators, and sahabas pages
+
+### Forms
+
+- [ ] Create form to add a narrator
+- [ ] Create form to add a sahaba
+- [ ] Create form to add a chapter
 
 ## Footer
 
@@ -50,3 +55,7 @@
 ## Documentation
 
 - [ ] Add comprehensive documentation
+
+### Reporting
+
+- [ ] Add report handling via the "Report" button on a hadith (modal, form, API, user feedback)

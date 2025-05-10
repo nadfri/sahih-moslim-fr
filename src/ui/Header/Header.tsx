@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { ButtonSignOut } from "../connexion/ButtonSignOut";
-import ThemeToggle from "../ThemeToggle/ThemeToggle";
+import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
 import { Hamburger } from "./Hamburger";
 import { LinkAddHadith } from "./LinkAddHadith";
 import { Logo } from "./Logo";
@@ -27,7 +27,7 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-2 ml-2">
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-4">
             <LinkAddHadith />
             <ButtonSignOut />
           </div>

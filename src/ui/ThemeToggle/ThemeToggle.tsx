@@ -3,38 +3,48 @@
 import { useLayoutEffect, useState } from "react";
 import { MoonIcon, SunIcon } from "lucide-react";
 
-export default function ThemeToggle() {
-  // Only access localStorage in useLayoutEffect to avoid SSR issues
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+type ThemeType = "light" | "dark";
 
+export function ThemeToggle() {
+  const [theme, setTheme] = useState<ThemeType | null>(null);
+
+  /*Pre Rendering*/
   useLayoutEffect(() => {
-    const stored = localStorage.getItem("theme");
+    const attributeValue = document.body.getAttribute("data-theme");
 
-    if (stored === "light" || stored === "dark") setTheme(stored || "dark");
+    if (attributeValue === "light" || attributeValue === "dark") {
+      setTheme(attributeValue);
+    }
   }, []);
 
-  useLayoutEffect(() => {
-    // Prevent flash of light theme
-    document.body.setAttribute("data-theme", theme);
+  /*Handle Theme Change*/
+  function toggleTheme() {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
 
-    localStorage.setItem("theme", theme);
-  }, [theme]);
+    document.body.setAttribute("data-theme", newTheme);
+    document.cookie = `theme=${newTheme}; path=/; max-age=31536000`; // 1 year
+  }
 
-  const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
-  };
+  let IconTheme: React.ElementType | null = null;
+
+  switch (theme) {
+    case "light":
+      IconTheme = SunIcon;
+      break;
+    case "dark":
+      IconTheme = MoonIcon;
+      break;
+  }
 
   return (
     <button
-      className="flex items-center justify-center rounded-full transition-colors duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 p-1"
+      className="flex items-center justify-center rounded-full transition-colors duration-300 hover:bg-gray-300 dark:hover:bg-gray-600 p-1 size-8"
       onClick={toggleTheme}
       aria-label={`Toggle theme to ${theme === "light" ? "dark" : "light"}`}
+      disabled={theme === null}
     >
-      {theme === "light" ? (
-        <SunIcon className="size-6 text-yellow-400" />
-      ) : (
-        <MoonIcon className="size-6 text-black/80 dark:text-yellow-200" />
-      )}
+      {IconTheme && <IconTheme className="w-full text-yellow-400 moveLeft" />}
     </button>
   );
 }
