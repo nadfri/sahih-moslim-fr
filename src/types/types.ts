@@ -4,6 +4,7 @@ export type FilterType = "word" | "narrator" | "sahaba";
 
 export const SchemaChapter = z.object({
   id: z.string(),
+  index: z.number(),
   title: z.string(),
   slug: z.string(),
   hadithCount: z.number().optional(),

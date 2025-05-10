@@ -47,26 +47,29 @@ export async function getHadithByNumero(
   return hadith ? HadithSchema.parse(hadith) : null;
 }
 
-// Get all chapters with hadith count
+// Get all chapters with hadith count and index
 export async function getAllChapters(): Promise<ChapterType[]> {
   const chapters = await prisma.chapter.findMany({
     select: {
       id: true,
       title: true,
       slug: true,
+      index: true,
       _count: { select: { hadiths: true } },
     },
+    orderBy: { index: "asc" },
   });
   // Map to ChapterType with hadithCount
-  return chapters.map((c) => ({
-    id: c.id,
-    title: c.title,
-    slug: c.slug,
-    hadithCount: c._count.hadiths,
+  return chapters.map((chapter) => ({
+    id: chapter.id,
+    title: chapter.title,
+    slug: chapter.slug,
+    index: chapter.index,
+    hadithCount: chapter._count.hadiths,
   }));
 }
 
-// Get a single chapter by slug with hadith count
+// Get a single chapter by slug with hadith count and index
 export async function getChapterBySlug(
   slug: string
 ): Promise<ChapterType | null> {
@@ -76,6 +79,7 @@ export async function getChapterBySlug(
       id: true,
       title: true,
       slug: true,
+      index: true, // Include index
       _count: { select: { hadiths: true } },
     },
   });
@@ -85,12 +89,13 @@ export async function getChapterBySlug(
         id: chapter.id,
         title: chapter.title,
         slug: chapter.slug,
+        index: chapter.index,
         hadithCount: chapter._count.hadiths,
       }
     : null;
 }
 
-// Get a chapter and its hadiths
+// Get a chapter and its hadiths (chapter now includes index)
 export async function getChapterWithHadiths(slug: string): Promise<{
   chapter: ChapterType | null;
   hadiths: HadithType[];

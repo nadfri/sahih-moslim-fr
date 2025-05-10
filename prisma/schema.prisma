@@ -118,6 +118,7 @@ model Chapter {
   id      String   @id @default(cuid())
   title   String   @unique
   slug    String   @unique
+  index   Int      @unique
   hadiths Hadith[]
 
   createdAt DateTime @default(now())
@@ -139,7 +140,7 @@ model Sahaba {
   id                 String   @id @default(cuid())
   name               String   @unique
   slug               String   @unique
-  nameArabic         String? 
+  nameArabic         String?
   mentionedInHadiths Hadith[]
 
   createdAt DateTime @default(now())
