@@ -115,11 +115,12 @@ model Hadith {
 }
 
 model Chapter {
-  id      String   @id @default(cuid())
-  title   String   @unique
-  slug    String   @unique
-  index   Int      @unique
-  hadiths Hadith[]
+  id         String   @id @default(cuid())
+  index      Int      @unique
+  name       String   @unique
+  slug       String   @unique
+  nameArabic String?  
+  hadiths    Hadith[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

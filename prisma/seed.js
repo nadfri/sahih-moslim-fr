@@ -97,20 +97,20 @@ async function main() {
 
     // First, check existing chapters to avoid duplicates
     const existingChapters = await prisma.chapter.findMany({
-      select: { title: true, id: true },
+      select: { name: true, id: true },
     });
-    const existingChapterTitles = new Set(existingChapters.map((c) => c.title));
-    const chaptersMap = new Map(existingChapters.map((c) => [c.title, c.id]));
+    const existingchapterNames = new Set(existingChapters.map((c) => c.name));
+    const chaptersMap = new Map(existingChapters.map((c) => [c.name, c.id]));
 
     // Filter out chapters that already exist
     const newChapters = chapters.filter(
-      (title) => !existingChapterTitles.has(title)
+      (name) => !existingchapterNames.has(name)
     );
 
     if (newChapters.length > 0) {
       // Create chapters (only new ones)
-      const chaptersData = newChapters.map((title) => ({
-        title,
+      const chaptersData = newChapters.map((name) => ({
+        name,
       }));
 
       // Insert new chapters
@@ -124,11 +124,11 @@ async function main() {
 
       // Update our map with newly created chapters
       const newlyCreatedChapters = await prisma.chapter.findMany({
-        where: { title: { in: newChapters } },
-        select: { title: true, id: true },
+        where: { name: { in: newChapters } },
+        select: { name: true, id: true },
       });
 
-      newlyCreatedChapters.forEach((c) => chaptersMap.set(c.title, c.id));
+      newlyCreatedChapters.forEach((c) => chaptersMap.set(c.name, c.id));
     } else {
       console.log("ℹ️ No new chapters to seed - all already exist in database");
     }

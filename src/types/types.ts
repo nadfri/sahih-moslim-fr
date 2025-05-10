@@ -2,25 +2,16 @@ import { z } from "zod";
 
 export type FilterType = "word" | "narrator" | "sahaba";
 
-export const SchemaChapter = z.object({
+export const SchemaItem = z.object({
   id: z.string(),
-  index: z.number(),
-  title: z.string(),
-  slug: z.string(),
-  hadithCount: z.number().optional(),
-});
-
-export type ChapterType = z.infer<typeof SchemaChapter>;
-
-export const SchemaPerson = z.object({
-  id: z.string(),
+  index: z.number().nullable().optional(),
   name: z.string(),
   slug: z.string(),
   nameArabic: z.string().nullable().optional(),
   hadithCount: z.number().optional(),
 });
 
-export type PersonType = z.infer<typeof SchemaPerson>;
+export type ItemType = z.infer<typeof SchemaItem>;
 
 export const HadithSchema = z.object({
   id: z.string(),
@@ -28,11 +19,13 @@ export const HadithSchema = z.object({
   matn_fr: z.string(),
   matn_ar: z.string(),
   isnad: z.string().nullable().optional(),
-  chapter: SchemaChapter,
-  narrator: SchemaPerson,
-  mentionedSahabas: z.array(SchemaPerson),
+  chapter: SchemaItem,
+  narrator: SchemaItem,
+  mentionedSahabas: z.array(SchemaItem),
 });
 
 export type HadithType = z.infer<typeof HadithSchema>;
 
 export type ThemeType = "light" | "dark";
+
+export type VariantType = "chapters" | "narrators" | "sahabas";

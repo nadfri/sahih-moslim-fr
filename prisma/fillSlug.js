@@ -23,7 +23,7 @@ async function main() {
     if (!chapter.slug) {
       await prisma.chapter.update({
         where: { id: chapter.id },
-        data: { slug: slugify(chapter.title) },
+        data: { slug: slugify(chapter.name) },
       });
     }
   }

@@ -1,12 +1,7 @@
 import { z } from "zod";
 
 import { prisma } from "@/prisma/prisma";
-import {
-  ChapterType,
-  HadithSchema,
-  HadithType,
-  PersonType,
-} from "../types/types";
+import { HadithSchema, HadithType, ItemType } from "../types/types";
 
 // Get all hadith numbers
 export async function getHadithNumeros(): Promise<number[]> {
@@ -48,21 +43,21 @@ export async function getHadithByNumero(
 }
 
 // Get all chapters with hadith count and index
-export async function getAllChapters(): Promise<ChapterType[]> {
+export async function getAllChapters(): Promise<ItemType[]> {
   const chapters = await prisma.chapter.findMany({
     select: {
       id: true,
-      title: true,
+      name: true,
       slug: true,
       index: true,
       _count: { select: { hadiths: true } },
     },
     orderBy: { index: "asc" },
   });
-  // Map to ChapterType with hadithCount
+  // Map to ItemType with hadithCount
   return chapters.map((chapter) => ({
     id: chapter.id,
-    title: chapter.title,
+    name: chapter.name,
     slug: chapter.slug,
     index: chapter.index,
     hadithCount: chapter._count.hadiths,
@@ -70,16 +65,14 @@ export async function getAllChapters(): Promise<ChapterType[]> {
 }
 
 // Get a single chapter by slug with hadith count and index
-export async function getChapterBySlug(
-  slug: string
-): Promise<ChapterType | null> {
+export async function getChapterBySlug(slug: string): Promise<ItemType | null> {
   const chapter = await prisma.chapter.findUnique({
     where: { slug },
     select: {
       id: true,
-      title: true,
+      name: true,
       slug: true,
-      index: true, // Include index
+      index: true,
       _count: { select: { hadiths: true } },
     },
   });
@@ -87,7 +80,7 @@ export async function getChapterBySlug(
   return chapter
     ? {
         id: chapter.id,
-        title: chapter.title,
+        name: chapter.name,
         slug: chapter.slug,
         index: chapter.index,
         hadithCount: chapter._count.hadiths,
@@ -97,7 +90,7 @@ export async function getChapterBySlug(
 
 // Get a chapter and its hadiths (chapter now includes index)
 export async function getChapterWithHadiths(slug: string): Promise<{
-  chapter: ChapterType | null;
+  chapter: ItemType | null;
   hadiths: HadithType[];
 }> {
   const chapter = await getChapterBySlug(slug);
@@ -120,7 +113,7 @@ export async function getChapterWithHadiths(slug: string): Promise<{
 }
 
 // Get all narrators with hadith count
-export async function getAllNarrators(): Promise<PersonType[]> {
+export async function getAllNarrators(): Promise<ItemType[]> {
   const narrators = await prisma.narrator.findMany({
     select: {
       id: true,
@@ -130,7 +123,7 @@ export async function getAllNarrators(): Promise<PersonType[]> {
     },
     orderBy: { name: "asc" },
   });
-  // Map to PersonType with hadithCount
+  // Map to ItemType with hadithCount
   return narrators.map((narrator) => ({
     id: narrator.id,
     name: narrator.name,
@@ -142,7 +135,7 @@ export async function getAllNarrators(): Promise<PersonType[]> {
 // Get a single narrator by slug
 export async function getNarratorBySlug(
   slug: string
-): Promise<PersonType | null> {
+): Promise<ItemType | null> {
   // Fetch narrator by slug
   const narrator = await prisma.narrator.findUnique({
     where: { slug },
@@ -166,7 +159,7 @@ export async function getNarratorBySlug(
 
 // Get a narrator and their hadiths
 export async function getNarratorWithHadiths(slug: string): Promise<{
-  narrator: PersonType | null;
+  narrator: ItemType | null;
   hadiths: HadithType[];
 }> {
   const narrator = await getNarratorBySlug(slug);
@@ -200,7 +193,7 @@ export async function getNarratorNames(): Promise<string[]> {
 }
 
 // Get all sahabas with hadith count
-export async function getAllSahabas(): Promise<PersonType[]> {
+export async function getAllSahabas(): Promise<ItemType[]> {
   const sahabas = await prisma.sahaba.findMany({
     select: {
       id: true,
@@ -210,7 +203,7 @@ export async function getAllSahabas(): Promise<PersonType[]> {
     },
     orderBy: { name: "asc" },
   });
-  // Map to PersonType with hadithCount
+  // Map to ItemType with hadithCount
   return sahabas.map((sahaba) => ({
     id: sahaba.id,
     name: sahaba.name,
@@ -220,9 +213,7 @@ export async function getAllSahabas(): Promise<PersonType[]> {
 }
 
 // Get a single sahaba by slug
-export async function getSahabaBySlug(
-  slug: string
-): Promise<PersonType | null> {
+export async function getSahabaBySlug(slug: string): Promise<ItemType | null> {
   const sahaba = await prisma.sahaba.findUnique({
     where: { slug },
     select: {
@@ -245,7 +236,7 @@ export async function getSahabaBySlug(
 
 // Get a sahaba and their hadiths
 export async function getSahabaWithHadiths(slug: string): Promise<{
-  sahaba: PersonType | null;
+  sahaba: ItemType | null;
   hadiths: HadithType[];
 }> {
   // Fetch sahaba
