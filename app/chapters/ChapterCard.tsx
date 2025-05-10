@@ -3,12 +3,7 @@ import { BookOpenText, MoveRight } from "lucide-react";
 
 import { ChapterType } from "@/src/types/types";
 
-type Props = {
-  chapter: ChapterType;
-  index: number;
-};
-
-export function ChapterCard({ chapter, index }: Props) {
+export function ChapterCard({ chapter }: { chapter: ChapterType }) {
   return (
     <Link
       href={`/chapters/${chapter.slug}`}
@@ -20,7 +15,7 @@ export function ChapterCard({ chapter, index }: Props) {
         <div className="flex-grow">
           {/* Styled chapter number */}
           <span className="inline-block bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 text-xs font-semibold px-3 py-1 rounded-full mb-3">
-            Chapitre {index + 1}
+            Chapitre {chapter.index}
           </span>
 
           {/* Chapter title */}
