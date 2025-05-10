@@ -1,16 +1,19 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 
 import { getAllSahabas } from "@/src/services/services";
-import { ListLayoutPerson } from "@/src/ui/ListLayoutPerson/ListLayoutPerson";
+import { PersonFilter } from "@/src/ui/PersonsFilter/PersonsFilter";
 
 export default async function SahabasPage() {
   const sahabas = await getAllSahabas();
 
   return (
-    <ListLayoutPerson
-      title="Hadiths mentionnant des Compagnons"
-      persons={sahabas}
-      basePath="sahabas"
-    />
+    <>
+      <h1 className="title">Hadiths mentionnant des compagnons</h1>
+
+      <PersonFilter
+        type="sahabas"
+        persons={sahabas}
+      />
+    </>
   );
 }
