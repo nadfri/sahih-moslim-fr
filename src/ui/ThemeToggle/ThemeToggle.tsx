@@ -3,7 +3,7 @@
 import { useLayoutEffect, useState } from "react";
 import { MoonIcon, SunIcon } from "lucide-react";
 
-type ThemeType = "light" | "dark";
+import { ThemeType } from "@/src/types/types";
 
 export function ThemeToggle() {
   const [theme, setTheme] = useState<ThemeType | null>(null);

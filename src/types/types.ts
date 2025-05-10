@@ -34,3 +34,5 @@ export const HadithSchema = z.object({
 });
 
 export type HadithType = z.infer<typeof HadithSchema>;
+
+export type ThemeType = "light" | "dark";
