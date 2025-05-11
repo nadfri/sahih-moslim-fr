@@ -1,3 +1,4 @@
+-In Chat, speak only in French
 -use NextJS 15, React 19, Tailwind v4, pnpm
 -For new component, use export function only
 -comments are always in english!

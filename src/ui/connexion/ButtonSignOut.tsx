@@ -6,7 +6,7 @@ import { signOut, useSession } from "next-auth/react";
 export function ButtonSignOut() {
   const { status } = useSession();
 
-  if (status === "unauthenticated") {
+  if (status === "unauthenticated" || process.env.NODE_ENV === "production") {
     return null;
   }
 

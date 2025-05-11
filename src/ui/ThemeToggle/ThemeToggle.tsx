@@ -1,7 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useState } from "react";
-import { MoonIcon, SunIcon } from "lucide-react";
+import { MoonIcon, SunIcon, SunMoonIcon } from "lucide-react";
 
 import { ThemeType } from "@/src/types/types";
 
@@ -26,7 +26,7 @@ export function ThemeToggle() {
     document.cookie = `theme=${newTheme}; path=/; max-age=31536000`; // 1 year
   }
 
-  let IconTheme: React.ElementType | null = null;
+  let IconTheme: React.ElementType | null = SunMoonIcon;
 
   switch (theme) {
     case "light":
