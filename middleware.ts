@@ -8,43 +8,51 @@ const secret = process.env.AUTH_SECRET;
 export async function middleware(req: NextRequest) {
   console.log(`--- AUTH CHECK VIA getToken POUR: ${req.nextUrl.pathname} ---`);
 
-  // Récupère le token JWT SANS utiliser l'adapter Prisma
-  // The token might contain user details including the role if configured in callbacks
   const token = await getToken({ req, secret });
-
   console.log(`   Token récupéré:`, token);
 
   const pathname = req.nextUrl.pathname;
   const isProtectedRoute =
     pathname.endsWith("/add") ||
     pathname.endsWith("/edit") ||
-    pathname.includes("/api/hadiths");
+    pathname.endsWith("/admin") ||
+    pathname.includes("/api/hadiths"); // This covers /api/hadiths/add, etc.
 
-  if (isProtectedRoute) {
-    if (!token) {
+  // In production, block access to protected routes and return 404
+  if (process.env.NODE_ENV === "production") {
+    if (isProtectedRoute) {
       console.log(
-        "   PAS de token trouvé (non connecté). Préparation de la redirection vers signin..."
+        `   [PROD] Accès bloqué à la route protégée: ${pathname}. Rewrite vers /404.`
       );
-      const signInUrl = new URL("/auth/signin", req.nextUrl.origin); // Use standard signin path
-      signInUrl.searchParams.set("callbackUrl", req.nextUrl.href);
-      console.log(`   Redirection vers: ${signInUrl.toString()}`);
-      return NextResponse.redirect(signInUrl);
-    } else {
-      // Check if the user has the ADMIN role
-      // Note: Ensure the 'role' is included in the JWT token via callbacks in auth.ts
-      if (token.role !== Role.ADMIN) {
-        console.log(
-          `   Token trouvé mais rôle insuffisant (${token.role}). Redirection vers la page d'accueil.`
-        );
-        const homeUrl = new URL("/unauthorized", req.nextUrl.origin);
-        // Optionally add an error query parameter for the home page to display a message
-        // homeUrl.searchParams.set("error", "unauthorized");
-        return NextResponse.redirect(homeUrl); // Redirect to home or an unauthorized page
-      }
-      console.log("   Token trouvé et rôle ADMIN confirmé. Accès autorisé.");
+      // Rewrite vers la page 404 de Next.js (affiche la vraie page 404 custom)
+      return NextResponse.rewrite(new URL("/404", req.nextUrl.origin), {
+        status: 404,
+      });
     }
   } else {
-    console.log("   Route non protégée.");
+    // In development or other environments, apply existing auth logic
+    if (isProtectedRoute) {
+      if (!token) {
+        console.log(
+          "   PAS de token trouvé (non connecté). Préparation de la redirection vers signin..."
+        );
+        const signInUrl = new URL("/auth/signin", req.nextUrl.origin);
+        signInUrl.searchParams.set("callbackUrl", req.nextUrl.href);
+        console.log(`   Redirection vers: ${signInUrl.toString()}`);
+        return NextResponse.redirect(signInUrl);
+      } else {
+        if (token.role !== Role.ADMIN) {
+          console.log(
+            `   Token trouvé mais rôle insuffisant (${token.role}). Redirection vers la page non autorisée.`
+          );
+          const unauthorizedUrl = new URL("/unauthorized", req.nextUrl.origin);
+          return NextResponse.redirect(unauthorizedUrl);
+        }
+        console.log(
+          "   [DEV] Token trouvé et rôle ADMIN confirmé. Accès autorisé."
+        );
+      }
+    }
   }
 
   console.log("   Middleware terminé. Passage à next().");
@@ -52,5 +60,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/(.*)/add", "/(.*)/edit", "/api/hadiths/:path*"],
+  matcher: ["/(.*)/add", "/(.*)/edit", "/admin", "/api/hadiths/:path*"],
 };

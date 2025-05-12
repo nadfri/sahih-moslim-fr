@@ -10,12 +10,17 @@
 - [ ] Ensure accessible keyboard navigation
 - [ ] Add proper aria attributes for screen readers
 
-
 ### Forms
 
 - [ ] Create form to add a narrator
 - [ ] Create form to add a sahaba
 - [ ] Create form to add a chapter
+
+### Pages & UI
+
+- [ ] Create a custom 404 page
+- [ ] Add dark mode support for the unauthorized page
+- [ ] Add a global page loader/spinner
 
 ## Footer
 
