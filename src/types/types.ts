@@ -1,8 +1,11 @@
 import { z } from "zod";
 
 export type FilterType = "word" | "narrator" | "sahaba";
+export type VariantType = "chapters" | "narrators" | "sahabas";
+export type ThemeType = "light" | "dark";
 
-export const SchemaItem = z.object({
+// --- Structural Schema (for ItemType, data representation) ---
+export const SchemaItemStructure = z.object({
   id: z.string(),
   index: z.number().nullable().optional(),
   name: z.string(),
@@ -10,8 +13,9 @@ export const SchemaItem = z.object({
   nameArabic: z.string().nullable().optional(),
   hadithCount: z.number().optional(),
 });
+export type ItemType = z.infer<typeof SchemaItemStructure>;
 
-export type ItemType = z.infer<typeof SchemaItem>;
+export type AddItemFormValues = Omit<ItemType, "id" | "slug" | "hadithCount">;
 
 export const HadithSchema = z.object({
   id: z.string(),
@@ -19,13 +23,8 @@ export const HadithSchema = z.object({
   matn_fr: z.string(),
   matn_ar: z.string(),
   isnad: z.string().nullable().optional(),
-  chapter: SchemaItem,
-  narrator: SchemaItem,
-  mentionedSahabas: z.array(SchemaItem),
+  chapter: SchemaItemStructure, // Use the structural schema for relations
+  narrator: SchemaItemStructure,
+  mentionedSahabas: z.array(SchemaItemStructure),
 });
-
 export type HadithType = z.infer<typeof HadithSchema>;
-
-export type ThemeType = "light" | "dark";
-
-export type VariantType = "chapters" | "narrators" | "sahabas";
