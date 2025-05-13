@@ -23,6 +23,7 @@
     "@hookform/resolvers": "^5.0.1",
     "@prisma/client": "6.2.1",
     "@uiw/react-md-editor": "^4.0.1",
+    "babel-plugin-react-compiler": "19.1.0-rc.1",
     "lucide-react": "^0.488.0",
     "next": "15.1.5",
     "next-auth": "5.0.0-beta.25",

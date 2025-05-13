@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { FieldErrors, useForm } from "react-hook-form";
@@ -33,10 +33,6 @@ const placeholderText = {
 export function AddItemForm({ initialItems, variant }: AddItemFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [items, setItems] = useState<ItemType[]>(initialItems);
-
-  useEffect(() => {
-    setItems(initialItems);
-  }, [initialItems]);
 
   const existingNames = useMemo(
     () => items.map((c) => c.name.toLowerCase()),
@@ -121,7 +117,7 @@ export function AddItemForm({ initialItems, variant }: AddItemFormProps) {
   });
 
   const watchedName = watch("name");
-  const liveSlug = useMemo(() => slugify(watchedName || ""), [watchedName]);
+  const liveSlug = slugify(watchedName);
 
   const onAddItemSubmit = async (formData: AddItemFormValues) => {
     setIsSubmitting(true);
