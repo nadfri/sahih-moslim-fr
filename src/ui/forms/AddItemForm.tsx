@@ -1,18 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
-import { FieldErrors, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
 import { addItem } from "@/src/services/actions";
 import { AddItemFormValues, ItemType, VariantType } from "@/src/types/types";
-import { slugify } from "@/src/utils/slugify";
 
-type AddItemFormProps = {
-  initialItems: ItemType[];
+type Props = {
+  items: ItemType[];
   variant: VariantType;
 };
 
@@ -30,96 +29,69 @@ const placeholderText = {
   },
 };
 
-export function AddItemForm({ initialItems, variant }: AddItemFormProps) {
+export function AddItemForm({ items: serverItems, variant }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [items, setItems] = useState<ItemType[]>(initialItems);
+  const [items, setItems] = useState<ItemType[]>(serverItems);
 
-  const existingNames = useMemo(
-    () => items.map((c) => c.name.toLowerCase()),
-    [items]
-  );
-  const existingIndexes = useMemo(
-    () => (variant === "chapters" ? items.map((c) => c.index!) : []),
-    [items, variant]
-  );
+  const existingNames = () => items.map((item) => item.name.toLowerCase());
+  const existingIndexes = () => items.map((chapter) => chapter.index);
 
-  // Dynamic Zod schema defined locally
-  const itemSchema = useMemo(() => {
-    const nameValidation = z
+  const ItemSchema = z.object({
+    name: z
       .string()
       .min(3, "Au moins 3 lettres")
       .trim()
       .refine(
-        (name) => !existingNames.includes(name.toLowerCase()),
+        (name) => !existingNames().includes(name.toLowerCase()),
         "Ce nom est déjà utilisé. Veuillez en choisir un autre."
-      );
+      ),
 
-    const nameArabicValidation = z
+    nameArabic: z
       .string()
       .trim()
       .transform((val) => (val === "" ? null : val))
       .nullable()
-      .optional();
+      .optional(),
 
-    if (variant === "chapters") {
-      const indexValidation = z.coerce
-        .number({
-          required_error: "L'index est requis",
-          invalid_type_error: "L'index doit être un nombre",
-        })
-        .int({ message: "L'index doit être un nombre entier" })
-        .positive({ message: "L'index doit être un nombre positif" })
-        .refine(
-          (index) => !existingIndexes.includes(index),
-          "Cet index est déjà utilisé. Veuillez en choisir un autre."
-        );
-      return z.object({
-        name: nameValidation,
-        index: indexValidation,
-        nameArabic: nameArabicValidation,
-      });
-    }
-    // For narrators/sahabas: no index
-    return z.object({
-      name: nameValidation,
-      nameArabic: nameArabicValidation,
-    });
-  }, [variant, existingNames, existingIndexes]);
+    index:
+      variant === "chapters"
+        ? z.coerce
+            .number({
+              message: "L'index est requis",
+            })
+            .int({ message: "L'index doit être un nombre entier" })
+            .positive({ message: "L'index doit être un nombre positif" })
+            .refine(
+              (index) => !existingIndexes().includes(index),
+              "Cet index est déjà utilisé. Veuillez en choisir un autre."
+            )
+        : z.union([z.undefined(), z.null()]), // for no chapters
+  });
 
-  const nextAvailableIndex = useMemo(() => {
+  // Get the next available index for chapters (returns 1 if empty, else max+1)
+  function nextAvailableIndex(items: ItemType[]): number | undefined {
     if (variant !== "chapters") return undefined;
-    if (items.length === 0) return 1;
-    const validIndexes = items.map((c) => c.index!);
 
-    if (validIndexes.length === 0) return 1;
-    const maxIndex = Math.max(...validIndexes);
-    return maxIndex + 1;
-  }, [items, variant]);
+    if (items.length === 0) return 1;
+    return Math.max(...items.map((chapter) => chapter.index ?? 0)) + 1;
+  }
 
   const {
     register,
-    handleSubmit: handleFormSubmit,
+    handleSubmit,
     formState: { errors },
     reset,
-    watch,
   } = useForm<AddItemFormValues>({
     mode: "onChange",
-    resolver: zodResolver(itemSchema),
-    // defaultValues will handle initial load and variant changes
-    defaultValues: useMemo(
-      () => ({
-        name: "",
-        nameArabic: "",
-        index: variant === "chapters" ? nextAvailableIndex : undefined,
-      }),
-      [variant, nextAvailableIndex]
-    ),
+    resolver: zodResolver(ItemSchema),
+    defaultValues: {
+      name: "",
+      nameArabic: "",
+      index: nextAvailableIndex(items),
+    },
   });
 
-  const watchedName = watch("name");
-  const liveSlug = slugify(watchedName);
-
-  const onAddItemSubmit = async (formData: AddItemFormValues) => {
+  async function addItemSubmit(formData: AddItemFormValues) {
     setIsSubmitting(true);
 
     try {
@@ -128,22 +100,12 @@ export function AddItemForm({ initialItems, variant }: AddItemFormProps) {
       if (response.success && response.data) {
         toast.success(response.message);
 
-        // Update items state
         const newItem = response.data as ItemType;
-        setItems((prevItems) => [...prevItems, newItem]);
 
-        let newSuggestedIndex: number | undefined = undefined;
+        const newList = [...items, newItem];
+        setItems(newList);
 
-        if (variant === "chapters") {
-          const currentItemsPlusNew = [...items, newItem]; // Use the current 'items' state and add the new one for calculation
-          const validIndexes = currentItemsPlusNew.map((c) => c.index!);
-
-          if (validIndexes.length === 0) {
-            newSuggestedIndex = 1;
-          } else {
-            newSuggestedIndex = Math.max(...validIndexes) + 1;
-          }
-        }
+        const newSuggestedIndex = nextAvailableIndex(newList);
 
         reset({
           name: "",
@@ -162,9 +124,7 @@ export function AddItemForm({ initialItems, variant }: AddItemFormProps) {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const formErrors = errors as FieldErrors<AddItemFormValues>;
+  }
 
   return (
     <div className="flex flex-col gap-8">
@@ -173,10 +133,10 @@ export function AddItemForm({ initialItems, variant }: AddItemFormProps) {
           {placeholderText.title[variant]}
         </h2>
         <form
-          onSubmit={handleFormSubmit(onAddItemSubmit)}
+          onSubmit={handleSubmit(addItemSubmit)}
           className="flex flex-col gap-4"
         >
-          {/* Index Field (only for chapters) */}
+          {/* Index Field (visible only for chapters but always included in form data) */}
           {variant === "chapters" && (
             <div>
               <div className="flex justify-between items-baseline mb-1">
@@ -187,27 +147,25 @@ export function AddItemForm({ initialItems, variant }: AddItemFormProps) {
                   Numero du chapitre*
                 </label>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Suggéré: {nextAvailableIndex}
+                  Suggéré: {nextAvailableIndex(items)}
                 </p>
               </div>
+
               <input
                 id="index"
                 type="number"
                 placeholder="Index"
-                {...register("index", { valueAsNumber: true })}
-                min={1}
+                {...register("index")}
                 className={`block w-full rounded-lg border ${
-                  formErrors.index
+                  errors.index
                     ? "border-red-500"
                     : "border-gray-300 dark:border-gray-700"
                 } bg-gray-50 dark:bg-gray-800 px-3 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 ${
-                  formErrors.index
-                    ? "focus:ring-red-500"
-                    : "focus:ring-emerald-500"
+                  errors.index ? "focus:ring-red-500" : "focus:ring-emerald-500"
                 }`}
               />
               <p className="mt-1 text-xs text-red-600 dark:text-red-400 h-4">
-                {formErrors.index?.message || <>&nbsp;</>}
+                {errors.index?.message || <>&nbsp;</>}
               </p>
             </div>
           )}
@@ -221,11 +179,6 @@ export function AddItemForm({ initialItems, variant }: AddItemFormProps) {
               >
                 {placeholderText.title[variant]}*
               </label>
-              {watchedName && (
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Slug: <span className="font-mono">{liveSlug}</span>
-                </p>
-              )}
             </div>
             <input
               id="name"
@@ -233,17 +186,15 @@ export function AddItemForm({ initialItems, variant }: AddItemFormProps) {
               placeholder={placeholderText.name[variant]}
               {...register("name")}
               className={`block w-full rounded-lg border ${
-                formErrors.name
+                errors.name
                   ? "border-red-500"
                   : "border-gray-300 dark:border-gray-700"
               } bg-gray-50 dark:bg-gray-800 px-3 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 ${
-                formErrors.name
-                  ? "focus:ring-red-500"
-                  : "focus:ring-emerald-500"
+                errors.name ? "focus:ring-red-500" : "focus:ring-emerald-500"
               }`}
             />
             <p className="mt-1 text-xs text-red-600 dark:text-red-400 h-4">
-              {formErrors.name?.message || <>&nbsp;</>}
+              {errors.name?.message || <>&nbsp;</>}
             </p>
           </div>
 
@@ -261,18 +212,18 @@ export function AddItemForm({ initialItems, variant }: AddItemFormProps) {
               placeholder="الاسم بالعربية"
               {...register("nameArabic")}
               className={`block w-full rounded-lg border ${
-                formErrors.nameArabic
+                errors.nameArabic
                   ? "border-red-500"
                   : "border-gray-300 dark:border-gray-700"
               } bg-gray-50 dark:bg-gray-800 px-3 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 ${
-                formErrors.nameArabic
+                errors.nameArabic
                   ? "focus:ring-red-500"
                   : "focus:ring-emerald-500"
               }`}
               dir="rtl"
             />
             <p className="mt-1 text-xs text-red-600 dark:text-red-400 h-4">
-              {formErrors.nameArabic?.message || <>&nbsp;</>}
+              {errors.nameArabic?.message || <>&nbsp;</>}
             </p>
           </div>
 
