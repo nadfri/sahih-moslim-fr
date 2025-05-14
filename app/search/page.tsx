@@ -28,7 +28,7 @@ export default async function SearchPage() {
   ]);
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="container mx-auto max-w-5xl">
       <h1 className="title">Rechercher un Hadith</h1>
 
       <Suspense fallback={<p>Chargement...</p>}>

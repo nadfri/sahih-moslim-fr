@@ -15,7 +15,7 @@ export default async function AdminPage() {
   ]);
 
   return (
-    <div className="container mx-auto max-w-5xl py-8">
+    <div className="container mx-auto max-w-5xl">
       <h1 className="title mb-10 text-center">Administration</h1>
 
       <AdminDashboard

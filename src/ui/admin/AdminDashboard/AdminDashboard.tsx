@@ -15,7 +15,7 @@ type AdminDashboardProps = {
 const variantOptions: { label: string; value: VariantType }[] = [
   { label: "Chapitres", value: "chapters" },
   { label: "Narrateurs", value: "narrators" },
-  { label: "Sahabas", value: "sahabas" },
+  { label: "Compagnons", value: "sahabas" },
 ];
 
 export function AdminDashboard({

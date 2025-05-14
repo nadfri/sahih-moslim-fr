@@ -109,10 +109,10 @@ describe("AdminDashboard", () => {
       />
     );
 
-    const sahabaRadioButton = screen.getByLabelText("Sahabas");
-    await user.click(sahabaRadioButton);
+    const companionRadioButton = screen.getByLabelText("Compagnons");
+    await user.click(companionRadioButton);
 
-    expect(sahabaRadioButton).toBeChecked();
+    expect(companionRadioButton).toBeChecked();
 
     const filteredCardsEdit = screen.getByTestId("filtered-cards-edit");
     expect(filteredCardsEdit).toHaveTextContent("Variant: sahabas");
@@ -153,7 +153,7 @@ describe("AdminDashboard", () => {
     expect(addItemForm).toHaveTextContent("First item: Narrator 1");
 
     // Switch to sahabas
-    const sahabaRadioButton = screen.getByLabelText("Sahabas");
+    const sahabaRadioButton = screen.getByLabelText("Compagnons");
     await user.click(sahabaRadioButton);
 
     filteredCardsEdit = screen.getByTestId("filtered-cards-edit"); // Re-query after update
