@@ -306,15 +306,16 @@ export async function deleteItem(
 
   try {
     let deleted: Chapter | Narrator | Sahaba;
+
     if (variant === "chapters") {
       deleted = await prisma.chapter.delete({ where: { id } });
     } else if (variant === "narrators") {
       deleted = await prisma.narrator.delete({ where: { id } });
     } else {
-      // sahabas
       deleted = await prisma.sahaba.delete({ where: { id } });
     }
     revalidatePath("/admin");
+
     return {
       success: true,
       message: "Élément supprimé avec succès.",

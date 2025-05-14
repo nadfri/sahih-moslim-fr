@@ -1,12 +1,34 @@
-import { Pencil, Trash2 } from "lucide-react";
+"use client";
 
-import type { ItemType } from "@/src/types/types";
+import { useState } from "react";
+import { Pencil, Trash2 } from "lucide-react";
+import { toast } from "react-toastify";
+
+import { deleteItem } from "@/src/services/actions";
+import type { ItemType, VariantType } from "@/src/types/types";
+import { ConfirmDeleteModal } from "../../ConfirmDeleteModal/ConfirmDeleteModal";
 
 type Props = {
   item: ItemType;
+  variant: VariantType;
 };
 
-export function CardEdit({ item }: Props) {
+const variantOptions = {
+  chapters: {
+    title: "Supprimer ce chapitre ?",
+    description: "Êtes-vous sûr de vouloir supprimer ce chapitre ",
+  },
+  narrators: {
+    title: "Supprimer ce narrateur ?",
+    description: "Êtes-vous sûr de vouloir supprimer ce narrateur ",
+  },
+  sahabas: {
+    title: "Supprimer ce sahaba ?",
+    description: "Êtes-vous sûr de vouloir supprimer ce sahaba ",
+  },
+};
+
+export function CardEdit({ item, variant }: Props) {
   const onEdit = (data: {
     id: string;
     name: string;
@@ -17,10 +39,36 @@ export function CardEdit({ item }: Props) {
     console.log("Edit item:", data);
   };
 
-  const onDelete = (id: string) => {
-    // Handle delete action
-    console.log("Delete item with id:", id);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const result = await deleteItem(variant, item.id);
+
+      if (result.success) {
+        toast.success(result.message);
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      toast.error("Erreur inconnue lors de la suppression.");
+    } finally {
+      setIsDeleting(false);
+    }
   };
+
+  const deleteDescription = (
+    <p>
+      {variantOptions[variant].description}
+      <span className="inline-block mx-1 px-2 py-0.5 rounded bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 font-semibold">
+        {item.name}
+      </span>
+      {" ?"}
+    </p>
+  );
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-3 flex">
@@ -28,7 +76,7 @@ export function CardEdit({ item }: Props) {
       <div className="flex-grow flex flex-col gap-1">
         <div className="flex items-center gap-2">
           {/* Index */}
-          {item.index && (
+          {item.index !== undefined && (
             <span className="inline-flex items-center justify-center bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 text-sm font-medium h-6 min-w-6 px-1.5 rounded-md">
               {item.index}
             </span>
@@ -52,7 +100,6 @@ export function CardEdit({ item }: Props) {
         </div>
       </div>
 
-      {/* Action buttons on the right, centered vertically */}
       <div className="flex items-center ml-3">
         <button
           type="button"
@@ -60,7 +107,7 @@ export function CardEdit({ item }: Props) {
             onEdit({
               id: item.id,
               name: item.name,
-              index: item.index ?? undefined, // Ensure index is number | undefined
+              index: item.index ?? undefined,
               nameArabic: item.nameArabic || "",
             })
           }
@@ -72,7 +119,7 @@ export function CardEdit({ item }: Props) {
         </button>
         <button
           type="button"
-          onClick={() => onDelete(item.id)}
+          onClick={() => setShowDeleteModal(true)}
           className="p-1.5 rounded hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 flex items-center justify-center"
           aria-label="Supprimer"
           title="Supprimer"
@@ -80,6 +127,15 @@ export function CardEdit({ item }: Props) {
           <Trash2 className="size-4" />
         </button>
       </div>
+
+      <ConfirmDeleteModal
+        open={showDeleteModal}
+        onCancel={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+        loading={isDeleting}
+        title={variantOptions[variant].title}
+        description={deleteDescription}
+      />
     </div>
   );
 }

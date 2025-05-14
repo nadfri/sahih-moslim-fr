@@ -16,7 +16,7 @@ import { SearchSelect } from "@/src/ui/inputs/SearchSelect/SearchSelect";
 import { Select } from "@/src/ui/inputs/Select/Select";
 import { cleanArabicText } from "@/src/utils/cleanArabicText";
 import { replaceSWS } from "@/src/utils/replaceSWS";
-import { ConfirmDeleteModal } from "../hadith/ConfirmDeleteModal/ConfirmDeleteModal";
+import { ConfirmDeleteModal } from "../ConfirmDeleteModal/ConfirmDeleteModal";
 
 const createEditHadithSchema = (
   existingNumeros: number[],

@@ -8,7 +8,7 @@ type ConfirmDeleteModalProps = {
   onConfirm: () => void;
   loading?: boolean;
   title?: string;
-  description?: string;
+  description?: string | React.ReactNode;
 };
 
 export function ConfirmDeleteModal({
@@ -16,8 +16,8 @@ export function ConfirmDeleteModal({
   onCancel,
   onConfirm,
   loading = false,
-  title = "Confirm deletion",
-  description = "Are you sure you want to delete this item?",
+  title = "Supprimer cet élément ?",
+  description = "Êtes-vous sûr de vouloir supprimer cet élément ?",
 }: ConfirmDeleteModalProps) {
   // Animation state
   const [show, setShow] = useState(open);

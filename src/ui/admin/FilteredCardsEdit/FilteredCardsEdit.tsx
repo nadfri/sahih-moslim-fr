@@ -59,6 +59,7 @@ export function FilteredCardsEdit({ items, variant }: Props) {
             <CardEdit
               key={item.id}
               item={item}
+              variant={variant}
             />
           ))
         )}
