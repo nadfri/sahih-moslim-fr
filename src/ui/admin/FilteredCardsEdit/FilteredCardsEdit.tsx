@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import type { ItemType, VariantType } from "@/src/types/types";
+import { Input } from "@/src/ui/inputs/Input/Input";
 import { CardEdit } from "../CardEdit/CardEdit";
 
 type Props = {
@@ -11,40 +12,51 @@ type Props = {
 };
 
 const variantOptions = {
-  chapters: "Liste des chapitres",
-  narrators: "Liste des narrateurs",
-  sahabas: "Liste des sahabas",
+  chapters: {
+    label: "Liste des chapitres",
+    placeholder: "Rechercher un chapitre...",
+    name: "chapitre",
+  },
+  narrators: {
+    label: "Liste des narrateurs",
+    placeholder: "Rechercher un narrateur...",
+    name: "narrateur",
+  },
+  sahabas: {
+    label: "Liste des sahabas",
+    placeholder: "Rechercher un sahaba...",
+    name: "sahaba",
+  },
 };
 
 export function FilteredCardsEdit({ items, variant }: Props) {
   const [inputValue, setInputValue] = useState("");
 
   // Filter items based on search
-  const filteredItems = useMemo(() => {
+  const filteredItems = (() => {
     if (!inputValue) return items;
     const searchLower = inputValue.toLowerCase();
 
-    return items.filter(
-      (item) =>
-        item.name.toLowerCase().includes(searchLower) ||
-        (item.nameArabic && item.nameArabic.toLowerCase().includes(searchLower))
+    return items.filter((item) =>
+      item.name.toLowerCase().includes(searchLower)
     );
-  }, [items, inputValue]);
+  })();
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
       <h2 className="text-xl font-bold mb-4 text-emerald-700 dark:text-emerald-300">
-        {variantOptions[variant]}
+        {variantOptions[variant].label}
       </h2>
 
       {/* Search Bar */}
       <div className="mb-4">
-        <input
+        <Input
+          id="search-bar"
+          label="Recherche"
           type="text"
-          placeholder="Rechercher un chapitre..."
+          placeholder={variantOptions[variant].placeholder}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
         />
       </div>
 
@@ -52,13 +64,14 @@ export function FilteredCardsEdit({ items, variant }: Props) {
       <div className="space-y-3">
         {filteredItems.length === 0 ? (
           <p className="text-center py-6 text-gray-500 dark:text-gray-400 italic">
-            Aucun {variant} trouvé
+            Aucun {variantOptions[variant].name} trouvé
           </p>
         ) : (
           filteredItems.map((item) => (
             <CardEdit
               key={item.id}
               item={item}
+              items={items}
               variant={variant}
             />
           ))

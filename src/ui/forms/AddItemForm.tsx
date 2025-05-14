@@ -9,6 +9,7 @@ import { z } from "zod";
 
 import { addItem } from "@/src/services/actions";
 import { AddItemFormValues, ItemType, VariantType } from "@/src/types/types";
+import { Input } from "@/src/ui/inputs/Input/Input";
 
 type Props = {
   items: ItemType[];
@@ -33,16 +34,17 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [items, setItems] = useState<ItemType[]>(serverItems);
 
-  const existingNames = () => items.map((item) => item.name.toLowerCase());
-  const existingIndexes = () => items.map((chapter) => chapter.index);
-
   const ItemSchema = z.object({
     name: z
       .string()
       .min(3, "Au moins 3 lettres")
       .trim()
       .refine(
-        (name) => !existingNames().includes(name.toLowerCase()),
+        (name) =>
+          !items.some(
+            (item) =>
+              item.name.trim().toLowerCase() === name.trim().toLowerCase()
+          ),
         "Ce nom est déjà utilisé. Veuillez en choisir un autre."
       ),
 
@@ -56,16 +58,14 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
     index:
       variant === "chapters"
         ? z.coerce
-            .number({
-              message: "L'index est requis",
-            })
+            .number({ message: "L'index est requis" })
             .int({ message: "L'index doit être un nombre entier" })
             .positive({ message: "L'index doit être un nombre positif" })
             .refine(
-              (index) => !existingIndexes().includes(index),
+              (index) => !items.some((chapter) => chapter.index === index),
               "Cet index est déjà utilisé. Veuillez en choisir un autre."
             )
-        : z.union([z.undefined(), z.null()]), // for no chapters
+        : z.number().optional().nullable(),
   });
 
   // Get the next available index for chapters (returns 1 if empty, else max+1)
@@ -139,92 +139,46 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
           {/* Index Field (visible only for chapters but always included in form data) */}
           {variant === "chapters" && (
             <div>
-              <div className="flex justify-between items-baseline mb-1">
-                <label
-                  htmlFor="index"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Numero du chapitre*
-                </label>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Suggéré: {nextAvailableIndex(items)}
-                </p>
-              </div>
-
-              <input
+              <Input
                 id="index"
+                label="Numero du chapitre*"
                 type="number"
-                placeholder="Index"
-                {...register("index")}
-                className={`block w-full rounded-lg border ${
-                  errors.index
-                    ? "border-red-500"
-                    : "border-gray-300 dark:border-gray-700"
-                } bg-gray-50 dark:bg-gray-800 px-3 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 ${
-                  errors.index ? "focus:ring-red-500" : "focus:ring-emerald-500"
-                }`}
+                min={1}
+                error={!!errors.index}
+                errorMessage={errors.index?.message}
+                register={register("index")}
               />
-              <p className="mt-1 text-xs text-red-600 dark:text-red-400 h-4">
-                {errors.index?.message || <>&nbsp;</>}
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Suggéré: {nextAvailableIndex(items)}
               </p>
             </div>
           )}
 
           {/* Name Field */}
           <div>
-            <div className="flex justify-between items-baseline mb-1">
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                {placeholderText.title[variant]}*
-              </label>
-            </div>
-            <input
+            <Input
               id="name"
+              label={placeholderText.title[variant] + "*"}
               type="text"
               placeholder={placeholderText.name[variant]}
-              {...register("name")}
-              className={`block w-full rounded-lg border ${
-                errors.name
-                  ? "border-red-500"
-                  : "border-gray-300 dark:border-gray-700"
-              } bg-gray-50 dark:bg-gray-800 px-3 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 ${
-                errors.name ? "focus:ring-red-500" : "focus:ring-emerald-500"
-              }`}
+              error={!!errors.name}
+              errorMessage={errors.name?.message}
+              register={register("name")}
             />
-            <p className="mt-1 text-xs text-red-600 dark:text-red-400 h-4">
-              {errors.name?.message || <>&nbsp;</>}
-            </p>
           </div>
 
           {/* Arabic Name Field */}
           <div>
-            <label
-              htmlFor="nameArabic"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >
-              Nom en arabe (optionnel)
-            </label>
-            <input
+            <Input
               id="nameArabic"
+              label="Nom en arabe (optionnel)"
               type="text"
               placeholder="الاسم بالعربية"
-              {...register("nameArabic")}
-              className={`block w-full rounded-lg border ${
-                errors.nameArabic
-                  ? "border-red-500"
-                  : "border-gray-300 dark:border-gray-700"
-              } bg-gray-50 dark:bg-gray-800 px-3 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 ${
-                errors.nameArabic
-                  ? "focus:ring-red-500"
-                  : "focus:ring-emerald-500"
-              }`}
+              error={!!errors.nameArabic}
+              errorMessage={errors.nameArabic?.message}
+              register={register("nameArabic")}
               dir="rtl"
             />
-            <p className="mt-1 text-xs text-red-600 dark:text-red-400 h-4">
-              {errors.nameArabic?.message || <>&nbsp;</>}
-            </p>
           </div>
 
           <button

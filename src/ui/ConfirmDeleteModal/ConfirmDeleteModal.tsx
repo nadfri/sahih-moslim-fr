@@ -38,6 +38,7 @@ export function ConfirmDeleteModal({
   }, [open]);
 
   if (!visible) return null;
+
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/70 px-2 transition-opacity duration-200 ${show ? "opacity-100" : "opacity-0"}`}

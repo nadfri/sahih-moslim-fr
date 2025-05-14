@@ -68,6 +68,7 @@ export function AdminDashboard({
       </div>
 
       <AddItemForm
+        key={selectedVariant}
         items={currentItems}
         variant={selectedVariant}
       />
