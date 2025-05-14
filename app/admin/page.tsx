@@ -1,31 +1,27 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 
-import { getAllChapters } from "@/src/services/services";
-import { FilteredCardsEdit } from "@/src/ui/FilteredCardsEdit/FilteredCardsEdit";
-import { AddItemForm } from "@/src/ui/forms/AddItemForm";
+import {
+  getAllChapters,
+  getAllNarrators,
+  getAllSahabas,
+} from "@/src/services/services";
+import { AdminDashboard } from "@/src/ui/admin/AdminDashboard/AdminDashboard";
 
 export default async function AdminPage() {
-  const chapters = await getAllChapters();
+  const [chapters, narrators, sahabas] = await Promise.all([
+    getAllChapters(),
+    getAllNarrators(),
+    getAllSahabas(),
+  ]);
 
   return (
-    <div className="container mx-auto max-w-5xl">
-      <h1 className="title">Administration</h1>
+    <div className="container mx-auto max-w-5xl py-8">
+      <h1 className="title mb-10 text-center">Administration</h1>
 
-      <AddItemForm
-        initialItems={chapters}
-        variant="chapters"
-      />
-
-      <br/>
-
-      <AddItemForm
-        initialItems={chapters}
-        variant="narrators"
-      />
-
-      <FilteredCardsEdit
-        items={chapters}
-        variant="chapters"
+      <AdminDashboard
+        chapters={chapters}
+        narrators={narrators}
+        sahabas={sahabas}
       />
     </div>
   );

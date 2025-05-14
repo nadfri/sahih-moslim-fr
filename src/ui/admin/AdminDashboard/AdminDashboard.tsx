@@ -1,0 +1,83 @@
+"use client";
+
+import { useState } from "react";
+
+import type { ItemType, VariantType } from "@/src/types/types";
+import { FilteredCardsEdit } from "@/src/ui/admin/FilteredCardsEdit/FilteredCardsEdit";
+import { AddItemForm } from "@/src/ui/forms/AddItemForm";
+
+type AdminDashboardProps = {
+  chapters: ItemType[];
+  narrators: ItemType[];
+  sahabas: ItemType[];
+};
+
+const variantOptions: { label: string; value: VariantType }[] = [
+  { label: "Chapitres", value: "chapters" },
+  { label: "Narrateurs", value: "narrators" },
+  { label: "Sahabas", value: "sahabas" },
+];
+
+export function AdminDashboard({
+  chapters,
+  narrators,
+  sahabas,
+}: AdminDashboardProps) {
+  const [selectedVariant, setSelectedVariant] =
+    useState<VariantType>("chapters");
+
+  let currentItems: ItemType[];
+
+  switch (selectedVariant) {
+    case "chapters":
+      currentItems = chapters;
+      break;
+
+    case "narrators":
+      currentItems = narrators;
+      break;
+
+    case "sahabas":
+      currentItems = sahabas;
+      break;
+  }
+
+  return (
+    <div className="space-y-12">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+        {variantOptions.map((option) => (
+          <label
+            key={option.value}
+            className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
+              selectedVariant === option.value
+                ? "bg-emerald-100 dark:bg-emerald-900/50 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 font-medium"
+                : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+            }`}
+          >
+            <input
+              type="radio"
+              name="variantSelector"
+              value={option.value}
+              checked={selectedVariant === option.value}
+              onChange={() => setSelectedVariant(option.value)}
+              className="sr-only"
+            />
+            <span className="font-medium">{option.label}</span>
+          </label>
+        ))}
+      </div>
+
+      <AddItemForm
+        items={currentItems}
+        variant={selectedVariant}
+      />
+
+      <div>
+        <FilteredCardsEdit
+          items={currentItems}
+          variant={selectedVariant}
+        />
+      </div>
+    </div>
+  );
+}

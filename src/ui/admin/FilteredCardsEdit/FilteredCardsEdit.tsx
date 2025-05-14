@@ -2,12 +2,18 @@
 
 import { useMemo, useState } from "react";
 
-import type { ItemType, VariantType } from "@/src/types/types"; // Import ItemType
+import type { ItemType, VariantType } from "@/src/types/types";
 import { CardEdit } from "../CardEdit/CardEdit";
 
 type Props = {
   items: ItemType[];
   variant: VariantType;
+};
+
+const variantOptions = {
+  chapters: "Liste des chapitres",
+  narrators: "Liste des narrateurs",
+  sahabas: "Liste des sahabas",
 };
 
 export function FilteredCardsEdit({ items, variant }: Props) {
@@ -28,7 +34,7 @@ export function FilteredCardsEdit({ items, variant }: Props) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
       <h2 className="text-xl font-bold mb-4 text-emerald-700 dark:text-emerald-300">
-        Liste des {variant}
+        {variantOptions[variant]}
       </h2>
 
       {/* Search Bar */}

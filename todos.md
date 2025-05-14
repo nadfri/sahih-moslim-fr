@@ -53,6 +53,7 @@
 
 - [ ] Implement internationalization (i18n)
 - [ ] Optimize performance
+- [ ] Remove all useMemo and useCallback to benefit from React 19 automatic optimizations
 
 ## Documentation
 

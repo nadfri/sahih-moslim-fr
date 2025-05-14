@@ -7,52 +7,63 @@ import { z } from "zod";
 
 import { prisma } from "@/prisma/prisma";
 import { auth } from "@/src/authentification/auth";
-import { slugify } from "@/src/utils/slugify"; // Added import
-import { AddItemFormValues, VariantType } from "../types/types";
-
-// No longer importing server-side validation schemas from types.ts
+import { slugify } from "@/src/utils/slugify";
+import { AddItemFormValues, ItemType, VariantType } from "../types/types";
 
 // --- Server-Side Validation Schemas (defined locally) ---
 const serverBaseItemSchema = z.object({
   name: z.string().min(3, "Le nom doit faire au moins 3 lettres"),
-  // slug: z.string().min(1, "Le slug est requis"), // Slug removed, will be generated
   nameArabic: z.string().nullable().optional(),
 });
+
 const serverIndexValidation = {
   index: z
     .number()
     .int()
     .positive("L'index doit être un nombre entier positif"),
 };
+
 const serverAddItemChapterSchema = serverBaseItemSchema.extend(
   serverIndexValidation
 );
+
 const serverAddItemOtherSchema = serverBaseItemSchema;
 
 const serverIdValidation = z.object({
   id: z.string().min(1, "L'ID est requis"),
 });
+
 const serverEditItemChapterSchema =
   serverAddItemChapterSchema.merge(serverIdValidation);
+
 const serverEditItemOtherSchema =
   serverAddItemOtherSchema.merge(serverIdValidation);
 
 // EditItemParams can remain similar if Edit forms also send a similar structure
 type EditItemActionParams = AddItemFormValues & { id: string };
 
-type ActionResponse<T> = {
+type ActionResponse = {
   success: boolean;
   message: string;
-  error?: string; // Detailed error string, e.g., from Zod
-  data?: T;
+  error?: string;
+  data?: ItemType;
 };
+
+// Define inferred types for schema outputs for clarity
+type ServerAddItemChapterOutput = z.infer<typeof serverAddItemChapterSchema>;
+type ServerAddItemOtherOutput = z.infer<typeof serverAddItemOtherSchema>;
+type ServerEditItemChapterOutput = z.infer<typeof serverEditItemChapterSchema>;
+type ServerEditItemOtherOutput = z.infer<typeof serverEditItemOtherSchema>;
+
+// Define the explicit type for parseResult in addItem
+type AddItemParseResultType =
+  | z.SafeParseReturnType<AddItemFormValues, ServerAddItemChapterOutput>
+  | z.SafeParseReturnType<AddItemFormValues, ServerAddItemOtherOutput>;
 
 export async function addItem(
   variant: VariantType,
-  data: AddItemFormValues // Use the refined type
-): Promise<
-  ActionResponse<Chapter> | ActionResponse<Narrator> | ActionResponse<Sahaba>
-> {
+  data: AddItemFormValues
+): Promise<ActionResponse> {
   const session = await auth();
   if (!session || session.user.role !== "ADMIN") {
     return {
@@ -62,18 +73,10 @@ export async function addItem(
     };
   }
 
-  let parseResult;
-  // The 'slug' field from 'data' (AddItemFormValues) will be ignored by Zod
-  // because server schemas no longer include 'slug'.
-  if (variant === "chapters") {
-    // serverAddItemChapterSchema expects 'index' to be a number.
-    // The client form ensures this for chapters.
-    parseResult = serverAddItemChapterSchema.safeParse(data);
-  } else {
-    // serverAddItemOtherSchema does not expect 'index'.
-    // If 'data' contains an undefined 'index', it will be stripped by Zod.
-    parseResult = serverAddItemOtherSchema.safeParse(data);
-  }
+  const parseResult: AddItemParseResultType =
+    variant === "chapters"
+      ? serverAddItemChapterSchema.safeParse(data)
+      : serverAddItemOtherSchema.safeParse(data);
 
   if (!parseResult.success) {
     const errorMessages = parseResult.error.errors
@@ -81,13 +84,12 @@ export async function addItem(
       .join(". ");
     return {
       success: false,
-      message: `Erreur de validation: ${errorMessages}`, // Main user-friendly message
-      error: errorMessages, // Keep detailed errors if needed elsewhere
+      message: `Erreur de validation: ${errorMessages}`,
     };
   }
 
-  const validatedData = parseResult.data; // Contains only fields defined in the used schema (no slug)
-  const slug = slugify(validatedData.name); // Generate slug from name
+  const validatedData = parseResult.data;
+  const slug = slugify(validatedData.name);
 
   try {
     let created: Chapter | Narrator | Sahaba;
@@ -96,6 +98,7 @@ export async function addItem(
       const chapterData = validatedData as z.infer<
         typeof serverAddItemChapterSchema
       >;
+
       created = await prisma.chapter.create({
         data: {
           name: chapterData.name,
@@ -105,7 +108,7 @@ export async function addItem(
         },
       });
     } else if (variant === "narrators") {
-      // validatedData is z.infer<typeof serverAddItemOtherSchema>
+      // On ignore l'index pour les narrateurs
       const narratorData = validatedData as z.infer<
         typeof serverAddItemOtherSchema
       >;
@@ -117,7 +120,7 @@ export async function addItem(
         },
       });
     } else {
-      // validatedData is z.infer<typeof serverAddItemOtherSchema>
+      // On ignore l'index pour les sahabas
       const sahabaData = validatedData as z.infer<
         typeof serverAddItemOtherSchema
       >;
@@ -130,6 +133,7 @@ export async function addItem(
       });
     }
     revalidatePath("/admin");
+
     return {
       success: true,
       message: "Élément ajouté avec succès.",
@@ -142,14 +146,11 @@ export async function addItem(
       if (error.code === "P2002") {
         // Unique constraint violation
         const target = error.meta?.target as string[] | undefined;
-        if (target?.includes("name")) {
-          userMessage = "Ce nom est déjà utilisé.";
-        } else if (target?.includes("slug")) {
-          userMessage = "Ce slug est déjà utilisé.";
-        } else if (target?.includes("index")) {
-          userMessage = "Cet index est déjà utilisé.";
+
+        if (target?.includes("index")) {
+          userMessage = "Ce index est déjà utilisé.";
         } else {
-          userMessage = "Une valeur unique est déjà utilisée.";
+          userMessage = "Cet nom est déjà utilisé.";
         }
       }
     }
@@ -161,12 +162,15 @@ export async function addItem(
   }
 }
 
+// Define the explicit type for parseResult in editItem
+type EditItemParseResultType =
+  | z.SafeParseReturnType<EditItemActionParams, ServerEditItemChapterOutput>
+  | z.SafeParseReturnType<EditItemActionParams, ServerEditItemOtherOutput>;
+
 export async function editItem(
-  variant: "chapters" | "narrators" | "sahabas",
-  data: EditItemActionParams // Use the refined type
-): Promise<
-  ActionResponse<Chapter> | ActionResponse<Narrator> | ActionResponse<Sahaba>
-> {
+  variant: VariantType,
+  data: EditItemActionParams
+): Promise<ActionResponse> {
   const session = await auth();
   if (!session || session.user.role !== "ADMIN") {
     return {
@@ -176,9 +180,8 @@ export async function editItem(
     };
   }
 
-  let parseResult;
-  // The 'slug' field from 'data' (EditItemActionParams) will be ignored by Zod
-  // because server schemas no longer include 'slug'.
+  let parseResult: EditItemParseResultType; // Explicitly typed
+
   if (variant === "chapters") {
     parseResult = serverEditItemChapterSchema.safeParse(data);
   } else {
@@ -282,9 +285,7 @@ export async function editItem(
 export async function deleteItem(
   variant: "chapters" | "narrators" | "sahabas",
   id: string
-): Promise<
-  ActionResponse<Chapter> | ActionResponse<Narrator> | ActionResponse<Sahaba>
-> {
+): Promise<ActionResponse> {
   const session = await auth();
   if (!session || session.user.role !== "ADMIN") {
     return {
