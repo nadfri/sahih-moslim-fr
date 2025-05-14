@@ -8,7 +8,7 @@ import { z } from "zod";
 import { prisma } from "@/prisma/prisma";
 import { auth } from "@/src/authentification/auth";
 import { slugify } from "@/src/utils/slugify";
-import { AddItemFormValues, ItemType, VariantType } from "../types/types";
+import { ItemFormValues, ItemType, VariantType } from "../types/types";
 
 // --- Server-Side Validation Schemas (defined locally) ---
 const serverBaseItemSchema = z.object({
@@ -40,7 +40,7 @@ const serverEditItemOtherSchema =
   serverAddItemOtherSchema.merge(serverIdValidation);
 
 // EditItemParams can remain similar if Edit forms also send a similar structure
-type EditItemActionParams = AddItemFormValues & { id: string };
+type EditItemActionParams = ItemFormValues & { id: string };
 
 type ActionResponse = {
   success: boolean;
@@ -57,12 +57,12 @@ type ServerEditItemOtherOutput = z.infer<typeof serverEditItemOtherSchema>;
 
 // Define the explicit type for parseResult in addItem
 type AddItemParseResultType =
-  | z.SafeParseReturnType<AddItemFormValues, ServerAddItemChapterOutput>
-  | z.SafeParseReturnType<AddItemFormValues, ServerAddItemOtherOutput>;
+  | z.SafeParseReturnType<ItemFormValues, ServerAddItemChapterOutput>
+  | z.SafeParseReturnType<ItemFormValues, ServerAddItemOtherOutput>;
 
 export async function addItem(
   variant: VariantType,
-  data: AddItemFormValues
+  data: ItemFormValues
 ): Promise<ActionResponse> {
   const session = await auth();
   if (!session || session.user.role !== "ADMIN") {

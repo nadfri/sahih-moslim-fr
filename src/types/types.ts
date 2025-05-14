@@ -15,7 +15,7 @@ export const SchemaItemStructure = z.object({
 });
 export type ItemType = z.infer<typeof SchemaItemStructure>;
 
-export type AddItemFormValues = Omit<ItemType, "id" | "slug" | "hadithCount">;
+export type ItemFormValues = Omit<ItemType, "id" | "slug" | "hadithCount">;
 
 export const HadithSchema = z.object({
   id: z.string(),

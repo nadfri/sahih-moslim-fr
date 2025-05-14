@@ -7,9 +7,11 @@ import { toast } from "react-toastify";
 import { deleteItem } from "@/src/services/actions";
 import type { ItemType, VariantType } from "@/src/types/types";
 import { ConfirmDeleteModal } from "../../ConfirmDeleteModal/ConfirmDeleteModal";
+import { EditItemDialog } from "../EditItemDialog/EditItemDialog";
 
 type Props = {
   item: ItemType;
+  items: ItemType[];
   variant: VariantType;
 };
 
@@ -28,17 +30,8 @@ const variantOptions = {
   },
 };
 
-export function CardEdit({ item, variant }: Props) {
-  const onEdit = (data: {
-    id: string;
-    name: string;
-    index?: number;
-    nameArabic?: string;
-  }) => {
-    // Handle edit action
-    console.log("Edit item:", data);
-  };
-
+export function CardEdit({ item, variant, items }: Props) {
+  const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -103,14 +96,7 @@ export function CardEdit({ item, variant }: Props) {
       <div className="flex items-center ml-3">
         <button
           type="button"
-          onClick={() =>
-            onEdit({
-              id: item.id,
-              name: item.name,
-              index: item.index ?? undefined,
-              nameArabic: item.nameArabic || "",
-            })
-          }
+          onClick={() => setShowEditDialog(true)}
           className="p-1.5 rounded text-orange-500 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-900/70 flex items-center justify-center"
           aria-label="Éditer"
           title="Éditer"
@@ -135,6 +121,14 @@ export function CardEdit({ item, variant }: Props) {
         loading={isDeleting}
         title={variantOptions[variant].title}
         description={deleteDescription}
+      />
+
+      <EditItemDialog
+        open={showEditDialog}
+        onCancel={() => setShowEditDialog(false)}
+        item={item}
+        items={items}
+        variant={variant}
       />
     </div>
   );

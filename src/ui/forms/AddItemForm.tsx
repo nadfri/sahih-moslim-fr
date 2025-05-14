@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 
 import { addItem } from "@/src/services/actions";
-import { AddItemFormValues, ItemType, VariantType } from "@/src/types/types";
+import { ItemFormValues, ItemType, VariantType } from "@/src/types/types";
 import { Input } from "@/src/ui/inputs/Input/Input";
 
 type Props = {
@@ -34,7 +34,7 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [items, setItems] = useState<ItemType[]>(serverItems);
 
-  const ItemSchema = z.object({
+  const ItemAddSchema = z.object({
     name: z
       .string()
       .min(3, "Au moins 3 lettres")
@@ -81,9 +81,9 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<AddItemFormValues>({
+  } = useForm<ItemFormValues>({
     mode: "onChange",
-    resolver: zodResolver(ItemSchema),
+    resolver: zodResolver(ItemAddSchema),
     defaultValues: {
       name: "",
       nameArabic: "",
@@ -91,7 +91,7 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
     },
   });
 
-  async function addItemSubmit(formData: AddItemFormValues) {
+  async function addItemSubmit(formData: ItemFormValues) {
     setIsSubmitting(true);
 
     try {
