@@ -5,9 +5,9 @@ import { Pencil, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { deleteItem } from "@/src/services/actions";
-import type { ItemType, VariantType } from "@/src/types/types";
+import { ItemType, VariantType } from "@/src/types/types";
 import { ConfirmDeleteModal } from "../../ConfirmDeleteModal/ConfirmDeleteModal";
-import { EditItemDialog } from "../EditItemDialog/EditItemDialog";
+import { EditItemFormDialog } from "../EditItemFormDialog/EditItemFormDialog";
 
 type Props = {
   item: ItemType;
@@ -25,12 +25,12 @@ const variantOptions = {
     description: "Êtes-vous sûr de vouloir supprimer ce narrateur ",
   },
   sahabas: {
-    title: "Supprimer ce sahaba ?",
-    description: "Êtes-vous sûr de vouloir supprimer ce sahaba ",
+    title: "Supprimer ce compagnon ?",
+    description: "Êtes-vous sûr de vouloir supprimer ce compagnon ",
   },
 };
 
-export function CardEdit({ item, variant, items }: Props) {
+export function CardEdit({ item, items, variant }: Props) {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -123,7 +123,7 @@ export function CardEdit({ item, variant, items }: Props) {
         description={deleteDescription}
       />
 
-      <EditItemDialog
+      <EditItemFormDialog
         open={showEditDialog}
         onCancel={() => setShowEditDialog(false)}
         item={item}

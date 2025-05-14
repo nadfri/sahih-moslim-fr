@@ -34,7 +34,8 @@ button {
 }
 
 /* Md Editor */
-.w-md-editor, .w-md-editor-show-edit .w-md-editor-input {
+.w-md-editor,
+.w-md-editor-show-edit .w-md-editor-input {
   @apply dark:bg-gray-800 dark:text-gray-200;
 }
 
@@ -47,7 +48,7 @@ button {
 }
 
 [data-theme="dark"] .w-md-editor-toolbar li > button {
-  color:white !important;
+  color: white !important;
 }
 
 /*Animations*/
@@ -64,4 +65,45 @@ button {
 
 .moveLeft {
   animation: moveLeft 0.3s;
+}
+
+@keyframes moveUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.moveUp {
+  animation: moveUp 0.3s;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.fadeIn {
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.fadeOut {
+  animation: fadeOut 0.3s;
 }

@@ -10,11 +10,6 @@
 - [ ] Ensure accessible keyboard navigation
 - [ ] Add proper aria attributes for screen readers
 
-### Forms
-
-- [ ] Create form to add a narrator
-- [ ] Create form to add a sahaba
-- [ ] Create form to add a chapter
 
 ### Pages & UI
 

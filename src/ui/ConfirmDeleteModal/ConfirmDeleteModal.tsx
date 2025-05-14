@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
-type ConfirmDeleteModalProps = {
+type Props = {
   open: boolean;
   onCancel: () => void;
   onConfirm: () => void;
@@ -18,39 +18,39 @@ export function ConfirmDeleteModal({
   loading = false,
   title = "Supprimer cet élément ?",
   description = "Êtes-vous sûr de vouloir supprimer cet élément ?",
-}: ConfirmDeleteModalProps) {
-  // Animation state
-  const [show, setShow] = useState(open);
-  const [visible, setVisible] = useState(open);
+}: Props) {
+  const ref = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (open) {
-      setVisible(true);
-      setTimeout(() => setShow(true), 10); // trigger animation
-    } else {
-      setShow(false);
-      timeoutRef.current = setTimeout(() => setVisible(false), 200); // match duration
-    }
+    // Cleanup on unmount
     return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
-  }, [open]);
+  }, []);
 
-  if (!visible) return null;
+  if (!open) return null;
+
+  const handleCancel = () => {
+    if (ref.current) {
+      ref.current.classList.replace("fadeIn", "fadeOut");
+      timeoutRef.current = setTimeout(onCancel, 200);
+    }
+  };
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/70 px-2 transition-opacity duration-200 ${show ? "opacity-100" : "opacity-0"}`}
+      ref={ref}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/70 px-2 transition-opacity duration-200 fadeIn"
     >
-      <div
-        className={`bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-sm w-full transform transition-all duration-200 ${show ? "scale-100 translate-y-0" : "scale-95 translate-y-4"}`}
-      >
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-sm w-full moveUp">
         <h2 className="text-lg font-semibold mb-2 dark:text-white">{title}</h2>
         <p className="mb-4 dark:text-gray-300">{description}</p>
         <div className="flex justify-end gap-2">
           <button
-            onClick={onCancel}
+            onClick={handleCancel}
             disabled={loading}
             className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-100"
           >

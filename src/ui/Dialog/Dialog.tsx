@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 
 type DialogProps = {
   open: boolean;
@@ -8,13 +8,35 @@ type DialogProps = {
 };
 
 export function Dialog({ open, onClose, title, children }: DialogProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    // Cleanup on unmount
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
   if (!open) return null;
 
+  const handleClose = () => {
+    if (ref.current) {
+      ref.current.classList.replace("fadeIn", "fadeOut");
+      timeoutRef.current = setTimeout(onClose, 200);
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60">
-      <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-xl p-6 w-full max-w-md relative">
+    <div
+      ref={ref}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/70 px-2 transition-opacity duration-200 fadeIn"
+    >
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-lg w-full duration-200 moveUp relative">
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-3 right-3 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 text-xl font-bold"
           aria-label="Fermer"
         >

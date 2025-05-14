@@ -23,7 +23,7 @@ export const HadithSchema = z.object({
   matn_fr: z.string(),
   matn_ar: z.string(),
   isnad: z.string().nullable().optional(),
-  chapter: SchemaItemStructure, // Use the structural schema for relations
+  chapter: SchemaItemStructure,
   narrator: SchemaItemStructure,
   mentionedSahabas: z.array(SchemaItemStructure),
 });

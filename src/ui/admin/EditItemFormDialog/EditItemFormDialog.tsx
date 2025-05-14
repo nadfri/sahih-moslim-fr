@@ -4,10 +4,10 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { z } from "zod";
 
 import { editItem } from "@/src/services/actions";
 import { ItemFormValues, ItemType, VariantType } from "@/src/types/types";
+import { getItemSchema } from "@/src/ui/forms/ItemFormSchema";
 import { Input } from "@/src/ui/inputs/Input/Input";
 import { Dialog } from "../../Dialog/Dialog";
 
@@ -19,7 +19,7 @@ type Props = {
   variant: VariantType;
 };
 
-export function EditItemDialog({
+export function EditItemFormDialog({
   open,
   onCancel,
   item,
@@ -28,43 +28,7 @@ export function EditItemDialog({
 }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const ItemEditSchema = z.object({
-    name: z
-      .string()
-      .min(3, "Au moins 3 lettres")
-      .trim()
-      .refine(
-        (name) =>
-          !items.some(
-            (i) =>
-              i.id !== item.id &&
-              i.name.trim().toLowerCase() === name.trim().toLowerCase()
-          ),
-        "Ce nom est déjà utilisé. Veuillez en choisir un autre."
-      ),
-
-    nameArabic: z
-      .string()
-      .trim()
-      .transform((val) => (val === "" ? null : val))
-      .nullable()
-      .optional(),
-
-    index:
-      variant === "chapters"
-        ? z.coerce
-            .number({ message: "L'index est requis" })
-            .int({ message: "L'index doit être un nombre entier" })
-            .positive({ message: "L'index doit être un nombre positif" })
-            .refine(
-              (index) =>
-                !items.some(
-                  (chapter) => chapter.id !== item.id && chapter.index === index
-                ),
-              "Cet index est déjà utilisé. Veuillez en choisir un autre."
-            )
-        : z.number().optional().nullable(),
-  });
+  const ItemEditSchema = getItemSchema(items, variant, item.id);
 
   const {
     register,
@@ -112,46 +76,40 @@ export function EditItemDialog({
           defaultValue={item.id}
         />
 
-        {/* Name Field */}
-        <div>
-          <Input
-            id="edit-name"
-            label="Nom du chapitre*"
-            type="text"
-            placeholder="Nom du chapitre"
-            error={!!errors.name}
-            errorMessage={errors.name?.message}
-            register={register("name")}
-          />
-        </div>
-
         {/* Index Field */}
-        <div>
-          <Input
-            id="edit-index"
-            label="Index*"
-            type="number"
-            placeholder="Index"
-            min={1}
-            error={!!errors.index}
-            errorMessage={errors.index?.message}
-            register={register("index")}
-          />
-        </div>
+        <Input
+          id="edit-index"
+          label="Index*"
+          type="number"
+          placeholder="Index"
+          min={1}
+          error={!!errors.index}
+          errorMessage={errors.index?.message}
+          register={register("index")}
+        />
+
+        {/* Name Field */}
+        <Input
+          id="edit-name"
+          label="Nom du chapitre*"
+          type="text"
+          placeholder="Nom du chapitre"
+          error={!!errors.name}
+          errorMessage={errors.name?.message}
+          register={register("name")}
+        />
 
         {/* Arabic Name Field */}
-        <div>
-          <Input
-            id="edit-nameArabic"
-            label="Nom arabe (optionnel)"
-            type="text"
-            placeholder="Nom arabe"
-            error={!!errors.nameArabic}
-            errorMessage={errors.nameArabic?.message}
-            register={register("nameArabic")}
-            dir="rtl"
-          />
-        </div>
+        <Input
+          id="edit-nameArabic"
+          label="Nom arabe (optionnel)"
+          type="text"
+          placeholder="Nom arabe"
+          error={!!errors.nameArabic}
+          errorMessage={errors.nameArabic?.message}
+          register={register("nameArabic")}
+          dir="rtl"
+        />
 
         <div className="flex justify-end gap-2 pt-2">
           <button
