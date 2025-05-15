@@ -3,69 +3,33 @@
 import { revalidatePath } from "next/cache";
 import type { Chapter, Narrator, Sahaba } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { z } from "zod";
 
 import { prisma } from "@/prisma/prisma";
 import { auth } from "@/src/authentification/auth";
+import { getItemFormSchema } from "@/src/ui/forms/getItemFormSchema";
 import { slugify } from "@/src/utils/slugify";
 import { ItemFormValues, ItemType, VariantType } from "../types/types";
 
-// --- Server-Side Validation Schemas (defined locally) ---
-const serverBaseItemSchema = z.object({
-  name: z.string().min(3, "Le nom doit faire au moins 3 lettres"),
-  nameArabic: z.string().nullable().optional(),
-});
-
-const serverIndexValidation = {
-  index: z
-    .number()
-    .int()
-    .positive("L'index doit être un nombre entier positif"),
-};
-
-const serverAddItemChapterSchema = serverBaseItemSchema.extend(
-  serverIndexValidation
-);
-
-const serverAddItemOtherSchema = serverBaseItemSchema;
-
-const serverIdValidation = z.object({
-  id: z.string().min(1, "L'ID est requis"),
-});
-
-const serverEditItemChapterSchema =
-  serverAddItemChapterSchema.merge(serverIdValidation);
-
-const serverEditItemOtherSchema =
-  serverAddItemOtherSchema.merge(serverIdValidation);
-
-// EditItemParams can remain similar if Edit forms also send a similar structure
-type EditItemActionParams = ItemFormValues & { id: string };
-
-type ActionResponse = {
+export type ActionResponse = {
   success: boolean;
   message: string;
   error?: string;
   data?: ItemType;
 };
 
-// Define inferred types for schema outputs for clarity
-type ServerAddItemChapterOutput = z.infer<typeof serverAddItemChapterSchema>;
-type ServerAddItemOtherOutput = z.infer<typeof serverAddItemOtherSchema>;
-type ServerEditItemChapterOutput = z.infer<typeof serverEditItemChapterSchema>;
-type ServerEditItemOtherOutput = z.infer<typeof serverEditItemOtherSchema>;
+const checkIsAdmin = async () => {
+  const session = await auth();
+  return session && session.user.role === "ADMIN";
+};
 
-// Define the explicit type for parseResult in addItem
-type AddItemParseResultType =
-  | z.SafeParseReturnType<ItemFormValues, ServerAddItemChapterOutput>
-  | z.SafeParseReturnType<ItemFormValues, ServerAddItemOtherOutput>;
-
+/* Add Item */
 export async function addItem(
   variant: VariantType,
   data: ItemFormValues
 ): Promise<ActionResponse> {
-  const session = await auth();
-  if (!session || session.user.role !== "ADMIN") {
+  const isAdmin = await checkIsAdmin();
+
+  if (!isAdmin) {
     return {
       success: false,
       message: "Non autorisé",
@@ -73,10 +37,25 @@ export async function addItem(
     };
   }
 
-  const parseResult: AddItemParseResultType =
-    variant === "chapters"
-      ? serverAddItemChapterSchema.safeParse(data)
-      : serverAddItemOtherSchema.safeParse(data);
+  let items: ItemType[] = [];
+
+  switch (variant) {
+    case "chapters":
+      items = await prisma.chapter.findMany();
+      break;
+    case "narrators":
+      items = await prisma.narrator.findMany();
+      break;
+    case "sahabas":
+      items = await prisma.sahaba.findMany();
+      break;
+    default:
+      throw new Error("Type de variant non supporté");
+  }
+
+  const schema = getItemFormSchema(items, variant);
+
+  const parseResult = schema.safeParse(data);
 
   if (!parseResult.success) {
     const errorMessages = parseResult.error.errors
@@ -93,45 +72,40 @@ export async function addItem(
 
   try {
     let created: Chapter | Narrator | Sahaba;
-    if (variant === "chapters") {
-      // validatedData is z.infer<typeof serverAddItemChapterSchema>
-      const chapterData = validatedData as z.infer<
-        typeof serverAddItemChapterSchema
-      >;
 
-      created = await prisma.chapter.create({
-        data: {
-          name: chapterData.name,
-          index: chapterData.index,
-          nameArabic: chapterData.nameArabic,
-          slug: slug,
-        },
-      });
-    } else if (variant === "narrators") {
-      // On ignore l'index pour les narrateurs
-      const narratorData = validatedData as z.infer<
-        typeof serverAddItemOtherSchema
-      >;
-      created = await prisma.narrator.create({
-        data: {
-          name: narratorData.name,
-          nameArabic: narratorData.nameArabic,
-          slug: slug,
-        },
-      });
-    } else {
-      // On ignore l'index pour les sahabas
-      const sahabaData = validatedData as z.infer<
-        typeof serverAddItemOtherSchema
-      >;
-      created = await prisma.sahaba.create({
-        data: {
-          name: sahabaData.name,
-          nameArabic: sahabaData.nameArabic,
-          slug: slug,
-        },
-      });
+    switch (variant) {
+      case "chapters":
+        created = await prisma.chapter.create({
+          data: {
+            name: validatedData.name,
+            index: Number(validatedData.index),
+            nameArabic: validatedData.nameArabic,
+            slug: slug,
+          },
+        });
+        break;
+      case "narrators":
+        created = await prisma.narrator.create({
+          data: {
+            name: validatedData.name,
+            nameArabic: validatedData.nameArabic,
+            slug: slug,
+          },
+        });
+        break;
+      case "sahabas":
+        created = await prisma.sahaba.create({
+          data: {
+            name: validatedData.name,
+            nameArabic: validatedData.nameArabic,
+            slug: slug,
+          },
+        });
+        break;
+      default:
+        throw new Error("Type de variant non supporté");
     }
+
     revalidatePath("/admin");
 
     return {
@@ -144,13 +118,20 @@ export async function addItem(
     const errorDetails = error instanceof Error ? error.message : String(error);
     if (error instanceof PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
-        // Unique constraint violation
         const target = error.meta?.target as string[] | undefined;
 
-        if (target?.includes("index")) {
-          userMessage = "Ce index est déjà utilisé.";
-        } else {
-          userMessage = "Cet nom est déjà utilisé.";
+        switch (true) {
+          case !!target?.includes("name"):
+            userMessage = "Ce nom est déjà utilisé.";
+            break;
+          case !!target?.includes("slug"):
+            userMessage = "Ce slug est déjà utilisé.";
+            break;
+          case !!target?.includes("index"):
+            userMessage = "Cet index est déjà utilisé.";
+            break;
+          default:
+            userMessage = "Une valeur unique est déjà utilisée.";
         }
       }
     }
@@ -162,17 +143,14 @@ export async function addItem(
   }
 }
 
-// Define the explicit type for parseResult in editItem
-type EditItemParseResultType =
-  | z.SafeParseReturnType<EditItemActionParams, ServerEditItemChapterOutput>
-  | z.SafeParseReturnType<EditItemActionParams, ServerEditItemOtherOutput>;
-
+/* Edit Item */
 export async function editItem(
   variant: VariantType,
-  data: EditItemActionParams
+  data: ItemFormValues & { id: string }
 ): Promise<ActionResponse> {
-  const session = await auth();
-  if (!session || session.user.role !== "ADMIN") {
+  const isAdmin = await checkIsAdmin();
+
+  if (!isAdmin) {
     return {
       success: false,
       message: "Non autorisé",
@@ -180,13 +158,25 @@ export async function editItem(
     };
   }
 
-  let parseResult: EditItemParseResultType; // Explicitly typed
+  let items: ItemType[] = [];
 
-  if (variant === "chapters") {
-    parseResult = serverEditItemChapterSchema.safeParse(data);
-  } else {
-    parseResult = serverEditItemOtherSchema.safeParse(data);
+  switch (variant) {
+    case "chapters":
+      items = await prisma.chapter.findMany();
+      break;
+    case "narrators":
+      items = await prisma.narrator.findMany();
+      break;
+    case "sahabas":
+      items = await prisma.sahaba.findMany();
+      break;
+    default:
+      throw new Error("Type de variant non supporté");
   }
+
+  const schema = getItemFormSchema(items, variant, data.id);
+
+  const parseResult = schema.safeParse(data);
 
   if (!parseResult.success) {
     const errorMessages = parseResult.error.errors
@@ -199,57 +189,49 @@ export async function editItem(
     };
   }
 
-  const validatedData = parseResult.data; // Contains id and other fields (no slug)
-  const { id, ...updateFields } = validatedData; // updateFields is { name, nameArabic, index? }
-  const slug = slugify(updateFields.name); // Generate slug from name
+  const validatedData = parseResult.data as ItemFormValues & { id: string };
+  const slug = slugify(validatedData.name);
 
   try {
     let updated: Chapter | Narrator | Sahaba;
-    if (variant === "chapters") {
-      // updateFields is Omit<z.infer<typeof serverEditItemChapterSchema>, "id">
-      const chapterUpdateData = updateFields as Omit<
-        z.infer<typeof serverEditItemChapterSchema>,
-        "id"
-      >;
-      updated = await prisma.chapter.update({
-        where: { id },
-        data: {
-          name: chapterUpdateData.name,
-          index: chapterUpdateData.index,
-          nameArabic: chapterUpdateData.nameArabic,
-          slug: slug,
-        },
-      });
-    } else if (variant === "narrators") {
-      // updateFields is Omit<z.infer<typeof serverEditItemOtherSchema>, "id">
-      const narratorUpdateData = updateFields as Omit<
-        z.infer<typeof serverEditItemOtherSchema>,
-        "id"
-      >;
-      updated = await prisma.narrator.update({
-        where: { id },
-        data: {
-          name: narratorUpdateData.name,
-          nameArabic: narratorUpdateData.nameArabic,
-          slug: slug,
-        },
-      });
-    } else {
-      // updateFields is Omit<z.infer<typeof serverEditItemOtherSchema>, "id">
-      const sahabaUpdateData = updateFields as Omit<
-        z.infer<typeof serverEditItemOtherSchema>,
-        "id"
-      >;
-      updated = await prisma.sahaba.update({
-        where: { id },
-        data: {
-          name: sahabaUpdateData.name,
-          nameArabic: sahabaUpdateData.nameArabic,
-          slug: slug,
-        },
-      });
+
+    switch (variant) {
+      case "chapters":
+        updated = await prisma.chapter.update({
+          where: { id: validatedData.id },
+          data: {
+            name: validatedData.name,
+            index: Number(validatedData.index),
+            nameArabic: validatedData.nameArabic,
+            slug: slug,
+          },
+        });
+        break;
+      case "narrators":
+        updated = await prisma.narrator.update({
+          where: { id: validatedData.id },
+          data: {
+            name: validatedData.name,
+            nameArabic: validatedData.nameArabic,
+            slug: slug,
+          },
+        });
+        break;
+      case "sahabas":
+        updated = await prisma.sahaba.update({
+          where: { id: validatedData.id },
+          data: {
+            name: validatedData.name,
+            nameArabic: validatedData.nameArabic,
+            slug: slug,
+          },
+        });
+        break;
+      default:
+        throw new Error("Type de variant non supporté");
     }
     revalidatePath("/admin");
+
     return {
       success: true,
       message: "Élément modifié avec succès.",
@@ -261,14 +243,18 @@ export async function editItem(
     if (error instanceof PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
         const target = error.meta?.target as string[] | undefined;
-        if (target?.includes("name")) {
-          userMessage = "Ce nom est déjà utilisé.";
-        } else if (target?.includes("slug")) {
-          userMessage = "Ce slug est déjà utilisé.";
-        } else if (target?.includes("index")) {
-          userMessage = "Cet index est déjà utilisé.";
-        } else {
-          userMessage = "Une valeur unique est déjà utilisée.";
+        switch (true) {
+          case !!target?.includes("name"):
+            userMessage = "Ce nom est déjà utilisé.";
+            break;
+          case !!target?.includes("slug"):
+            userMessage = "Ce slug est déjà utilisé.";
+            break;
+          case !!target?.includes("index"):
+            userMessage = "Cet index est déjà utilisé.";
+            break;
+          default:
+            userMessage = "Une valeur unique est déjà utilisée.";
         }
       } else if (error.code === "P2025") {
         userMessage = "L'élément à modifier n'a pas été trouvé.";
@@ -282,12 +268,14 @@ export async function editItem(
   }
 }
 
+/* Delete Item */
 export async function deleteItem(
-  variant: "chapters" | "narrators" | "sahabas",
+  variant: VariantType,
   id: string
 ): Promise<ActionResponse> {
-  const session = await auth();
-  if (!session || session.user.role !== "ADMIN") {
+  const isAdmin = await checkIsAdmin();
+
+  if (!isAdmin) {
     return {
       success: false,
       message: "Non autorisé",
@@ -307,13 +295,20 @@ export async function deleteItem(
   try {
     let deleted: Chapter | Narrator | Sahaba;
 
-    if (variant === "chapters") {
-      deleted = await prisma.chapter.delete({ where: { id } });
-    } else if (variant === "narrators") {
-      deleted = await prisma.narrator.delete({ where: { id } });
-    } else {
-      deleted = await prisma.sahaba.delete({ where: { id } });
+    switch (variant) {
+      case "chapters":
+        deleted = await prisma.chapter.delete({ where: { id } });
+        break;
+      case "narrators":
+        deleted = await prisma.narrator.delete({ where: { id } });
+        break;
+      case "sahabas":
+        deleted = await prisma.sahaba.delete({ where: { id } });
+        break;
+      default:
+        throw new Error("Type de variant non supporté");
     }
+
     revalidatePath("/admin");
 
     return {
@@ -323,6 +318,7 @@ export async function deleteItem(
     };
   } catch (error: unknown) {
     let userMessage = "Erreur inconnue lors de la suppression.";
+
     const errorDetails = error instanceof Error ? error.message : String(error);
     if (error instanceof PrismaClientKnownRequestError) {
       if (error.code === "P2025") {

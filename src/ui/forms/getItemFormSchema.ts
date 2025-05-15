@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import type { ItemType, VariantType } from "@/src/types/types";
 
-export function getItemSchema(
+export function getItemFormSchema(
   items: ItemType[],
   variant: VariantType,
   excludeId?: string

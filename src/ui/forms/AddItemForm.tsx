@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import { addItem } from "@/src/services/actions";
 import { ItemFormValues, ItemType, VariantType } from "@/src/types/types";
 import { Input } from "@/src/ui/inputs/Input/Input";
-import { getItemSchema } from "./ItemFormSchema";
+import { getItemFormSchema } from "./getItemFormSchema";
 
 type Props = {
   items: ItemType[];
@@ -34,7 +34,7 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [items, setItems] = useState<ItemType[]>(serverItems);
 
-  const ItemAddSchema = getItemSchema(items, variant);
+  const ItemAddSchema = getItemFormSchema(items, variant);
 
   // Get the next available index for chapters (returns 1 if empty, else max+1)
   function nextAvailableIndex(items: ItemType[]): number | undefined {

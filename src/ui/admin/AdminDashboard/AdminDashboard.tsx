@@ -6,7 +6,7 @@ import type { ItemType, VariantType } from "@/src/types/types";
 import { FilteredCardsEdit } from "@/src/ui/admin/FilteredCardsEdit/FilteredCardsEdit";
 import { AddItemForm } from "@/src/ui/forms/AddItemForm";
 
-type AdminDashboardProps = {
+type Props = {
   chapters: ItemType[];
   narrators: ItemType[];
   sahabas: ItemType[];
@@ -18,11 +18,7 @@ const variantOptions: { label: string; value: VariantType }[] = [
   { label: "Compagnons", value: "sahabas" },
 ];
 
-export function AdminDashboard({
-  chapters,
-  narrators,
-  sahabas,
-}: AdminDashboardProps) {
+export function AdminDashboard({ chapters, narrators, sahabas }: Props) {
   const [selectedVariant, setSelectedVariant] =
     useState<VariantType>("chapters");
 
