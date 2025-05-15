@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import type { Chapter, Narrator, Sahaba } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 import { prisma } from "@/prisma/prisma";
@@ -17,44 +16,41 @@ export type ActionResponse = {
   data?: ItemType;
 };
 
-const checkIsAdmin = async () => {
+// Helper to check admin and return ActionResponse if not
+async function requireAdmin(): Promise<true | ActionResponse> {
   const session = await auth();
-  return session && session.user.role === "ADMIN";
-};
-
-/* Add Item */
-export async function addItem(
-  variant: VariantType,
-  data: ItemFormValues
-): Promise<ActionResponse> {
-  const isAdmin = await checkIsAdmin();
-
-  if (!isAdmin) {
+  if (!session || session.user.role !== "ADMIN") {
     return {
       success: false,
       message: "Non autorisé",
       error: "Accès administrateur requis.",
     };
   }
+  return true;
+}
 
-  let items: ItemType[] = [];
-
+async function getItems(variant: VariantType): Promise<ItemType[]> {
   switch (variant) {
     case "chapters":
-      items = await prisma.chapter.findMany();
-      break;
+      return prisma.chapter.findMany();
     case "narrators":
-      items = await prisma.narrator.findMany();
-      break;
+      return prisma.narrator.findMany();
     case "sahabas":
-      items = await prisma.sahaba.findMany();
-      break;
-    default:
-      throw new Error("Type de variant non supporté");
+      return prisma.sahaba.findMany();
   }
+}
 
+/* Add Item */
+export async function addItem(
+  variant: VariantType,
+  data: ItemFormValues
+): Promise<ActionResponse> {
+  // admin check refactored
+  const adminCheck = await requireAdmin();
+  if (adminCheck !== true) return adminCheck;
+
+  const items = await getItems(variant);
   const schema = getItemFormSchema(items, variant);
-
   const parseResult = schema.safeParse(data);
 
   if (!parseResult.success) {
@@ -71,16 +67,16 @@ export async function addItem(
   const slug = slugify(validatedData.name);
 
   try {
-    let created: Chapter | Narrator | Sahaba;
+    let created;
 
     switch (variant) {
       case "chapters":
         created = await prisma.chapter.create({
           data: {
             name: validatedData.name,
-            index: Number(validatedData.index),
             nameArabic: validatedData.nameArabic,
-            slug: slug,
+            slug,
+            index: Number(validatedData.index),
           },
         });
         break;
@@ -89,7 +85,7 @@ export async function addItem(
           data: {
             name: validatedData.name,
             nameArabic: validatedData.nameArabic,
-            slug: slug,
+            slug,
           },
         });
         break;
@@ -98,12 +94,10 @@ export async function addItem(
           data: {
             name: validatedData.name,
             nameArabic: validatedData.nameArabic,
-            slug: slug,
+            slug,
           },
         });
         break;
-      default:
-        throw new Error("Type de variant non supporté");
     }
 
     revalidatePath("/admin");
@@ -116,6 +110,7 @@ export async function addItem(
   } catch (error: unknown) {
     let userMessage = "Erreur inconnue lors de l'ajout.";
     const errorDetails = error instanceof Error ? error.message : String(error);
+
     if (error instanceof PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
         const target = error.meta?.target as string[] | undefined;
@@ -148,40 +143,19 @@ export async function editItem(
   variant: VariantType,
   data: ItemFormValues & { id: string }
 ): Promise<ActionResponse> {
-  const isAdmin = await checkIsAdmin();
+  // admin check refactored
+  const adminCheck = await requireAdmin();
+  if (adminCheck !== true) return adminCheck;
 
-  if (!isAdmin) {
-    return {
-      success: false,
-      message: "Non autorisé",
-      error: "Accès administrateur requis.",
-    };
-  }
-
-  let items: ItemType[] = [];
-
-  switch (variant) {
-    case "chapters":
-      items = await prisma.chapter.findMany();
-      break;
-    case "narrators":
-      items = await prisma.narrator.findMany();
-      break;
-    case "sahabas":
-      items = await prisma.sahaba.findMany();
-      break;
-    default:
-      throw new Error("Type de variant non supporté");
-  }
-
+  const items = await getItems(variant);
   const schema = getItemFormSchema(items, variant, data.id);
-
   const parseResult = schema.safeParse(data);
 
   if (!parseResult.success) {
     const errorMessages = parseResult.error.errors
       .map((e) => e.message)
       .join(". ");
+
     return {
       success: false,
       message: `Erreur de validation: ${errorMessages}`,
@@ -193,7 +167,7 @@ export async function editItem(
   const slug = slugify(validatedData.name);
 
   try {
-    let updated: Chapter | Narrator | Sahaba;
+    let updated;
 
     switch (variant) {
       case "chapters":
@@ -201,9 +175,9 @@ export async function editItem(
           where: { id: validatedData.id },
           data: {
             name: validatedData.name,
-            index: Number(validatedData.index),
             nameArabic: validatedData.nameArabic,
-            slug: slug,
+            slug,
+            index: Number(validatedData.index),
           },
         });
         break;
@@ -213,7 +187,7 @@ export async function editItem(
           data: {
             name: validatedData.name,
             nameArabic: validatedData.nameArabic,
-            slug: slug,
+            slug,
           },
         });
         break;
@@ -223,13 +197,12 @@ export async function editItem(
           data: {
             name: validatedData.name,
             nameArabic: validatedData.nameArabic,
-            slug: slug,
+            slug,
           },
         });
         break;
-      default:
-        throw new Error("Type de variant non supporté");
     }
+
     revalidatePath("/admin");
 
     return {
@@ -240,6 +213,7 @@ export async function editItem(
   } catch (error: unknown) {
     let userMessage = "Erreur inconnue lors de la modification.";
     const errorDetails = error instanceof Error ? error.message : String(error);
+
     if (error instanceof PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
         const target = error.meta?.target as string[] | undefined;
@@ -273,17 +247,10 @@ export async function deleteItem(
   variant: VariantType,
   id: string
 ): Promise<ActionResponse> {
-  const isAdmin = await checkIsAdmin();
+  // admin check refactored
+  const adminCheck = await requireAdmin();
+  if (adminCheck !== true) return adminCheck;
 
-  if (!isAdmin) {
-    return {
-      success: false,
-      message: "Non autorisé",
-      error: "Accès administrateur requis.",
-    };
-  }
-
-  // Basic validation for ID
   if (!id || typeof id !== "string") {
     return {
       success: false,
@@ -293,8 +260,7 @@ export async function deleteItem(
   }
 
   try {
-    let deleted: Chapter | Narrator | Sahaba;
-
+    let deleted;
     switch (variant) {
       case "chapters":
         deleted = await prisma.chapter.delete({ where: { id } });
@@ -305,8 +271,6 @@ export async function deleteItem(
       case "sahabas":
         deleted = await prisma.sahaba.delete({ where: { id } });
         break;
-      default:
-        throw new Error("Type de variant non supporté");
     }
 
     revalidatePath("/admin");
@@ -320,6 +284,7 @@ export async function deleteItem(
     let userMessage = "Erreur inconnue lors de la suppression.";
 
     const errorDetails = error instanceof Error ? error.message : String(error);
+
     if (error instanceof PrismaClientKnownRequestError) {
       if (error.code === "P2025") {
         userMessage = "L'élément à supprimer n'a pas été trouvé.";
