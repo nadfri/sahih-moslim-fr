@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 
 type Props = {
   open: boolean;
@@ -21,6 +21,7 @@ export function ConfirmDeleteModal({
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const titleId = useId();
 
   useEffect(() => {
     // Cleanup on unmount
@@ -44,6 +45,9 @@ export function ConfirmDeleteModal({
     <div
       ref={ref}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/70 px-2 transition-opacity duration-200 fadeIn"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
     >
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-sm w-full moveUp">
         <h2 className="text-lg font-semibold mb-2 dark:text-white">{title}</h2>

@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useEffect, useId, useRef } from "react";
 
 type DialogProps = {
   open: boolean;
@@ -10,6 +10,7 @@ type DialogProps = {
 export function Dialog({ open, onClose, title, children }: DialogProps) {
   const ref = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const titleId = useId();
 
   useEffect(() => {
     // Cleanup on unmount
@@ -33,6 +34,9 @@ export function Dialog({ open, onClose, title, children }: DialogProps) {
     <div
       ref={ref}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/70 px-2 transition-opacity duration-200 fadeIn"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
     >
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-lg w-full duration-200 moveUp relative">
         <button
@@ -42,7 +46,10 @@ export function Dialog({ open, onClose, title, children }: DialogProps) {
         >
           ×
         </button>
-        <h2 className="text-lg font-semibold mb-4 text-zinc-900 dark:text-zinc-100">
+        <h2
+          id={titleId}
+          className="text-lg font-semibold mb-4 text-zinc-900 dark:text-zinc-100"
+        >
           {title}
         </h2>
         {children}
