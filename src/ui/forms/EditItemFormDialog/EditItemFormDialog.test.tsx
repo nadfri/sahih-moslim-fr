@@ -94,7 +94,7 @@ describe("EditItemFormDialog", () => {
     });
   });
 
-  it("ne rend rien si open est false", () => {
+  it("renders nothing if open is false", () => {
     render(
       <EditItemFormDialog
         {...defaultProps}
@@ -104,7 +104,7 @@ describe("EditItemFormDialog", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
-  it("rend le dialogue avec les valeurs initiales correctes pour un chapitre", () => {
+  it("renders the dialog with correct initial values for a chapter", () => {
     render(<EditItemFormDialog {...defaultProps} />);
     expect(
       screen.getByRole("dialog", { name: "Éditer le chapitre" })
@@ -122,13 +122,13 @@ describe("EditItemFormDialog", () => {
     expect(screen.getByRole("button", { name: "Annuler" })).toBeInTheDocument();
   });
 
-  it("appelle onCancel lorsque le bouton Annuler est cliqué", async () => {
+  it("calls onCancel when the Cancel button is clicked", async () => {
     render(<EditItemFormDialog {...defaultProps} />);
     await userEvent.click(screen.getByRole("button", { name: "Annuler" }));
     expect(defaultProps.onCancel).toHaveBeenCalledTimes(1);
   });
 
-  it("affiche un message d'erreur si le nom est manquant", async () => {
+  it("shows an error message if name is missing", async () => {
     render(<EditItemFormDialog {...defaultProps} />);
     const nameInput = screen.getByLabelText("Nom du chapitre*");
     const submitButton = screen.getByRole("button", { name: "Enregistrer" });
@@ -140,7 +140,7 @@ describe("EditItemFormDialog", () => {
     expect(await screen.findByText("Au moins 3 lettres")).toBeInTheDocument(); // from getItemFormSchema
   });
 
-  it("affiche un message d'erreur si l'index est manquant pour un chapitre", async () => {
+  it("shows an error message if index is missing for a chapter", async () => {
     render(<EditItemFormDialog {...defaultProps} />);
     const indexInput = screen.getByLabelText("Index*");
     const submitButton = screen.getByRole("button", { name: "Enregistrer" });
@@ -154,7 +154,7 @@ describe("EditItemFormDialog", () => {
     ).toBeInTheDocument();
   });
 
-  it("affiche un message d'erreur si l'index existe déjà pour un chapitre (différent de l'initial)", async () => {
+  it("shows an error if index already exists for a chapter (different from initial)", async () => {
     render(
       <EditItemFormDialog
         {...defaultProps}
@@ -177,7 +177,7 @@ describe("EditItemFormDialog", () => {
     ).toBeInTheDocument();
   });
 
-  it("ne montre pas d'erreur d'index si l'index est inchangé", async () => {
+  it("does not show index error if index is unchanged", async () => {
     render(
       <EditItemFormDialog
         {...defaultProps}
@@ -200,7 +200,7 @@ describe("EditItemFormDialog", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("soumet le formulaire avec des données valides, appelle editItem et toast.success", async () => {
+  it("submits the form with valid data, calls editItem and toast.success", async () => {
     render(<EditItemFormDialog {...defaultProps} />);
     const nameInput = screen.getByLabelText("Nom du chapitre*");
     const submitButton = screen.getByRole("button", { name: "Enregistrer" });
@@ -228,7 +228,7 @@ describe("EditItemFormDialog", () => {
     });
   });
 
-  it("affiche 'En cours...' sur le bouton pendant la soumission", async () => {
+  it("shows 'En cours...' on the button during submission", async () => {
     mockEditItem.mockImplementationOnce(
       () =>
         new Promise((resolve) =>
@@ -254,7 +254,7 @@ describe("EditItemFormDialog", () => {
     await waitFor(() => expect(mockEditItem).toHaveBeenCalled()); // Ensure mock promise resolves
   });
 
-  it("affiche toast.error si editItem lève une exception", async () => {
+  it("shows toast.error if editItem throws an exception", async () => {
     mockEditItem.mockRejectedValueOnce(new Error("Erreur critique"));
     render(<EditItemFormDialog {...defaultProps} />);
     const nameInput = screen.getByLabelText("Nom du chapitre*");
@@ -273,7 +273,7 @@ describe("EditItemFormDialog", () => {
   });
 
   // Test for a different variant, e.g., narrators, where index might be optional
-  describe("avec variant='narrators'", () => {
+  describe("with variant='narrators'", () => {
     const narratorProps = {
       ...defaultProps,
       item: mockNarratorItem,
@@ -290,22 +290,11 @@ describe("EditItemFormDialog", () => {
       });
     });
 
-    it("rend le dialogue avec les valeurs initiales correctes pour un narrateur", () => {
+    it("renders the dialog with correct initial values for a narrator", () => {
       render(<EditItemFormDialog {...narratorProps} />);
       expect(
         screen.getByRole("dialog", { name: "Éditer le chapitre" })
       ).toBeInTheDocument(); // Title is static
-      // Index field is present, but its value might be null/undefined if narrator.index is not set
-      // For mockNarratorItem, index is undefined. Input type number with undefined value is empty.
-      // However, react-hook-form defaultValues will set it. If item.index is undefined, it will be undefined.
-      // The input will show empty. Let's assume it should be empty if undefined.
-      // The schema for narrators makes index optional (z.number().optional().nullable())
-      // The <Input register={register("index")} /> will register it.
-      // If mockNarratorItem.index is undefined, the input field will be empty.
-      // Let's ensure mockNarratorItem has an index or test the empty case.
-      // Our mockNarratorItem does not have an 'index' field.
-      // So defaultValues: item will mean formState.defaultValues.index is undefined.
-      // The input field for number will be empty.
       expect(screen.getByLabelText("Index*")).toHaveValue(null); // Empty number input
       expect(screen.getByLabelText("Nom du chapitre*")).toHaveValue(
         mockNarratorItem.name
@@ -315,7 +304,7 @@ describe("EditItemFormDialog", () => {
       );
     });
 
-    it("soumet le formulaire pour un narrateur (index optionnel)", async () => {
+    it("submits the form for a narrator (index optional)", async () => {
       render(<EditItemFormDialog {...narratorProps} />);
       const nameInput = screen.getByLabelText("Nom du chapitre*"); // Static label
       const indexInput = screen.getByLabelText("Index*");
@@ -325,14 +314,7 @@ describe("EditItemFormDialog", () => {
       await userEvent.clear(nameInput);
       await userEvent.type(nameInput, newName);
 
-      // For narrators, index is optional. We can leave it empty or set it.
-      // If we leave it empty, it should submit as undefined or null.
-      // The schema getItemFormSchema for non-chapters: z.number().optional().nullable()
-      // An empty number input, when coerced by Zod, might become undefined or null if empty.
-      // If we clear it:
       await userEvent.clear(indexInput);
-      // Let's also test setting it
-      // await userEvent.type(indexInput, "123");
 
       await userEvent.click(submitButton);
 
@@ -341,9 +323,7 @@ describe("EditItemFormDialog", () => {
           id: mockNarratorItem.id,
           name: newName,
           nameArabic: mockNarratorItem.nameArabic,
-          index: null, // z.coerce.number on empty string can be null if schema allows .nullable()
-          // or undefined if .optional() and it's not provided/empty.
-          // Given schema is .optional().nullable(), empty string from clear() -> coerce -> null
+          index: null,
         });
       });
       expect(mockToastSuccess).toHaveBeenCalledWith("Narrateur modifié!");

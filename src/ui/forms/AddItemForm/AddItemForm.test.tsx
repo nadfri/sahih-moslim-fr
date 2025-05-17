@@ -78,7 +78,7 @@ describe("AddItemForm", () => {
     });
   });
 
-  it("affiche le titre et les champs corrects pour les chapitres", () => {
+  it("displays the title and correct fields for chapters", () => {
     render(<AddItemForm {...defaultProps} />);
     expect(
       screen.getByRole("heading", {
@@ -94,7 +94,7 @@ describe("AddItemForm", () => {
     ).toBeInTheDocument();
   });
 
-  it("affiche le titre et les champs corrects pour les narrateurs", () => {
+  it("displays the title and correct fields for narrators", () => {
     render(
       <AddItemForm
         {...defaultProps}
@@ -118,7 +118,7 @@ describe("AddItemForm", () => {
     ).toBeInTheDocument();
   });
 
-  it("affiche le titre et les champs corrects pour les sahabas", () => {
+  it("displays the title and correct fields for sahabas", () => {
     render(
       <AddItemForm
         {...defaultProps}
