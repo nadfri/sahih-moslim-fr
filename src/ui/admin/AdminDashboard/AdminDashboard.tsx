@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import type { ItemType, VariantType } from "@/src/types/types";
 import { FilteredCardsEdit } from "@/src/ui/admin/FilteredCardsEdit/FilteredCardsEdit";
-import { AddItemForm } from "@/src/ui/forms/AddItemForm";
+import { AddItemForm } from "@/src/ui/forms/AddItemForm/AddItemForm";
 
 type Props = {
   chapters: ItemType[];

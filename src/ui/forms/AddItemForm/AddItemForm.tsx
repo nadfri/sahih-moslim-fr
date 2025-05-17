@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import { addItem } from "@/src/services/actions";
 import { ItemFormValues, ItemType, VariantType } from "@/src/types/types";
 import { Input } from "@/src/ui/inputs/Input/Input";
-import { getItemFormSchema } from "./getItemFormSchema";
+import { getItemFormSchema } from "../getItemFormSchema";
 
 type Props = {
   items: ItemType[];
