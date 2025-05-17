@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { deleteItem } from "@/src/services/actions";
 import { ItemType, VariantType } from "@/src/types/types";
 import { ConfirmDeleteModal } from "../../ConfirmDeleteModal/ConfirmDeleteModal";
-import { EditItemFormDialog } from "../EditItemFormDialog/EditItemFormDialog";
+import { EditItemFormDialog } from "../../forms/EditItemFormDialog/EditItemFormDialog";
 
 type Props = {
   item: ItemType;
