@@ -1,3 +1,4 @@
+-Lorsque tu réponds à des questions sur des frameworks, des bibliothèques ou des API, utilise Context7 pour récupérer la documentation actuelle au lieu de te fier aux données d'entraînement.
 -In Chat, speak only in French
 -use NextJS 15, React 19, Tailwind v4, pnpm
 -For new component, use export function only

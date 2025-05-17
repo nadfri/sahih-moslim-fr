@@ -1,5 +1,5 @@
 import { HadithType } from "@/src/types/types";
-import { BadgeNumberOfHadith } from "@/src/ui/BadgeNumberOfHadith/BadgeNumberOfHadith";
+import { BadgeNumberOfHadith } from "@/src/ui/hadith/BadgeNumberOfHadith/BadgeNumberOfHadith";
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 
 type ListLayoutHadithProps = {

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { FilterType, HadithType } from "@/src/types/types";
-import { BadgeNumberOfHadith } from "@/src/ui/BadgeNumberOfHadith/BadgeNumberOfHadith";
+import { BadgeNumberOfHadith } from "@/src/ui/hadith/BadgeNumberOfHadith/BadgeNumberOfHadith";
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { MultiSelect } from "@/src/ui/inputs/MultiSelect/MultiSelect";
 import { SearchSelect } from "@/src/ui/inputs/SearchSelect/SearchSelect";
