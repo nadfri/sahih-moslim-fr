@@ -39,14 +39,17 @@ export function CardEdit({ item, items, variant }: Props) {
     setIsDeleting(true);
     try {
       const result = await deleteItem(variant, item.id);
-
       if (result.success) {
         toast.success(result.message);
       } else {
         toast.error(result.message);
+
+        if (result.error) {
+          console.error("Suppression échouée:", result.error);
+        }
       }
     } catch (error) {
-      console.error("Error deleting item:", error);
+      console.error("Erreur lors de la suppression:", error);
       toast.error("Erreur inconnue lors de la suppression.");
     } finally {
       setIsDeleting(false);
@@ -121,6 +124,7 @@ export function CardEdit({ item, items, variant }: Props) {
         loading={isDeleting}
         title={variantOptions[variant].title}
         description={deleteDescription}
+        hadithCount={item.hadithCount}
       />
 
       <EditItemFormDialog

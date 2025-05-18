@@ -54,7 +54,19 @@ export function EditItemFormDialog({
       }
     } catch (error) {
       toast.error("Erreur inconnue lors de la modification.");
-      console.error(error);
+      if (error instanceof Error) {
+        console.error(
+          "[EditItemFormDialog] Erreur lors de la modification:",
+          error.message,
+          error.stack
+        );
+      } else {
+        console.error("[EditItemFormDialog] Erreur inconnue:", error);
+      }
+
+      if (typeof error === "object" && error !== null && "response" in error) {
+        console.error("[EditItemFormDialog] Réponse serveur:", error.response);
+      }
     } finally {
       setIsSubmitting(false);
     }

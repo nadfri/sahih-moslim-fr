@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef } from "react";
+import { useId, useRef } from "react";
 
 type Props = {
   open: boolean;
@@ -9,6 +9,7 @@ type Props = {
   loading?: boolean;
   title?: string;
   description?: string | React.ReactNode;
+  hadithCount?: number;
 };
 
 export function ConfirmDeleteModal({
@@ -18,20 +19,13 @@ export function ConfirmDeleteModal({
   loading = false,
   title = "Supprimer cet élément ?",
   description = "Êtes-vous sûr de vouloir supprimer cet élément ?",
+  hadithCount = 0,
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const titleId = useId();
 
-  useEffect(() => {
-    // Cleanup on unmount
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
-
+  // Cleanup on unmount
   if (!open) return null;
 
   const handleCancel = () => {
@@ -51,7 +45,15 @@ export function ConfirmDeleteModal({
     >
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-sm w-full moveUp">
         <h2 className="text-lg font-semibold mb-2 dark:text-white">{title}</h2>
-        <p className="mb-4 dark:text-gray-300">{description}</p>
+        <div className="mb-4 dark:text-gray-300">{description}</div>
+        {hadithCount > 0 && (
+          <div className="mb-4 p-3 rounded bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300 text-sm">
+            {/* Warning about affected hadiths */}
+            {`Attention : ${hadithCount} hadith(s) lié(s) seront rattachés à « Inconnu ».`}
+            <br />
+            Cette action est irréversible.
+          </div>
+        )}
         <div className="flex justify-end gap-2">
           <button
             onClick={handleCancel}

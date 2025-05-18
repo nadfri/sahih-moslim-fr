@@ -166,6 +166,25 @@ export async function editItem(
   const validatedData = parseResult.data as ItemFormValues & { id: string };
   const slug = slugify(validatedData.name);
 
+  // Protection: Interdiction de modifier l'item 'Inconnu' (slug 'inconnu' ou index 999)
+  if (
+    (variant === "chapters" &&
+      (slug === "inconnu" || Number(validatedData.index) === 999)) ||
+    (variant !== "chapters" && slug === "inconnu")
+  ) {
+    const msg =
+      "Modification de l'élément 'Inconnu' interdite (élément système).";
+    console.error(
+      "[editItem] Tentative de modification de l'élément 'Inconnu'",
+      validatedData
+    );
+    return {
+      success: false,
+      message: msg,
+      error: msg,
+    };
+  }
+
   try {
     let updated;
 
@@ -213,6 +232,8 @@ export async function editItem(
   } catch (error: unknown) {
     let userMessage = "Erreur inconnue lors de la modification.";
     const errorDetails = error instanceof Error ? error.message : String(error);
+    // Log serveur pour tout échec
+    console.error("[editItem] Erreur lors de la modification:", error);
 
     if (error instanceof PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
@@ -237,7 +258,7 @@ export async function editItem(
     return {
       success: false,
       message: userMessage,
-      error: errorDetails,
+      error: errorDetails || userMessage,
     };
   }
 }
@@ -246,7 +267,7 @@ export async function editItem(
 export async function deleteItem(
   variant: VariantType,
   id: string
-): Promise<ActionResponse> {
+): Promise<ActionResponse & { affectedHadiths?: number }> {
   // admin check refactored
   const adminCheck = await requireAdmin();
   if (adminCheck !== true) return adminCheck;
@@ -261,6 +282,48 @@ export async function deleteItem(
 
   try {
     let deleted;
+    let affectedHadiths = 0;
+    if (variant === "chapters" || variant === "narrators") {
+      // 1. Vérifier les hadiths liés
+      const hadiths = await prisma.hadith.findMany({
+        where: variant === "chapters" ? { chapterId: id } : { narratorId: id },
+        select: { id: true },
+      });
+      affectedHadiths = hadiths.length;
+      if (affectedHadiths > 0) {
+        // 2. Chercher ou créer l'élément 'Inconnu'
+        let unknown;
+        if (variant === "chapters") {
+          unknown = await prisma.chapter.upsert({
+            where: { slug: "inconnu" },
+            update: {},
+            create: {
+              name: "Inconnu",
+              slug: "inconnu",
+              index: 999,
+            },
+          });
+          // 3. Mettre à jour les hadiths
+          await prisma.hadith.updateMany({
+            where: { chapterId: id },
+            data: { chapterId: unknown.id },
+          });
+        } else if (variant === "narrators") {
+          unknown = await prisma.narrator.upsert({
+            where: { slug: "inconnu" },
+            update: {},
+            create: {
+              name: "Inconnu",
+              slug: "inconnu",
+            },
+          });
+          await prisma.hadith.updateMany({
+            where: { narratorId: id },
+            data: { narratorId: unknown.id },
+          });
+        }
+      }
+    }
     switch (variant) {
       case "chapters":
         deleted = await prisma.chapter.delete({ where: { id } });
@@ -277,8 +340,12 @@ export async function deleteItem(
 
     return {
       success: true,
-      message: "Élément supprimé avec succès.",
+      message:
+        affectedHadiths > 0
+          ? `Élément supprimé. ${affectedHadiths} hadith(s) ont été rattachés à 'Inconnu'.`
+          : "Élément supprimé avec succès.",
       data: deleted,
+      affectedHadiths,
     };
   } catch (error: unknown) {
     let userMessage = "Erreur inconnue lors de la suppression.";

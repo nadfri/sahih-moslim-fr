@@ -36,12 +36,13 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
 
   const ItemAddSchema = getItemFormSchema(items, variant);
 
-  // Get the next available index for chapters (returns 1 if empty, else max+1)
+  // Get the next available index for chapters (never 999)
   function nextAvailableIndex(items: ItemType[]): number | undefined {
     if (variant !== "chapters") return undefined;
-
-    if (items.length === 0) return 1;
-    return Math.max(...items.map((chapter) => chapter.index ?? 0)) + 1;
+    // Exclude the "Unknown" chapter (index 999)
+    const filtered = items.filter((chapter) => chapter.index !== 999);
+    if (filtered.length === 0) return 1;
+    return Math.max(...filtered.map((chapter) => chapter.index ?? 0)) + 1;
   }
 
   const {
