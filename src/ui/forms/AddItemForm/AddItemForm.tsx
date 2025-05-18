@@ -106,19 +106,21 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
         >
           {/* Index Field (visible only for chapters but always included in form data) */}
           {variant === "chapters" && (
-            <>
+            <div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 m-0 text-right relative top-4">
+                Suggéré: {nextAvailableIndex(items)}
+              </p>
+
               <Input
                 id="index"
                 label="Numero du chapitre*"
                 type="number"
+                min={1}
                 error={!!errors.index}
                 errorMessage={errors.index?.message}
                 register={register("index")}
               />
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Suggéré: {nextAvailableIndex(items)}
-              </p>
-            </>
+            </div>
           )}
 
           {/* Name Field */}
