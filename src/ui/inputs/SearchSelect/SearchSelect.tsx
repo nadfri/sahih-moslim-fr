@@ -123,7 +123,7 @@ export function SearchSelect({
             type="text"
             className={`w-full p-2 border-none rounded-l-md focus:ring-0 focus:outline-none ${
               error
-                ? "bg-red-50 dark:bg-red-950/30"
+                ? "bg-red-50 dark:bg-red-950/30 text-red-900 dark:text-white"
                 : "bg-white dark:bg-gray-800 dark:text-gray-200"
             }`}
             placeholder={placeholder}
