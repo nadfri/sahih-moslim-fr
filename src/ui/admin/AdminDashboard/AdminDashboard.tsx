@@ -71,6 +71,7 @@ export function AdminDashboard({ chapters, narrators, sahabas }: Props) {
 
       <div>
         <FilteredCardsEdit
+          key={selectedVariant}
           items={currentItems}
           variant={selectedVariant}
         />

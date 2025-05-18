@@ -1,7 +1,7 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 
 import { getAllChapters } from "@/src/services/services";
-import { FilteredList } from "@/src/ui/FilteredList/FilteredList";
+import { FilteredListCard } from "@/src/ui/FilteredListCard/FilteredListCard";
 
 export default async function ChaptersPage() {
   const chapters = await getAllChapters();
@@ -9,7 +9,7 @@ export default async function ChaptersPage() {
     <div className="container mx-auto max-w-5xl">
       <h1 className="title">Chapitres de Sahih Muslim</h1>
 
-      <FilteredList
+      <FilteredListCard
         items={chapters}
         variant="chapters"
       />

@@ -17,7 +17,7 @@ const placeholder = {
   narrators: "Rechercher un narrateur...",
 };
 
-export function FilteredList({ items, variant }: Props) {
+export function FilteredListCard({ items, variant }: Props) {
   const [inputValue, setInputValue] = useState("");
   const [selected, setSelected] = useState("");
 

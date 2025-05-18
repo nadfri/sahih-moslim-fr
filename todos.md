@@ -21,12 +21,10 @@
 
 - [ ] Design responsive footer layout
 - [ ] Add copyright information and current year
-- [ ] Include attribution for Sahih Muslim sources
 - [ ] Create "About" section with project information
 - [ ] Add contact information or feedback form
 - [ ] Implement social media links (if applicable)
 - [ ] Ensure proper accessibility for all footer elements
-- [ ] Add language selection dropdown (for i18n support)
 
 ## Testing
 

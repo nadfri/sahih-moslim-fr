@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
-import { FilteredList } from "./FilteredList";
+import { FilteredListCard } from "./FilteredListCard";
 
 // Mock data for testing
 const items = [
@@ -11,10 +11,10 @@ const items = [
   { id: "3", name: "Item 3", slug: "item-3" },
 ];
 
-describe("FilteredList", () => {
+describe("FilteredListCard", () => {
   it("renders all items initially", () => {
     render(
-      <FilteredList
+      <FilteredListCard
         items={items}
         variant="chapters"
       />
@@ -27,7 +27,7 @@ describe("FilteredList", () => {
 
   it("filters items when search text is entered", async () => {
     render(
-      <FilteredList
+      <FilteredListCard
         items={items}
         variant="chapters"
       />
@@ -54,7 +54,7 @@ describe("FilteredList", () => {
 
   it("filters items when an option is selected from dropdown", async () => {
     render(
-      <FilteredList
+      <FilteredListCard
         items={items}
         variant="chapters"
       />

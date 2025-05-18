@@ -2,7 +2,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import Home from "./page";
+import Home from "@/app/page";
 
 // Tests for Home page component
 describe("Home", () => {
