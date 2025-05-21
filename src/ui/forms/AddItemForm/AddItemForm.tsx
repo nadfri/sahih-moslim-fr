@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -31,8 +31,8 @@ const placeholderText = {
 };
 
 export function AddItemForm({ items: serverItems, variant }: Props) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [items, setItems] = useState<ItemType[]>(serverItems);
+  const [isPending, startTransition] = useTransition();
 
   const ItemAddSchema = getItemFormSchema(items, variant);
 
@@ -60,39 +60,37 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
     },
   });
 
-  async function addItemSubmit(formData: ItemFormValues) {
-    setIsSubmitting(true);
+  function addItemSubmit(formData: ItemFormValues) {
+    startTransition(async () => {
+      try {
+        const response = await addItem(variant, formData);
 
-    try {
-      const response = await addItem(variant, formData);
+        if (response.success && response.data) {
+          toast.success(response.message);
 
-      if (response.success && response.data) {
-        toast.success(response.message);
+          const newItem = response.data as ItemType;
 
-        const newItem = response.data as ItemType;
+          const newList = [...items, newItem];
+          setItems(newList);
 
-        const newList = [...items, newItem];
-        setItems(newList);
+          const newSuggestedIndex = nextAvailableIndex(newList);
 
-        const newSuggestedIndex = nextAvailableIndex(newList);
-
-        reset({
-          name: "",
-          nameArabic: "",
-          index: newSuggestedIndex,
-        });
-      } else {
-        toast.error(response.message || "Une erreur est survenue.");
+          reset({
+            name: "",
+            nameArabic: "",
+            index: newSuggestedIndex,
+          });
+        } else {
+          toast.error(response.message || "Une erreur est survenue.");
+        }
+      } catch (err: unknown) {
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : "Erreur inattendue lors de l'ajout.";
+        toast.error(errorMessage);
       }
-    } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Erreur inattendue lors de l'ajout.";
-      toast.error(errorMessage);
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
   }
 
   return (
@@ -150,11 +148,11 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
           <button
             type="submit"
             className="mt-2 flex items-center justify-center gap-2 w-full py-2 px-4 rounded-lg font-semibold transition focus:outline-none focus-visible:ring-1 bg-emerald-600 dark:bg-emerald-500 text-white dark:text-gray-900 hover:bg-emerald-700 dark:hover:bg-emerald-600 focus-visible:ring-emerald-500 disabled:opacity-70 disabled:cursor-not-allowed"
-            disabled={isSubmitting}
+            disabled={isPending}
           >
             <Plus className="w-5 h-5" />
 
-            {isSubmitting ? "En cours..." : placeholderText.title[variant]}
+            {isPending ? "En cours..." : placeholderText.title[variant]}
           </button>
         </form>
       </div>

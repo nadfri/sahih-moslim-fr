@@ -113,7 +113,7 @@ describe("EditItemFormDialog", () => {
     expect(screen.getByLabelText("Nom du chapitre*")).toHaveValue(
       mockChapterItem.name
     );
-    expect(screen.getByLabelText("Nom arabe (optionnel)")).toHaveValue(
+    expect(screen.getByLabelText("Nom en arabe (optionnel)")).toHaveValue(
       mockChapterItem.nameArabic
     );
     expect(
@@ -140,12 +140,49 @@ describe("EditItemFormDialog", () => {
     expect(await screen.findByText("Au moins 3 lettres")).toBeInTheDocument(); // from getItemFormSchema
   });
 
+  it("shows an error message if name is too short", async () => {
+    render(<EditItemFormDialog {...defaultProps} />);
+    const nameInput = screen.getByLabelText("Nom du chapitre*");
+    const submitButton = screen.getByRole("button", { name: "Enregistrer" });
+
+    await userEvent.clear(nameInput);
+    await userEvent.type(nameInput, "ab"); // Name with 2 characters
+    await userEvent.click(submitButton);
+
+    expect(mockEditItem).not.toHaveBeenCalled();
+    expect(await screen.findByText("Au moins 3 lettres")).toBeInTheDocument();
+  });
+
   it("shows an error message if index is missing for a chapter", async () => {
     render(<EditItemFormDialog {...defaultProps} />);
     const indexInput = screen.getByLabelText("Index*");
     const submitButton = screen.getByRole("button", { name: "Enregistrer" });
 
     await userEvent.clear(indexInput); // Clear the input
+    await userEvent.click(submitButton);
+
+    expect(mockEditItem).not.toHaveBeenCalled();
+    expect(
+      await screen.findByText("L'index doit être un nombre positif")
+    ).toBeInTheDocument();
+  });
+
+  it("shows an error message if index is not a positive number for a chapter", async () => {
+    render(<EditItemFormDialog {...defaultProps} />);
+    const indexInput = screen.getByLabelText("Index*");
+    const submitButton = screen.getByRole("button", { name: "Enregistrer" });
+
+    await userEvent.clear(indexInput);
+    await userEvent.type(indexInput, "0"); // Non-positive index
+    await userEvent.click(submitButton);
+
+    expect(mockEditItem).not.toHaveBeenCalled();
+    expect(
+      await screen.findByText("L'index doit être un nombre positif")
+    ).toBeInTheDocument();
+
+    await userEvent.clear(indexInput);
+    await userEvent.type(indexInput, "-5"); // Negative index
     await userEvent.click(submitButton);
 
     expect(mockEditItem).not.toHaveBeenCalled();
@@ -254,6 +291,26 @@ describe("EditItemFormDialog", () => {
     await waitFor(() => expect(mockEditItem).toHaveBeenCalled()); // Ensure mock promise resolves
   });
 
+  it("shows toast.error if editItem returns success:false", async () => {
+    const errorMessage = "Erreur spécifique de l'action";
+    mockEditItem.mockResolvedValueOnce({
+      success: false,
+      message: errorMessage,
+    });
+    render(<EditItemFormDialog {...defaultProps} />);
+    const nameInput = screen.getByLabelText("Nom du chapitre*");
+    const submitButton = screen.getByRole("button", { name: "Enregistrer" });
+
+    await userEvent.clear(nameInput);
+    await userEvent.type(nameInput, "Test Erreur Action");
+    await userEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(mockToastError).toHaveBeenCalledWith(errorMessage);
+    });
+    expect(defaultProps.onCancel).not.toHaveBeenCalled(); // Should not close on action error
+  });
+
   it("shows toast.error if editItem throws an exception", async () => {
     mockEditItem.mockRejectedValueOnce(new Error("Erreur critique"));
     render(<EditItemFormDialog {...defaultProps} />);
@@ -269,7 +326,6 @@ describe("EditItemFormDialog", () => {
         "Erreur inconnue lors de la modification."
       );
     });
-    expect(defaultProps.onCancel).not.toHaveBeenCalled();
   });
 
   // Test for a different variant, e.g., narrators, where index might be optional
@@ -293,28 +349,27 @@ describe("EditItemFormDialog", () => {
     it("renders the dialog with correct initial values for a narrator", () => {
       render(<EditItemFormDialog {...narratorProps} />);
       expect(
-        screen.getByRole("dialog", { name: "Éditer le chapitre" })
-      ).toBeInTheDocument(); // Title is static
-      expect(screen.getByLabelText("Index*")).toHaveValue(null); // Empty number input
-      expect(screen.getByLabelText("Nom du chapitre*")).toHaveValue(
+        screen.getByRole("dialog", { name: "Éditer le narrateur" })
+      ).toBeInTheDocument();
+      expect(screen.queryByLabelText("Index*")).not.toBeInTheDocument(); // Index field should not be present for narrators
+      expect(screen.getByLabelText("Nom du narrateur*")).toHaveValue(
         mockNarratorItem.name
-      ); // Label is static
-      expect(screen.getByLabelText("Nom arabe (optionnel)")).toHaveValue(
+      );
+      expect(screen.getByLabelText("Nom en arabe (optionnel)")).toHaveValue(
         mockNarratorItem.nameArabic
       );
     });
 
     it("submits the form for a narrator (index optional)", async () => {
       render(<EditItemFormDialog {...narratorProps} />);
-      const nameInput = screen.getByLabelText("Nom du chapitre*"); // Static label
-      const indexInput = screen.getByLabelText("Index*");
+      const nameInput = screen.getByLabelText("Nom du narrateur*");
       const submitButton = screen.getByRole("button", { name: "Enregistrer" });
 
       const newName = "Narrateur Un Modifié";
-      await userEvent.clear(nameInput);
-      await userEvent.type(nameInput, newName);
 
-      await userEvent.clear(indexInput);
+      await userEvent.clear(nameInput);
+
+      await userEvent.type(nameInput, newName);
 
       await userEvent.click(submitButton);
 
@@ -323,7 +378,6 @@ describe("EditItemFormDialog", () => {
           id: mockNarratorItem.id,
           name: newName,
           nameArabic: mockNarratorItem.nameArabic,
-          index: null,
         });
       });
       expect(mockToastSuccess).toHaveBeenCalledWith("Narrateur modifié!");

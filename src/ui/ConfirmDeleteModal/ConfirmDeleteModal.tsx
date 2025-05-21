@@ -25,7 +25,6 @@ export function ConfirmDeleteModal({
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const titleId = useId();
 
-  // Cleanup on unmount
   if (!open) return null;
 
   const handleCancel = () => {
@@ -48,7 +47,6 @@ export function ConfirmDeleteModal({
         <div className="mb-4 dark:text-gray-300">{description}</div>
         {hadithCount > 0 && (
           <div className="mb-4 p-3 rounded bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300 text-sm">
-            {/* Warning about affected hadiths */}
             {`Attention : ${hadithCount} hadith(s) lié(s) seront rattachés à « Inconnu ».`}
             <br />
             Cette action est irréversible.
@@ -67,7 +65,7 @@ export function ConfirmDeleteModal({
             disabled={loading}
             className="px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white dark:bg-red-700 dark:hover:bg-red-800 dark:text-white"
           >
-            {loading ? "Supression..." : "Supprimer"}
+            {loading ? "Suppression..." : "Supprimer"}
           </button>
         </div>
       </div>

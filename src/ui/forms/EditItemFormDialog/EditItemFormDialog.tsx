@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -19,6 +19,20 @@ type Props = {
   variant: VariantType;
 };
 
+const placeholderText = {
+  title: {
+    chapters: "Éditer le chapitre",
+    narrators: "Éditer le narrateur",
+    sahabas: "Éditer le compagnon",
+  },
+
+  name: {
+    chapters: "Nom du chapitre",
+    narrators: "Nom du narrateur",
+    sahabas: "Nom du compagnon",
+  },
+};
+
 export function EditItemFormDialog({
   open,
   onCancel,
@@ -26,7 +40,7 @@ export function EditItemFormDialog({
   items,
   variant,
 }: Props) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const ItemEditSchema = getItemFormSchema(items, variant, item.id);
 
@@ -40,72 +54,74 @@ export function EditItemFormDialog({
     defaultValues: item,
   });
 
-  async function editItemSubmit(formData: ItemFormValues) {
-    setIsSubmitting(true);
-    try {
-      const response = await editItem(variant, { ...formData, id: item.id });
-      if (response && response.success) {
-        toast.success(response.message);
-        onCancel();
-      } else if (response) {
-        toast.error(response.message);
-      } else {
-        toast.error("Erreur inconnue lors de la modification.");
-      }
-    } catch (error) {
-      toast.error("Erreur inconnue lors de la modification.");
-      if (error instanceof Error) {
-        console.error(
-          "[EditItemFormDialog] Erreur lors de la modification:",
-          error.message,
-          error.stack
-        );
-      } else {
-        console.error("[EditItemFormDialog] Erreur inconnue:", error);
-      }
+  function editItemSubmit(formData: ItemFormValues) {
+    startTransition(async () => {
+      try {
+        const response = await editItem(variant, { ...formData, id: item.id });
 
-      if (typeof error === "object" && error !== null && "response" in error) {
-        console.error("[EditItemFormDialog] Réponse serveur:", error.response);
+        if (response.success) {
+          toast.success(response.message);
+          onCancel();
+        } else {
+          toast.error(response.message);
+        }
+      } catch (error) {
+        toast.error("Erreur inconnue lors de la modification.");
+
+        if (error instanceof Error) {
+          console.error(
+            "[EditItemFormDialog] Erreur lors de la modification:",
+            error.message,
+            error.stack
+          );
+        } else {
+          console.error("[EditItemFormDialog] Erreur inconnue:", error);
+        }
+
+        if (
+          typeof error === "object" &&
+          error !== null &&
+          "response" in error
+        ) {
+          console.error(
+            "[EditItemFormDialog] Réponse serveur:",
+            error.response
+          );
+        }
       }
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
   }
 
   return (
     <Dialog
       open={open}
       onClose={onCancel}
-      title="Éditer le chapitre"
+      title={placeholderText.title[variant]}
     >
       <form
         onSubmit={handleFormSubmit(editItemSubmit)}
         className="space-y-4"
       >
-        {/* Hidden input for ID if needed, or ensure it's part of 'data' */}
-        <input
-          type="hidden"
-          defaultValue={item.id}
-        />
-
         {/* Index Field */}
-        <Input
-          id="edit-index"
-          label="Index*"
-          type="number"
-          placeholder="Index"
-          min={1}
-          error={!!errors.index}
-          errorMessage={errors.index?.message}
-          register={register("index")}
-        />
+        {variant === "chapters" && (
+          <Input
+            id="edit-index"
+            label="Index*"
+            type="number"
+            placeholder="Index"
+            min={1}
+            error={!!errors.index}
+            errorMessage={errors.index?.message}
+            register={register("index")}
+          />
+        )}
 
         {/* Name Field */}
         <Input
           id="edit-name"
-          label="Nom du chapitre*"
+          label={placeholderText.name[variant] + "*"}
           type="text"
-          placeholder="Nom du chapitre"
+          placeholder={placeholderText.name[variant]}
           error={!!errors.name}
           errorMessage={errors.name?.message}
           register={register("name")}
@@ -114,9 +130,9 @@ export function EditItemFormDialog({
         {/* Arabic Name Field */}
         <Input
           id="edit-nameArabic"
-          label="Nom arabe (optionnel)"
+          label="Nom en arabe (optionnel)"
           type="text"
-          placeholder="Nom arabe"
+          placeholder="Nom en arabe"
           error={!!errors.nameArabic}
           errorMessage={errors.nameArabic?.message}
           register={register("nameArabic")}
@@ -128,16 +144,16 @@ export function EditItemFormDialog({
             type="button"
             className="px-4 py-2 rounded-lg focus-visible:ring-1 focus-visible:ring-emerald-500 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
             onClick={onCancel}
-            disabled={isSubmitting}
+            disabled={isPending}
           >
             Annuler
           </button>
           <button
             type="submit"
             className="px-4 py-2 rounded-lg focus-visible:ring-1 bg-emerald-600 dark:bg-emerald-500 text-white dark:text-gray-900 hover:bg-emerald-700 dark:hover:bg-emerald-600 focus-visible:ring-emerald-500 disabled:opacity-70 disabled:cursor-not-allowed"
-            disabled={isSubmitting}
+            disabled={isPending}
           >
-            {isSubmitting ? "En cours..." : "Enregistrer"}
+            {isPending ? "En cours..." : "Enregistrer"}
           </button>
         </div>
       </form>

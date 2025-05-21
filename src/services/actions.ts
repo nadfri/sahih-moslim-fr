@@ -164,9 +164,10 @@ export async function editItem(
   }
 
   const validatedData = parseResult.data as ItemFormValues & { id: string };
+
   const slug = slugify(validatedData.name);
 
-  // Protection: Interdiction de modifier l'item 'Inconnu' (slug 'inconnu' ou index 999)
+  // Prevent modification of the 'Unknown' item (slug 'inconnu' or index 999)
   if (
     (variant === "chapters" &&
       (slug === "inconnu" || Number(validatedData.index) === 999)) ||

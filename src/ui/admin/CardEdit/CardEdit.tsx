@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -33,10 +33,9 @@ const variantOptions = {
 export function CardEdit({ item, items, variant }: Props) {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  const handleDelete = async () => {
-    setIsDeleting(true);
+  async function handleDelete() {
     try {
       const result = await deleteItem(variant, item.id);
       if (result.success) {
@@ -51,10 +50,8 @@ export function CardEdit({ item, items, variant }: Props) {
     } catch (error) {
       console.error("Erreur lors de la suppression:", error);
       toast.error("Erreur inconnue lors de la suppression.");
-    } finally {
-      setIsDeleting(false);
     }
-  };
+  }
 
   const deleteDescription = (
     <p>
@@ -120,10 +117,10 @@ export function CardEdit({ item, items, variant }: Props) {
       <ConfirmDeleteModal
         open={showDeleteModal}
         onCancel={() => setShowDeleteModal(false)}
-        onConfirm={handleDelete}
-        loading={isDeleting}
-        title={variantOptions[variant].title}
+        onConfirm={() => startTransition(handleDelete)}
+        loading={isPending}
         description={deleteDescription}
+        title={variantOptions[variant].title}
         hadithCount={item.hadithCount}
       />
 

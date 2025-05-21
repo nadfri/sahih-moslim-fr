@@ -5,9 +5,10 @@ import type { ItemType, VariantType } from "@/src/types/types";
 export function getItemFormSchema(
   items: ItemType[],
   variant: VariantType,
-  excludeId?: string
+  id?: string
 ) {
   return z.object({
+    id: z.string().optional(),
     name: z
       .string()
       .min(3, "Au moins 3 lettres")
@@ -16,7 +17,7 @@ export function getItemFormSchema(
         (name) =>
           !items.some(
             (item) =>
-              (excludeId ? item.id !== excludeId : true) &&
+              (id ? item.id !== id : true) &&
               item.name.trim().toLowerCase() === name.trim().toLowerCase()
           ),
         "Ce nom est déjà utilisé. Veuillez en choisir un autre."
@@ -37,8 +38,7 @@ export function getItemFormSchema(
               (index) =>
                 !items.some(
                   (chapter) =>
-                    (excludeId ? chapter.id !== excludeId : true) &&
-                    chapter.index === index
+                    (id ? chapter.id !== id : true) && chapter.index === index
                 ),
               "Cet index est déjà utilisé. Veuillez en choisir un autre."
             )
