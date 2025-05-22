@@ -13,8 +13,6 @@
 
 ### Pages & UI
 
-- [ ] Create a custom 404 page
-- [ ] Add dark mode support for the unauthorized page
 - [ ] Add a global page loader/spinner
 
 ## Footer
@@ -26,7 +24,6 @@
 - [ ] Implement social media links (if applicable)
 - [ ] Ensure proper accessibility for all footer elements
 
-## Testing
 
 ### Slug Page
 
@@ -35,7 +32,7 @@
 - [ ] Test error handling for invalid slugs
 - [ ] Verify proper metadata generation
 
-### Forms
+### Testing
 
 - [ ] Test form validation
 - [ ] Test form submission

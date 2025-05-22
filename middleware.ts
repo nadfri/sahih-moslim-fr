@@ -9,7 +9,7 @@ export async function middleware(req: NextRequest) {
   console.log(`--- AUTH CHECK VIA getToken POUR: ${req.nextUrl.pathname} ---`);
 
   const token = await getToken({ req, secret });
-  console.log(`   Token récupéré:`, token);
+  // console.log(`   Token récupéré:`, token);
 
   const pathname = req.nextUrl.pathname;
   const isProtectedRoute =
@@ -55,7 +55,6 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  console.log("   Middleware terminé. Passage à next().");
   return NextResponse.next();
 }
 
