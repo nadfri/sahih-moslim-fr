@@ -3,11 +3,13 @@
 /*Libs*/
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { createPortal } from "react-dom"; // Import createPortal
+
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { z } from "zod";
 
-import { HadithType, ItemType } from "@/src/types/types";
+import { HadithType, ItemType, VariantType } from "@/src/types/types"; // Import VariantType
+
 /*UI*/
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { Input } from "@/src/ui/inputs/Input/Input";
@@ -18,32 +20,14 @@ import { Select } from "@/src/ui/inputs/Select/Select";
 /*Utils*/
 import { cleanArabicText } from "@/src/utils/cleanArabicText";
 import { replaceSWS } from "@/src/utils/replaceSWS";
+import { BtnAddItem } from "../hadith/BtnAddItem/BtnAddItem";
+import { AddItemFormDialog } from "./AddItemFormDialog/AddItemFomDialog"; // Import AddItemFormDialog
+import {
+  createHadithSchema,
+  HadithFormValues,
+} from "./schemas/createHadithSchema";
 
-const createHadithSchema = (existingNumeros: number[]) => {
-  return z.object({
-    numero: z.coerce
-      .number({
-        required_error: "Le numéro est requis",
-        invalid_type_error: "Le numéro doit être un nombre",
-      })
-      .int({ message: "Le numéro doit être un nombre entier" })
-      .positive({ message: "Le numéro doit être un nombre positif" })
-      .refine((numero) => !existingNumeros.includes(numero), {
-        message: "Ce numéro existe déjà. Veuillez en choisir un autre.",
-      }),
-    chapter: z.string().min(1, "Le chapitre est requis"),
-    narrator: z.string().min(1, "Le narrateur est requis"),
-    mentionedSahabas: z.array(z.string()),
-    matn_fr: z.string().min(1, "Le texte du hadith est requis"),
-    matn_ar: z.string().min(1, "Le texte arabe est requis"),
-    isnad: z.string().nullable().optional(),
-  });
-};
-
-type HadithFormValues = z.infer<ReturnType<typeof createHadithSchema>>;
-
-// Define props for the component
-type AddHadithFormProps = {
+type Props = {
   initialNumeros: number[];
   chaptersData: ItemType[];
   narratorsData: ItemType[];
@@ -55,11 +39,13 @@ export function AddHadithForm({
   chaptersData,
   narratorsData,
   sahabasData,
-}: AddHadithFormProps) {
+}: Props) {
   const [existingNumeros, setExistingNumeros] =
     useState<number[]>(initialNumeros);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOpenDialog, setIsOpenDialog] = useState(false);
+  const [variant, setVariant] = useState<VariantType | null>(null);
 
   const hadithSchema = createHadithSchema(existingNumeros);
 
@@ -76,7 +62,7 @@ export function AddHadithForm({
     mode: "onChange",
     defaultValues: {
       numero: initialNumeros.length > 0 ? Math.max(...initialNumeros) + 1 : 1,
-      chapter: "Introduction",
+      chapter: "La Foi",
       narrator: "Abou Huraira",
       mentionedSahabas: [],
       matn_fr: "",
@@ -90,6 +76,18 @@ export function AddHadithForm({
   const chapterOptions = chaptersData.map((chapter) => chapter.name);
   const narratorOptions = narratorsData.map((n) => n.name);
   const sahabaOptions = sahabasData.map((s) => s.name);
+
+  // Function to open the dialog with the correct variant
+  const handleOpenDialog = (variant: VariantType) => {
+    setVariant(variant);
+    setIsOpenDialog(true);
+  };
+
+  // Function to close the dialog
+  const handleCloseDialog = () => {
+    setIsOpenDialog(false);
+    setVariant(null);
+  };
 
   const onSubmit = async (data: HadithFormValues) => {
     setIsSubmitting(true);
@@ -143,7 +141,7 @@ export function AddHadithForm({
 
         reset({
           numero: Math.max(...updatedNumeros) + 1,
-          chapter: "Introduction",
+          chapter: "La Foi",
           narrator: "Abou Huraira",
           mentionedSahabas: [],
           matn_fr: "",
@@ -161,12 +159,17 @@ export function AddHadithForm({
     }
   };
 
+  const items = {
+    chapters: chaptersData,
+    narrators: narratorsData,
+    sahabas: sahabasData,
+  };
+
   // Construct preview object matching HadithType exactly
   const previewHadith: HadithType = {
-    id: "preview-id", // Placeholder
+    id: "preview-id",
     numero: formValues.numero || 0,
     chapter: {
-      // Provide all fields expected by Chapter type in Prisma schema
       id: "preview-chapter-id",
       name: formValues.chapter || "Sélectionnez un chapitre...",
       slug: "preview-chapter-slug", // Add slug for preview
@@ -175,17 +178,14 @@ export function AddHadithForm({
       id: "preview-narrator-id",
       name: formValues.narrator || "Sélectionnez un narrateur...",
       slug: "preview-narrator-slug", // Add slug for preview
-      nameArabic: null, // Placeholder or fetch if needed
     },
     mentionedSahabas: (formValues.mentionedSahabas || []).map((name, i) => ({
       id: `preview-sahaba-id-${i}`,
       name: name,
-      slug: `preview-sahaba-slug-${i}`, // Add slug for preview
-      nameArabic: null,
+      slug: `preview-sahaba-slug-${i}`,
     })),
     matn_fr: formValues.matn_fr || "...",
     matn_ar: formValues.matn_ar || "...",
-    isnad: formValues.isnad || null,
   };
 
   return (
@@ -208,58 +208,76 @@ export function AddHadithForm({
           />
 
           {/* Chapter */}
-          <Controller
-            name="chapter"
-            control={control}
-            render={({ field }) => (
-              <Select
-                id="chapter"
-                label="Chapitre*"
-                options={chapterOptions}
-                error={!!errors.chapter}
-                errorMessage={errors.chapter?.message}
-                {...field} // Pass field props (value, onChange, etc.)
-              />
-            )}
-          />
+          <div className="flex justify-between items-end gap-1">
+            <Controller
+              name="chapter"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  id="chapter"
+                  label="Chapitre*"
+                  options={chapterOptions}
+                  error={!!errors.chapter}
+                  errorMessage={errors.chapter?.message}
+                  {...field} // Pass field props (value, onChange, etc.)
+                />
+              )}
+            />
+            <BtnAddItem
+              onOpen={() => handleOpenDialog("chapters")}
+              variant="chapters"
+            />
+          </div>
 
           {/* Narrator */}
-          <Controller
-            name="narrator"
-            control={control}
-            render={({ field }) => (
-              <SearchSelect
-                id="narrator"
-                label="Narrateur*"
-                options={narratorOptions}
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="Rechercher un narrateur..."
-                name={field.name}
-                error={!!errors.narrator}
-                errorMessage={errors.narrator?.message}
-              />
-            )}
-          />
+          <div className="flex justify-between items-end gap-1">
+            <Controller
+              name="narrator"
+              control={control}
+              render={({ field }) => (
+                <SearchSelect
+                  id="narrator"
+                  label="Narrateur*"
+                  options={narratorOptions}
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="Rechercher un narrateur..."
+                  name={field.name}
+                  error={!!errors.narrator}
+                  errorMessage={errors.narrator?.message}
+                />
+              )}
+            />
+            <BtnAddItem
+              onOpen={() => handleOpenDialog("narrators")}
+              variant="narrators"
+            />
+          </div>
 
           {/* MentionedSahabas */}
-          <Controller
-            name="mentionedSahabas"
-            control={control}
-            render={({ field }) => (
-              <MultiSelect
-                id="mentionedSahabas"
-                label="Sahabas mentionnés"
-                options={sahabaOptions}
-                selected={field.value} // Expects string[]
-                onChange={field.onChange}
-                placeholder="Rechercher des sahabas..."
-                name={field.name}
-                error={!!errors.mentionedSahabas}
-                errorMessage={errors.mentionedSahabas?.message}
-              />
-            )}
-          />
+          <div className="flex justify-between items-end gap-1">
+            <Controller
+              name="mentionedSahabas"
+              control={control}
+              render={({ field }) => (
+                <MultiSelect
+                  id="mentionedSahabas"
+                  label="Sahabas mentionnés"
+                  options={sahabaOptions}
+                  selected={field.value}
+                  onChange={field.onChange}
+                  placeholder="Rechercher des sahabas..."
+                  name={field.name}
+                  error={!!errors.mentionedSahabas}
+                  errorMessage={errors.mentionedSahabas?.message}
+                />
+              )}
+            />
+            <BtnAddItem
+              onOpen={() => handleOpenDialog("sahabas")}
+              variant="sahabas"
+            />
+          </div>
 
           {/* matn_fr FR */}
           <MdTextArea
@@ -297,20 +315,6 @@ export function AddHadithForm({
             helperText="Le texte sera automatiquement nettoyé"
           />
 
-          {/* Isnad (Optional) */}
-          {/* <Input
-            id="isnad"
-            label="Isnad (Chaîne de transmission)"
-            type="textarea"
-            rows={3}
-            dir="rtl" // Assuming Isnad is often in Arabic
-            className="font-matn_ar" // Optional: style like Arabic text
-            error={!!errors.isnad}
-            errorMessage={errors.isnad?.message}
-            register={register("isnad")}
-            placeholder="Saisir l'isnad (optionnel)..."
-          /> */}
-
           {/* Submit Button */}
           <button
             type="submit"
@@ -331,6 +335,19 @@ export function AddHadithForm({
           />
         </div>
       </div>
+
+      {/* AddItemFormDialog Portal */}
+      {isOpenDialog &&
+        variant &&
+        createPortal(
+          <AddItemFormDialog
+            open={isOpenDialog}
+            onCancel={handleCloseDialog}
+            items={items[variant]}
+            variant={variant}
+          />,
+          document.body
+        )}
     </div>
   );
 }

@@ -9,7 +9,8 @@ import { toast } from "react-toastify";
 import { addItem } from "@/src/services/actions";
 import { ItemFormValues, ItemType, VariantType } from "@/src/types/types";
 import { Input } from "@/src/ui/inputs/Input/Input";
-import { getItemFormSchema } from "../getItemFormSchema";
+import { nextAvailableIndex } from "@/src/utils/nextAvailableIndex";
+import { getItemFormSchema } from "../schemas/getItemFormSchema";
 
 type Props = {
   items: ItemType[];
@@ -36,15 +37,6 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
 
   const ItemAddSchema = getItemFormSchema(items, variant);
 
-  // Get the next available index for chapters (never 999)
-  function nextAvailableIndex(items: ItemType[]): number | undefined {
-    if (variant !== "chapters") return undefined;
-    // Exclude the "Unknown" chapter (index 999)
-    const filtered = items.filter((chapter) => chapter.index !== 999);
-    if (filtered.length === 0) return 1;
-    return Math.max(...filtered.map((chapter) => chapter.index ?? 0)) + 1;
-  }
-
   const {
     register,
     handleSubmit,
@@ -56,7 +48,7 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
     defaultValues: {
       name: "",
       nameArabic: "",
-      index: nextAvailableIndex(items),
+      index: nextAvailableIndex(items, variant),
     },
   });
 
@@ -73,7 +65,7 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
           const newList = [...items, newItem];
           setItems(newList);
 
-          const newSuggestedIndex = nextAvailableIndex(newList);
+          const newSuggestedIndex = nextAvailableIndex(newList, variant);
 
           reset({
             name: "",
@@ -107,7 +99,7 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
           {variant === "chapters" && (
             <div>
               <p className="text-xs text-gray-500 dark:text-gray-400 m-0 text-right relative top-4">
-                Suggéré: {nextAvailableIndex(items)}
+                Suggéré: {nextAvailableIndex(items, variant)}
               </p>
 
               <Input

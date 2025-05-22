@@ -27,4 +27,5 @@ export const HadithSchema = z.object({
   narrator: SchemaItemStructure,
   mentionedSahabas: z.array(SchemaItemStructure),
 });
+
 export type HadithType = z.infer<typeof HadithSchema>;

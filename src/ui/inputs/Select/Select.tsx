@@ -8,7 +8,6 @@ type SelectProps = {
   options: string[];
   value?: string;
   onChange?: (value: string) => void;
-  className?: string;
   error?: boolean;
   errorMessage?: string;
   name?: string;
@@ -21,14 +20,13 @@ export function Select({
   options,
   value,
   onChange,
-  className = "",
   error = false,
   errorMessage,
   name,
   required,
 }: SelectProps) {
   return (
-    <div>
+    <div className="w-full">
       <label
         htmlFor={id}
         className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
@@ -46,8 +44,8 @@ export function Select({
           className={`w-full p-2 border rounded-md appearance-none pr-10 cursor-pointer ${
             error
               ? "border-red-500 bg-red-50 dark:bg-red-950/30 focus:border-red-500 focus:ring-red-500"
-              : "border-gray-300 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-200"
-          } focus:ring-2 focus:outline-none ${className}`}
+              : "border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus-within:ring-emerald-600 focus-within:border-emerald-600"
+          } focus:ring-1 focus:outline-none`}
         >
           {options.map((option) => (
             <option

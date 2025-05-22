@@ -5,25 +5,25 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
-import { editItem } from "@/src/services/actions";
+import { addItem } from "@/src/services/actions";
 import { ItemFormValues, ItemType, VariantType } from "@/src/types/types";
 import { getItemFormSchema } from "@/src/ui/forms/schemas/getItemFormSchema";
 import { Input } from "@/src/ui/inputs/Input/Input";
+import { nextAvailableIndex } from "@/src/utils/nextAvailableIndex";
 import { Dialog } from "../../Dialog/Dialog";
 
 type Props = {
   open: boolean;
   onCancel: () => void;
-  item: ItemType;
   items: ItemType[];
   variant: VariantType;
 };
 
 const placeholderText = {
   title: {
-    chapters: "Éditer le chapitre",
-    narrators: "Éditer le narrateur",
-    sahabas: "Éditer le compagnon",
+    chapters: "Ajouter un chapitre",
+    narrators: "Ajouter un narrateur",
+    sahabas: "Ajouter un compagnon",
   },
 
   name: {
@@ -33,61 +33,41 @@ const placeholderText = {
   },
 };
 
-export function EditItemFormDialog({
-  open,
-  onCancel,
-  item,
-  items,
-  variant,
-}: Props) {
+export function AddItemFormDialog({ open, onCancel, items, variant }: Props) {
   const [isPending, startTransition] = useTransition();
 
-  const ItemEditSchema = getItemFormSchema(items, variant, item.id);
+  const ItemAddSchema = getItemFormSchema(items, variant);
 
   const {
     register,
     handleSubmit: handleFormSubmit,
     formState: { errors },
+    reset,
   } = useForm<ItemFormValues>({
-    resolver: zodResolver(ItemEditSchema),
+    resolver: zodResolver(ItemAddSchema),
     mode: "onChange",
-    defaultValues: item,
+    defaultValues: {
+      name: "",
+      nameArabic: "",
+      index: nextAvailableIndex(items, variant),
+    },
   });
 
-  function editItemSubmit(formData: ItemFormValues) {
+  function addItemSubmit(formData: ItemFormValues) {
     startTransition(async () => {
       try {
-        const response = await editItem(variant, { ...formData, id: item.id });
+        const response = await addItem(variant, formData);
 
         if (response.success) {
           toast.success(response.message);
+          reset();
           onCancel();
         } else {
           toast.error(response.message);
         }
       } catch (error) {
-        toast.error("Erreur inconnue lors de la modification.");
-
-        if (error instanceof Error) {
-          console.error(
-            "[EditItemFormDialog] Erreur lors de la modification:",
-            error.message,
-            error.stack
-          );
-        } else {
-          console.error("[EditItemFormDialog] Erreur inconnue:", error);
-        }
-
-        if (
-          typeof error === "object" &&
-          error !== null &&
-          "response" in error
-        ) {
-          console.error(
-            "[EditItemFormDialog] Réponse serveur:",
-            error.response
-          );
-        }
+        toast.error("Erreur inconnue lors de l'ajout.");
+        console.error("[AddItemFormDialog] Erreur lors de l'ajout:", error);
       }
     });
   }
@@ -99,13 +79,13 @@ export function EditItemFormDialog({
       title={placeholderText.title[variant]}
     >
       <form
-        onSubmit={handleFormSubmit(editItemSubmit)}
+        onSubmit={handleFormSubmit(addItemSubmit)}
         className="space-y-4"
       >
         {/* Index Field */}
         {variant === "chapters" && (
           <Input
-            id="edit-index"
+            id="add-index"
             label="Index*"
             type="number"
             placeholder="Index"
@@ -118,7 +98,7 @@ export function EditItemFormDialog({
 
         {/* Name Field */}
         <Input
-          id="edit-name"
+          id="add-name"
           label={placeholderText.name[variant] + "*"}
           type="text"
           placeholder={placeholderText.name[variant]}
@@ -129,7 +109,7 @@ export function EditItemFormDialog({
 
         {/* Arabic Name Field */}
         <Input
-          id="edit-nameArabic"
+          id="add-nameArabic"
           label="Nom en arabe (optionnel)"
           type="text"
           placeholder="Nom en arabe"
@@ -153,7 +133,7 @@ export function EditItemFormDialog({
             className="px-4 py-2 rounded-lg focus-visible:ring-1 bg-emerald-600 dark:bg-emerald-500 text-white dark:text-gray-900 hover:bg-emerald-700 dark:hover:bg-emerald-600 focus-visible:ring-emerald-500 disabled:opacity-70 disabled:cursor-not-allowed"
             disabled={isPending}
           >
-            {isPending ? "En cours..." : "Enregistrer"}
+            {isPending ? "En cours..." : "Ajouter"}
           </button>
         </div>
       </form>
