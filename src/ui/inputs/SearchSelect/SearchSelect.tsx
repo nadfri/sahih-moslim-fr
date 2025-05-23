@@ -96,7 +96,7 @@ export function SearchSelect({
   const showLabel = label && label.trim() !== "";
 
   return (
-    <div className="w-full">
+    <div className="w-full relative">
       {showLabel && (
         <label
           htmlFor={id}
@@ -113,15 +113,15 @@ export function SearchSelect({
         <div
           className={`flex items-center border rounded-md ${
             error
-              ? "border-red-500 focus-within:ring-red-500 focus-within:border-red-500 bg-red-50 dark:bg-red-950/30"
-              : "border-gray-300 dark:border-gray-700 focus-within:ring-emerald-600 focus-within:border-emerald-600 bg-white dark:bg-gray-800"
-          } focus-within:ring-1`}
+              ? "border-red-500 bg-red-50 dark:bg-red-950/30"
+              : "border-gray-300 dark:border-gray-700 focus-within:border-emerald-600 bg-white dark:bg-gray-800"
+          }`}
         >
           <input
             ref={inputRef}
             id={id}
             type="text"
-            className={`w-full p-2 border-none rounded-l-md focus:ring-0 focus:outline-none ${
+            className={`w-full p-2 border-none rounded-l-md focus:outline-none ${
               error
                 ? "bg-red-50 dark:bg-red-950/30 text-red-900 dark:text-white"
                 : "bg-white dark:bg-gray-800 dark:text-gray-200"
@@ -206,7 +206,7 @@ export function SearchSelect({
         )}
 
         {error && errorMessage && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+          <p className="mt-1 text-sm text-red-600 dark:text-red-400 absolute -bottom-5">
             {errorMessage}
           </p>
         )}

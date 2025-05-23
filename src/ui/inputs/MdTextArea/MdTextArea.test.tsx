@@ -121,12 +121,12 @@ describe("MdTextArea", () => {
     const container = screen.getByTestId("md-editor-textarea").closest("div");
     const parentDiv = container?.parentElement?.parentElement;
 
-    expect(parentDiv).not.toHaveClass("ring-2 ring-blue-500");
+    expect(parentDiv).not.toHaveClass(" border-emerald-600");
 
     await user.click(screen.getByTestId("md-editor-textarea"));
 
-    // After focus, it should have blue ring
-    expect(parentDiv).toHaveClass("ring-2 ring-blue-500");
+    // After focus, it should have emerald border
+    expect(parentDiv).toHaveClass("border-emerald-600");
   });
 
   it("applies error styling when error is true", () => {
@@ -135,7 +135,7 @@ describe("MdTextArea", () => {
     const container = screen.getByTestId("md-editor-textarea").closest("div");
     const parentDiv = container?.parentElement?.parentElement;
 
-    expect(parentDiv).toHaveClass("ring-2 ring-red-500");
+    expect(parentDiv).toHaveClass("border-red-500");
   });
 
   it("calls onValueChange when text is entered", async () => {
@@ -168,10 +168,10 @@ describe("MdTextArea", () => {
 
     // First focus the element
     await user.click(textarea);
-    expect(parentDiv).toHaveClass("ring-2 ring-blue-500");
+    expect(parentDiv).toHaveClass("border-emerald-600");
 
     // Then blur by clicking outside
     await user.click(document.body);
-    expect(parentDiv).not.toHaveClass("ring-2 ring-blue-500");
+    expect(parentDiv).not.toHaveClass("border-emerald-600");
   });
 });

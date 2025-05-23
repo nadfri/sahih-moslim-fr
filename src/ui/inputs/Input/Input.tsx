@@ -49,12 +49,12 @@ export function Input({
 }: InputProps) {
   const inputClasses = `w-full p-2 border rounded-md ${
     error
-      ? "border-red-500 bg-red-50 dark:bg-red-950/30 focus:border-red-500 focus:ring-red-500 text-red-900 dark:text-white"
-      : "border-gray-300 dark:border-gray-700 focus:border-emerald-600 focus:ring-emerald-600 bg-white dark:bg-gray-800 dark:text-gray-200"
-  } focus:ring-1 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${className}`;
+      ? "border-red-500 bg-red-50 dark:bg-red-950/30 text-red-900 dark:text-white"
+      : "border-gray-300 dark:border-gray-700 focus:border-emerald-600 bg-white dark:bg-gray-800 dark:text-gray-200"
+  } focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${className}`;
 
   return (
-    <div>
+    <div className="relative">
       <label
         htmlFor={id}
         className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
@@ -103,7 +103,7 @@ export function Input({
       )}
 
       {error && errorMessage && (
-        <p className="mt-1 text-sm text-red-600 dark:text-red-400 font-medium">
+        <p className="mt-1 text-sm text-red-600 dark:text-red-400 font-medium absolute -bottom-5">
           {errorMessage}
         </p>
       )}

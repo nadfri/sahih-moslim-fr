@@ -194,7 +194,7 @@ export function AddHadithForm({
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
         <form
           onSubmit={handleFormSubmit(onSubmit)}
-          className="flex flex-col gap-4"
+          className="flex flex-col gap-7"
         >
           {/* Numero */}
           <Input
@@ -319,7 +319,7 @@ export function AddHadithForm({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:bg-emerald-300 disabled:dark:bg-emerald-800/50 disabled:cursor-not-allowed mt-2"
+            className="w-full bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700 focus:outline-none disabled:bg-emerald-300 disabled:dark:bg-emerald-800/50 disabled:cursor-not-allowed mt-2"
           >
             {isSubmitting ? "Ajout en cours..." : "Ajouter le hadith"}
           </button>

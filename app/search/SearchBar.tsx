@@ -245,7 +245,7 @@ export function SearchBar({
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Rechercher par mot (3 lettres min)..."
-                className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-1 focus:ring-emerald-600 dark:focus:ring-emerald-500 focus:border-emerald-600 dark:focus:border-emerald-600 bg-white dark:bg-gray-800 dark:text-gray-200"
+                className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-600 bg-white dark:bg-gray-800 dark:text-gray-200"
                 autoFocus
               />
             )}
@@ -275,7 +275,7 @@ export function SearchBar({
 
           <button
             type="submit"
-            className="w-full sm:w-auto p-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition focus:outline-none focus:ring-2  focus:ring-emerald-500 dark:bg-emerald-700 dark:hover:bg-emerald-800 dark:focus:ring-emerald-600"
+            className="w-full sm:w-auto p-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition focus:outline-none dark:bg-emerald-700 dark:hover:bg-emerald-800 border border-emerald-600 hover:border-emerald-700 dark:border-emerald-700 dark:hover:border-emerald-800"
           >
             Rechercher
           </button>
@@ -290,9 +290,9 @@ export function SearchBar({
               size="large"
             />
             {filterMode === "word" && query && query.length < 3 && (
-              <div className="text-gray-500 italic">
+              <p className="text-red-400 italic">
                 Merci de saisir au moins 3 lettres pour la recherche par mot.
-              </div>
+              </p>
             )}
             {results.map((hadith) => (
               <Hadith
@@ -304,15 +304,15 @@ export function SearchBar({
             {results.length === 0 &&
               (query || narrator || selectedSahabas.length > 0) &&
               !(filterMode === "word" && query && query.length < 3) && (
-                <div className="text-gray-500 italic">
+                <p className="text-gray-500 italic">
                   Aucun hadith ne correspond à votre recherche.
-                </div>
+                </p>
               )}
           </>
         ) : (
-          <div className="text-gray-400 italic">
+          <p className="text-gray-400 italic">
             Veuillez saisir vos critères et cliquer sur "Rechercher".
-          </div>
+          </p>
         )}
       </div>
     </div>

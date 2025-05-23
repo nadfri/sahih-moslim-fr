@@ -100,7 +100,7 @@ export function EditItemFormDialog({
     >
       <form
         onSubmit={handleFormSubmit(editItemSubmit)}
-        className="space-y-4"
+        className="flex flex-col gap-6"
       >
         {/* Index Field */}
         {variant === "chapters" && (
@@ -142,7 +142,7 @@ export function EditItemFormDialog({
         <div className="flex justify-end gap-2 pt-2">
           <button
             type="button"
-            className="px-4 py-2 rounded-lg focus-visible:ring-1 focus-visible:ring-emerald-500 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
+            className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
             onClick={onCancel}
             disabled={isPending}
           >
@@ -150,7 +150,7 @@ export function EditItemFormDialog({
           </button>
           <button
             type="submit"
-            className="px-4 py-2 rounded-lg focus-visible:ring-1 bg-emerald-600 dark:bg-emerald-500 text-white dark:text-gray-900 hover:bg-emerald-700 dark:hover:bg-emerald-600 focus-visible:ring-emerald-500 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="px-4 py-2 rounded-lg bg-emerald-600 dark:bg-emerald-500 text-white dark:text-gray-900 hover:bg-emerald-700 dark:hover:bg-emerald-600 disabled:opacity-70 disabled:cursor-not-allowed"
             disabled={isPending}
           >
             {isPending ? "En cours..." : "Enregistrer"}

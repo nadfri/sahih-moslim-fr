@@ -40,10 +40,10 @@ export function MdTextArea<T extends FieldValues>({
       <div
         className={`rounded-md overflow-hidden transition-all duration-200 ${
           error
-            ? "ring-2 ring-red-500"
+            ? "border border-red-500"
             : isFocused
-              ? "ring-2 ring-blue-500"
-              : "ring-1 ring-gray-300 dark:ring-gray-700"
+              ? "border border-emerald-600"
+              : "border border-gray-300 dark:border-gray-700"
         }`}
       >
         <div

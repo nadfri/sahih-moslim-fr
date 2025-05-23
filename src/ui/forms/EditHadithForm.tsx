@@ -317,7 +317,7 @@ export function EditHadithForm({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:bg-emerald-300 disabled:dark:bg-emerald-800/50 disabled:cursor-not-allowed mt-2"
+            className="w-full bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700 focus:outline-none disabled:bg-emerald-300 disabled:dark:bg-emerald-800/50 disabled:cursor-not-allowed mt-2"
           >
             {isSubmitting
               ? "Modification en cours..."
@@ -330,7 +330,7 @@ export function EditHadithForm({
           type="button"
           onClick={() => setShowDeleteModal(true)}
           disabled={isDeleting}
-          className="w-full bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:bg-red-300 disabled:dark:bg-red-800/50 disabled:cursor-not-allowed mt-4"
+          className="w-full bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none disabled:bg-red-300 disabled:dark:bg-red-800/50 disabled:cursor-not-allowed mt-4"
         >
           {isDeleting ? "Suppression..." : "Supprimer le hadith"}
         </button>

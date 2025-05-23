@@ -76,9 +76,9 @@ export function MultiSelect({
         <div
           className={`flex items-center w-full border rounded-md ${
             error
-              ? "border-red-500 bg-red-50 dark:bg-red-950/30 focus-within:ring-red-500 focus-within:border-red-500"
-              : "border-gray-300 dark:border-gray-700 focus-within:ring-emerald-600 focus-within:border-emerald-600 bg-white dark:bg-gray-800"
-          } focus-within:ring-1`}
+              ? "border-red-500 bg-red-50 dark:bg-red-950/30"
+              : "border-gray-300 dark:border-gray-700  focus-within:border-emerald-600 bg-white dark:bg-gray-800"
+          }`}
           onClick={() => !isOpen && setIsOpen(true)}
         >
           <div className="flex-1 flex flex-wrap items-center gap-1 px-2 py-1.5">
@@ -104,7 +104,7 @@ export function MultiSelect({
               ref={inputRef}
               id={id}
               type="text"
-              className={`flex-grow p-0.5 border-none focus:ring-0 focus:outline-none min-w-[100px] ${
+              className={`flex-grow p-0.5 border-none focus:outline-none min-w-[100px] ${
                 error
                   ? "bg-red-50 dark:bg-red-950/30"
                   : "bg-white dark:bg-gray-800 dark:text-gray-200"
