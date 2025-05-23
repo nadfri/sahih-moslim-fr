@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { replaceSWS } from "./replaceSWS";
+import { replaceSWS } from "../src/utils/replaceSWS";
 
 describe("replaceSWS", () => {
   it("removes Zero Width Non-Joiner (\u200C)", () => {

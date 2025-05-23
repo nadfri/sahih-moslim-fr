@@ -64,6 +64,7 @@ export function AddItemFormDialog({ open, onCancel, items, variant }: Props) {
           onCancel();
         } else {
           toast.error(response.message);
+          // onCancel(); // DO NOT CALL onCancel if submission failed
         }
       } catch (error) {
         toast.error("Erreur inconnue lors de l'ajout.");

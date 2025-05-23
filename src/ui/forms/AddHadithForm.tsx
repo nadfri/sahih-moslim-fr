@@ -8,8 +8,7 @@ import { createPortal } from "react-dom"; // Import createPortal
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
-import { HadithType, ItemType, VariantType } from "@/src/types/types"; // Import VariantType
-
+import { HadithType, ItemType, VariantType } from "@/src/types/types";
 /*UI*/
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { Input } from "@/src/ui/inputs/Input/Input";
@@ -21,7 +20,7 @@ import { Select } from "@/src/ui/inputs/Select/Select";
 import { cleanArabicText } from "@/src/utils/cleanArabicText";
 import { replaceSWS } from "@/src/utils/replaceSWS";
 import { BtnAddItem } from "../hadith/BtnAddItem/BtnAddItem";
-import { AddItemFormDialog } from "./AddItemFormDialog/AddItemFomDialog"; // Import AddItemFormDialog
+import { AddItemFormDialog } from "./AddItemFormDialog/AddItemFormDialog";
 import {
   createHadithSchema,
   HadithFormValues,
@@ -223,10 +222,7 @@ export function AddHadithForm({
                 />
               )}
             />
-            <BtnAddItem
-              onOpen={() => handleOpenDialog("chapters")}
-              variant="chapters"
-            />
+            <BtnAddItem onOpen={() => handleOpenDialog("chapters")} />
           </div>
 
           {/* Narrator */}
@@ -248,10 +244,7 @@ export function AddHadithForm({
                 />
               )}
             />
-            <BtnAddItem
-              onOpen={() => handleOpenDialog("narrators")}
-              variant="narrators"
-            />
+            <BtnAddItem onOpen={() => handleOpenDialog("narrators")} />
           </div>
 
           {/* MentionedSahabas */}
@@ -273,10 +266,7 @@ export function AddHadithForm({
                 />
               )}
             />
-            <BtnAddItem
-              onOpen={() => handleOpenDialog("sahabas")}
-              variant="sahabas"
-            />
+            <BtnAddItem onOpen={() => handleOpenDialog("sahabas")} />
           </div>
 
           {/* matn_fr FR */}

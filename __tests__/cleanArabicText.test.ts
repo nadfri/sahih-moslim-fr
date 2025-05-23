@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { cleanArabicText } from "./cleanArabicText";
+import { cleanArabicText } from "../src/utils/cleanArabicText";
 
 describe("cleanArabicText", () => {
   it("should return empty string for empty input", () => {
