@@ -15,7 +15,7 @@ import { MultiSelect } from "@/src/ui/inputs/MultiSelect/MultiSelect";
 import { SearchSelect } from "@/src/ui/inputs/SearchSelect/SearchSelect";
 import { Select } from "@/src/ui/inputs/Select/Select";
 import { cleanArabicText } from "@/src/utils/cleanArabicText";
-import { replaceSWS } from "@/src/utils/replaceSWS";
+import { wrapProphetNames } from "@/src/utils/wrapProphetNames";
 import { ConfirmDeleteModal } from "../ConfirmDeleteModal/ConfirmDeleteModal";
 
 const createEditHadithSchema = (
@@ -276,7 +276,7 @@ export function EditHadithForm({
             error={!!errors.matn_fr}
             errorMessage={errors.matn_fr?.message}
             onValueChange={(value) => {
-              const processedValue = replaceSWS(value);
+              const processedValue = wrapProphetNames(value);
               setValue("matn_fr", processedValue);
               return processedValue;
             }}

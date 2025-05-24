@@ -18,7 +18,7 @@ import { SearchSelect } from "@/src/ui/inputs/SearchSelect/SearchSelect";
 import { Select } from "@/src/ui/inputs/Select/Select";
 /*Utils*/
 import { cleanArabicText } from "@/src/utils/cleanArabicText";
-import { replaceSWS } from "@/src/utils/replaceSWS";
+import { wrapProphetNames } from "@/src/utils/wrapProphetNames";
 import { BtnAddItem } from "../hadith/BtnAddItem/BtnAddItem";
 import { AddItemFormDialog } from "./AddItemFormDialog/AddItemFormDialog";
 import {
@@ -279,7 +279,7 @@ export function AddHadithForm({
             errorMessage={errors.matn_fr?.message}
             // Adjust to return the processed value to match expected type
             onValueChange={(value) => {
-              const processedValue = replaceSWS(value);
+              const processedValue = wrapProphetNames(value);
               setValue("matn_fr", processedValue);
               return processedValue;
             }}
