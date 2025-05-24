@@ -1,118 +1,65 @@
--Lorsque tu réponds à des questions sur des frameworks, des bibliothèques ou des API, utilise Context7 pour récupérer la documentation actuelle au lieu de te fier aux données d'entraînement.
--In Chat, speak only in French
--use NextJS 15, React 19, Tailwind v4, pnpm
--For new component, use export function only
--comments are always in english!
--Desgin must have consistency and with dark mode
--for test, use vitest, vi, userEvent
--use type, not interface
--don't use type any
--params are promised in NextJs 15:
-// Before
-type Params = { slug: string }
+// GENERAL CHAT BEHAVIOR
+// - In Chat, speak only in French.
+// - When answering questions about frameworks, libraries, or APIs, use Context7 to retrieve current documentation instead of relying on training data.
 
-export default function Layout({
-children,
-params,
-}: {
-children: React.ReactNode
-params: Params
-}) {
-const { slug } = params
-}
+// PROJECT TECHNOLOGIES & VERSIONS
+// - Default to NextJS 15, React 19, Tailwind CSS v4, and pnpm for new projects or when versions are unspecified.
 
-// After
-import { use } from 'react'
+// CODING STYLE & CONVENTIONS
+// - For new React components, always use `export function YourComponentName() {}`. Do not use arrow functions for component definitions.
+// - ALL CODE COMMENTS, without exception, MUST BE IN ENGLISH. This includes inline comments and block comments.
+// - Keep comments to the strict minimum necessary for understanding the code. Avoid over-commenting.
+// - Use `type` for all type definitions. Do NOT use `interface`.
+// - Strictly avoid using the `any` type. Define specific types whenever possible.
 
-type Params = Promise<{ slug: string }>
+// UI/UX DESIGN
+// - Ensure UI design is consistent with the existing project's style.
+// - All UI components and pages MUST fully support dark mode.
 
-export default function Layout(props: {
-children: React.ReactNode
-params: Params
-}) {
-const params = use(props.params)
-const slug = params.slug
-}
+// TESTING
+// - For tests, use Vitest as the test runner.
+// - Use `vi` for mocking and spying.
+// - Use `@testing-library/user-event` for simulating user interactions.
 
-// Before
-type Params = { slug: string }
-type SearchParams = { [key: string]: string | string[] | undefined }
+// NEXT.JS 15 SPECIFICS (PARAMS & SEARCHPARAMS)
+// - Remember that `params` and `searchParams` are Promises in Next.js 15 Route Handlers and Pages.
 
-export function generateMetadata({
-params,
-searchParams,
-}: {
-params: Params
-searchParams: SearchParams
-}) {
-const { slug } = params
-const { query } = searchParams
-}
+// Server Components (e.g., Layouts, Pages, generateMetadata)
+// // Before (Next.js < 15)
+// type Params = { slug: string }
+// type SearchParams = { [key: string]: string | string[] | undefined }
+// export async function generateMetadata({ params, searchParams }: { params: Params, searchParams: SearchParams }) { /_ ... _/ }
+// export default async function Page({ params, searchParams }: { params: Params, searchParams: SearchParams }) { /_ ... _/ }
 
-export default async function Page({
-params,
-searchParams,
-}: {
-params: Params
-searchParams: SearchParams
-}) {
-const { slug } = params
-const { query } = searchParams
-}
+// // After (Next.js 15+)
+// type ParamsPromise = Promise<{ slug: string }>
+// type SearchParamsPromise = Promise<{ [key: string]: string | string[] | undefined }>
+// export async function generateMetadata(props: { params: ParamsPromise, searchParams: SearchParamsPromise }) {
+// const params = await props.params;
+// const searchParams = await props.searchParams;
+// // const { slug } = params;
+// // const { query } = searchParams;
+// }
+// export default async function Page(props: { params: ParamsPromise, searchParams: SearchParamsPromise }) {
+// const params = await props.params;
+// const searchParams = await props.searchParams;
+// // const { slug } = params;
+// // const { query } = searchParams;
+// }
 
-// After
-type Params = Promise<{ slug: string }>
-type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
+// Client Components
+// // Before (Next.js < 15)
+// type Params = { slug: string }
+// type SearchParams = { [key: string]: string | string[] | undefined }
+// export default function PageClient({ params, searchParams }: { params: Params, searchParams: SearchParams }) { /_ ... _/ }
 
-export async function generateMetadata(props: {
-params: Params
-searchParams: SearchParams
-}) {
-const params = await props.params
-const searchParams = await props.searchParams
-const slug = params.slug
-const query = searchParams.query
-}
-
-export default async function Page(props: {
-params: Params
-searchParams: SearchParams
-}) {
-const params = await props.params
-const searchParams = await props.searchParams
-const slug = params.slug
-const query = searchParams.query
-}
-
-'use client'
-
-// Before
-type Params = { slug: string }
-type SearchParams = { [key: string]: string | string[] | undefined }
-
-export default function Page({
-params,
-searchParams,
-}: {
-params: Params
-searchParams: SearchParams
-}) {
-const { slug } = params
-const { query } = searchParams
-}
-
-// After
-import { use } from 'react'
-
-type Params = Promise<{ slug: string }>
-type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
-
-export default function Page(props: {
-params: Params
-searchParams: SearchParams
-}) {
-const params = use(props.params)
-const searchParams = use(props.searchParams)
-const slug = params.slug
-const query = searchParams.query
-}
+// // After (Next.js 15+)
+// import { use } from 'react';
+// type ParamsPromise = Promise<{ slug: string }>
+// type SearchParamsPromise = Promise<{ [key: string]: string | string[] | undefined }>
+// export default function PageClient(props: { params: ParamsPromise, searchParams: SearchParamsPromise }) {
+// const params = use(props.params);
+// const searchParams = use(props.searchParams);
+// // const { slug } = params;
+// // const { query } = searchParams;
+// }

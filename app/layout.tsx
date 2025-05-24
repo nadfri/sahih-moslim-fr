@@ -11,6 +11,7 @@ import { ToastContainer } from "react-toastify";
 import { SessionWrapper } from "@/src/authentification/SessionWrapper";
 import { Footer } from "@/src/ui/Footer/Footer";
 import { Header } from "@/src/ui/Header/Header";
+import { ScrollBtns } from "@/src/ui/ScrollBtns/ScrollBtns";
 
 export const metadata: Metadata = {
   title: "Sahih Moslim en français",
@@ -37,6 +38,7 @@ export default async function RootLayout({
           type="image/svg+xml"
         />
       </head>
+
       <body
         className="antialiased flex flex-col min-h-screen text-gray-800 dark:text-gray-200 dark:bg-gray-950 transition-colors duration-200"
         suppressHydrationWarning
@@ -57,6 +59,8 @@ export default async function RootLayout({
           draggable
           theme="colored"
         />
+
+        <ScrollBtns />
       </body>
     </html>
   );
