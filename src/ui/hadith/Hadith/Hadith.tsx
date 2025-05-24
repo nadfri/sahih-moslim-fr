@@ -90,6 +90,14 @@ export function Hadith({
         {...props}
       />
     ),
+
+    // Override the default <s> tag rendering
+    del: ({ ...props }) => (
+      <del
+        className="text-blue-600 dark:text-blue-500 no-underline font-medium"
+        {...props}
+      />
+    ),
   };
 
   return (

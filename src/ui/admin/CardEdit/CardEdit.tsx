@@ -8,6 +8,7 @@ import { deleteItem } from "@/src/services/actions";
 import { ItemType, VariantType } from "@/src/types/types";
 import { ConfirmDeleteModal } from "../../ConfirmDeleteModal/ConfirmDeleteModal";
 import { EditItemFormDialog } from "../../forms/EditItemFormDialog/EditItemFormDialog";
+import { BadgeNumberOfHadith } from "../../hadith/BadgeNumberOfHadith/BadgeNumberOfHadith";
 
 type Props = {
   item: ItemType;
@@ -75,8 +76,10 @@ export function CardEdit({ item, items, variant }: Props) {
             </span>
           )}
 
-          <h3 className="font-medium text-gray-900 dark:text-gray-100">
-            {item.name}
+          {/* Name */}
+          <h3 className="font-medium text-gray-900 dark:text-gray-100 space-x-2">
+            <span>{item.name}</span>{" "}
+            <BadgeNumberOfHadith count={item.hadithCount} />
           </h3>
         </div>
 
