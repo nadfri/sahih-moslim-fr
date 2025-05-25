@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { Eye, EyeOff, Pencil, ScanEye, TriangleAlert } from "lucide-react";
+import { Pencil, ScanEye, TriangleAlert } from "lucide-react";
 
 import { HadithType } from "@/src/types/types";
 import { CopyBoard } from "@/src/ui/CopyBoard/CopyBoard";
 import { ArabicIcon } from "@/src/ui/icons/ArabicIcon";
-import { escapeRegExp } from "@/src/utils/escapeRegExp";
 import { ListOfSahabas } from "../ListOfSahabas/ListOfSahabas";
+import { Matn_ar } from "../Matn_ar/Matn_ar";
 import { Matn_fr } from "../Matn_fr/Matn_fr";
 
 export function Hadith({
@@ -22,33 +21,6 @@ export function Hadith({
 }) {
   // Check if we're in development mode
   const isDevelopment = process.env.NODE_ENV === "development";
-
-  const [isArabicVisible, setIsArabicVisible] = useState(false);
-
-  // Preprocess markdown to wrap highlight matches in <mark> for raw HTML rendering
-  const processedMatnFr = highlight
-    ? hadith.matn_fr.replace(
-        new RegExp(
-          `(${highlight.replace(/[.*+?^${}()|[\\]\\]/g, "$&")})`,
-          "gi"
-        ),
-        '<mark class="bg-yellow-200">$1</mark>'
-      )
-    : hadith.matn_fr;
-
-  // Preprocess Arabic text similarly for raw HTML rendering
-  const processedMatnAr = highlight
-    ? hadith.matn_ar.replace(
-        new RegExp(`(${escapeRegExp(highlight)})`, "gi"),
-        '<mark class="bg-yellow-200">$1</mark>'
-      )
-    : hadith.matn_ar;
-
-  const toggleArabicVisibility = () => {
-    setIsArabicVisible(!isArabicVisible);
-  };
-
-  const arabicContentId = `matn_ar-content-${hadith.id}`;
 
   return (
     <div
@@ -84,7 +56,10 @@ export function Hadith({
         </div>
 
         {/* matn_fr Section (Main text in French) */}
-        <Matn_fr matn={processedMatnFr} />
+        <Matn_fr
+          hadith={hadith}
+          highlight={highlight}
+        />
 
         {/* Mentioned Sahabas Section */}
         <ListOfSahabas
@@ -93,53 +68,11 @@ export function Hadith({
         />
 
         {/* matn_ar Section with toggle button and adaptive animation */}
-        <div className="mt-5 pt-4 border-t border-emerald-100 dark:border-emerald-900">
-          {!update && (
-            <button
-              onClick={toggleArabicVisibility}
-              className="flex items-center space-x-2 text-sm font-medium text-emerald-700 dark:text-emerald-500 hover:text-emerald-900 dark:hover:text-emerald-400 focus:outline-none rounded mb-3 transition-colors duration-200"
-              aria-expanded={isArabicVisible}
-              aria-controls={arabicContentId}
-            >
-              {isArabicVisible ? (
-                <EyeOff
-                  className="w-5 h-5"
-                  aria-hidden="true"
-                />
-              ) : (
-                <Eye
-                  className="w-5 h-5"
-                  aria-hidden="true"
-                />
-              )}
-              <span>
-                {isArabicVisible
-                  ? "Masquer la version arabe"
-                  : "Voir la version arabe"}
-              </span>
-            </button>
-          )}
-
-          <div
-            id={arabicContentId}
-            className={`
-                grid                      
-                transition-[grid-template-rows,opacity]
-                duration-500             
-                ease-in-out              
-                ${isArabicVisible || update ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}
-              `}
-          >
-            <div className="overflow-hidden">
-              <div
-                className="pt-2 text-right font-matn_ar text-xl leading-loose text-pretty dark:text-gray-300"
-                dir="rtl"
-                // Render processed Arabic HTML with highlights
-                dangerouslySetInnerHTML={{ __html: processedMatnAr }}
-              />
-            </div>
-          </div>
-        </div>
+        <Matn_ar
+          hadith={hadith}
+          highlight={highlight}
+          update={update}
+        />
 
         {/* Action buttons section */}
         <div className="flex flex-wrap items-center justify-between gap-3 mt-4">

@@ -2,7 +2,15 @@ import ReactMarkdown, { Components } from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 
-export function Matn_fr({ matn }: { matn: string }) {
+import { HadithType } from "@/src/types/types";
+import { highlightText } from "@/src/utils/highlightText";
+
+type Props = {
+  hadith: HadithType;
+  highlight?: string;
+};
+
+export function Matn_fr({ hadith, highlight }: Props) {
   // Custom renderers for ReactMarkdown
   const customRenderers: Components = {
     // Override the default <strong> tag rendering
@@ -29,6 +37,9 @@ export function Matn_fr({ matn }: { matn: string }) {
     ),
   };
 
+  // Preprocess markdown to wrap highlight matches in <mark> for raw HTML rendering
+  const processedMatnFr = highlightText(hadith.matn_fr, highlight);
+
   return (
     <div className="space-y-3 text-gray-700 dark:text-gray-300 leading-relaxed text-pretty">
       <ReactMarkdown
@@ -36,7 +47,7 @@ export function Matn_fr({ matn }: { matn: string }) {
         rehypePlugins={[rehypeRaw]}
         components={customRenderers} // Add the custom renderers here
       >
-        {matn}
+        {processedMatnFr}
       </ReactMarkdown>
     </div>
   );
