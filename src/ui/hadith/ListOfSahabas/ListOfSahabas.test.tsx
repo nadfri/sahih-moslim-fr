@@ -1,35 +1,19 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { HadithType } from "../../../types/types";
+import { Item } from "@/src/types/types";
 import { ListOfSahabas } from "./ListOfSahabas";
 
-const mockHadithWithSahabas: HadithType = {
-  id: "1",
-  numero: 1,
-  matn_fr: "Test hadith",
-  matn_ar: "حديث تجريبي",
-  chapter: { id: "1", name: "Test Chapter", slug: "test-chapter" },
-  narrator: { id: "1", name: "Test Narrator", slug: "test-narrator" },
-  mentionedSahabas: [
-    { id: "1", name: "Abu Bakr", slug: "abu-bakr" },
-    { id: "2", name: "Omar ibn al-Khattab", slug: "omar-ibn-al-khattab" },
-  ],
-};
+const mockSahabas: Item[] = [
+  { id: "1", name: "Abu Bakr", slug: "abu-bakr" },
+  { id: "2", name: "Omar ibn al-Khattab", slug: "omar-ibn-al-khattab" },
+];
 
-const mockHadithNoSahabas: HadithType = {
-  id: "2",
-  numero: 2,
-  matn_fr: "Test hadith",
-  matn_ar: "حديث تجريبي",
-  chapter: { id: "1", name: "Test Chapter", slug: "test-chapter" },
-  narrator: { id: "1", name: "Test Narrator", slug: "test-narrator" },
-  mentionedSahabas: [],
-};
+const mockEmptySahabas: Item[] = [];
 
 describe("ListOfSahabas", () => {
   it("renders list of sahabas with correct links", () => {
-    render(<ListOfSahabas hadith={mockHadithWithSahabas} />);
+    render(<ListOfSahabas sahabas={mockSahabas} />);
 
     expect(screen.getByText("Sahaba(s) mentionné(s) :")).toBeInTheDocument();
 
@@ -43,7 +27,7 @@ describe("ListOfSahabas", () => {
   it("highlights search terms in sahaba names", () => {
     render(
       <ListOfSahabas
-        hadith={mockHadithWithSahabas}
+        sahabas={mockSahabas}
         highlight="Abu"
       />
     );
@@ -54,15 +38,13 @@ describe("ListOfSahabas", () => {
   });
 
   it("does not render when no sahabas are mentioned", () => {
-    const { container } = render(
-      <ListOfSahabas hadith={mockHadithNoSahabas} />
-    );
+    const { container } = render(<ListOfSahabas sahabas={mockEmptySahabas} />);
 
     expect(container.firstChild).toBeNull();
   });
 
   it("renders without highlighting when no highlight prop is provided", () => {
-    render(<ListOfSahabas hadith={mockHadithWithSahabas} />);
+    render(<ListOfSahabas sahabas={mockSahabas} />);
 
     expect(screen.getByText("Abu Bakr")).toBeInTheDocument();
     // Check that no mark elements exist when no highlight is provided
@@ -73,7 +55,7 @@ describe("ListOfSahabas", () => {
   it("handles case-insensitive highlighting", () => {
     render(
       <ListOfSahabas
-        hadith={mockHadithWithSahabas}
+        sahabas={mockSahabas}
         highlight="abu"
       />
     );
@@ -85,14 +67,13 @@ describe("ListOfSahabas", () => {
   });
 
   it("escapes special regex characters in highlight", () => {
-    const specialCharHadith: HadithType = {
-      ...mockHadithWithSahabas,
-      mentionedSahabas: [{ id: "1", name: "Abu (Bakr)", slug: "abu-bakr" }],
-    };
+    const specialCharSahabas: Item[] = [
+      { id: "1", name: "Abu (Bakr)", slug: "abu-bakr" },
+    ];
 
     render(
       <ListOfSahabas
-        hadith={specialCharHadith}
+        sahabas={specialCharSahabas}
         highlight="("
       />
     );

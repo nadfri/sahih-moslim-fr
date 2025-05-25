@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 
 import { HadithType } from "@/src/types/types";
@@ -53,19 +51,19 @@ export function Hadith({
 
         {/* matn_fr Section (Main text in French) */}
         <Matn_fr
-          hadith={hadith}
+          matn={hadith.matn_fr}
           highlight={highlight}
         />
 
         {/* Mentioned Sahabas Section */}
         <ListOfSahabas
-          hadith={hadith}
+          sahabas={hadith.mentionedSahabas}
           highlight={highlight}
         />
 
         {/* matn_ar Section with toggle button and adaptive animation */}
         <Matn_ar
-          hadith={hadith}
+          matn={hadith.matn_ar}
           highlight={highlight}
           update={update}
         />

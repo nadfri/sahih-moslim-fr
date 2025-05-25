@@ -1,7 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { HadithType } from "@/src/types/types";
 import { highlightText } from "@/src/utils/highlightText";
 import { mockHadith } from "@/src/utils/mocks/mockHadith";
 import { Matn_fr } from "./Matn_fr";
@@ -25,19 +24,16 @@ describe("Matn_fr Component", () => {
   });
 
   it("should render the French text content", () => {
-    render(<Matn_fr hadith={mockHadith} />);
+    render(<Matn_fr matn={mockHadith.matn_fr} />);
 
     expect(screen.getByText(/Ceci est un/)).toBeInTheDocument();
     expect(screen.getByText(/de hadith en français/)).toBeInTheDocument();
   });
 
   it("should apply custom styling to strong elements", () => {
-    const hadithWithStrong: HadithType = {
-      ...mockHadith,
-      matn_fr: "Texte avec **mot important** dedans",
-    };
+    const matnWithStrong = "Texte avec **mot important** dedans";
 
-    render(<Matn_fr hadith={hadithWithStrong} />);
+    render(<Matn_fr matn={matnWithStrong} />);
 
     const strongElement = screen.getByText("mot important");
     expect(strongElement).toHaveClass(
@@ -49,12 +45,9 @@ describe("Matn_fr Component", () => {
   });
 
   it("should apply custom styling to em elements", () => {
-    const hadithWithEm: HadithType = {
-      ...mockHadith,
-      matn_fr: "Texte avec _note importante_ dedans",
-    };
+    const matnWithEm = "Texte avec _note importante_ dedans";
 
-    render(<Matn_fr hadith={hadithWithEm} />);
+    render(<Matn_fr matn={matnWithEm} />);
 
     const emElement = screen.getByText("note importante");
     expect(emElement).toHaveClass(
@@ -75,12 +68,9 @@ describe("Matn_fr Component", () => {
   });
 
   it("should apply custom styling to del elements", () => {
-    const hadithWithDel: HadithType = {
-      ...mockHadith,
-      matn_fr: "Texte avec ~~texte barré~~ dedans",
-    };
+    const matnWithDel = "Texte avec ~~texte barré~~ dedans";
 
-    render(<Matn_fr hadith={hadithWithDel} />);
+    render(<Matn_fr matn={matnWithDel} />);
 
     const delElement = screen.getByText("texte barré");
     expect(delElement).toHaveClass(
@@ -95,7 +85,7 @@ describe("Matn_fr Component", () => {
   it("should call highlightText with correct parameters when highlight is provided", () => {
     render(
       <Matn_fr
-        hadith={mockHadith}
+        matn={mockHadith.matn_fr}
         highlight="test"
       />
     );
@@ -108,7 +98,7 @@ describe("Matn_fr Component", () => {
   });
 
   it("should call highlightText with undefined when no highlight is provided", () => {
-    render(<Matn_fr hadith={mockHadith} />);
+    render(<Matn_fr matn={mockHadith.matn_fr} />);
 
     expect(mockedHighlightText).toHaveBeenCalledWith(
       mockHadith.matn_fr,
@@ -118,7 +108,7 @@ describe("Matn_fr Component", () => {
   });
 
   it("should have proper container styling", () => {
-    const { container } = render(<Matn_fr hadith={mockHadith} />);
+    const { container } = render(<Matn_fr matn={mockHadith.matn_fr} />);
 
     const mainDiv = container.firstChild as HTMLElement;
     expect(mainDiv).toHaveClass(
@@ -131,23 +121,15 @@ describe("Matn_fr Component", () => {
   });
 
   it("should render empty content gracefully", () => {
-    const emptyHadith: HadithType = {
-      ...mockHadith,
-      matn_fr: "",
-    };
-
-    render(<Matn_fr hadith={emptyHadith} />);
+    render(<Matn_fr matn="" />);
 
     expect(mockedHighlightText).toHaveBeenCalledWith("", undefined);
   });
 
   it("should process markdown correctly", () => {
-    const hadithWithMarkdown: HadithType = {
-      ...mockHadith,
-      matn_fr: "# Titre du hadith\n\nTexte normal avec **gras**.",
-    };
+    const matnWithMarkdown = "# Titre du hadith\n\nTexte normal avec **gras**.";
 
-    render(<Matn_fr hadith={hadithWithMarkdown} />);
+    render(<Matn_fr matn={matnWithMarkdown} />);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Titre du hadith"

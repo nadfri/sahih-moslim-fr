@@ -29,3 +29,4 @@ export const HadithSchema = z.object({
 });
 
 export type HadithType = z.infer<typeof HadithSchema>;
+export type Item = z.infer<typeof SchemaItemStructure>;

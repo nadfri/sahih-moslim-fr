@@ -1,25 +1,26 @@
-import { useState } from "react";
+"use client";
+
+import { useId, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
-import { HadithType } from "@/src/types/types";
 import { highlightText } from "@/src/utils/highlightText";
 
 type Props = {
-  hadith: HadithType;
+  matn: string;
   highlight?: string;
   update?: boolean;
 };
 
-export function Matn_ar({ hadith, update, highlight }: Props) {
+export function Matn_ar({ matn, update, highlight }: Props) {
   const [isArabicVisible, setIsArabicVisible] = useState(false);
 
-  const arabicContentId = `matn_ar-content-${hadith.id}`;
+  const arabicContentId = useId();
 
   const toggleArabicVisibility = () => {
     setIsArabicVisible(!isArabicVisible);
   };
 
-  const processedMatnAr = highlightText(hadith.matn_ar, highlight);
+  const processedMatnAr = highlightText(matn, highlight);
 
   return (
     <div className="mt-5 pt-4 border-t border-emerald-100 dark:border-emerald-900">

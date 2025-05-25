@@ -1,38 +1,16 @@
 import Link from "next/link";
 
-import { HadithType } from "@/src/types/types";
-import { escapeRegExp } from "@/src/utils/escapeRegExp";
+import { Item } from "@/src/types/types";
+import { highlightText } from "@/src/utils/highlightText";
 
 export function ListOfSahabas({
-  hadith,
+  sahabas,
   highlight,
 }: {
-  hadith: HadithType;
+  sahabas: Item[];
   highlight?: string;
 }) {
-  // Build case-insensitive regex for highlighting if a query is provided
-  const highlightRegex = highlight
-    ? new RegExp(`(${escapeRegExp(highlight)})`, "gi")
-    : null;
-
-  // Split text and wrap matched parts in a <mark> for highlighting
-  const highlightParts = (text: string): (string | React.ReactNode)[] =>
-    highlightRegex
-      ? text.split(highlightRegex).map((part, i) =>
-          highlightRegex.test(part) ? (
-            <mark
-              key={i}
-              className="bg-yellow-200"
-            >
-              {part}
-            </mark>
-          ) : (
-            part
-          )
-        )
-      : [text];
-
-  if (hadith.mentionedSahabas?.length === 0) return null;
+  if (sahabas.length === 0) return null;
 
   return (
     <div className="mt-5 pt-4 border-t border-emerald-100 dark:border-emerald-900">
@@ -43,14 +21,15 @@ export function ListOfSahabas({
       </p>
 
       <div className="flex flex-wrap gap-x-2 gap-y-2 mt-2">
-        {hadith.mentionedSahabas.map((sahaba) => (
+        {sahabas.map((sahaba) => (
           <Link
             key={sahaba.id}
             href={`/sahabas/${sahaba.slug}`}
             className="text-sm bg-emerald-50 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-300 px-2 py-1 rounded-md transition-colors duration-200 hover:bg-emerald-200 dark:hover:bg-emerald-800/50"
-          >
-            {highlight ? highlightParts(sahaba.name) : sahaba.name}
-          </Link>
+            dangerouslySetInnerHTML={{
+              __html: highlightText(sahaba.name, highlight),
+            }}
+          />
         ))}
       </div>
     </div>

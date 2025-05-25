@@ -2,7 +2,6 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { HadithType } from "@/src/types/types";
 import { highlightText } from "@/src/utils/highlightText";
 import { mockHadith } from "@/src/utils/mocks/mockHadith";
 import { Matn_ar } from "./Matn_ar";
@@ -26,7 +25,7 @@ describe("Matn_ar Component", () => {
   });
 
   it("should render with toggle button when update is false", () => {
-    render(<Matn_ar hadith={mockHadith} />);
+    render(<Matn_ar matn={mockHadith.matn_ar} />);
 
     expect(
       screen.getByRole("button", { name: /Voir la version arabe/ })
@@ -36,7 +35,7 @@ describe("Matn_ar Component", () => {
   it("should not render toggle button when update is true", () => {
     render(
       <Matn_ar
-        hadith={mockHadith}
+        matn={mockHadith.matn_ar}
         update={true}
       />
     );
@@ -45,18 +44,20 @@ describe("Matn_ar Component", () => {
   });
 
   it("should hide Arabic content by default", () => {
-    render(<Matn_ar hadith={mockHadith} />);
+    render(<Matn_ar matn={mockHadith.matn_ar} />);
 
-    const contentDiv = screen.getByRole("button").getAttribute("aria-controls");
-    const arabicContent = document.getElementById(contentDiv!);
+    const toggleButton = screen.getByRole("button");
+    expect(toggleButton).toHaveAttribute("aria-expanded", "false");
 
+    const contentId = toggleButton.getAttribute("aria-controls");
+    const arabicContent = document.getElementById(contentId!);
     expect(arabicContent).toHaveClass("grid-rows-[0fr]", "opacity-0");
   });
 
   it("should show Arabic content when update is true", () => {
     render(
       <Matn_ar
-        hadith={mockHadith}
+        matn={mockHadith.matn_ar}
         update={true}
       />
     );
@@ -70,7 +71,7 @@ describe("Matn_ar Component", () => {
 
   it("should toggle Arabic content visibility when button is clicked", async () => {
     const user = userEvent.setup();
-    render(<Matn_ar hadith={mockHadith} />);
+    render(<Matn_ar matn={mockHadith.matn_ar} />);
 
     const toggleButton = screen.getByRole("button");
 
@@ -94,7 +95,7 @@ describe("Matn_ar Component", () => {
   it("should render Arabic text with correct styling", () => {
     render(
       <Matn_ar
-        hadith={mockHadith}
+        matn={mockHadith.matn_ar}
         update={true}
       />
     );
@@ -115,7 +116,7 @@ describe("Matn_ar Component", () => {
   it("should call highlightText with correct parameters when highlight is provided", () => {
     render(
       <Matn_ar
-        hadith={mockHadith}
+        matn={mockHadith.matn_ar}
         highlight="test"
       />
     );
@@ -128,7 +129,7 @@ describe("Matn_ar Component", () => {
   });
 
   it("should call highlightText with undefined when no highlight is provided", () => {
-    render(<Matn_ar hadith={mockHadith} />);
+    render(<Matn_ar matn={mockHadith.matn_ar} />);
 
     expect(mockedHighlightText).toHaveBeenCalledWith(
       mockHadith.matn_ar,
@@ -138,7 +139,7 @@ describe("Matn_ar Component", () => {
   });
 
   it("should have proper container styling with dark mode support", () => {
-    const { container } = render(<Matn_ar hadith={mockHadith} />);
+    const { container } = render(<Matn_ar matn={mockHadith.matn_ar} />);
 
     const mainDiv = container.firstChild as HTMLElement;
     expect(mainDiv).toHaveClass(
@@ -150,26 +151,21 @@ describe("Matn_ar Component", () => {
     );
   });
 
-  it("should render with correct aria attributes", () => {
-    render(<Matn_ar hadith={mockHadith} />);
+  it("should render with correct aria attributes using useId", () => {
+    render(<Matn_ar matn={mockHadith.matn_ar} />);
 
     const toggleButton = screen.getByRole("button");
-    const contentId = `matn_ar-content-${mockHadith.id}`;
+    const contentId = toggleButton.getAttribute("aria-controls");
 
     expect(toggleButton).toHaveAttribute("aria-expanded", "false");
-    expect(toggleButton).toHaveAttribute("aria-controls", contentId);
-    expect(document.getElementById(contentId)).toBeInTheDocument();
+    expect(contentId).toBeTruthy();
+    expect(document.getElementById(contentId!)).toBeInTheDocument();
   });
 
-  it("should handle empty matn_ar gracefully", () => {
-    const emptyHadith: HadithType = {
-      ...mockHadith,
-      matn_ar: "",
-    };
-
+  it("should handle empty matn gracefully", () => {
     render(
       <Matn_ar
-        hadith={emptyHadith}
+        matn=""
         update={true}
       />
     );
@@ -178,17 +174,14 @@ describe("Matn_ar Component", () => {
   });
 
   it("should use dangerouslySetInnerHTML for Arabic content", () => {
-    const hadithWithHighlight: HadithType = {
-      ...mockHadith,
-      matn_ar: "النص العربي للحديث",
-    };
+    const arabicText = "النص العربي للحديث";
 
     // Mock highlightText to return HTML with mark tag
     mockedHighlightText.mockReturnValue("النص <mark>العربي</mark> للحديث");
 
     render(
       <Matn_ar
-        hadith={hadithWithHighlight}
+        matn={arabicText}
         highlight="العربي"
         update={true}
       />
