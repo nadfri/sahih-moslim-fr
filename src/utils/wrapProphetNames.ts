@@ -40,7 +40,7 @@ const patterns = [
   },
   // Complete phrases
   {
-    regex: /(\(que la prière d['']Allah et Son salut soient sur lui\))/g,
+    regex: /(\(que la prière d['’]Allah et Son salut soient sur lui\))/g,
     label: "phrase complète",
   },
 ];
@@ -51,10 +51,14 @@ export function wrapProphetNames(text: string): string {
 
   // Direct replacement of complete phrases with wrapped icon
   result = result.replace(
-    /\(que la prière d['']Allah et Son salut soient sur lui\)/g,
+    /\(que la prière d['’]Allah et Son salut soient sur lui\)/g,
     "~~ﷺ~~"
   );
   result = result.replace(/\(paix et bénédictions sur lui\)/g, "~~ﷺ~~");
+  result = result.replace(
+    /\(paix et bénédictions d['’]Allah sur lui\)/g,
+    "~~ﷺ~~"
+  );
 
   // Apply patterns to wrap titles (without icon)
   for (const { regex } of patterns) {

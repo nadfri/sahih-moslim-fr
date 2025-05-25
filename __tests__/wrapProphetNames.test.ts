@@ -49,4 +49,11 @@ describe("wrapProphetNames", () => {
       wrapProphetNames("Muhammad (paix et bénédictions sur lui) a dit...")
     ).toBe("~~Muhammad~~ ~~ﷺ~~ a dit...");
   });
+  it("replaces complete phrase (paix et bénédictions d'Allah sur lui) with icon", () => {
+    expect(
+      wrapProphetNames(
+        "Muhammad (paix et bénédictions d'Allah sur lui) a dit..."
+      )
+    ).toBe("~~Muhammad~~ ~~ﷺ~~ a dit...");
+  });
 });
