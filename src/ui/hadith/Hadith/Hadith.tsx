@@ -3,14 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Eye, EyeOff, Pencil, ScanEye, TriangleAlert } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import type { Components } from "react-markdown";
-import rehypeRaw from "rehype-raw";
-import remarkGfm from "remark-gfm";
 
 import { HadithType } from "@/src/types/types";
 import { CopyBoard } from "@/src/ui/CopyBoard/CopyBoard";
 import { ArabicIcon } from "@/src/ui/icons/ArabicIcon";
+import { escapeRegExp } from "@/src/utils/escapeRegExp";
+import { ListOfSahabas } from "../ListOfSahabas/ListOfSahabas";
+import { Matn_fr } from "../Matn_fr/Matn_fr";
 
 export function Hadith({
   hadith,
@@ -25,29 +24,6 @@ export function Hadith({
   const isDevelopment = process.env.NODE_ENV === "development";
 
   const [isArabicVisible, setIsArabicVisible] = useState(false);
-
-  // Helper to escape regex special chars in highlight string
-  const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&");
-  // Build case-insensitive regex for highlighting if a query is provided
-  const highlightRegex = highlight
-    ? new RegExp(`(${escapeRegExp(highlight)})`, "gi")
-    : null;
-  // Split text and wrap matched parts in a <mark> for highlighting
-  const highlightParts = (text: string): (string | React.ReactNode)[] =>
-    highlightRegex
-      ? text.split(highlightRegex).map((part, i) =>
-          highlightRegex.test(part) ? (
-            <mark
-              key={i}
-              className="bg-yellow-200"
-            >
-              {part}
-            </mark>
-          ) : (
-            part
-          )
-        )
-      : [text];
 
   // Preprocess markdown to wrap highlight matches in <mark> for raw HTML rendering
   const processedMatnFr = highlight
@@ -73,32 +49,6 @@ export function Hadith({
   };
 
   const arabicContentId = `matn_ar-content-${hadith.id}`;
-
-  // Custom renderers for ReactMarkdown
-  const customRenderers: Components = {
-    // Override the default <strong> tag rendering
-    strong: ({ ...props }) => (
-      <span
-        className="text-emerald-600 dark:text-emerald-400 font-medium"
-        {...props}
-      />
-    ),
-    // Override the default <em> tag rendering
-    em: ({ ...props }) => (
-      <em
-        className="border-l-4 rounded-md border-amber-500 dark:border-amber-600 bg-amber-50 dark:bg-amber-900/30 p-3 my-4 text-amber-800 dark:text-amber-400 italic block"
-        {...props}
-      />
-    ),
-
-    // Override the default <s> tag rendering
-    del: ({ ...props }) => (
-      <del
-        className="text-blue-600 dark:text-blue-500 no-underline font-medium"
-        {...props}
-      />
-    ),
-  };
 
   return (
     <div
@@ -134,38 +84,13 @@ export function Hadith({
         </div>
 
         {/* matn_fr Section (Main text in French) */}
-        <div className="space-y-3 text-gray-700 dark:text-gray-300 leading-relaxed text-pretty">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw]}
-            components={customRenderers} // Add the custom renderers here
-          >
-            {processedMatnFr}
-          </ReactMarkdown>
-        </div>
+        <Matn_fr matn={processedMatnFr} />
 
         {/* Mentioned Sahabas Section */}
-        {hadith.mentionedSahabas && hadith.mentionedSahabas.length > 0 && (
-          <div className="mt-5 pt-4 border-t border-emerald-100 dark:border-emerald-900">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              <span className="font-semibold text-emerald-700 dark:text-emerald-500">
-                Sahaba(s) mentionné(s) :
-              </span>
-            </p>
-
-            <div className="flex flex-wrap gap-x-2 gap-y-2 mt-2">
-              {hadith.mentionedSahabas.map((sahaba) => (
-                <Link
-                  key={sahaba.id}
-                  href={`/sahabas/${sahaba.slug}`}
-                  className="text-sm bg-emerald-50 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-300 px-2 py-1 rounded-md transition-colors duration-200 hover:bg-emerald-200 dark:hover:bg-emerald-800/50"
-                >
-                  {highlight ? highlightParts(sahaba.name) : sahaba.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
+        <ListOfSahabas
+          hadith={hadith}
+          highlight={highlight}
+        />
 
         {/* matn_ar Section with toggle button and adaptive animation */}
         <div className="mt-5 pt-4 border-t border-emerald-100 dark:border-emerald-900">
