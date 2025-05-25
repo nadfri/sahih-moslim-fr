@@ -61,7 +61,7 @@ export function EditItemFormDialog({
 
         if (response.success) {
           toast.success(response.message);
-          onCancel();
+          onCancel(); // Only call onCancel on success
         } else {
           toast.error(response.message);
         }

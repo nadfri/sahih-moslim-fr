@@ -9,7 +9,7 @@ describe("wrapProphetNames", () => {
     );
   });
   it("wraps Messager ﷺ", () => {
-    expect(wrapProphetNames("Le Messager ﷺ a dit...")).toBe(
+    expect(wrapProphetNames("Le Messager ﷺ  a dit...")).toBe(
       "Le ~~Messager~~ ~~ﷺ~~  a dit..."
     );
   });
