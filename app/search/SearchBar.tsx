@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -18,22 +19,26 @@ function extractInitials(sp: URLSearchParams) {
   let narrator = "";
   let sahabas: string[] = [];
 
-  if (filterMode === "word") {
-    query = queryParam?.trim() || "";
-  } else if (filterMode === "narrator") {
-    // Primarily read from 'query'
-    narrator = queryParam || "";
-    // Backward compatibility: if 'query' is empty but 'narrator' exists
-    if (!narrator && sp.has("narrator")) {
-      narrator = sp.get("narrator") || "";
-    }
-  } else if (filterMode === "sahaba") {
-    // Primarily read from 'query' (potentially multiple values)
-    sahabas = queryParams.filter(Boolean);
-    // Backward compatibility: if 'query' is empty but 'sahaba' exists
-    if (sahabas.length === 0 && sp.has("sahaba")) {
-      sahabas = sp.getAll("sahaba");
-    }
+  switch (filterMode) {
+    case "word":
+      query = queryParam?.trim() || "";
+      break;
+    case "narrator":
+      // Primarily read from 'query'
+      narrator = queryParam || "";
+      // Backward compatibility: if 'query' is empty but 'narrator' exists
+      if (!narrator && sp.has("narrator")) {
+        narrator = sp.get("narrator") || "";
+      }
+      break;
+    case "sahaba":
+      // Primarily read from 'query' (potentially multiple values)
+      sahabas = queryParams.filter(Boolean);
+      // Backward compatibility: if 'query' is empty but 'sahaba' exists
+      if (sahabas.length === 0 && sp.has("sahaba")) {
+        sahabas = sp.getAll("sahaba");
+      }
+      break;
   }
 
   return { filterMode, query, narrator, sahabas };
@@ -54,24 +59,42 @@ function filterHadiths(
     sahabas: string[];
   }
 ) {
-  if (filterMode === "narrator" && narrator) {
-    return hadiths.filter((h) => h.narrator.name === narrator);
-  }
-  if (filterMode === "sahaba" && sahabas.length > 0) {
-    return hadiths.filter(
-      (h) =>
-        Array.isArray(h.mentionedSahabas) &&
-        h.mentionedSahabas.some((s) => sahabas.includes(s.name))
-    );
-  }
-  if (filterMode === "word" && query.length >= 3) {
-    const q = query.toLowerCase();
-    return hadiths.filter((h) => {
-      const inMatnFr = h.matn_fr.toLowerCase().includes(q);
-      const inMatnAr = h.matn_ar.toLowerCase().includes(q);
+  switch (filterMode) {
+    case "narrator":
+      if (narrator) {
+        return hadiths.filter((h) => h.narrator.name === narrator);
+      }
+      break;
+    case "sahaba":
+      if (sahabas.length > 0) {
+        return hadiths.filter((h) => {
+          if (!Array.isArray(h.mentionedSahabas)) return false;
 
-      return inMatnFr || inMatnAr;
-    });
+          // Check if hadith contains all selected sahabas
+          const hadithSahabaNames = h.mentionedSahabas.map((s) => s.name);
+
+          // All selected sahabas must be present in the hadith
+          return sahabas.every((sahaba) => hadithSahabaNames.includes(sahaba));
+        });
+      }
+      break;
+    case "word":
+      if (query.length >= 3) {
+        const q = query.toLowerCase();
+        return hadiths.filter((h) => {
+          const inMatnFr = h.matn_fr.toLowerCase().includes(q);
+          const inMatnAr = h.matn_ar.toLowerCase().includes(q);
+          const inNarrator = h.narrator.name.toLowerCase().includes(q);
+          const inSahabas = h.mentionedSahabas.some((s) =>
+            s.name.toLowerCase().includes(q)
+          );
+
+          return inMatnFr || inMatnAr || inNarrator || inSahabas;
+        });
+      }
+      break;
+    default:
+      return [];
   }
   return [];
 }
@@ -103,17 +126,105 @@ export function SearchBar({
   const [results, setResults] = useState<HadithType[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
 
+  // Timer for URL updates only
+  const [urlUpdateTimer, setUrlUpdateTimer] = useState<NodeJS.Timeout | null>(
+    null
+  );
+
+  // Immediate search function
+  const performSearch = (
+    searchFilterMode: FilterType,
+    searchQuery: string,
+    searchNarrator: string,
+    searchSelectedSahabas: string[]
+  ) => {
+    const hasCriteria =
+      (searchFilterMode === "word" && searchQuery.length >= 3) ||
+      (searchFilterMode === "narrator" && searchNarrator) ||
+      (searchFilterMode === "sahaba" && searchSelectedSahabas.length > 0);
+
+    if (hasCriteria) {
+      const filteredResults = filterHadiths(hadiths, {
+        filterMode: searchFilterMode,
+        query: searchQuery,
+        narrator: searchNarrator,
+        sahabas: searchSelectedSahabas,
+      });
+      setResults(filteredResults);
+      setHasSearched(true);
+    } else {
+      setResults([]);
+      if (searchFilterMode !== "word" || searchQuery.length === 0) {
+        setHasSearched(false);
+      }
+    }
+  };
+
+  // Update URL function
+  const updateUrl = (
+    urlFilterMode: FilterType,
+    urlQuery: string,
+    urlNarrator: string,
+    urlSelectedSahabas: string[]
+  ) => {
+    const params = new URLSearchParams();
+    params.set("filterMode", urlFilterMode);
+
+    if (urlFilterMode === "word" && urlQuery) {
+      params.set("query", urlQuery);
+    } else if (urlFilterMode === "narrator" && urlNarrator) {
+      params.set("query", urlNarrator);
+    } else if (urlFilterMode === "sahaba" && urlSelectedSahabas.length > 0) {
+      urlSelectedSahabas.forEach((sahaba) => params.append("query", sahaba));
+    }
+
+    const newUrl = `/search?${params.toString()}`;
+    window.history.pushState(null, "", newUrl);
+  };
+
+  // Effect for immediate search
+  useEffect(() => {
+    performSearch(filterMode, query, narrator, selectedSahabas);
+  }, [filterMode, query, narrator, selectedSahabas]);
+
+  // Effect for debounced URL update
+  useEffect(() => {
+    if (urlUpdateTimer) {
+      clearTimeout(urlUpdateTimer);
+    }
+
+    const timer = setTimeout(() => {
+      updateUrl(filterMode, query, narrator, selectedSahabas);
+    }, 300);
+
+    setUrlUpdateTimer(timer);
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [filterMode, query, narrator, selectedSahabas]);
+
   // Function to handle filter mode change and reset fields
   const handleFilterModeChange = (newMode: FilterType) => {
     setFilterMode(newMode);
     setQuery("");
     setNarrator("");
     setSelectedSahabas([]);
+
+    setResults([]);
+    setHasSearched(false);
+
+    // Clear timer and update URL immediately
+    if (urlUpdateTimer) {
+      clearTimeout(urlUpdateTimer);
+    }
+    updateUrl(newMode, "", "", []);
   };
 
   // Automatically search if there are criteria in the URL (for URL sharing)
   useEffect(() => {
-    // Only trigger if there are search params in the URL
     const hasCriteria =
       (filterMode === "word" && query) ||
       (filterMode === "narrator" && narrator) ||
@@ -130,7 +241,6 @@ export function SearchBar({
       );
       setHasSearched(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -139,46 +249,10 @@ export function SearchBar({
         className="mb-6"
         onSubmit={(e) => {
           e.preventDefault();
-          setHasSearched(true);
-
-          const params = new URLSearchParams();
-          params.set("filterMode", filterMode);
-
-          // Determine sahabas list outside to use in filtering
-          let sahabasToUse: string[] = [];
-
-          if (filterMode === "word" && query) {
-            params.set("query", query);
-          } else if (filterMode === "narrator" && narrator) {
-            params.set("query", narrator);
-          } else if (filterMode === "sahaba") {
-            // Collect typed or selected sahabas
-            const inputEl = document.getElementById(
-              "sahaba-multiselect"
-            ) as HTMLInputElement | null;
-            const typed = inputEl?.value?.trim();
-            sahabasToUse =
-              selectedSahabas.length > 0
-                ? selectedSahabas
-                : typed
-                  ? [typed]
-                  : [];
-            sahabasToUse.forEach((sahaba) => params.append("query", sahaba));
+          if (urlUpdateTimer) {
+            clearTimeout(urlUpdateTimer);
           }
-
-          // Update URL using pushState to avoid navigation
-          const newUrl = `/search?${params.toString()}`;
-          window.history.pushState(null, "", newUrl);
-
-          // Filter hadiths using the actual state values
-          setResults(
-            filterHadiths(hadiths, {
-              filterMode,
-              query,
-              narrator,
-              sahabas: filterMode === "sahaba" ? sahabasToUse : selectedSahabas,
-            })
-          );
+          updateUrl(filterMode, query, narrator, selectedSahabas);
         }}
         autoComplete="off"
       >
