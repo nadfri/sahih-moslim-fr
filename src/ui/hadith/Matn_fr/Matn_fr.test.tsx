@@ -1,13 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { highlightText } from "@/src/utils/highlightText";
+import { highlightTextAsHTML } from "@/src/utils/highlightText";
 import { mockHadith } from "@/src/utils/mocks/mockHadith";
 import { Matn_fr } from "./Matn_fr";
 
-// Mock the highlightText utility
+// Mock the highlightTextAsHTML utility
 vi.mock("@/src/utils/highlightText", () => ({
-  highlightText: vi.fn((text: string, highlight?: string) => {
+  highlightTextAsHTML: vi.fn((text: string, highlight?: string) => {
     if (!highlight) return text;
     return text.replace(
       new RegExp(highlight, "gi"),
@@ -16,7 +16,7 @@ vi.mock("@/src/utils/highlightText", () => ({
   }),
 }));
 
-const mockedHighlightText = vi.mocked(highlightText);
+const mockedHighlightTextAsHTML = vi.mocked(highlightTextAsHTML);
 
 describe("Matn_fr Component", () => {
   beforeEach(() => {
@@ -82,7 +82,7 @@ describe("Matn_fr Component", () => {
     expect(delElement.tagName).toBe("DEL");
   });
 
-  it("should call highlightText with correct parameters when highlight is provided", () => {
+  it("should call highlightTextAsHTML with correct parameters when highlight is provided", () => {
     render(
       <Matn_fr
         matn={mockHadith.matn_fr}
@@ -90,21 +90,21 @@ describe("Matn_fr Component", () => {
       />
     );
 
-    expect(mockedHighlightText).toHaveBeenCalledWith(
+    expect(mockedHighlightTextAsHTML).toHaveBeenCalledWith(
       mockHadith.matn_fr,
       "test"
     );
-    expect(mockedHighlightText).toHaveBeenCalledTimes(1);
+    expect(mockedHighlightTextAsHTML).toHaveBeenCalledTimes(1);
   });
 
-  it("should call highlightText with undefined when no highlight is provided", () => {
+  it("should call highlightTextAsHTML with undefined when no highlight is provided", () => {
     render(<Matn_fr matn={mockHadith.matn_fr} />);
 
-    expect(mockedHighlightText).toHaveBeenCalledWith(
+    expect(mockedHighlightTextAsHTML).toHaveBeenCalledWith(
       mockHadith.matn_fr,
       undefined
     );
-    expect(mockedHighlightText).toHaveBeenCalledTimes(1);
+    expect(mockedHighlightTextAsHTML).toHaveBeenCalledTimes(1);
   });
 
   it("should have proper container styling", () => {
@@ -123,7 +123,7 @@ describe("Matn_fr Component", () => {
   it("should render empty content gracefully", () => {
     render(<Matn_fr matn="" />);
 
-    expect(mockedHighlightText).toHaveBeenCalledWith("", undefined);
+    expect(mockedHighlightTextAsHTML).toHaveBeenCalledWith("", undefined);
   });
 
   it("should process markdown correctly", () => {

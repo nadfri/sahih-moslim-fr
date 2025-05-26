@@ -2,7 +2,7 @@ import ReactMarkdown, { Components } from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 
-import { highlightText } from "@/src/utils/highlightText";
+import { highlightTextAsHTML } from "@/src/utils/highlightText";
 
 type Props = {
   matn: string;
@@ -37,7 +37,7 @@ export function Matn_fr({ matn, highlight }: Props) {
   };
 
   // Preprocess markdown to wrap highlight matches in <mark> for raw HTML rendering
-  const processedMatnFr = highlightText(matn, highlight);
+  const processedMatnFr = highlightTextAsHTML(matn, highlight);
 
   return (
     <div className="space-y-3 text-gray-700 dark:text-gray-300 leading-relaxed text-pretty">

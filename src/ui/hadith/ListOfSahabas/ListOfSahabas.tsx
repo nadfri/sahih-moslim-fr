@@ -26,10 +26,9 @@ export function ListOfSahabas({
             key={sahaba.id}
             href={`/sahabas/${sahaba.slug}`}
             className="text-sm bg-emerald-50 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-300 px-2 py-1 rounded-md transition-colors duration-200 hover:bg-emerald-200 dark:hover:bg-emerald-800/50"
-            dangerouslySetInnerHTML={{
-              __html: highlightText(sahaba.name, highlight),
-            }}
-          />
+          >
+            {highlightText(sahaba.name, highlight)}
+          </Link>
         ))}
       </div>
     </div>

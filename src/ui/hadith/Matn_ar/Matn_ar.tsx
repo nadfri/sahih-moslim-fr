@@ -64,9 +64,9 @@ export function Matn_ar({ matn, update, highlight }: Props) {
           <div
             className="pt-2 text-right font-matn_ar text-xl leading-loose text-pretty dark:text-gray-300"
             dir="rtl"
-            // Render processed Arabic HTML with highlights
-            dangerouslySetInnerHTML={{ __html: processedMatnAr }}
-          />
+          >
+            {processedMatnAr}
+          </div>
         </div>
       </div>
     </div>

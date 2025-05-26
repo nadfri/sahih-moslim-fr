@@ -10,8 +10,11 @@ export function Descriptive() {
         <span className="text-emerald-700 dark:text-emerald-400 font-bold">
           3 033
         </span>{" "}
-        récits du Prophète Muhammad ﷺ, soigneusement vérifiés et classés par
-        thèmes.
+        récits du{" "}
+        <span className="text-blue-600 dark:text-blue-500 font-medium">
+          Prophète Muhammad ﷺ
+        </span>
+        , soigneusement vérifiés et classés par thèmes.
       </p>
       <p className="mb-3 text-gray-700 dark:text-gray-300">
         Compilée au IX<sup>e</sup> siècle, cette œuvre occupe une place centrale
