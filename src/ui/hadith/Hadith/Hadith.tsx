@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { SquareArrowOutUpRight } from "lucide-react";
 
 import { HadithType } from "@/src/types/types";
 import { ArabicIcon } from "@/src/ui/icons/ArabicIcon";
+import { highlightText } from "@/src/utils/highlightText";
 import { ActionsBtns } from "../ActionBtns/ActionsBtns";
 import { ListOfSahabas } from "../ListOfSahabas/ListOfSahabas";
 import { Matn_ar } from "../Matn_ar/Matn_ar";
@@ -44,7 +46,8 @@ export function Hadith({
               href={`/narrators/${hadith.narrator.slug}`}
               className="font-medium text-emerald-700 dark:text-emerald-500 hover:text-emerald-800 dark:hover:text-emerald-400 hover:underline transition-colors duration-200"
             >
-              {hadith.narrator.name}
+              {highlightText(hadith.narrator.name, highlight)}{" "}
+              <SquareArrowOutUpRight className="inline size-3 align-middle" />
             </Link>
           </p>
         </div>
