@@ -145,6 +145,7 @@ export function EditHadithForm({
       const result = await response.json();
       if (response.ok) {
         toast.success("Hadith modifié avec succès!");
+        router.push("/");
       } else {
         toast.error(result.message);
       }
@@ -288,7 +289,7 @@ export function EditHadithForm({
             render={({ field }) => (
               <MultiSelect
                 id="isnadTransmitters"
-                label="Transmetteurs de l'isnād"
+                label="Transmetteurs de l'isnad"
                 options={transmitterOptions}
                 selected={field.value || []}
                 onChange={field.onChange}

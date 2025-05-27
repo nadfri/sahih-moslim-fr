@@ -282,7 +282,6 @@ export async function getAllTransmitters(): Promise<ItemType[]> {
       slug: true,
       _count: { select: { narratedHadiths: true } },
     },
-    orderBy: { name: "asc" },
   });
   // Map to ItemType with hadithCount
   return transmitters.map((transmitter) => ({
@@ -346,7 +345,6 @@ export async function getTransmitterWithHadiths(slug: string): Promise<{
 export async function getTransmitterNames(): Promise<string[]> {
   const transmitters = await prisma.transmitter.findMany({
     select: { name: true },
-    orderBy: { name: "asc" },
   });
   // Map to array of names
   return transmitters.map((transmitter) => transmitter.name);

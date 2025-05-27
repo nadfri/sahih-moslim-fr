@@ -293,7 +293,7 @@ export function AddHadithForm({
               render={({ field }) => (
                 <MultiSelect
                   id="isnadTransmitters"
-                  label="Transmetteurs de l'isnād"
+                  label="Transmetteurs de l'isnad"
                   options={transmitterOptions}
                   selected={field.value || []}
                   onChange={field.onChange}

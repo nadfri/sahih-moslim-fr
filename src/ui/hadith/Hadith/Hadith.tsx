@@ -1,13 +1,11 @@
-import Link from "next/link";
-import { SquareArrowOutUpRight } from "lucide-react";
-
 import { HadithType } from "@/src/types/types";
-import { ArabicIcon } from "@/src/ui/icons/ArabicIcon";
-import { highlightText } from "@/src/utils/highlightText";
 import { ActionsBtns } from "../ActionBtns/ActionsBtns";
+import { ChapterName } from "../ChapterName/ChapterName";
+import { Isnad } from "../Isnad/Isnad";
 import { ListOfSahabas } from "../ListOfSahabas/ListOfSahabas";
 import { Matn_ar } from "../Matn_ar/Matn_ar";
 import { Matn_fr } from "../Matn_fr/Matn_fr";
+import { NarratedBy } from "../NarratedBy/NarratedBy";
 
 export function Hadith({
   hadith,
@@ -26,30 +24,19 @@ export function Hadith({
       <div className="p-3 md:p-6">
         {/* Metadata Section (Chapter, ID, Narrator) */}
         <div className="mb-5">
-          <div className="flex items-center justify-between mb-2">
-            <Link
-              href={`/chapters/${hadith.chapter.slug}`}
-              className="text-sm font-medium text-amber-700 dark:text-amber-500 tracking-wide uppercase inline-flex items-center hover:text-amber-900 dark:hover:text-amber-400 hover:underline transition-colors duration-200"
-            >
-              <ArabicIcon className="mr-1 h-5" /> {hadith.chapter.name}
-            </Link>
+          <ChapterName hadith={hadith} />
 
-            <div className="flex items-center gap-2">
-              <span className="bg-emerald-600 dark:bg-emerald-700 text-white text-sm font-semibold rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">
-                {hadith.numero}
-              </span>
-            </div>
-          </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Rapporté par{" "}
-            <Link
-              href={`/narrators/${hadith.narrator.slug}`}
-              className="font-medium text-emerald-700 dark:text-emerald-500 hover:text-emerald-800 dark:hover:text-emerald-400 hover:underline transition-colors duration-200"
-            >
-              {highlightText(hadith.narrator.name, highlight)}{" "}
-              <SquareArrowOutUpRight className="inline size-3 align-middle" />
-            </Link>
-          </p>
+          {/* Narrator Section */}
+          <NarratedBy
+            narrator={hadith.narrator}
+            highlight={highlight}
+          />
+
+          {/* Isnad */}
+          <Isnad
+            isnadTransmitters={hadith.isnadTransmitters}
+            highlight={highlight}
+          />
         </div>
 
         {/* matn_fr Section (Main text in French) */}
