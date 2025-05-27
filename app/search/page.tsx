@@ -1,3 +1,5 @@
+/*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
+
 import { Suspense } from "react";
 import { Metadata } from "next";
 
@@ -6,6 +8,7 @@ import {
   getAllHadiths,
   getNarratorNames,
   getSahabaNames,
+  getTransmitterNames,
 } from "@/src/services/services";
 
 // Generate static metadata
@@ -21,11 +24,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function SearchPage() {
-  const [hadiths, narratorNames, sahabaNames] = await Promise.all([
-    getAllHadiths(),
-    getNarratorNames(),
-    getSahabaNames(),
-  ]);
+  const [hadiths, narratorNames, sahabaNames, transmitterNames] =
+    await Promise.all([
+      getAllHadiths(),
+      getNarratorNames(),
+      getSahabaNames(),
+      getTransmitterNames(),
+    ]);
 
   return (
     <div className="container mx-auto max-w-5xl">
@@ -36,6 +41,7 @@ export default async function SearchPage() {
           hadiths={hadiths}
           narrators={narratorNames}
           sahabas={sahabaNames}
+          transmitters={transmitterNames}
         />
       </Suspense>
     </div>

@@ -90,11 +90,10 @@ model Authenticator {
  * Hadith models
  */
 model Hadith {
-  id      String  @id @default(cuid())
-  numero  Int     @unique
+  id      String @id @default(cuid())
+  numero  Int    @unique
   matn_fr String
   matn_ar String
-  isnad   String?
 
   // Relations
   chapterId String
@@ -103,7 +102,8 @@ model Hadith {
   narratorId String
   narrator   Narrator @relation(fields: [narratorId], references: [id])
 
-  mentionedSahabas Sahaba[]
+  mentionedSahabas  Sahaba[]
+  isnadTransmitters Transmitter[] // New relation
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -119,7 +119,7 @@ model Chapter {
   index      Int      @unique
   name       String   @unique
   slug       String   @unique
-  nameArabic String?  
+  nameArabic String?
   hadiths    Hadith[]
 
   createdAt DateTime @default(now())
@@ -143,6 +143,17 @@ model Sahaba {
   slug               String   @unique
   nameArabic         String?
   mentionedInHadiths Hadith[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Transmitter {
+  id              String   @id @default(cuid())
+  name            String   @unique
+  slug            String   @unique
+  nameArabic      String?
+  narratedHadiths Hadith[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

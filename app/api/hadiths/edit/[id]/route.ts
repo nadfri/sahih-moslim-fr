@@ -9,10 +9,10 @@ const editHadithPayloadSchema = z.object({
   numero: z.number().int().positive(),
   matn_fr: z.string().min(1),
   matn_ar: z.string().min(1),
-  isnad: z.string().optional(),
   chapterName: z.string().min(1),
   narratorName: z.string().min(1),
   mentionedSahabasNames: z.array(z.string()),
+  isnadTransmittersNames: z.array(z.string()).optional(),
 });
 
 export async function PATCH(
@@ -50,10 +50,10 @@ export async function PATCH(
       numero,
       matn_fr,
       matn_ar,
-      isnad,
       chapterName,
       narratorName,
       mentionedSahabasNames,
+      isnadTransmittersNames = [],
     } = validation.data;
     // Find hadith by id
     const hadith = await prisma.hadith.findUnique({
@@ -125,6 +125,26 @@ export async function PATCH(
         { status: 400 }
       );
     }
+    // Find Transmitters by name
+    const isnadTransmitters = await prisma.transmitter.findMany({
+      where: { name: { in: isnadTransmittersNames } },
+      select: { id: true, name: true },
+    });
+
+    if (isnadTransmitters.length !== isnadTransmittersNames.length) {
+      const foundNames = isnadTransmitters.map((t) => t.name);
+      const notFoundNames = isnadTransmittersNames.filter(
+        (name) => !foundNames.includes(name)
+      );
+      return Response.json(
+        {
+          success: false,
+          message: `Transmetteur(s) non trouvé(s): ${notFoundNames.join(", ")}`,
+        },
+        { status: 400 }
+      );
+    }
+
     // Update hadith
     const updatedHadith = await prisma.hadith.update({
       where: { id },
@@ -132,18 +152,22 @@ export async function PATCH(
         numero,
         matn_fr,
         matn_ar,
-        isnad: isnad || null,
         chapter: { connect: { id: chapter.id } },
         narrator: { connect: { id: narrator.id } },
         mentionedSahabas: {
-          set: [], // Remove all previous
+          set: [],
           connect: mentionedSahabas.map((s) => ({ id: s.id })),
+        },
+        isnadTransmitters: {
+          set: [],
+          connect: isnadTransmitters.map((t) => ({ id: t.id })),
         },
       },
       include: {
         chapter: true,
         narrator: true,
         mentionedSahabas: true,
+        isnadTransmitters: true,
       },
     });
     return Response.json({

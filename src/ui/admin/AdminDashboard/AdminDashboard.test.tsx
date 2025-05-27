@@ -23,6 +23,11 @@ const mockSahabas: ItemType[] = [
   { id: "s2", name: "Sahaba 2", slug: "sahaba-2" },
 ];
 
+const mockTransmitters: ItemType[] = [
+  { id: "t1", name: "Transmitter 1", slug: "transmitter-1" },
+  { id: "t2", name: "Transmitter 2", slug: "transmitter-2" },
+];
+
 // Mock the child components to isolate the AdminDashboard logic
 vi.mock("@/src/ui/admin/FilteredCardsEdit/FilteredCardsEdit", () => ({
   FilteredCardsEdit: vi.fn(({ items, variant }) => (
@@ -58,6 +63,7 @@ describe("AdminDashboard", () => {
         chapters={mockChapters}
         narrators={mockNarrators}
         sahabas={mockSahabas}
+        transmitters={mockTransmitters}
       />
     );
 
@@ -82,6 +88,7 @@ describe("AdminDashboard", () => {
         chapters={mockChapters}
         narrators={mockNarrators}
         sahabas={mockSahabas}
+        transmitters={mockTransmitters}
       />
     );
 
@@ -106,6 +113,7 @@ describe("AdminDashboard", () => {
         chapters={mockChapters}
         narrators={mockNarrators}
         sahabas={mockSahabas}
+        transmitters={mockTransmitters}
       />
     );
 
@@ -123,6 +131,31 @@ describe("AdminDashboard", () => {
     expect(addItemForm).toHaveTextContent("First item: Sahaba 1");
   });
 
+  it("switches to transmitters variant when Transmitters radio button is clicked", async () => {
+    const user = userEvent.setup();
+    render(
+      <AdminDashboard
+        chapters={mockChapters}
+        narrators={mockNarrators}
+        sahabas={mockSahabas}
+        transmitters={mockTransmitters}
+      />
+    );
+
+    const transmitterRadioButton = screen.getByLabelText("Transmetteurs");
+    await user.click(transmitterRadioButton);
+
+    expect(transmitterRadioButton).toBeChecked();
+
+    const filteredCardsEdit = screen.getByTestId("filtered-cards-edit");
+    expect(filteredCardsEdit).toHaveTextContent("Variant: transmitters");
+    expect(filteredCardsEdit).toHaveTextContent("Transmitter 1");
+
+    const addItemForm = screen.getByTestId("add-item-form");
+    expect(addItemForm).toHaveTextContent("Add Form for: transmitters");
+    expect(addItemForm).toHaveTextContent("First item: Transmitter 1");
+  });
+
   it("passes the correct items to child components when variant changes", async () => {
     const user = userEvent.setup();
     render(
@@ -130,6 +163,7 @@ describe("AdminDashboard", () => {
         chapters={mockChapters}
         narrators={mockNarrators}
         sahabas={mockSahabas}
+        transmitters={mockTransmitters}
       />
     );
 
@@ -162,5 +196,16 @@ describe("AdminDashboard", () => {
 
     addItemForm = screen.getByTestId("add-item-form"); // Re-query after update
     expect(addItemForm).toHaveTextContent("First item: Sahaba 1");
+
+    // Switch to transmitters
+    const transmitterRadioButton = screen.getByLabelText("Transmetteurs");
+    await user.click(transmitterRadioButton);
+
+    filteredCardsEdit = screen.getByTestId("filtered-cards-edit"); // Re-query after update
+    expect(filteredCardsEdit).toHaveTextContent("Transmitter 1");
+    expect(filteredCardsEdit).not.toHaveTextContent("Sahaba 1");
+
+    addItemForm = screen.getByTestId("add-item-form"); // Re-query after update
+    expect(addItemForm).toHaveTextContent("First item: Transmitter 1");
   });
 });

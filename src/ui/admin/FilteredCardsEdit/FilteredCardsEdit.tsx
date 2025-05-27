@@ -27,6 +27,11 @@ const variantOptions = {
     placeholder: "Rechercher un sahaba...",
     name: "sahaba",
   },
+  transmitters: {
+    label: "Liste des transmetteurs",
+    placeholder: "Rechercher un transmetteur...",
+    name: "transmetteur",
+  },
 };
 
 export function FilteredCardsEdit({ items, variant }: Props) {

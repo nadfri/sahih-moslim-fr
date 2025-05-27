@@ -5,6 +5,7 @@ import {
   getAllChapters,
   getAllNarrators,
   getAllSahabas,
+  getAllTransmitters,
   getHadithByNumero,
   getHadithNumeros,
 } from "@/src/services/services";
@@ -23,14 +24,21 @@ export default async function EditPage(props: { params: Params }) {
     redirect("/");
   }
   const numero = params.numero;
-  const [hadith, existingNumeros, chaptersData, narratorsData, sahabasData] =
-    await Promise.all([
-      getHadithByNumero(numero),
-      getHadithNumeros(),
-      getAllChapters(),
-      getAllNarrators(),
-      getAllSahabas(),
-    ]);
+  const [
+    hadith,
+    existingNumeros,
+    chaptersData,
+    narratorsData,
+    sahabasData,
+    transmittersData,
+  ] = await Promise.all([
+    getHadithByNumero(numero),
+    getHadithNumeros(),
+    getAllChapters(),
+    getAllNarrators(),
+    getAllSahabas(),
+    getAllTransmitters(),
+  ]);
 
   if (!hadith) {
     redirect("/hadiths");
@@ -53,6 +61,7 @@ export default async function EditPage(props: { params: Params }) {
         chaptersData={chaptersData}
         narratorsData={narratorsData}
         sahabasData={sahabasData}
+        transmittersData={transmittersData}
       />
     </>
   );

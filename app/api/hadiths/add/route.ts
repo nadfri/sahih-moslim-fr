@@ -9,10 +9,10 @@ const addHadithPayloadSchema = z.object({
   numero: z.number().int().positive(),
   matn_fr: z.string().min(1),
   matn_ar: z.string().min(1),
-  isnad: z.string().optional(),
   chapterName: z.string().min(1),
   narratorName: z.string().min(1),
   mentionedSahabasNames: z.array(z.string()),
+  isnadTransmittersNames: z.array(z.string()).optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -48,10 +48,10 @@ export async function POST(request: NextRequest) {
       numero,
       matn_fr,
       matn_ar,
-      isnad,
       chapterName,
       narratorName,
       mentionedSahabasNames,
+      isnadTransmittersNames = [],
     } = validation.data;
 
     // 2. Check if hadith number already exists
@@ -120,29 +120,57 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Find Transmitters by name and get their IDs
+    const isnadTransmitters = await prisma.transmitter.findMany({
+      where: {
+        name: {
+          in: isnadTransmittersNames,
+        },
+      },
+      select: { id: true, name: true },
+    });
+
+    // Verify all mentioned transmitters were found
+    if (isnadTransmitters.length !== isnadTransmittersNames.length) {
+      const foundNames = isnadTransmitters.map((t) => t.name);
+      const notFoundNames = isnadTransmittersNames.filter(
+        (name) => !foundNames.includes(name)
+      );
+      return Response.json(
+        {
+          success: false,
+          message: `Transmetteur(s) non trouvé(s): ${notFoundNames.join(", ")}`,
+        },
+        { status: 400 }
+      );
+    }
+
     // 4. Create the new Hadith record
     const newHadith = await prisma.hadith.create({
       data: {
         numero,
         matn_fr,
         matn_ar,
-        isnad: isnad || null, // Use null if isnad is empty/undefined
         chapter: {
-          connect: { id: chapter.id }, // Connect using chapter ID
+          connect: { id: chapter.id },
         },
         narrator: {
-          connect: { id: narrator.id }, // Connect using narrator ID
+          connect: { id: narrator.id },
         },
         mentionedSahabas: {
-          // Connect using sahaba IDs
           connect: mentionedSahabas.map((sahaba) => ({ id: sahaba.id })),
         },
+        isnadTransmitters: {
+          connect: isnadTransmitters.map((transmitter) => ({
+            id: transmitter.id,
+          })),
+        },
       },
-      // Include related data in the response if needed
       include: {
         chapter: true,
         narrator: true,
         mentionedSahabas: true,
+        isnadTransmitters: true,
       },
     });
 

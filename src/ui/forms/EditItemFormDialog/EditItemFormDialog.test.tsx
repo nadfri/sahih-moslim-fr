@@ -75,29 +75,51 @@ const mockExistingNarrators: ItemType[] = [
   },
 ];
 
-const defaultProps = {
-  open: true,
-  onCancel: vi.fn(),
-  item: mockChapterItem,
-  items: mockExistingChapters,
-  variant: "chapters" as VariantType,
+const mockTransmitterItem: ItemType = {
+  id: "trans1",
+  name: "Transmetteur Un",
+  slug: "transmetteur-un",
+  nameArabic: "الناقل الأول",
+  hadithCount: 12,
 };
 
+const mockExistingTransmitters: ItemType[] = [
+  mockTransmitterItem,
+  {
+    id: "trans2",
+    name: "Transmetteur Deux",
+    slug: "transmetteur-deux",
+    nameArabic: "الناقل الثاني",
+    hadithCount: 8,
+  },
+];
+
 describe("EditItemFormDialog", () => {
+  let mockOnCancel: ReturnType<typeof vi.fn>;
+
   beforeEach(() => {
     vi.clearAllMocks();
+    mockOnCancel = vi.fn(); // Create a fresh mock for each test
     // Default mock implementation for editItem
     mockEditItem.mockResolvedValue({
       success: true,
       message: "Élément modifié avec succès",
-      data: { ...mockChapterItem, name: "Nouveau Nom" }, // Simulate some change
+      data: { ...mockChapterItem, name: "Nouveau Nom" },
     });
+  });
+
+  const getDefaultProps = () => ({
+    open: true,
+    onCancel: mockOnCancel,
+    item: mockChapterItem,
+    items: mockExistingChapters,
+    variant: "chapters" as VariantType,
   });
 
   it("renders nothing if open is false", () => {
     render(
       <EditItemFormDialog
-        {...defaultProps}
+        {...getDefaultProps()}
         open={false}
       />
     );
@@ -105,7 +127,7 @@ describe("EditItemFormDialog", () => {
   });
 
   it("renders the dialog with correct initial values for a chapter", () => {
-    render(<EditItemFormDialog {...defaultProps} />);
+    render(<EditItemFormDialog {...getDefaultProps()} />);
     expect(
       screen.getByRole("dialog", { name: "Éditer le chapitre" })
     ).toBeInTheDocument();
@@ -123,13 +145,14 @@ describe("EditItemFormDialog", () => {
   });
 
   it("calls onCancel when the Cancel button is clicked", async () => {
-    render(<EditItemFormDialog {...defaultProps} />);
+    const props = getDefaultProps();
+    render(<EditItemFormDialog {...props} />);
     await userEvent.click(screen.getByRole("button", { name: "Annuler" }));
-    expect(defaultProps.onCancel).toHaveBeenCalledTimes(1);
+    expect(props.onCancel).toHaveBeenCalledTimes(1);
   });
 
   it("shows an error message if name is missing", async () => {
-    render(<EditItemFormDialog {...defaultProps} />);
+    render(<EditItemFormDialog {...getDefaultProps()} />);
     const nameInput = screen.getByLabelText("Nom du chapitre*");
     const submitButton = screen.getByRole("button", { name: "Enregistrer" });
 
@@ -141,7 +164,7 @@ describe("EditItemFormDialog", () => {
   });
 
   it("shows an error message if name is too short", async () => {
-    render(<EditItemFormDialog {...defaultProps} />);
+    render(<EditItemFormDialog {...getDefaultProps()} />);
     const nameInput = screen.getByLabelText("Nom du chapitre*");
     const submitButton = screen.getByRole("button", { name: "Enregistrer" });
 
@@ -154,7 +177,7 @@ describe("EditItemFormDialog", () => {
   });
 
   it("shows an error message if index is missing for a chapter", async () => {
-    render(<EditItemFormDialog {...defaultProps} />);
+    render(<EditItemFormDialog {...getDefaultProps()} />);
     const indexInput = screen.getByLabelText("Index*");
     const submitButton = screen.getByRole("button", { name: "Enregistrer" });
 
@@ -168,7 +191,7 @@ describe("EditItemFormDialog", () => {
   });
 
   it("shows an error message if index is not a positive number for a chapter", async () => {
-    render(<EditItemFormDialog {...defaultProps} />);
+    render(<EditItemFormDialog {...getDefaultProps()} />);
     const indexInput = screen.getByLabelText("Index*");
     const submitButton = screen.getByRole("button", { name: "Enregistrer" });
 
@@ -194,7 +217,7 @@ describe("EditItemFormDialog", () => {
   it("shows an error if index already exists for a chapter (different from initial)", async () => {
     render(
       <EditItemFormDialog
-        {...defaultProps}
+        {...getDefaultProps()}
         item={mockExistingChapters[0]}
         items={mockExistingChapters}
       />
@@ -217,7 +240,7 @@ describe("EditItemFormDialog", () => {
   it("does not show index error if index is unchanged", async () => {
     render(
       <EditItemFormDialog
-        {...defaultProps}
+        {...getDefaultProps()}
         item={mockExistingChapters[0]}
         items={mockExistingChapters}
       />
@@ -238,7 +261,8 @@ describe("EditItemFormDialog", () => {
   });
 
   it("submits the form with valid data, calls editItem and toast.success", async () => {
-    render(<EditItemFormDialog {...defaultProps} />);
+    const props = getDefaultProps();
+    render(<EditItemFormDialog {...props} />);
     const nameInput = screen.getByLabelText("Nom du chapitre*");
     const submitButton = screen.getByRole("button", { name: "Enregistrer" });
 
@@ -248,11 +272,11 @@ describe("EditItemFormDialog", () => {
     await userEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(mockEditItem).toHaveBeenCalledWith(defaultProps.variant, {
+      expect(mockEditItem).toHaveBeenCalledWith(props.variant, {
         id: mockChapterItem.id,
         name: newName,
-        nameArabic: mockChapterItem.nameArabic, // Unchanged
-        index: mockChapterItem.index, // Unchanged
+        nameArabic: mockChapterItem.nameArabic,
+        index: mockChapterItem.index,
       });
     });
     await waitFor(() => {
@@ -261,7 +285,7 @@ describe("EditItemFormDialog", () => {
       );
     });
     await waitFor(() => {
-      expect(defaultProps.onCancel).toHaveBeenCalledTimes(1);
+      expect(props.onCancel).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -276,7 +300,7 @@ describe("EditItemFormDialog", () => {
           )
         )
     );
-    render(<EditItemFormDialog {...defaultProps} />);
+    render(<EditItemFormDialog {...getDefaultProps()} />);
     const nameInput = screen.getByLabelText("Nom du chapitre*");
     await userEvent.type(nameInput, "abc"); // Make a small valid change to enable submit
 
@@ -297,7 +321,9 @@ describe("EditItemFormDialog", () => {
       success: false,
       message: errorMessage,
     });
-    render(<EditItemFormDialog {...defaultProps} />);
+
+    const props = getDefaultProps();
+    render(<EditItemFormDialog {...props} />);
     const nameInput = screen.getByLabelText("Nom du chapitre*");
     const submitButton = screen.getByRole("button", { name: "Enregistrer" });
 
@@ -308,12 +334,14 @@ describe("EditItemFormDialog", () => {
     await waitFor(() => {
       expect(mockToastError).toHaveBeenCalledWith(errorMessage);
     });
-    expect(defaultProps.onCancel).not.toHaveBeenCalled(); // Should not close on action error
+    expect(props.onCancel).not.toHaveBeenCalled();
   });
 
   it("shows toast.error if editItem throws an exception", async () => {
     mockEditItem.mockRejectedValueOnce(new Error("Erreur critique"));
-    render(<EditItemFormDialog {...defaultProps} />);
+
+    const props = getDefaultProps();
+    render(<EditItemFormDialog {...props} />);
     const nameInput = screen.getByLabelText("Nom du chapitre*");
     const submitButton = screen.getByRole("button", { name: "Enregistrer" });
 
@@ -326,16 +354,17 @@ describe("EditItemFormDialog", () => {
         "Erreur inconnue lors de la modification."
       );
     });
+    expect(props.onCancel).not.toHaveBeenCalled();
   });
 
   // Test for a different variant, e.g., narrators, where index might be optional
   describe("with variant='narrators'", () => {
-    const narratorProps = {
-      ...defaultProps,
+    const getNarratorProps = () => ({
+      ...getDefaultProps(),
       item: mockNarratorItem,
       items: mockExistingNarrators,
       variant: "narrators" as VariantType,
-    };
+    });
 
     beforeEach(() => {
       mockEditItem.mockResolvedValue({
@@ -347,7 +376,7 @@ describe("EditItemFormDialog", () => {
     });
 
     it("renders the dialog with correct initial values for a narrator", () => {
-      render(<EditItemFormDialog {...narratorProps} />);
+      render(<EditItemFormDialog {...getNarratorProps()} />);
       expect(
         screen.getByRole("dialog", { name: "Éditer le narrateur" })
       ).toBeInTheDocument();
@@ -361,6 +390,7 @@ describe("EditItemFormDialog", () => {
     });
 
     it("submits the form for a narrator (index optional)", async () => {
+      const narratorProps = getNarratorProps();
       render(<EditItemFormDialog {...narratorProps} />);
       const nameInput = screen.getByLabelText("Nom du narrateur*");
       const submitButton = screen.getByRole("button", { name: "Enregistrer" });
@@ -382,6 +412,60 @@ describe("EditItemFormDialog", () => {
       });
       expect(mockToastSuccess).toHaveBeenCalledWith("Narrateur modifié!");
       expect(narratorProps.onCancel).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("with variant='transmitters'", () => {
+    const getTransmitterProps = () => ({
+      ...getDefaultProps(),
+      item: mockTransmitterItem,
+      items: mockExistingTransmitters,
+      variant: "transmitters" as VariantType,
+    });
+
+    beforeEach(() => {
+      mockEditItem.mockResolvedValue({
+        success: true,
+        message: "Transmetteur modifié!",
+        data: { ...mockTransmitterItem, name: "Transmetteur Modifié" },
+      });
+    });
+
+    it("renders the dialog with correct initial values for a transmitter", () => {
+      render(<EditItemFormDialog {...getTransmitterProps()} />);
+      expect(
+        screen.getByRole("dialog", { name: "Éditer le transmetteur" })
+      ).toBeInTheDocument();
+      expect(screen.queryByLabelText("Index*")).not.toBeInTheDocument(); // Index field should not be present for transmitters
+      expect(screen.getByLabelText("Nom du transmetteur*")).toHaveValue(
+        mockTransmitterItem.name
+      );
+      expect(screen.getByLabelText("Nom en arabe (optionnel)")).toHaveValue(
+        mockTransmitterItem.nameArabic
+      );
+    });
+
+    it("submits the form for a transmitter (index optional)", async () => {
+      const transmitterProps = getTransmitterProps();
+      render(<EditItemFormDialog {...transmitterProps} />);
+      const nameInput = screen.getByLabelText("Nom du transmetteur*");
+      const submitButton = screen.getByRole("button", { name: "Enregistrer" });
+
+      const newName = "Transmetteur Un Modifié";
+
+      await userEvent.clear(nameInput);
+      await userEvent.type(nameInput, newName);
+      await userEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockEditItem).toHaveBeenCalledWith(transmitterProps.variant, {
+          id: mockTransmitterItem.id,
+          name: newName,
+          nameArabic: mockTransmitterItem.nameArabic,
+        });
+      });
+      expect(mockToastSuccess).toHaveBeenCalledWith("Transmetteur modifié!");
+      expect(transmitterProps.onCancel).toHaveBeenCalledTimes(1);
     });
   });
 });

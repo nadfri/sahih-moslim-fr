@@ -40,9 +40,9 @@ const createEditHadithSchema = (
     chapter: z.string().min(1, "Le chapitre est requis"),
     narrator: z.string().min(1, "Le narrateur est requis"),
     mentionedSahabas: z.array(z.string()),
+    isnadTransmitters: z.array(z.string()),
     matn_fr: z.string().min(1, "Le texte du hadith est requis"),
     matn_ar: z.string().min(1, "Le texte arabe est requis"),
-    isnad: z.string().optional(),
   });
 };
 
@@ -54,6 +54,7 @@ type EditHadithFormProps = {
   chaptersData: ItemType[];
   narratorsData: ItemType[];
   sahabasData: ItemType[];
+  transmittersData: ItemType[];
 };
 
 export function EditHadithForm({
@@ -62,6 +63,7 @@ export function EditHadithForm({
   chaptersData,
   narratorsData,
   sahabasData,
+  transmittersData,
 }: EditHadithFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -85,8 +87,8 @@ export function EditHadithForm({
       chapter: hadith.chapter.name,
       narrator: hadith.narrator.name,
       mentionedSahabas: hadith.mentionedSahabas.map((s) => s.name),
+      isnadTransmitters: hadith.isnadTransmitters.map((t) => t.name),
       matn_fr: hadith.matn_fr,
-      isnad: hadith.isnad || "",
       matn_ar: hadith.matn_ar,
     },
   });
@@ -96,6 +98,7 @@ export function EditHadithForm({
   const chapterOptions = chaptersData.map((chapter) => chapter.name);
   const narratorOptions = narratorsData.map((n) => n.name);
   const sahabaOptions = sahabasData.map((s) => s.name);
+  const transmitterOptions = transmittersData.map((t) => t.name);
 
   // Handle form submission for editing
   const onSubmit = async (data: HadithFormValues) => {
@@ -111,6 +114,9 @@ export function EditHadithForm({
     const selectedSahabas = sahabasData.filter((s) =>
       data.mentionedSahabas.includes(s.name)
     );
+    const selectedTransmitters = transmittersData.filter((t) =>
+      data.isnadTransmitters.includes(t.name)
+    );
 
     if (!selectedChapter || !selectedNarrator) {
       toast.error("Chapitre ou narrateur sélectionné invalide.");
@@ -122,10 +128,10 @@ export function EditHadithForm({
       numero: data.numero,
       matn_fr: data.matn_fr,
       matn_ar: data.matn_ar,
-      isnad: data.isnad,
       chapterName: selectedChapter.name,
       narratorName: selectedNarrator.name,
       mentionedSahabasNames: selectedSahabas.map((s) => s.name),
+      isnadTransmittersNames: selectedTransmitters.map((t) => t.name),
     };
 
     try {
@@ -180,22 +186,29 @@ export function EditHadithForm({
     chapter: {
       ...hadith.chapter,
       name: formValues.chapter || hadith.chapter.name,
-      slug: hadith.chapter.slug || "preview-chapter-slug", // Ensure slug exists
+      slug: hadith.chapter.slug || "preview-chapter-slug",
     },
     narrator: {
       ...hadith.narrator,
       name: formValues.narrator || hadith.narrator.name,
-      slug: hadith.narrator.slug || "preview-narrator-slug", // Ensure slug exists
+      slug: hadith.narrator.slug || "preview-narrator-slug",
     },
     mentionedSahabas: (formValues.mentionedSahabas || []).map((name, i) => ({
       id: `preview-sahaba-id-${i}`,
       name: name,
-      slug: `preview-sahaba-slug-${i}`, // Add slug for preview
+      slug: `preview-sahaba-slug-${i}`,
       nameArabic: null,
     })),
+    isnadTransmitters: (formValues.isnadTransmitters || []).map(
+      (name: string, i: number) => ({
+        id: `preview-transmitter-id-${i}`,
+        name: name,
+        slug: `preview-transmitter-slug-${i}`,
+        nameArabic: null,
+      })
+    ),
     matn_fr: formValues.matn_fr || "...",
     matn_ar: formValues.matn_ar || "...",
-    isnad: formValues.isnad || null,
   };
 
   return (
@@ -267,6 +280,26 @@ export function EditHadithForm({
               />
             )}
           />
+
+          {/* IsnadTransmitters */}
+          <Controller
+            name="isnadTransmitters"
+            control={control}
+            render={({ field }) => (
+              <MultiSelect
+                id="isnadTransmitters"
+                label="Transmetteurs de l'isnād"
+                options={transmitterOptions}
+                selected={field.value || []}
+                onChange={field.onChange}
+                placeholder="Rechercher des transmetteurs..."
+                name={field.name}
+                error={!!errors.isnadTransmitters}
+                errorMessage={errors.isnadTransmitters?.message}
+              />
+            )}
+          />
+
           {/* matn_fr (French text) */}
           <MdTextArea
             id="matn_fr"
@@ -300,19 +333,6 @@ export function EditHadithForm({
             }}
             helperText="Le texte sera automatiquement nettoyé"
           />
-          {/* Isnad (optional) */}
-          {/* <Input
-            id="isnad"
-            label="Isnad (Chaîne de transmission)"
-            type="textarea"
-            rows={3}
-            dir="rtl"
-            className="font-matn_ar"
-            error={!!errors.isnad}
-            errorMessage={errors.isnad?.message}
-            register={register("isnad")}
-            placeholder="Saisir l'isnad (optionnel)..."
-          /> */}
           {/* Submit Button */}
           <button
             type="submit"

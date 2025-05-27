@@ -15,6 +15,7 @@ export const createHadithSchema = (existingNumeros: number[]) => {
     chapter: z.string().min(1, "Le chapitre est requis"),
     narrator: z.string().min(1, "Le narrateur est requis"),
     mentionedSahabas: z.array(z.string()),
+    isnadTransmitters: z.array(z.string()),
     matn_fr: z.string().min(1, "Le texte du hadith est requis"),
     matn_ar: z.string().min(1, "Le texte arabe est requis"),
     isnad: z.string().nullable().optional(),

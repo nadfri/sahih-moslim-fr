@@ -29,6 +29,10 @@ const variantOptions = {
     title: "Supprimer ce compagnon ?",
     description: "Êtes-vous sûr de vouloir supprimer ce compagnon ",
   },
+  transmitters: {
+    title: "Supprimer ce transmetteur ?",
+    description: "Êtes-vous sûr de vouloir supprimer ce transmetteur ",
+  },
 };
 
 export function CardEdit({ item, items, variant }: Props) {

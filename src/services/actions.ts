@@ -37,6 +37,8 @@ async function getItems(variant: VariantType): Promise<ItemType[]> {
       return prisma.narrator.findMany();
     case "sahabas":
       return prisma.sahaba.findMany();
+    case "transmitters":
+      return prisma.transmitter.findMany();
   }
 }
 
@@ -91,6 +93,15 @@ export async function addItem(
         break;
       case "sahabas":
         created = await prisma.sahaba.create({
+          data: {
+            name: validatedData.name,
+            nameArabic: validatedData.nameArabic,
+            slug,
+          },
+        });
+        break;
+      case "transmitters":
+        created = await prisma.transmitter.create({
           data: {
             name: validatedData.name,
             nameArabic: validatedData.nameArabic,
@@ -221,6 +232,16 @@ export async function editItem(
           },
         });
         break;
+      case "transmitters":
+        updated = await prisma.transmitter.update({
+          where: { id: validatedData.id },
+          data: {
+            name: validatedData.name,
+            nameArabic: validatedData.nameArabic,
+            slug,
+          },
+        });
+        break;
     }
 
     revalidatePath("/admin");
@@ -334,6 +355,9 @@ export async function deleteItem(
         break;
       case "sahabas":
         deleted = await prisma.sahaba.delete({ where: { id } });
+        break;
+      case "transmitters":
+        deleted = await prisma.transmitter.delete({ where: { id } });
         break;
     }
 

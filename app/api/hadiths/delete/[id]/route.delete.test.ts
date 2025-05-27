@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { prisma } from "@/prisma/prisma";
 import { auth } from "@/src/authentification/auth";
@@ -16,32 +16,81 @@ function createParams(id: string) {
 }
 
 describe("DELETE /api/hadiths/delete/[id] (integration)", () => {
+  // Track created entities for cleanup
+  const createdEntities: {
+    chapters: string[];
+    narrators: string[];
+    hadiths: string[];
+  } = {
+    chapters: [],
+    narrators: [],
+    hadiths: [],
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  afterEach(async () => {
+    // Clean up all created entities in correct order (dependencies first)
+    if (createdEntities.hadiths.length > 0) {
+      await prisma.hadith.deleteMany({
+        where: { id: { in: createdEntities.hadiths } },
+      });
+      createdEntities.hadiths = [];
+    }
+
+    if (createdEntities.narrators.length > 0) {
+      await prisma.narrator.deleteMany({
+        where: { id: { in: createdEntities.narrators } },
+      });
+      createdEntities.narrators = [];
+    }
+
+    if (createdEntities.chapters.length > 0) {
+      await prisma.chapter.deleteMany({
+        where: { id: { in: createdEntities.chapters } },
+      });
+      createdEntities.chapters = [];
+    }
   });
 
   it("deletes a hadith if admin and id exists", async () => {
     (
       auth as unknown as { mockResolvedValue: (v: unknown) => void }
     ).mockResolvedValue({ user: { role: "ADMIN" } });
-    // Create chapter and narrator for the hadith
+    // Create chapter and narrator for the hadith with unique names
+    const timestamp = Date.now();
+    const uniqueId = timestamp % 1000000; // Keep it within INT range
     const chapter = await prisma.chapter.create({
-      data: { name: "Delete Chapter", slug: "delete-chapter", index: 9999 },
+      data: {
+        name: `Delete Chapter ${timestamp}`,
+        slug: `delete-chapter-${timestamp}`,
+        index: 9999 + uniqueId,
+      },
     });
+    createdEntities.chapters.push(chapter.id);
+
     const narrator = await prisma.narrator.create({
-      data: { name: "Delete Narrator", slug: "delete-narrator" },
+      data: {
+        name: `Delete Narrator ${timestamp}`,
+        slug: `delete-narrator-${timestamp}`,
+      },
     });
+    createdEntities.narrators.push(narrator.id);
+
     // Create a hadith to delete
     const hadith = await prisma.hadith.create({
       data: {
-        numero: 8888,
+        numero: 8888 + uniqueId,
         matn_fr: "fr",
         matn_ar: "ar",
-        isnad: null,
         chapter: { connect: { id: chapter.id } },
         narrator: { connect: { id: narrator.id } },
       },
     });
+    // Note: hadith will be deleted by the DELETE endpoint, no need to track it
+
     const req = new NextRequest(
       `http://localhost:3000/api/hadiths/delete/${hadith.id}`,
       { method: "DELETE" }
@@ -55,9 +104,6 @@ describe("DELETE /api/hadiths/delete/[id] (integration)", () => {
       where: { id: hadith.id },
     });
     expect(deleted).toBeNull();
-    // Clean up
-    await prisma.chapter.delete({ where: { id: chapter.id } });
-    await prisma.narrator.delete({ where: { id: narrator.id } });
   });
 
   it("returns 403 if not admin", async () => {

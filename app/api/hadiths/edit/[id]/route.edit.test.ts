@@ -81,6 +81,7 @@ describe("PATCH /api/hadiths/edit/[id] (integration)", () => {
       chapterName: "Edit Chapter",
       narratorName: "Edit Narrator",
       mentionedSahabasNames: [],
+      isnadTransmittersNames: [],
     });
     const res = await PATCH(req, { params: createParams("doesnotexistid") });
     expect(res.status).toBe(404);
@@ -98,8 +99,11 @@ describe("PATCH /api/hadiths/edit/[id] (integration)", () => {
     await prisma.chapter.deleteMany({ where: { slug: "edit-chapter" } });
     await prisma.narrator.deleteMany({ where: { slug: "edit-narrator" } });
     await prisma.sahaba.deleteMany({ where: { slug: "edit-sahaba" } });
+    await prisma.transmitter.deleteMany({
+      where: { slug: "edit-transmitter" },
+    });
 
-    // Create chapter, narrator, sahaba, and hadith
+    // Create chapter, narrator, sahaba, transmitter, and hadith
     const chapter = await prisma.chapter.create({
       data: { name: "Edit Chapter", slug: "edit-chapter", index: 9999 },
     });
@@ -109,15 +113,18 @@ describe("PATCH /api/hadiths/edit/[id] (integration)", () => {
     const sahaba = await prisma.sahaba.create({
       data: { name: "Edit Sahaba", slug: "edit-sahaba" },
     });
+    const transmitter = await prisma.transmitter.create({
+      data: { name: "Edit Transmitter", slug: "edit-transmitter" },
+    });
     const hadith = await prisma.hadith.create({
       data: {
         numero: 123456,
         matn_fr: "old fr",
         matn_ar: "old ar",
-        isnad: null,
         chapter: { connect: { id: chapter.id } },
         narrator: { connect: { id: narrator.id } },
         mentionedSahabas: { connect: [{ id: sahaba.id }] },
+        isnadTransmitters: { connect: [{ id: transmitter.id }] },
       },
     });
 
@@ -128,6 +135,7 @@ describe("PATCH /api/hadiths/edit/[id] (integration)", () => {
       chapterName: chapter.name,
       narratorName: narrator.name,
       mentionedSahabasNames: [sahaba.name],
+      isnadTransmittersNames: [transmitter.name],
     });
     const res = await PATCH(req, { params: createParams(hadith.id) });
     expect(res.status).toBe(200);
@@ -140,5 +148,6 @@ describe("PATCH /api/hadiths/edit/[id] (integration)", () => {
     await prisma.chapter.delete({ where: { id: chapter.id } });
     await prisma.narrator.delete({ where: { id: narrator.id } });
     await prisma.sahaba.delete({ where: { id: sahaba.id } });
+    await prisma.transmitter.delete({ where: { id: transmitter.id } });
   });
 });

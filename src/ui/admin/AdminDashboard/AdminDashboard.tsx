@@ -10,15 +10,22 @@ type Props = {
   chapters: ItemType[];
   narrators: ItemType[];
   sahabas: ItemType[];
+  transmitters: ItemType[];
 };
 
 const variantOptions: { label: string; value: VariantType }[] = [
   { label: "Chapitres", value: "chapters" },
   { label: "Narrateurs", value: "narrators" },
   { label: "Compagnons", value: "sahabas" },
+  { label: "Transmetteurs", value: "transmitters" },
 ];
 
-export function AdminDashboard({ chapters, narrators, sahabas }: Props) {
+export function AdminDashboard({
+  chapters,
+  narrators,
+  sahabas,
+  transmitters,
+}: Props) {
   const [selectedVariant, setSelectedVariant] =
     useState<VariantType>("chapters");
 
@@ -36,11 +43,19 @@ export function AdminDashboard({ chapters, narrators, sahabas }: Props) {
     case "sahabas":
       currentItems = sahabas;
       break;
+
+    case "transmitters":
+      currentItems = transmitters;
+      break;
+
+    default:
+      currentItems = chapters; // Fallback case
+      break;
   }
 
   return (
     <div className="space-y-12">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
         {variantOptions.map((option) => (
           <label
             key={option.value}

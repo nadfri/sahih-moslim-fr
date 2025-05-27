@@ -1,3 +1,5 @@
+/*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
+
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -6,6 +8,7 @@ import {
   getAllChapters,
   getAllNarrators,
   getAllSahabas,
+  getAllTransmitters,
   getHadithNumeros,
 } from "@/src/services/services";
 import { AddHadithForm } from "@/src/ui/forms/AddHadithForm";
@@ -20,13 +23,19 @@ export default async function AddHadithPage() {
     redirect("/");
   }
 
-  const [initialNumeros, chaptersData, narratorsData, sahabasData] =
-    await Promise.all([
-      getHadithNumeros(),
-      getAllChapters(),
-      getAllNarrators(),
-      getAllSahabas(),
-    ]);
+  const [
+    initialNumeros,
+    chaptersData,
+    narratorsData,
+    sahabasData,
+    transmittersData,
+  ] = await Promise.all([
+    getHadithNumeros(),
+    getAllChapters(),
+    getAllNarrators(),
+    getAllSahabas(),
+    getAllTransmitters(),
+  ]);
 
   return (
     <>
@@ -36,6 +45,7 @@ export default async function AddHadithPage() {
         chaptersData={chaptersData}
         narratorsData={narratorsData}
         sahabasData={sahabasData}
+        transmittersData={transmittersData}
       />
     </>
   );

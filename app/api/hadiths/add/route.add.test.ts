@@ -48,6 +48,7 @@ describe("POST /api/hadiths/add (integration)", () => {
       chapterName: "Test Chapter",
       narratorName: "Test Narrator",
       mentionedSahabasNames: [],
+      isnadTransmittersNames: [],
     });
     const res = await POST(req);
     expect(res.status).toBe(400);
@@ -67,7 +68,6 @@ describe("POST /api/hadiths/add (integration)", () => {
         numero: 9999,
         matn_fr: "fr",
         matn_ar: "ar",
-        isnad: null,
         chapter: {
           create: {
             name: "Chapter Exists",
@@ -87,6 +87,7 @@ describe("POST /api/hadiths/add (integration)", () => {
       chapterName: "Chapter Exists",
       narratorName: "Narrator Exists",
       mentionedSahabasNames: [],
+      isnadTransmittersNames: [],
     });
     const res = await POST(req);
     expect(res.status).toBe(409);
@@ -110,6 +111,7 @@ describe("POST /api/hadiths/add (integration)", () => {
       chapterName: "Chapter Not Found",
       narratorName: "Narrator Exists",
       mentionedSahabasNames: [],
+      isnadTransmittersNames: [],
     });
     const res = await POST(req);
     expect(res.status).toBe(400);
@@ -137,6 +139,7 @@ describe("POST /api/hadiths/add (integration)", () => {
       chapterName: chapter.name,
       narratorName: "Narrator Not Found",
       mentionedSahabasNames: [],
+      isnadTransmittersNames: [],
     });
     const res = await POST(req);
     expect(res.status).toBe(400);
@@ -171,6 +174,7 @@ describe("POST /api/hadiths/add (integration)", () => {
       chapterName: chapter.name,
       narratorName: narrator.name,
       mentionedSahabasNames: ["Ali", "Omar"],
+      isnadTransmittersNames: [],
     });
     const res = await POST(req);
     expect(res.status).toBe(400);
@@ -186,19 +190,71 @@ describe("POST /api/hadiths/add (integration)", () => {
     });
   });
 
+  it("returns 400 if some transmitters not found", async () => {
+    (
+      auth as unknown as { mockResolvedValue: (v: unknown) => void }
+    ).mockResolvedValue({ user: { role: "ADMIN" } });
+    // Insert chapter and narrator with unique names
+    const chapter = await prisma.chapter.create({
+      data: {
+        name: "Chapter For Transmitter Test",
+        slug: "chapter-for-transmitter-test",
+        index: 1006,
+      },
+    });
+    const narrator = await prisma.narrator.create({
+      data: {
+        name: "Narrator For Transmitter Test",
+        slug: "narrator-for-transmitter-test",
+      },
+    });
+    // Insert one transmitter only
+    await prisma.transmitter.create({
+      data: { name: "Malik Test", slug: "malik-test" },
+    });
+    const req = createNextRequest({
+      numero: 123461,
+      matn_fr: "fr",
+      matn_ar: "ar",
+      chapterName: chapter.name,
+      narratorName: narrator.name,
+      mentionedSahabasNames: [],
+      isnadTransmittersNames: ["Malik Test", "Nafi Test"],
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json.success).toBe(false);
+    expect(json.message).toMatch(/Transmetteur/);
+    expect(json.message).toMatch(/Nafi Test/);
+    // Clean up
+    await prisma.chapter.delete({ where: { id: chapter.id } });
+    await prisma.narrator.delete({ where: { id: narrator.id } });
+    await prisma.transmitter.deleteMany({
+      where: { name: { in: ["Malik Test", "Nafi Test"] } },
+    });
+  });
+
   it("returns 200 and hadith data on success", async () => {
     (
       auth as unknown as { mockResolvedValue: (v: unknown) => void }
     ).mockResolvedValue({ user: { role: "ADMIN" } });
-    // Insert chapter, narrator, sahaba
+    // Insert chapter, narrator, sahaba, transmitter with unique names
     const chapter = await prisma.chapter.create({
-      data: { name: "Chapter Success", slug: "chapter-success", index: 1004 },
+      data: {
+        name: "Chapter Success Test",
+        slug: "chapter-success-test",
+        index: 1007,
+      },
     });
     const narrator = await prisma.narrator.create({
-      data: { name: "Narrator Success", slug: "narrator-success" },
+      data: { name: "Narrator Success Test", slug: "narrator-success-test" },
     });
     const sahaba = await prisma.sahaba.create({
-      data: { name: "Ali Success", slug: "ali-success" },
+      data: { name: "Ali Success Test", slug: "ali-success-test" },
+    });
+    const transmitter = await prisma.transmitter.create({
+      data: { name: "Malik Success Test", slug: "malik-success-test" },
     });
     const req = createNextRequest({
       numero: 123460,
@@ -206,7 +262,8 @@ describe("POST /api/hadiths/add (integration)", () => {
       matn_ar: "ar",
       chapterName: chapter.name,
       narratorName: narrator.name,
-      mentionedSahabasNames: ["Ali Success"],
+      mentionedSahabasNames: ["Ali Success Test"],
+      isnadTransmittersNames: ["Malik Success Test"],
     });
     const res = await POST(req);
     expect(res.status).toBe(200);
@@ -219,5 +276,6 @@ describe("POST /api/hadiths/add (integration)", () => {
     await prisma.chapter.delete({ where: { id: chapter.id } });
     await prisma.narrator.delete({ where: { id: narrator.id } });
     await prisma.sahaba.delete({ where: { id: sahaba.id } });
+    await prisma.transmitter.delete({ where: { id: transmitter.id } });
   });
 });

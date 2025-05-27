@@ -31,6 +31,7 @@ type Props = {
   chaptersData: ItemType[];
   narratorsData: ItemType[];
   sahabasData: ItemType[];
+  transmittersData: ItemType[];
 };
 
 export function AddHadithForm({
@@ -38,6 +39,7 @@ export function AddHadithForm({
   chaptersData,
   narratorsData,
   sahabasData,
+  transmittersData,
 }: Props) {
   const [existingNumeros, setExistingNumeros] =
     useState<number[]>(initialNumeros);
@@ -64,6 +66,7 @@ export function AddHadithForm({
       chapter: "La Foi",
       narrator: "Abou Huraira",
       mentionedSahabas: [],
+      isnadTransmitters: [],
       matn_fr: "",
       isnad: "",
       matn_ar: "",
@@ -75,6 +78,7 @@ export function AddHadithForm({
   const chapterOptions = chaptersData.map((chapter) => chapter.name);
   const narratorOptions = narratorsData.map((n) => n.name);
   const sahabaOptions = sahabasData.map((s) => s.name);
+  const transmitterOptions = transmittersData.map((t) => t.name);
 
   // Function to open the dialog with the correct variant
   const handleOpenDialog = (variant: VariantType) => {
@@ -101,6 +105,9 @@ export function AddHadithForm({
     const selectedSahabas = sahabasData.filter((s) =>
       data.mentionedSahabas.includes(s.name)
     );
+    const selectedTransmitters = transmittersData.filter((t) =>
+      data.isnadTransmitters.includes(t.name)
+    );
 
     if (!selectedChapter || !selectedNarrator) {
       toast.error("Chapitre ou narrateur sélectionné invalide.");
@@ -112,10 +119,10 @@ export function AddHadithForm({
       numero: data.numero,
       matn_fr: data.matn_fr,
       matn_ar: data.matn_ar,
-      isnad: data.isnad,
       chapterName: selectedChapter.name,
       narratorName: selectedNarrator.name,
-      mentionedSahabasNames: selectedSahabas.map((s) => s.name), // Send names to API
+      mentionedSahabasNames: selectedSahabas.map((s) => s.name),
+      isnadTransmittersNames: selectedTransmitters.map((t) => t.name),
     };
 
     try {
@@ -143,6 +150,7 @@ export function AddHadithForm({
           chapter: "La Foi",
           narrator: "Abou Huraira",
           mentionedSahabas: [],
+          isnadTransmitters: [],
           matn_fr: "",
           isnad: "",
           matn_ar: "",
@@ -162,6 +170,7 @@ export function AddHadithForm({
     chapters: chaptersData,
     narrators: narratorsData,
     sahabas: sahabasData,
+    transmitters: transmittersData,
   };
 
   // Construct preview object matching HadithType exactly
@@ -171,18 +180,25 @@ export function AddHadithForm({
     chapter: {
       id: "preview-chapter-id",
       name: formValues.chapter || "Sélectionnez un chapitre...",
-      slug: "preview-chapter-slug", // Add slug for preview
+      slug: "preview-chapter-slug",
     },
     narrator: {
       id: "preview-narrator-id",
       name: formValues.narrator || "Sélectionnez un narrateur...",
-      slug: "preview-narrator-slug", // Add slug for preview
+      slug: "preview-narrator-slug",
     },
     mentionedSahabas: (formValues.mentionedSahabas || []).map((name, i) => ({
       id: `preview-sahaba-id-${i}`,
       name: name,
       slug: `preview-sahaba-slug-${i}`,
     })),
+    isnadTransmitters: (formValues.isnadTransmitters || []).map(
+      (name: string, i: number) => ({
+        id: `preview-transmitter-id-${i}`,
+        name: name,
+        slug: `preview-transmitter-slug-${i}`,
+      })
+    ),
     matn_fr: formValues.matn_fr || "...",
     matn_ar: formValues.matn_ar || "...",
   };
@@ -267,6 +283,28 @@ export function AddHadithForm({
               )}
             />
             <BtnAddItem onOpen={() => handleOpenDialog("sahabas")} />
+          </div>
+
+          {/* IsnadTransmitters */}
+          <div className="flex justify-between items-end gap-1">
+            <Controller
+              name="isnadTransmitters"
+              control={control}
+              render={({ field }) => (
+                <MultiSelect
+                  id="isnadTransmitters"
+                  label="Transmetteurs de l'isnād"
+                  options={transmitterOptions}
+                  selected={field.value || []}
+                  onChange={field.onChange}
+                  placeholder="Rechercher des transmetteurs..."
+                  name={field.name}
+                  error={!!errors.isnadTransmitters}
+                  errorMessage={errors.isnadTransmitters?.message}
+                />
+              )}
+            />
+            <BtnAddItem onOpen={() => handleOpenDialog("transmitters")} />
           </div>
 
           {/* matn_fr FR */}

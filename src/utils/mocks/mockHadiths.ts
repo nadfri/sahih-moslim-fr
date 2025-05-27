@@ -6,7 +6,6 @@ export const mockHadiths: HadithType[] = [
     numero: 101,
     matn_fr: "Premier hadith",
     matn_ar: "أول حديث",
-    isnad: null,
     chapter: {
       id: "ch1",
       name: "Test Chapter",
@@ -29,13 +28,21 @@ export const mockHadiths: HadithType[] = [
         nameArabic: "أبو هريرة",
       },
     ],
+    isnadTransmitters: [
+      {
+        id: "t1",
+        name: "Transmetteur 1",
+        slug: "transmetteur-1",
+        hadithCount: 3,
+        nameArabic: null,
+      },
+    ],
   },
   {
     id: "2",
     numero: 102,
     matn_fr: "Deuxième hadith",
     matn_ar: "ثاني حديث",
-    isnad: null,
     chapter: {
       id: "ch1",
       name: "Test Chapter",
@@ -56,6 +63,15 @@ export const mockHadiths: HadithType[] = [
         slug: "ibn-abbas",
         hadithCount: 8,
         nameArabic: "ابن عباس",
+      },
+    ],
+    isnadTransmitters: [
+      {
+        id: "t2",
+        name: "Transmetteur 2",
+        slug: "transmetteur-2",
+        hadithCount: 2,
+        nameArabic: null,
       },
     ],
   },

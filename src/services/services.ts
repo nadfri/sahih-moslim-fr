@@ -19,6 +19,7 @@ export async function getAllHadiths(): Promise<HadithType[]> {
       chapter: true,
       narrator: true,
       mentionedSahabas: true,
+      isnadTransmitters: true,
     },
     orderBy: { numero: "asc" },
   });
@@ -36,6 +37,7 @@ export async function getHadithByNumero(
       chapter: true,
       narrator: true,
       mentionedSahabas: true,
+      isnadTransmitters: true,
     },
   });
 
@@ -103,6 +105,7 @@ export async function getChapterWithHadiths(slug: string): Promise<{
       chapter: true,
       narrator: true,
       mentionedSahabas: true,
+      isnadTransmitters: true,
     },
     orderBy: { numero: "asc" },
   });
@@ -172,6 +175,7 @@ export async function getNarratorWithHadiths(slug: string): Promise<{
       chapter: true,
       narrator: true,
       mentionedSahabas: true,
+      isnadTransmitters: true,
     },
     orderBy: { numero: "asc" },
   });
@@ -250,6 +254,7 @@ export async function getSahabaWithHadiths(slug: string): Promise<{
       chapter: true,
       narrator: true,
       mentionedSahabas: true,
+      isnadTransmitters: true,
     },
     orderBy: { numero: "asc" },
   });
@@ -266,4 +271,83 @@ export async function getSahabaNames(): Promise<string[]> {
   });
   // Map to array of names
   return sahabas.map((sahaba) => sahaba.name);
+}
+
+// Get all transmitters with hadith count
+export async function getAllTransmitters(): Promise<ItemType[]> {
+  const transmitters = await prisma.transmitter.findMany({
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      _count: { select: { narratedHadiths: true } },
+    },
+    orderBy: { name: "asc" },
+  });
+  // Map to ItemType with hadithCount
+  return transmitters.map((transmitter) => ({
+    id: transmitter.id,
+    name: transmitter.name,
+    slug: transmitter.slug,
+    hadithCount: transmitter._count.narratedHadiths,
+  }));
+}
+
+// Get a single transmitter by slug
+export async function getTransmitterBySlug(
+  slug: string
+): Promise<ItemType | null> {
+  const transmitter = await prisma.transmitter.findUnique({
+    where: { slug },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      _count: { select: { narratedHadiths: true } },
+    },
+  });
+  // Return mapped transmitter or null
+  return transmitter
+    ? {
+        id: transmitter.id,
+        name: transmitter.name,
+        slug: transmitter.slug,
+        hadithCount: transmitter._count.narratedHadiths,
+      }
+    : null;
+}
+
+// Get a transmitter and their hadiths
+export async function getTransmitterWithHadiths(slug: string): Promise<{
+  transmitter: ItemType | null;
+  hadiths: HadithType[];
+}> {
+  // Fetch transmitter
+  const transmitter = await getTransmitterBySlug(slug);
+
+  if (!transmitter) return { transmitter: null, hadiths: [] };
+
+  const hadiths = await prisma.hadith.findMany({
+    where: { isnadTransmitters: { some: { name: transmitter.name } } },
+    include: {
+      chapter: true,
+      narrator: true,
+      mentionedSahabas: true,
+      isnadTransmitters: true,
+    },
+    orderBy: { numero: "asc" },
+  });
+  // Parse hadiths
+  const hadithsParsed = z.array(HadithSchema).parse(hadiths);
+  return { transmitter, hadiths: hadithsParsed };
+}
+
+// Get all transmitter names
+export async function getTransmitterNames(): Promise<string[]> {
+  const transmitters = await prisma.transmitter.findMany({
+    select: { name: true },
+    orderBy: { name: "asc" },
+  });
+  // Map to array of names
+  return transmitters.map((transmitter) => transmitter.name);
 }

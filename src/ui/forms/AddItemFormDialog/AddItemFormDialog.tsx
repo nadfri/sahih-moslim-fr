@@ -24,12 +24,14 @@ const placeholderText = {
     chapters: "Ajouter un chapitre",
     narrators: "Ajouter un narrateur",
     sahabas: "Ajouter un compagnon",
+    transmitters: "Ajouter un transmetteur",
   },
 
   name: {
     chapters: "Nom du chapitre",
     narrators: "Nom du narrateur",
     sahabas: "Nom du compagnon",
+    transmitters: "Nom du transmetteur",
   },
 };
 

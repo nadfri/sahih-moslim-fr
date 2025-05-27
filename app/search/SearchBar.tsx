@@ -18,30 +18,33 @@ function extractInitials(sp: URLSearchParams) {
   let query = "";
   let narrator = "";
   let sahabas: string[] = [];
+  let transmitters: string[] = [];
 
   switch (filterMode) {
     case "word":
       query = queryParam?.trim() || "";
       break;
     case "narrator":
-      // Primarily read from 'query'
       narrator = queryParam || "";
-      // Backward compatibility: if 'query' is empty but 'narrator' exists
       if (!narrator && sp.has("narrator")) {
         narrator = sp.get("narrator") || "";
       }
       break;
     case "sahaba":
-      // Primarily read from 'query' (potentially multiple values)
       sahabas = queryParams.filter(Boolean);
-      // Backward compatibility: if 'query' is empty but 'sahaba' exists
       if (sahabas.length === 0 && sp.has("sahaba")) {
         sahabas = sp.getAll("sahaba");
       }
       break;
+    case "transmitter":
+      transmitters = queryParams.filter(Boolean);
+      if (transmitters.length === 0 && sp.has("transmitter")) {
+        transmitters = sp.getAll("transmitter");
+      }
+      break;
   }
 
-  return { filterMode, query, narrator, sahabas };
+  return { filterMode, query, narrator, sahabas, transmitters };
 }
 
 // Filter hadiths based on filter mode and values
@@ -52,11 +55,13 @@ function filterHadiths(
     query,
     narrator,
     sahabas,
+    transmitters,
   }: {
     filterMode: FilterType;
     query: string;
     narrator: string;
     sahabas: string[];
+    transmitters: string[];
   }
 ) {
   switch (filterMode) {
@@ -69,12 +74,21 @@ function filterHadiths(
       if (sahabas.length > 0) {
         return hadiths.filter((h) => {
           if (!Array.isArray(h.mentionedSahabas)) return false;
-
-          // Check if hadith contains all selected sahabas
           const hadithSahabaNames = h.mentionedSahabas.map((s) => s.name);
-
-          // All selected sahabas must be present in the hadith
           return sahabas.every((sahaba) => hadithSahabaNames.includes(sahaba));
+        });
+      }
+      break;
+    case "transmitter":
+      if (transmitters.length > 0) {
+        return hadiths.filter((h) => {
+          if (!Array.isArray(h.isnadTransmitters)) return false;
+          const hadithTransmitterNames = h.isnadTransmitters.map(
+            (t: { name: string }) => t.name
+          );
+          return transmitters.every((transmitter) =>
+            hadithTransmitterNames.includes(transmitter)
+          );
         });
       }
       break;
@@ -88,8 +102,13 @@ function filterHadiths(
           const inSahabas = h.mentionedSahabas.some((s) =>
             s.name.toLowerCase().includes(q)
           );
+          const inTransmitters = h.isnadTransmitters?.some(
+            (t: { name: string }) => t.name.toLowerCase().includes(q)
+          );
 
-          return inMatnFr || inMatnAr || inNarrator || inSahabas;
+          return (
+            inMatnFr || inMatnAr || inNarrator || inSahabas || inTransmitters
+          );
         });
       }
       break;
@@ -103,10 +122,12 @@ export function SearchBar({
   hadiths,
   narrators,
   sahabas,
+  transmitters,
 }: {
   hadiths: HadithType[];
   narrators: string[];
   sahabas: string[];
+  transmitters: string[];
 }) {
   // Safely handle useSearchParams (can be null in test environments)
   const rawSearchParams = useSearchParams();
@@ -122,6 +143,9 @@ export function SearchBar({
   const [selectedSahabas, setSelectedSahabas] = useState<string[]>(
     initialValues.sahabas
   );
+  const [selectedTransmitters, setSelectedTransmitters] = useState<string[]>(
+    initialValues.transmitters
+  );
 
   const [results, setResults] = useState<HadithType[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
@@ -136,12 +160,15 @@ export function SearchBar({
     searchFilterMode: FilterType,
     searchQuery: string,
     searchNarrator: string,
-    searchSelectedSahabas: string[]
+    searchSelectedSahabas: string[],
+    searchSelectedTransmitters: string[]
   ) => {
     const hasCriteria =
       (searchFilterMode === "word" && searchQuery.length >= 3) ||
       (searchFilterMode === "narrator" && searchNarrator) ||
-      (searchFilterMode === "sahaba" && searchSelectedSahabas.length > 0);
+      (searchFilterMode === "sahaba" && searchSelectedSahabas.length > 0) ||
+      (searchFilterMode === "transmitter" &&
+        searchSelectedTransmitters.length > 0);
 
     if (hasCriteria) {
       const filteredResults = filterHadiths(hadiths, {
@@ -149,6 +176,7 @@ export function SearchBar({
         query: searchQuery,
         narrator: searchNarrator,
         sahabas: searchSelectedSahabas,
+        transmitters: searchSelectedTransmitters,
       });
       setResults(filteredResults);
       setHasSearched(true);
@@ -165,7 +193,8 @@ export function SearchBar({
     urlFilterMode: FilterType,
     urlQuery: string,
     urlNarrator: string,
-    urlSelectedSahabas: string[]
+    urlSelectedSahabas: string[],
+    urlSelectedTransmitters: string[]
   ) => {
     const params = new URLSearchParams();
     params.set("filterMode", urlFilterMode);
@@ -176,6 +205,13 @@ export function SearchBar({
       params.set("query", urlNarrator);
     } else if (urlFilterMode === "sahaba" && urlSelectedSahabas.length > 0) {
       urlSelectedSahabas.forEach((sahaba) => params.append("query", sahaba));
+    } else if (
+      urlFilterMode === "transmitter" &&
+      urlSelectedTransmitters.length > 0
+    ) {
+      urlSelectedTransmitters.forEach((transmitter) =>
+        params.append("query", transmitter)
+      );
     }
 
     const newUrl = `/search?${params.toString()}`;
@@ -184,8 +220,14 @@ export function SearchBar({
 
   // Effect for immediate search
   useEffect(() => {
-    performSearch(filterMode, query, narrator, selectedSahabas);
-  }, [filterMode, query, narrator, selectedSahabas]);
+    performSearch(
+      filterMode,
+      query,
+      narrator,
+      selectedSahabas,
+      selectedTransmitters
+    );
+  }, [filterMode, query, narrator, selectedSahabas, selectedTransmitters]);
 
   // Effect for debounced URL update
   useEffect(() => {
@@ -194,7 +236,13 @@ export function SearchBar({
     }
 
     const timer = setTimeout(() => {
-      updateUrl(filterMode, query, narrator, selectedSahabas);
+      updateUrl(
+        filterMode,
+        query,
+        narrator,
+        selectedSahabas,
+        selectedTransmitters
+      );
     }, 300);
 
     setUrlUpdateTimer(timer);
@@ -204,7 +252,7 @@ export function SearchBar({
         clearTimeout(timer);
       }
     };
-  }, [filterMode, query, narrator, selectedSahabas]);
+  }, [filterMode, query, narrator, selectedSahabas, selectedTransmitters]);
 
   // Function to handle filter mode change and reset fields
   const handleFilterModeChange = (newMode: FilterType) => {
@@ -212,15 +260,15 @@ export function SearchBar({
     setQuery("");
     setNarrator("");
     setSelectedSahabas([]);
+    setSelectedTransmitters([]);
 
     setResults([]);
     setHasSearched(false);
 
-    // Clear timer and update URL immediately
     if (urlUpdateTimer) {
       clearTimeout(urlUpdateTimer);
     }
-    updateUrl(newMode, "", "", []);
+    updateUrl(newMode, "", "", [], []);
   };
 
   // Automatically search if there are criteria in the URL (for URL sharing)
@@ -228,7 +276,8 @@ export function SearchBar({
     const hasCriteria =
       (filterMode === "word" && query) ||
       (filterMode === "narrator" && narrator) ||
-      (filterMode === "sahaba" && selectedSahabas.length > 0);
+      (filterMode === "sahaba" && selectedSahabas.length > 0) ||
+      (filterMode === "transmitter" && selectedTransmitters.length > 0);
 
     if (hasCriteria) {
       setResults(
@@ -237,6 +286,7 @@ export function SearchBar({
           query,
           narrator,
           sahabas: selectedSahabas,
+          transmitters: selectedTransmitters,
         })
       );
       setHasSearched(true);
@@ -252,11 +302,17 @@ export function SearchBar({
           if (urlUpdateTimer) {
             clearTimeout(urlUpdateTimer);
           }
-          updateUrl(filterMode, query, narrator, selectedSahabas);
+          updateUrl(
+            filterMode,
+            query,
+            narrator,
+            selectedSahabas,
+            selectedTransmitters
+          );
         }}
         autoComplete="off"
       >
-        <div className="grid grid-cols-3 gap-2 mb-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
           <label
             className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
               filterMode === "word"
@@ -308,6 +364,23 @@ export function SearchBar({
             />
             <span>Par Compagnons</span>
           </label>
+          <label
+            className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
+              filterMode === "transmitter"
+                ? "bg-emerald-100 dark:bg-emerald-900/50 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 font-medium"
+                : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+            }`}
+          >
+            <input
+              type="radio"
+              name="filterMode"
+              value="transmitter"
+              checked={filterMode === "transmitter"}
+              onChange={() => handleFilterModeChange("transmitter")}
+              className="sr-only"
+            />
+            <span>Par Transmetteurs</span>
+          </label>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:space-x-2 sm:items-start gap-2 sm:gap-0">
@@ -345,6 +418,17 @@ export function SearchBar({
                 name="sahabaInput"
               />
             )}
+            {filterMode === "transmitter" && (
+              <MultiSelect
+                id="transmitter-multiselect"
+                label=""
+                options={transmitters}
+                selected={selectedTransmitters}
+                onChange={setSelectedTransmitters}
+                placeholder="Choisir un ou plusieurs transmetteurs"
+                name="transmitterInput"
+              />
+            )}
           </div>
 
           <button
@@ -376,7 +460,10 @@ export function SearchBar({
               />
             ))}
             {results.length === 0 &&
-              (query || narrator || selectedSahabas.length > 0) &&
+              (query ||
+                narrator ||
+                selectedSahabas.length > 0 ||
+                selectedTransmitters.length > 0) &&
               !(filterMode === "word" && query && query.length < 3) && (
                 <p className="text-gray-500 italic">
                   Aucun hadith ne correspond à votre recherche.

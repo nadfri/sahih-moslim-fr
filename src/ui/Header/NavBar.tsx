@@ -7,6 +7,8 @@ export const navLinks = [
   { href: "/chapters", label: "Chapitres" },
   { href: "/narrators", label: "Narrateurs" },
   { href: "/sahabas", label: "Compagnons" },
+  { href: "/transmitters", label: "Transmetteurs" },
+  { href: "/about", label: "À propos" },
   { href: "/search", label: "Recherche" },
 ];
 
