@@ -1,6 +1,5 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 
-import { Suspense } from "react";
 import { Metadata } from "next";
 
 import { SearchBar } from "@/app/search/SearchBar";
@@ -36,14 +35,12 @@ export default async function SearchPage() {
     <div className="container mx-auto max-w-5xl">
       <h1 className="title">Rechercher un Hadith</h1>
 
-      <Suspense fallback={<p>Chargement...</p>}>
-        <SearchBar
-          hadiths={hadiths}
-          narrators={narratorNames}
-          sahabas={sahabaNames}
-          transmitters={transmitterNames}
-        />
-      </Suspense>
+      <SearchBar
+        hadiths={hadiths}
+        narrators={narratorNames}
+        sahabas={sahabaNames}
+        transmitters={transmitterNames}
+      />
     </div>
   );
 }

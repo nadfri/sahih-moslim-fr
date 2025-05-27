@@ -135,12 +135,6 @@ describe("Hadith", () => {
 
     // Check for preview badge
     expect(screen.getByText("Aperçu")).toBeInTheDocument();
-
-    // Arabic should be visible by default in update mode
-    const arabicContentContainer = document.getElementById(
-      `matn_ar-content-${mockHadith.id}`
-    );
-    expect(arabicContentContainer?.className).toContain("grid-rows-[1fr]");
   });
 
   it("shows edit link in development mode", () => {

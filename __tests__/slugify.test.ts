@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { slugify } from "./slugify";
+import { slugify } from "@/src/utils/slugify";
 
 describe("slugify", () => {
   it("converts string to slug", () => {

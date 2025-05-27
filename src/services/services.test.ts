@@ -6,6 +6,7 @@ import {
   getAllHadiths,
   getAllNarrators,
   getAllSahabas,
+  getAllTransmitters,
   getChapterBySlug,
   getChapterWithHadiths,
   getHadithByNumero,
@@ -16,6 +17,9 @@ import {
   getSahabaBySlug,
   getSahabaNames,
   getSahabaWithHadiths,
+  getTransmitterBySlug,
+  getTransmitterNames,
+  getTransmitterWithHadiths,
 } from "./services";
 
 describe("Service functions integration", () => {
@@ -156,6 +160,48 @@ describe("Service functions integration", () => {
 
   it("getSahabaNames returns all sahaba names", async () => {
     const names = await getSahabaNames();
+    expect(Array.isArray(names)).toBe(true);
+    if (names.length > 0) {
+      expect(typeof names[0]).toBe("string");
+    }
+  });
+
+  it("getAllTransmitters returns all transmitters", async () => {
+    const transmitters = await getAllTransmitters();
+    expect(Array.isArray(transmitters)).toBe(true);
+    if (transmitters.length > 0) {
+      expect(typeof transmitters[0].name).toBe("string");
+    }
+  });
+
+  it("getTransmitterBySlug returns a transmitter or null", async () => {
+    const transmitters = await getAllTransmitters();
+    if (transmitters.length > 0) {
+      const slug = transmitters[0].slug;
+      const transmitter = await getTransmitterBySlug(slug);
+      expect(transmitter).not.toBeNull();
+      if (transmitter) {
+        expect(transmitter.slug).toBe(slug);
+      }
+    }
+  });
+
+  it("getTransmitterWithHadiths returns transmitter and hadiths", async () => {
+    const transmitters = await getAllTransmitters();
+    if (transmitters.length > 0) {
+      const slug = transmitters[0].slug;
+      const { transmitter, hadiths } = await getTransmitterWithHadiths(slug);
+      if (transmitter) {
+        expect(transmitter.slug).toBe(slug);
+        expect(Array.isArray(hadiths)).toBe(true);
+      } else {
+        expect(hadiths).toEqual([]);
+      }
+    }
+  });
+
+  it("getTransmitterNames returns all transmitter names", async () => {
+    const names = await getTransmitterNames();
     expect(Array.isArray(names)).toBe(true);
     if (names.length > 0) {
       expect(typeof names[0]).toBe("string");

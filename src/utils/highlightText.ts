@@ -1,16 +1,40 @@
-export function highlightText(text: string, highlight?: string): string {
-  if (!highlight || highlight.trim() === "") {
-    return text;
-  }
+import React from "react";
 
-  // Escape special regex characters in the highlight string
-  const escapedHighlight = highlight.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+import { escapeRegExp } from "./escapeRegExp";
 
-  // Create a case-insensitive regex with global flag
-  const regex = new RegExp(escapedHighlight, "gi");
+// Process text to wrap highlight matches in <mark> elements for React rendering
+export function highlightText(
+  text: string,
+  highlight?: string
+): React.ReactNode {
+  if (!highlight) return text;
 
-  // Replace matches with highlighted version
-  return text.replace(regex, (match) => {
-    return `<mark className="bg-yellow-200">${match}</mark>`;
-  });
+  const regex = new RegExp(`(${escapeRegExp(highlight)})`, "gi");
+  const parts = text.split(regex);
+
+  return parts
+    .filter((part) => part !== "")
+    .map((part, index) => {
+      if (part.toLowerCase() === highlight.toLowerCase()) {
+        return React.createElement(
+          "mark",
+          {
+            key: index,
+            className: "bg-yellow-200",
+          },
+          part
+        );
+      }
+      return part;
+    });
+}
+
+// Keep the old function for backward compatibility where HTML string is needed
+export function highlightTextAsHTML(text: string, highlight?: string): string {
+  return highlight
+    ? text.replace(
+        new RegExp(`(${escapeRegExp(highlight)})`, "gi"),
+        '<mark class="bg-yellow-200">$1</mark>'
+      )
+    : text;
 }

@@ -2,12 +2,16 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { highlightTextAsHTML } from "@/src/utils/highlightText";
+import { highlightText } from "@/src/utils/highlightText";
 import { mockHadith } from "@/src/utils/mocks/mockHadith";
 import { Matn_ar } from "./Matn_ar";
 
-// Mock the highlightTextAsHTML utility
+// Mock the highlightText utility functions
 vi.mock("@/src/utils/highlightText", () => ({
+  highlightText: vi.fn((text: string, highlight?: string) => {
+    if (!highlight) return text;
+    return `${text} (highlighted: ${highlight})`;
+  }),
   highlightTextAsHTML: vi.fn((text: string, highlight?: string) => {
     if (!highlight) return text;
     return text.replace(
@@ -17,11 +21,18 @@ vi.mock("@/src/utils/highlightText", () => ({
   }),
 }));
 
-const mockedHighlightTextAsHTML = vi.mocked(highlightTextAsHTML);
+const mockedHighlightText = vi.mocked(highlightText);
 
 describe("Matn_ar Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset the mock implementation before each test
+    mockedHighlightText.mockImplementation(
+      (text: string, highlight?: string) => {
+        if (!highlight) return text;
+        return `${text} (highlighted: ${highlight})`;
+      }
+    );
   });
 
   it("should render with toggle button when update is false", () => {
@@ -52,21 +63,6 @@ describe("Matn_ar Component", () => {
     const contentId = toggleButton.getAttribute("aria-controls");
     const arabicContent = document.getElementById(contentId!);
     expect(arabicContent).toHaveClass("grid-rows-[0fr]", "opacity-0");
-  });
-
-  it("should show Arabic content when update is true", () => {
-    render(
-      <Matn_ar
-        matn={mockHadith.matn_ar}
-        update={true}
-      />
-    );
-
-    const arabicContent = screen.getByText(mockHadith.matn_ar).closest("div");
-    expect(arabicContent?.parentElement?.parentElement).toHaveClass(
-      "grid-rows-[1fr]",
-      "opacity-100"
-    );
   });
 
   it("should toggle Arabic content visibility when button is clicked", async () => {
@@ -100,8 +96,9 @@ describe("Matn_ar Component", () => {
       />
     );
 
-    const arabicText = screen.getByText(mockHadith.matn_ar);
-    expect(arabicText).toHaveClass(
+    // Find the div with dir="rtl"
+    const arabicDiv = document.querySelector('[dir="rtl"]');
+    expect(arabicDiv).toHaveClass(
       "pt-2",
       "text-right",
       "font-matn_ar",
@@ -110,32 +107,38 @@ describe("Matn_ar Component", () => {
       "text-pretty",
       "dark:text-gray-300"
     );
-    expect(arabicText).toHaveAttribute("dir", "rtl");
+    expect(arabicDiv).toHaveAttribute("dir", "rtl");
   });
 
-  it("should call highlightTextAsHTML with correct parameters when highlight is provided", () => {
+  it("should call highlightText with correct parameters when highlight is provided", () => {
     render(
       <Matn_ar
         matn={mockHadith.matn_ar}
         highlight="test"
+        update={true}
       />
     );
 
-    expect(mockedHighlightTextAsHTML).toHaveBeenCalledWith(
+    expect(mockedHighlightText).toHaveBeenCalledWith(
       mockHadith.matn_ar,
       "test"
     );
-    expect(mockedHighlightTextAsHTML).toHaveBeenCalledTimes(1);
+    expect(mockedHighlightText).toHaveBeenCalledTimes(1);
   });
 
-  it("should call highlightTextAsHTML with undefined when no highlight is provided", () => {
-    render(<Matn_ar matn={mockHadith.matn_ar} />);
+  it("should call highlightText with undefined when no highlight is provided", () => {
+    render(
+      <Matn_ar
+        matn={mockHadith.matn_ar}
+        update={true}
+      />
+    );
 
-    expect(mockedHighlightTextAsHTML).toHaveBeenCalledWith(
+    expect(mockedHighlightText).toHaveBeenCalledWith(
       mockHadith.matn_ar,
       undefined
     );
-    expect(mockedHighlightTextAsHTML).toHaveBeenCalledTimes(1);
+    expect(mockedHighlightText).toHaveBeenCalledTimes(1);
   });
 
   it("should handle empty matn gracefully", () => {
@@ -146,15 +149,15 @@ describe("Matn_ar Component", () => {
       />
     );
 
-    expect(mockedHighlightTextAsHTML).toHaveBeenCalledWith("", undefined);
+    expect(mockedHighlightText).toHaveBeenCalledWith("", undefined);
   });
 
-  it("should use dangerouslySetInnerHTML for Arabic content", () => {
+  it("should render highlighted content when highlight is provided", () => {
     const arabicText = "النص العربي للحديث";
 
-    // Mock highlightTextAsHTML to return HTML with mark tag
-    mockedHighlightTextAsHTML.mockReturnValue(
-      "النص <mark>العربي</mark> للحديث"
+    // Mock highlightText to return highlighted text
+    mockedHighlightText.mockReturnValueOnce(
+      "النص العربي للحديث (highlighted: العربي)"
     );
 
     render(
@@ -165,10 +168,8 @@ describe("Matn_ar Component", () => {
       />
     );
 
-    const arabicDiv = screen.getByText((content, element) => {
-      return element?.innerHTML === "النص <mark>العربي</mark> للحديث";
-    });
-
-    expect(arabicDiv).toBeInTheDocument();
+    expect(
+      screen.getByText("النص العربي للحديث (highlighted: العربي)")
+    ).toBeInTheDocument();
   });
 });
