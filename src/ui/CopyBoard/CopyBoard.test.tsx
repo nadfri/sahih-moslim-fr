@@ -82,7 +82,6 @@ describe("CopyBoard", () => {
     expect(screen.getByText("Les deux")).toBeInTheDocument();
     expect(screen.getByText("Le lien")).toBeInTheDocument(); // New option
   });
-
   it('copies French text when "Français" option is selected', async () => {
     const user = userEvent.setup();
     render(<CopyBoard hadith={mockHadith} />);
@@ -93,11 +92,10 @@ describe("CopyBoard", () => {
     const frenchOption = screen.getByText("Français");
     await user.click(frenchOption);
     await waitFor(() => {
-      const expectedText = `Sahih Moslim - Hadith n°123\nChapitre: La Foi\nRapporté par: Abu Hurayra\n\nTexte en français`;
+      const expectedText = `Sahih Moslim - Hadith n°123\nChapitre: Test Chapter\nRapporté par: Abu Test\n\nCeci est un **test** de hadith en français.`;
       expect(mockWriteText).toHaveBeenCalledWith(expectedText);
     });
   });
-
   it('copies Arabic text when "Arabe" option is selected', async () => {
     const user = userEvent.setup();
     render(<CopyBoard hadith={mockHadith} />);
@@ -108,11 +106,10 @@ describe("CopyBoard", () => {
     const arabicOption = screen.getByText("Arabe");
     await user.click(arabicOption);
     await waitFor(() => {
-      const expectedText = `Sahih Moslim - Hadith n°123\nChapitre: La Foi\nRapporté par: Abu Hurayra\n\nنص عربي`;
+      const expectedText = `Sahih Moslim - Hadith n°123\nChapitre: Test Chapter\nRapporté par: Abu Test\n\nهذا اختبار للحديث باللغة العربية`;
       expect(mockWriteText).toHaveBeenCalledWith(expectedText);
     });
   });
-
   it('copies both texts when "Les deux" option is selected', async () => {
     const user = userEvent.setup();
     render(<CopyBoard hadith={mockHadith} />);
@@ -123,7 +120,7 @@ describe("CopyBoard", () => {
     const bothOption = screen.getByText("Les deux");
     await user.click(bothOption);
     await waitFor(() => {
-      const expectedText = `Sahih Moslim - Hadith n°123\nChapitre: La Foi\nRapporté par: Abu Hurayra\n\nTexte en français\n\nنص عربي`;
+      const expectedText = `Sahih Moslim - Hadith n°123\nChapitre: Test Chapter\nRapporté par: Abu Test\n\nCeci est un **test** de hadith en français.\n\nهذا اختبار للحديث باللغة العربية`;
       expect(mockWriteText).toHaveBeenCalledWith(expectedText);
     });
   });

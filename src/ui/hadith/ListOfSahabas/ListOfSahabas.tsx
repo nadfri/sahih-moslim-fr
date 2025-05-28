@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { SquareArrowOutUpRight } from "lucide-react";
 
-import { Item } from "@/src/types/types";
+import { ItemType } from "@/src/types/types";
 import { highlightText } from "@/src/utils/highlightText";
 
 export function ListOfSahabas({
   sahabas,
   highlight,
 }: {
-  sahabas: Item[];
+  sahabas: ItemType[];
   highlight?: string;
 }) {
   if (sahabas.length === 0) return null;
