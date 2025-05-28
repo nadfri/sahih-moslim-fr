@@ -7,6 +7,7 @@ import { HadithSchema, HadithType, ItemType } from "../types/types";
 export async function getHadithNumeros(): Promise<number[]> {
   const hadiths = await prisma.hadith.findMany({
     select: { numero: true },
+    orderBy: { numero: "asc" },
   });
 
   return hadiths.map((hadith) => hadith.numero);
@@ -348,6 +349,7 @@ export async function getAllTransmitters(): Promise<ItemType[]> {
       slug: true,
       _count: { select: { hadithTransmitters: true } },
     },
+    orderBy: { name: "asc" },
   });
   // Map to ItemType with hadithCount
   return transmitters.map((transmitter) => ({
