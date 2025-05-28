@@ -13,13 +13,14 @@ import { HadithType, ItemType, VariantType } from "@/src/types/types";
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { Input } from "@/src/ui/inputs/Input/Input";
 import { MdTextArea } from "@/src/ui/inputs/MdTextArea/MdTextArea";
-import { MultiSelect } from "@/src/ui/inputs/MultiSelect/MultiSelect";
 import { SearchSelect } from "@/src/ui/inputs/SearchSelect/SearchSelect";
 import { Select } from "@/src/ui/inputs/Select/Select";
 /*Utils*/
 import { cleanArabicText } from "@/src/utils/cleanArabicText";
 import { wrapProphetNames } from "@/src/utils/wrapProphetNames";
 import { BtnAddItem } from "../hadith/BtnAddItem/BtnAddItem";
+import { MultiSelect } from "../inputs/MultiSelect/MultiSelect";
+import { MultiSelectDragNDrop } from "../inputs/MultiSelectDragNDrop/MultiSelectDragNDrop";
 import { AddItemFormDialog } from "./AddItemFormDialog/AddItemFormDialog";
 import {
   createHadithSchema,
@@ -91,7 +92,6 @@ export function AddHadithForm({
     setIsOpenDialog(false);
     setVariant(null);
   };
-
   const onSubmit = async (data: HadithFormValues) => {
     setIsSubmitting(true);
 
@@ -100,14 +100,16 @@ export function AddHadithForm({
       (chapter) => chapter.name === data.chapter
     );
     const selectedNarrator = narratorsData.find(
-      (n) => n.name === data.narrator
+      (narrator) => narrator.name === data.narrator
+    ); // Keep alphabetical order for sahabas (filter from original data)
+    const selectedSahabas = sahabasData.filter((sahaba) =>
+      data.mentionedSahabas.includes(sahaba.name)
     );
-    const selectedSahabas = sahabasData.filter((s) =>
-      data.mentionedSahabas.includes(s.name)
-    );
-    const selectedTransmitters = transmittersData.filter((t) =>
-      data.isnadTransmitters.includes(t.name)
-    );
+
+    // Preserve order from form for transmitters (map to maintain form order)
+    const selectedTransmitters = data.isnadTransmitters
+      .map((name) => transmittersData.find((t) => t.name === name))
+      .filter((t): t is NonNullable<typeof t> => t !== undefined);
 
     if (!selectedChapter || !selectedNarrator) {
       toast.error("Chapitre ou narrateur sélectionné invalide.");
@@ -221,7 +223,6 @@ export function AddHadithForm({
             errorMessage={errors.numero?.message}
             register={register("numero")}
           />
-
           {/* Chapter */}
           <div className="flex justify-between items-end gap-1">
             <Controller
@@ -240,7 +241,6 @@ export function AddHadithForm({
             />
             <BtnAddItem onOpen={() => handleOpenDialog("chapters")} />
           </div>
-
           {/* Narrator */}
           <div className="flex justify-between items-end gap-1">
             <Controller
@@ -262,7 +262,6 @@ export function AddHadithForm({
             />
             <BtnAddItem onOpen={() => handleOpenDialog("narrators")} />
           </div>
-
           {/* MentionedSahabas */}
           <div className="flex justify-between items-end gap-1">
             <Controller
@@ -284,14 +283,13 @@ export function AddHadithForm({
             />
             <BtnAddItem onOpen={() => handleOpenDialog("sahabas")} />
           </div>
-
           {/* IsnadTransmitters */}
           <div className="flex justify-between items-end gap-1">
             <Controller
               name="isnadTransmitters"
               control={control}
               render={({ field }) => (
-                <MultiSelect
+                <MultiSelectDragNDrop
                   id="isnadTransmitters"
                   label="Transmetteurs de l'isnad"
                   options={transmitterOptions}
@@ -306,7 +304,6 @@ export function AddHadithForm({
             />
             <BtnAddItem onOpen={() => handleOpenDialog("transmitters")} />
           </div>
-
           {/* matn_fr FR */}
           <MdTextArea
             id="matn_fr"
@@ -324,7 +321,6 @@ export function AddHadithForm({
             placeholder="Saisir le texte du hadith..."
             height={200}
           />
-
           {/* matn_fr AR */}
           <Input
             id="matn_ar"
@@ -342,7 +338,6 @@ export function AddHadithForm({
             }}
             helperText="Le texte sera automatiquement nettoyé"
           />
-
           {/* Submit Button */}
           <button
             type="submit"

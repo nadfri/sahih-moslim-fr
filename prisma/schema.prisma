@@ -90,25 +90,19 @@ model Authenticator {
  * Hadith models
  */
 model Hadith {
-  id      String @id @default(cuid())
-  numero  Int    @unique
-  matn_fr String
-  matn_ar String
+  id                 String              @id @default(cuid())
+  numero             Int                 @unique
+  matn_fr            String
+  matn_ar            String
+  chapterId          String
+  narratorId         String
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  narrator           Narrator            @relation(fields: [narratorId], references: [id])
+  chapter            Chapter             @relation(fields: [chapterId], references: [id])
+  hadithTransmitters HadithTransmitter[]
+  mentionedSahabas   Sahaba[]            @relation("HadithToSahaba")
 
-  // Relations
-  chapterId String
-  chapter   Chapter @relation(fields: [chapterId], references: [id])
-
-  narratorId String
-  narrator   Narrator @relation(fields: [narratorId], references: [id])
-
-  mentionedSahabas  Sahaba[]
-  isnadTransmitters Transmitter[] // New relation
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Index
   @@index([chapterId])
   @@index([narratorId])
   @@index([numero])
@@ -120,10 +114,9 @@ model Chapter {
   name       String   @unique
   slug       String   @unique
   nameArabic String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
   hadiths    Hadith[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model Narrator {
@@ -131,10 +124,9 @@ model Narrator {
   name            String   @unique
   slug            String   @unique
   nameArabic      String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
   narratedHadiths Hadith[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model Sahaba {
@@ -142,19 +134,31 @@ model Sahaba {
   name               String   @unique
   slug               String   @unique
   nameArabic         String?
-  mentionedInHadiths Hadith[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  mentionedInHadiths Hadith[] @relation("HadithToSahaba")
 }
 
 model Transmitter {
-  id              String   @id @default(cuid())
-  name            String   @unique
-  slug            String   @unique
-  nameArabic      String?
-  narratedHadiths Hadith[]
+  id                 String              @id @default(cuid())
+  name               String              @unique
+  slug               String              @unique
+  nameArabic         String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  hadithTransmitters HadithTransmitter[]
+}
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model HadithTransmitter {
+  id            String      @id @default(cuid())
+  hadithId      String
+  transmitterId String
+  order         Int
+  transmitter   Transmitter @relation(fields: [transmitterId], references: [id], onDelete: Cascade)
+  hadith        Hadith      @relation(fields: [hadithId], references: [id], onDelete: Cascade)
+
+  @@unique([hadithId, transmitterId])
+  @@unique([hadithId, order])
+  @@index([hadithId])
+  @@index([transmitterId])
 }

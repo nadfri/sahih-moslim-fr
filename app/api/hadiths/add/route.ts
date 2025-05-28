@@ -160,21 +160,40 @@ export async function POST(request: NextRequest) {
         mentionedSahabas: {
           connect: mentionedSahabas.map((sahaba) => ({ id: sahaba.id })),
         },
-        isnadTransmitters: {
-          connect: isnadTransmitters.map((transmitter) => ({
-            id: transmitter.id,
-          })),
-        },
       },
       include: {
         chapter: true,
         narrator: true,
         mentionedSahabas: true,
-        isnadTransmitters: true,
+        hadithTransmitters: {
+          include: {
+            transmitter: true,
+          },
+          orderBy: {
+            order: "asc",
+          },
+        },
       },
     });
 
-    // 5. Return success response
+    // 5. Create ordered transmitter relations
+    if (isnadTransmittersNames.length > 0) {
+      // Create transmitter relations with order based on the array position
+      const transmitterOrder = isnadTransmittersNames.map((name, index) => {
+        const transmitter = isnadTransmitters.find((t) => t.name === name);
+        return {
+          hadithId: newHadith.id,
+          transmitterId: transmitter!.id,
+          order: index + 1, // Start order from 1
+        };
+      });
+
+      await prisma.hadithTransmitter.createMany({
+        data: transmitterOrder,
+      });
+    }
+
+    // 6. Return success response
     return Response.json({
       success: true,
       message: `Hadith #${newHadith.numero} ajouté avec succès`,

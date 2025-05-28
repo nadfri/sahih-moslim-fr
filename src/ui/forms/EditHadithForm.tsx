@@ -11,12 +11,13 @@ import { HadithType, ItemType } from "@/src/types/types";
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { Input } from "@/src/ui/inputs/Input/Input";
 import { MdTextArea } from "@/src/ui/inputs/MdTextArea/MdTextArea";
-import { MultiSelect } from "@/src/ui/inputs/MultiSelect/MultiSelect";
+import { MultiSelectDragNDrop } from "@/src/ui/inputs/MultiSelectDragNDrop/MultiSelectDragNDrop";
 import { SearchSelect } from "@/src/ui/inputs/SearchSelect/SearchSelect";
 import { Select } from "@/src/ui/inputs/Select/Select";
 import { cleanArabicText } from "@/src/utils/cleanArabicText";
 import { wrapProphetNames } from "@/src/utils/wrapProphetNames";
 import { ConfirmDeleteModal } from "../ConfirmDeleteModal/ConfirmDeleteModal";
+import { MultiSelect } from "../inputs/MultiSelect/MultiSelect";
 
 const createEditHadithSchema = (
   existingNumeros: number[],
@@ -114,9 +115,16 @@ export function EditHadithForm({
     const selectedSahabas = sahabasData.filter((s) =>
       data.mentionedSahabas.includes(s.name)
     );
-    const selectedTransmitters = transmittersData.filter((t) =>
-      data.isnadTransmitters.includes(t.name)
-    );
+
+    // Preserve order from form for transmitters (map to maintain form order)
+    const selectedTransmitters = data.isnadTransmitters
+      .map((name) =>
+        transmittersData.find((transmitter) => transmitter.name === name)
+      )
+      .filter(
+        (transmitter): transmitter is NonNullable<typeof transmitter> =>
+          transmitter !== undefined
+      );
 
     if (!selectedChapter || !selectedNarrator) {
       toast.error("Chapitre ou narrateur sélectionné invalide.");
@@ -287,7 +295,7 @@ export function EditHadithForm({
             name="isnadTransmitters"
             control={control}
             render={({ field }) => (
-              <MultiSelect
+              <MultiSelectDragNDrop
                 id="isnadTransmitters"
                 label="Transmetteurs de l'isnad"
                 options={transmitterOptions}

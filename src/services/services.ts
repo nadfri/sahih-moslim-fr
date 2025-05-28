@@ -19,12 +19,26 @@ export async function getAllHadiths(): Promise<HadithType[]> {
       chapter: true,
       narrator: true,
       mentionedSahabas: true,
-      isnadTransmitters: true,
+      hadithTransmitters: {
+        include: {
+          transmitter: true,
+        },
+        orderBy: {
+          order: "asc",
+        },
+      },
     },
     orderBy: { numero: "asc" },
   });
+
+  // Transform the data to match HadithType structure
+  const transformedHadiths = hadiths.map((hadith) => ({
+    ...hadith,
+    isnadTransmitters: hadith.hadithTransmitters.map((ht) => ht.transmitter),
+  }));
+
   // Parse to remove unwanted fields and ensure types
-  return z.array(HadithSchema).parse(hadiths);
+  return z.array(HadithSchema).parse(transformedHadiths);
 }
 
 // Get a single hadith by numero, parsed with zod
@@ -37,11 +51,26 @@ export async function getHadithByNumero(
       chapter: true,
       narrator: true,
       mentionedSahabas: true,
-      isnadTransmitters: true,
+      hadithTransmitters: {
+        include: {
+          transmitter: true,
+        },
+        orderBy: {
+          order: "asc",
+        },
+      },
     },
   });
 
-  return hadith ? HadithSchema.parse(hadith) : null;
+  if (!hadith) return null;
+
+  // Transform the data to match HadithType structure
+  const transformedHadith = {
+    ...hadith,
+    isnadTransmitters: hadith.hadithTransmitters.map((ht) => ht.transmitter),
+  };
+
+  return HadithSchema.parse(transformedHadith);
 }
 
 // Get all chapters with hadith count and index
@@ -98,20 +127,32 @@ export async function getChapterWithHadiths(slug: string): Promise<{
   const chapter = await getChapterBySlug(slug);
 
   if (!chapter) return { chapter: null, hadiths: [] };
-
   const hadiths = await prisma.hadith.findMany({
     where: { chapter: { id: chapter.id } },
     include: {
       chapter: true,
       narrator: true,
       mentionedSahabas: true,
-      isnadTransmitters: true,
+      hadithTransmitters: {
+        include: {
+          transmitter: true,
+        },
+        orderBy: {
+          order: "asc",
+        },
+      },
     },
     orderBy: { numero: "asc" },
   });
 
+  // Transform the data to match HadithType structure
+  const transformedHadiths = hadiths.map((hadith) => ({
+    ...hadith,
+    isnadTransmitters: hadith.hadithTransmitters.map((ht) => ht.transmitter),
+  }));
+
   // Parse hadiths
-  const hadithsParsed = z.array(HadithSchema).parse(hadiths);
+  const hadithsParsed = z.array(HadithSchema).parse(transformedHadiths);
   return { chapter, hadiths: hadithsParsed };
 }
 
@@ -168,20 +209,32 @@ export async function getNarratorWithHadiths(slug: string): Promise<{
   const narrator = await getNarratorBySlug(slug);
 
   if (!narrator) return { narrator: null, hadiths: [] };
-
   const hadiths = await prisma.hadith.findMany({
     where: { narrator: { name: narrator.name } },
     include: {
       chapter: true,
       narrator: true,
       mentionedSahabas: true,
-      isnadTransmitters: true,
+      hadithTransmitters: {
+        include: {
+          transmitter: true,
+        },
+        orderBy: {
+          order: "asc",
+        },
+      },
     },
     orderBy: { numero: "asc" },
   });
 
+  // Transform the data to match HadithType structure
+  const transformedHadiths = hadiths.map((hadith) => ({
+    ...hadith,
+    isnadTransmitters: hadith.hadithTransmitters.map((ht) => ht.transmitter),
+  }));
+
   // Parse hadiths
-  const hadithsParsed = z.array(HadithSchema).parse(hadiths);
+  const hadithsParsed = z.array(HadithSchema).parse(transformedHadiths);
   return { narrator, hadiths: hadithsParsed };
 }
 
@@ -247,19 +300,32 @@ export async function getSahabaWithHadiths(slug: string): Promise<{
   const sahaba = await getSahabaBySlug(slug);
 
   if (!sahaba) return { sahaba: null, hadiths: [] };
-
   const hadiths = await prisma.hadith.findMany({
     where: { mentionedSahabas: { some: { name: sahaba.name } } },
     include: {
       chapter: true,
       narrator: true,
       mentionedSahabas: true,
-      isnadTransmitters: true,
+      hadithTransmitters: {
+        include: {
+          transmitter: true,
+        },
+        orderBy: {
+          order: "asc",
+        },
+      },
     },
     orderBy: { numero: "asc" },
   });
+
+  // Transform the data to match HadithType structure
+  const transformedHadiths = hadiths.map((hadith) => ({
+    ...hadith,
+    isnadTransmitters: hadith.hadithTransmitters.map((ht) => ht.transmitter),
+  }));
+
   // Parse hadiths
-  const hadithsParsed = z.array(HadithSchema).parse(hadiths);
+  const hadithsParsed = z.array(HadithSchema).parse(transformedHadiths);
   return { sahaba, hadiths: hadithsParsed };
 }
 
@@ -280,7 +346,7 @@ export async function getAllTransmitters(): Promise<ItemType[]> {
       id: true,
       name: true,
       slug: true,
-      _count: { select: { narratedHadiths: true } },
+      _count: { select: { hadithTransmitters: true } },
     },
   });
   // Map to ItemType with hadithCount
@@ -288,7 +354,7 @@ export async function getAllTransmitters(): Promise<ItemType[]> {
     id: transmitter.id,
     name: transmitter.name,
     slug: transmitter.slug,
-    hadithCount: transmitter._count.narratedHadiths,
+    hadithCount: transmitter._count.hadithTransmitters,
   }));
 }
 
@@ -302,7 +368,7 @@ export async function getTransmitterBySlug(
       id: true,
       name: true,
       slug: true,
-      _count: { select: { narratedHadiths: true } },
+      _count: { select: { hadithTransmitters: true } },
     },
   });
   // Return mapped transmitter or null
@@ -311,7 +377,7 @@ export async function getTransmitterBySlug(
         id: transmitter.id,
         name: transmitter.name,
         slug: transmitter.slug,
-        hadithCount: transmitter._count.narratedHadiths,
+        hadithCount: transmitter._count.hadithTransmitters,
       }
     : null;
 }
@@ -323,21 +389,42 @@ export async function getTransmitterWithHadiths(slug: string): Promise<{
 }> {
   // Fetch transmitter
   const transmitter = await getTransmitterBySlug(slug);
-
   if (!transmitter) return { transmitter: null, hadiths: [] };
 
   const hadiths = await prisma.hadith.findMany({
-    where: { isnadTransmitters: { some: { name: transmitter.name } } },
+    where: {
+      hadithTransmitters: {
+        some: {
+          transmitter: {
+            name: transmitter.name,
+          },
+        },
+      },
+    },
     include: {
       chapter: true,
       narrator: true,
       mentionedSahabas: true,
-      isnadTransmitters: true,
+      hadithTransmitters: {
+        include: {
+          transmitter: true,
+        },
+        orderBy: {
+          order: "asc",
+        },
+      },
     },
     orderBy: { numero: "asc" },
   });
+
+  // Transform the data to match HadithType structure
+  const transformedHadiths = hadiths.map((hadith) => ({
+    ...hadith,
+    isnadTransmitters: hadith.hadithTransmitters.map((ht) => ht.transmitter),
+  }));
+
   // Parse hadiths
-  const hadithsParsed = z.array(HadithSchema).parse(hadiths);
+  const hadithsParsed = z.array(HadithSchema).parse(transformedHadiths);
   return { transmitter, hadiths: hadithsParsed };
 }
 

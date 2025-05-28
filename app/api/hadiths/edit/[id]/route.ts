@@ -158,18 +158,43 @@ export async function PATCH(
           set: [],
           connect: mentionedSahabas.map((s) => ({ id: s.id })),
         },
-        isnadTransmitters: {
-          set: [],
-          connect: isnadTransmitters.map((t) => ({ id: t.id })),
-        },
       },
       include: {
         chapter: true,
         narrator: true,
         mentionedSahabas: true,
-        isnadTransmitters: true,
+        hadithTransmitters: {
+          include: {
+            transmitter: true,
+          },
+          orderBy: {
+            order: "asc",
+          },
+        },
       },
     });
+
+    // Delete existing transmitter relations and create new ordered ones
+    await prisma.hadithTransmitter.deleteMany({
+      where: { hadithId: id },
+    });
+
+    if (isnadTransmittersNames.length > 0) {
+      // Create transmitter relations with order based on the array position
+      const transmitterOrder = isnadTransmittersNames.map((name, index) => {
+        const transmitter = isnadTransmitters.find((t) => t.name === name);
+        return {
+          hadithId: id,
+          transmitterId: transmitter!.id,
+          order: index + 1, // Start order from 1
+        };
+      });
+
+      await prisma.hadithTransmitter.createMany({
+        data: transmitterOrder,
+      });
+    }
+
     return Response.json({
       success: true,
       message: `Hadith #${updatedHadith.numero} modifié avec succès`,
