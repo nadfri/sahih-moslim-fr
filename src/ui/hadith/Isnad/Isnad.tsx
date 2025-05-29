@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { ChevronRightCircle, SquareArrowOutUpRight } from "lucide-react";
+
 import { ItemType } from "@/src/types/types";
 import { highlightText } from "@/src/utils/highlightText";
 
@@ -8,61 +11,30 @@ type Props = {
 
 export function Isnad({ isnadTransmitters, highlight }: Props) {
   if (!isnadTransmitters || isnadTransmitters.length === 0) return null;
-
   return (
-    <div className="mt-4 flex flex-col items-start">
-      <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">
-        Isnad :
+    <div className="flex flex-wrap gap-1 mt-2 items-center w-fit">
+      <span className="text-xs font-medium rounded-md bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-300 px-2 py-1">
+        Isnad
       </span>
-      <div className="flex flex-wrap items-center gap-0">
-        {isnadTransmitters.map((trans, idx) => (
-          <div
-            key={trans.id}
-            className={`
-              relative flex items-center
-              ${idx !== 0 ? "-ml-4" : ""}
-              z-${10 - idx}
-            `}
-            style={{
-              marginLeft: idx === 0 ? 0 : -24,
-            }}
+
+      {isnadTransmitters.map((trans, index) => (
+        <div
+          key={trans.id}
+          className="flex items-center"
+        >
+          <Link
+            href={`/transmitters/${trans.slug}`}
+            className="text-xs bg-emerald-100 dark:bg-emerald-900/70 text-emerald-900 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-emerald-300 px-1.5 py-1 rounded-md transition-colors duration-200 hover:bg-emerald-200 dark:hover:bg-emerald-800/50"
           >
-            <div
-              className={`
-                px-4 py-1
-                bg-emerald-50 dark:bg-emerald-900/60
-                border border-emerald-200 dark:border-emerald-800
-                rounded-xl
-                text-xs font-medium
-                text-emerald-800 dark:text-emerald-200
-                shadow
-                transition
-                flex items-center
-                relative
-                group
-                ${idx !== 0 ? "clip-ariane" : ""}
-              `}
-              style={{
-                clipPath:
-                  idx === 0
-                    ? undefined
-                    : "polygon(75% 0%, 100% 50%, 75% 100%, 0% 100%, 25% 50%, 0% 0%)",
-                background:
-                  idx === 0
-                    ? undefined
-                    : "linear-gradient(90deg,rgba(16,185,129,0.08) 0%,rgba(16,185,129,0.18) 100%)",
-                borderLeft: idx === 0 ? undefined : "none",
-                borderTopLeftRadius: idx === 0 ? "0.75rem" : 0,
-                borderBottomLeftRadius: idx === 0 ? "0.75rem" : 0,
-                borderTopRightRadius: "0.75rem",
-                borderBottomRightRadius: "0.75rem",
-              }}
-            >
-              <span>{highlightText(trans.name, highlight)}</span>
-            </div>
-          </div>
-        ))}
-      </div>
+            {highlightText(trans.name, highlight)}{" "}
+            <SquareArrowOutUpRight className="inline size-2.5 align-middle" />
+          </Link>
+
+          {index < isnadTransmitters.length - 1 && (
+            <ChevronRightCircle className="ml-1 size-4 text-gray-500 dark:text-gray-400" />
+          )}
+        </div>
+      ))}
     </div>
   );
 }

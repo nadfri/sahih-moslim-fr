@@ -14,14 +14,12 @@ export function ListOfSahabas({
   if (sahabas.length === 0) return null;
 
   return (
-    <div className="mt-5 pt-4 border-t border-emerald-100 dark:border-emerald-900">
-      <p className="text-sm text-gray-600 dark:text-gray-400">
-        <span className="font-semibold text-emerald-700 dark:text-emerald-500">
-          Sahaba(s) mentionné(s) :
+    <div className="">
+      <div className="flex flex-wrap gap-2 mt-10">
+        <span className="text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-300 px-2 py-1">
+          Sahaba(s) mentionné(s)
         </span>
-      </p>
 
-      <div className="flex flex-wrap gap-x-2 gap-y-2 mt-2">
         {sahabas.map((sahaba) => (
           <Link
             key={sahaba.id}

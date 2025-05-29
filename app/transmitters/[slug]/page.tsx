@@ -38,17 +38,18 @@ export async function generateMetadata(props: {
 
   const slug = params.slug;
 
-  const transmitter = getTransmitterBySlug(slug);
+  const transmitter = await getTransmitterBySlug(slug);
 
   if (!transmitter) {
     return {
       title: "Transmetteur non trouvé",
+      description: "Ce transmetteur n'existe pas.",
     };
   }
 
   return {
-    title: `Transmetteur: ${transmitter}`,
-    description: `Collection de hadiths du transmetteur ${transmitter} - Sahih Moslim`,
+    title: `Transmetteur: ${transmitter.name}`,
+    description: `Collection de hadiths du transmetteur ${transmitter.name} - Sahih Moslim`,
   };
 }
 

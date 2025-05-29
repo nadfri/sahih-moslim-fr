@@ -1,15 +1,15 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { Item } from "@/src/types/types";
+import { ItemType } from "@/src/types/types";
 import { ListOfSahabas } from "./ListOfSahabas";
 
-const mockSahabas: Item[] = [
+const mockSahabas: ItemType[] = [
   { id: "1", name: "Abu Bakr", slug: "abu-bakr" },
   { id: "2", name: "Omar ibn al-Khattab", slug: "omar-ibn-al-khattab" },
 ];
 
-const mockEmptySahabas: Item[] = [];
+const mockEmptySahabas: ItemType[] = [];
 
 describe("ListOfSahabas", () => {
   it("renders list of sahabas with correct links", () => {
@@ -67,7 +67,7 @@ describe("ListOfSahabas", () => {
   });
 
   it("escapes special regex characters in highlight", () => {
-    const specialCharSahabas: Item[] = [
+    const specialCharSahabas: ItemType[] = [
       { id: "1", name: "Abu (Bakr)", slug: "abu-bakr" },
     ];
 
