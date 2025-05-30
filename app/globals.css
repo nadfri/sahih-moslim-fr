@@ -37,7 +37,7 @@ button {
 .title {
   @apply text-2xl text-balance md:text-4xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-10 tracking-tight dark:text-emerald-500;
 
-  span{
+  span {
     @apply text-nowrap;
   }
 }
@@ -117,6 +117,42 @@ button {
   animation: fadeOut 0.3s;
 }
 
-.w-fit{
+.w-fit {
   width: fit-content;
+}
+
+/* Scrollbar styling */
+body::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: #a7fed2; /* emerald-600 */
+  border-radius: 6px;
+}
+
+body::-webkit-scrollbar-track {
+  background: #edfdf5;
+}
+
+/* Dark theme scrollbar */
+body[data-theme="dark"]::-webkit-scrollbar-track {
+  background: #111827; /* gray-900 */
+  border: 1px solid #1f2937; /* gray-800 */
+}
+
+body[data-theme="dark"]::-webkit-scrollbar-thumb {
+  background: #017855; /* emerald-500 */
+  border: 1px solid #111827;
+}
+
+/* Scrollbar utility for hiding scrollbars */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
 }

@@ -262,27 +262,7 @@ export function AddHadithForm({
             />
             <BtnAddItem onOpen={() => handleOpenDialog("narrators")} />
           </div>
-          {/* MentionedSahabas */}
-          <div className="flex justify-between items-end gap-1">
-            <Controller
-              name="mentionedSahabas"
-              control={control}
-              render={({ field }) => (
-                <MultiSelect
-                  id="mentionedSahabas"
-                  label="Sahabas mentionnés"
-                  options={sahabaOptions}
-                  selected={field.value}
-                  onChange={field.onChange}
-                  placeholder="Rechercher des sahabas..."
-                  name={field.name}
-                  error={!!errors.mentionedSahabas}
-                  errorMessage={errors.mentionedSahabas?.message}
-                />
-              )}
-            />
-            <BtnAddItem onOpen={() => handleOpenDialog("sahabas")} />
-          </div>
+
           {/* IsnadTransmitters */}
           <div className="flex justify-between items-end gap-1">
             <Controller
@@ -304,6 +284,29 @@ export function AddHadithForm({
             />
             <BtnAddItem onOpen={() => handleOpenDialog("transmitters")} />
           </div>
+
+          {/* MentionedSahabas */}
+          <div className="flex justify-between items-end gap-1">
+            <Controller
+              name="mentionedSahabas"
+              control={control}
+              render={({ field }) => (
+                <MultiSelect
+                  id="mentionedSahabas"
+                  label="Sahabas mentionnés"
+                  options={sahabaOptions}
+                  selected={field.value}
+                  onChange={field.onChange}
+                  placeholder="Rechercher des sahabas..."
+                  name={field.name}
+                  error={!!errors.mentionedSahabas}
+                  errorMessage={errors.mentionedSahabas?.message}
+                />
+              )}
+            />
+            <BtnAddItem onOpen={() => handleOpenDialog("sahabas")} />
+          </div>
+
           {/* matn_fr FR */}
           <MdTextArea
             id="matn_fr"

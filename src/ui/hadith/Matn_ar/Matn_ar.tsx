@@ -23,7 +23,7 @@ export function Matn_ar({ matn, update, highlight }: Props) {
   const processedMatnAr = highlightText(matn, highlight);
 
   return (
-    <div className="mt-3 pt-2 border-t border-emerald-100 dark:border-emerald-900">
+    <div className="mt-4 pt-2 border-t border-emerald-100 dark:border-emerald-900">
       {!update && (
         <button
           onClick={toggleArabicVisibility}

@@ -271,24 +271,6 @@ export function EditHadithForm({
               />
             )}
           />
-          {/* Sahabas */}
-          <Controller
-            name="mentionedSahabas"
-            control={control}
-            render={({ field }) => (
-              <MultiSelect
-                id="mentionedSahabas"
-                label="Sahabas mentionnés"
-                options={sahabaOptions}
-                selected={field.value}
-                onChange={field.onChange}
-                placeholder="Rechercher des sahabas..."
-                name={field.name}
-                error={!!errors.mentionedSahabas}
-                errorMessage={errors.mentionedSahabas?.message}
-              />
-            )}
-          />
 
           {/* IsnadTransmitters */}
           <Controller
@@ -305,6 +287,25 @@ export function EditHadithForm({
                 name={field.name}
                 error={!!errors.isnadTransmitters}
                 errorMessage={errors.isnadTransmitters?.message}
+              />
+            )}
+          />
+
+          {/* Sahabas */}
+          <Controller
+            name="mentionedSahabas"
+            control={control}
+            render={({ field }) => (
+              <MultiSelect
+                id="mentionedSahabas"
+                label="Sahabas mentionnés"
+                options={sahabaOptions}
+                selected={field.value}
+                onChange={field.onChange}
+                placeholder="Rechercher des sahabas..."
+                name={field.name}
+                error={!!errors.mentionedSahabas}
+                errorMessage={errors.mentionedSahabas?.message}
               />
             )}
           />
