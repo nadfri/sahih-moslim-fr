@@ -34,11 +34,32 @@ async function getItems(variant: VariantType): Promise<ItemType[]> {
     case "chapters":
       return prisma.chapter.findMany();
     case "narrators":
-      return prisma.narrator.findMany();
+      return prisma.narrator.findMany({
+        select: {
+          id: true,
+          name: true,
+          nameArabic: true,
+          slug: true,
+        },
+      });
     case "sahabas":
-      return prisma.sahaba.findMany();
+      return prisma.sahaba.findMany({
+        select: {
+          id: true,
+          name: true,
+          nameArabic: true,
+          slug: true,
+        },
+      });
     case "transmitters":
-      return prisma.transmitter.findMany();
+      return prisma.transmitter.findMany({
+        select: {
+          id: true,
+          name: true,
+          nameArabic: true,
+          slug: true,
+        },
+      });
   }
 }
 

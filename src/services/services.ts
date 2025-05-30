@@ -187,6 +187,7 @@ export async function getNarratorBySlug(
     select: {
       id: true,
       name: true,
+      nameArabic: true,
       slug: true,
       _count: { select: { narratedHadiths: true } },
     },
@@ -196,6 +197,7 @@ export async function getNarratorBySlug(
     ? {
         id: narrator.id,
         name: narrator.name,
+        nameArabic: narrator.nameArabic,
         slug: narrator.slug,
         hadithCount: narrator._count.narratedHadiths,
       }
@@ -256,6 +258,7 @@ export async function getAllSahabas(): Promise<ItemType[]> {
     select: {
       id: true,
       name: true,
+      nameArabic: true,
       slug: true,
       _count: { select: { mentionedInHadiths: true } },
     },
@@ -265,6 +268,7 @@ export async function getAllSahabas(): Promise<ItemType[]> {
   return sahabas.map((sahaba) => ({
     id: sahaba.id,
     name: sahaba.name,
+    nameArabic: sahaba.nameArabic,
     slug: sahaba.slug,
     hadithCount: sahaba._count.mentionedInHadiths,
   }));
@@ -277,6 +281,7 @@ export async function getSahabaBySlug(slug: string): Promise<ItemType | null> {
     select: {
       id: true,
       name: true,
+      nameArabic: true,
       slug: true,
       _count: { select: { mentionedInHadiths: true } },
     },
@@ -286,6 +291,7 @@ export async function getSahabaBySlug(slug: string): Promise<ItemType | null> {
     ? {
         id: sahaba.id,
         name: sahaba.name,
+        nameArabic: sahaba.nameArabic,
         slug: sahaba.slug,
         hadithCount: sahaba._count.mentionedInHadiths,
       }
@@ -346,6 +352,7 @@ export async function getAllTransmitters(): Promise<ItemType[]> {
     select: {
       id: true,
       name: true,
+      nameArabic: true,
       slug: true,
       _count: { select: { hadithTransmitters: true } },
     },
@@ -355,6 +362,7 @@ export async function getAllTransmitters(): Promise<ItemType[]> {
   return transmitters.map((transmitter) => ({
     id: transmitter.id,
     name: transmitter.name,
+    nameArabic: transmitter.nameArabic,
     slug: transmitter.slug,
     hadithCount: transmitter._count.hadithTransmitters,
   }));
@@ -369,6 +377,7 @@ export async function getTransmitterBySlug(
     select: {
       id: true,
       name: true,
+      nameArabic: true,
       slug: true,
       _count: { select: { hadithTransmitters: true } },
     },
@@ -378,6 +387,7 @@ export async function getTransmitterBySlug(
     ? {
         id: transmitter.id,
         name: transmitter.name,
+        nameArabic: transmitter.nameArabic,
         slug: transmitter.slug,
         hadithCount: transmitter._count.hadithTransmitters,
       }
