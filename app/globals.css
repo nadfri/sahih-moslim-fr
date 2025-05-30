@@ -117,10 +117,6 @@ button {
   animation: fadeOut 0.3s;
 }
 
-.w-fit {
-  width: fit-content;
-}
-
 /* Scrollbar styling */
 body::-webkit-scrollbar {
   width: 10px;
@@ -147,12 +143,3 @@ body[data-theme="dark"]::-webkit-scrollbar-thumb {
   border: 1px solid #111827;
 }
 
-/* Scrollbar utility for hiding scrollbars */
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-.scrollbar-hide {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
-}
