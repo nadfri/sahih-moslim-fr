@@ -15,10 +15,11 @@ import { highlightText } from "@/src/utils/highlightText";
 type Props = {
   isnadTransmitters: ItemType[];
   highlight?: string;
+  update?: boolean;
 };
 
-export function Isnad({ isnadTransmitters, highlight }: Props) {
-  const [isIsnadVisible, setIsIsnadVisible] = useState(false);
+export function Isnad({ isnadTransmitters, highlight, update }: Props) {
+  const [isIsnadVisible, setIsIsnadVisible] = useState(update ?? false);
   const isnadContentId = useId();
 
   const toggleIsnadVisibility = () => {

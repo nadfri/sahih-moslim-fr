@@ -36,6 +36,7 @@ export function Hadith({
           <Isnad
             isnadTransmitters={hadith.isnadTransmitters}
             highlight={highlight}
+            update={update}
           />
         </div>
 
