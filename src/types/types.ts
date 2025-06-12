@@ -1,6 +1,11 @@
 import { z } from "zod";
 
-export type FilterType = "word" | "narrator" | "sahaba" | "transmitter";
+export type FilterType =
+  | "word"
+  | "narrator"
+  | "sahaba"
+  | "transmitter"
+  | "numero";
 export type VariantType = "chapters" | "narrators" | "sahabas" | "transmitters";
 export type ThemeType = "light" | "dark";
 

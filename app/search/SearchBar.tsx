@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { Search } from "lucide-react";
 
 import { FilterType, HadithType } from "@/src/types/types";
 import { BadgeNumberOfHadith } from "@/src/ui/hadith/BadgeNumberOfHadith/BadgeNumberOfHadith";
@@ -14,11 +15,11 @@ function extractInitials(sp: URLSearchParams) {
   const filterMode = (sp.get("filterMode") as FilterType) || "word";
   const queryParam = sp.get("query");
   const queryParams = sp.getAll("query");
-
   let query = "";
   let narrator = "";
   let sahabas: string[] = [];
   let transmitters: string[] = [];
+  let numero = "";
 
   switch (filterMode) {
     case "word":
@@ -42,9 +43,12 @@ function extractInitials(sp: URLSearchParams) {
         transmitters = sp.getAll("transmitter");
       }
       break;
+    case "numero":
+      numero = queryParam?.trim() || "";
+      break;
   }
 
-  return { filterMode, query, narrator, sahabas, transmitters };
+  return { filterMode, query, narrator, sahabas, transmitters, numero };
 }
 
 // Filter hadiths based on filter mode and values
@@ -56,12 +60,14 @@ function filterHadiths(
     narrator,
     sahabas,
     transmitters,
+    numero,
   }: {
     filterMode: FilterType;
     query: string;
     narrator: string;
     sahabas: string[];
     transmitters: string[];
+    numero?: string;
   }
 ) {
   switch (filterMode) {
@@ -90,6 +96,11 @@ function filterHadiths(
             hadithTransmitterNames.includes(transmitter)
           );
         });
+      }
+      break;
+    case "numero":
+      if (numero && !isNaN(Number(numero))) {
+        return hadiths.filter((h) => h.numero === Number(numero));
       }
       break;
     case "word":
@@ -146,6 +157,7 @@ export function SearchBar({
   const [selectedTransmitters, setSelectedTransmitters] = useState<string[]>(
     initialValues.transmitters
   );
+  const [numero, setNumero] = useState(initialValues.numero);
 
   const [results, setResults] = useState<HadithType[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
@@ -154,21 +166,24 @@ export function SearchBar({
   const [urlUpdateTimer, setUrlUpdateTimer] = useState<NodeJS.Timeout | null>(
     null
   );
-
   // Immediate search function
   const performSearch = (
     searchFilterMode: FilterType,
     searchQuery: string,
     searchNarrator: string,
     searchSelectedSahabas: string[],
-    searchSelectedTransmitters: string[]
+    searchSelectedTransmitters: string[],
+    searchNumero: string
   ) => {
     const hasCriteria =
       (searchFilterMode === "word" && searchQuery.length >= 3) ||
       (searchFilterMode === "narrator" && searchNarrator) ||
       (searchFilterMode === "sahaba" && searchSelectedSahabas.length > 0) ||
       (searchFilterMode === "transmitter" &&
-        searchSelectedTransmitters.length > 0);
+        searchSelectedTransmitters.length > 0) ||
+      (searchFilterMode === "numero" &&
+        searchNumero &&
+        !isNaN(Number(searchNumero)));
 
     if (hasCriteria) {
       const filteredResults = filterHadiths(hadiths, {
@@ -177,6 +192,7 @@ export function SearchBar({
         narrator: searchNarrator,
         sahabas: searchSelectedSahabas,
         transmitters: searchSelectedTransmitters,
+        numero: searchNumero,
       });
       setResults(filteredResults);
       setHasSearched(true);
@@ -187,14 +203,14 @@ export function SearchBar({
       }
     }
   };
-
   // Update URL function
   const updateUrl = (
     urlFilterMode: FilterType,
     urlQuery: string,
     urlNarrator: string,
     urlSelectedSahabas: string[],
-    urlSelectedTransmitters: string[]
+    urlSelectedTransmitters: string[],
+    urlNumero: string
   ) => {
     const params = new URLSearchParams();
     params.set("filterMode", urlFilterMode);
@@ -212,12 +228,13 @@ export function SearchBar({
       urlSelectedTransmitters.forEach((transmitter) =>
         params.append("query", transmitter)
       );
+    } else if (urlFilterMode === "numero" && urlNumero) {
+      params.set("query", urlNumero);
     }
 
     const newUrl = `/search?${params.toString()}`;
     window.history.pushState(null, "", newUrl);
   };
-
   // Effect for immediate search
   useEffect(() => {
     performSearch(
@@ -225,10 +242,17 @@ export function SearchBar({
       query,
       narrator,
       selectedSahabas,
-      selectedTransmitters
+      selectedTransmitters,
+      numero
     );
-  }, [filterMode, query, narrator, selectedSahabas, selectedTransmitters]);
-
+  }, [
+    filterMode,
+    query,
+    narrator,
+    selectedSahabas,
+    selectedTransmitters,
+    numero,
+  ]);
   // Effect for debounced URL update
   useEffect(() => {
     if (urlUpdateTimer) {
@@ -241,7 +265,8 @@ export function SearchBar({
         query,
         narrator,
         selectedSahabas,
-        selectedTransmitters
+        selectedTransmitters,
+        numero
       );
     }, 300);
 
@@ -252,8 +277,14 @@ export function SearchBar({
         clearTimeout(timer);
       }
     };
-  }, [filterMode, query, narrator, selectedSahabas, selectedTransmitters]);
-
+  }, [
+    filterMode,
+    query,
+    narrator,
+    selectedSahabas,
+    selectedTransmitters,
+    numero,
+  ]);
   // Function to handle filter mode change and reset fields
   const handleFilterModeChange = (newMode: FilterType) => {
     setFilterMode(newMode);
@@ -261,6 +292,7 @@ export function SearchBar({
     setNarrator("");
     setSelectedSahabas([]);
     setSelectedTransmitters([]);
+    setNumero("");
 
     setResults([]);
     setHasSearched(false);
@@ -268,16 +300,16 @@ export function SearchBar({
     if (urlUpdateTimer) {
       clearTimeout(urlUpdateTimer);
     }
-    updateUrl(newMode, "", "", [], []);
+    updateUrl(newMode, "", "", [], [], "");
   };
-
   // Automatically search if there are criteria in the URL (for URL sharing)
   useEffect(() => {
     const hasCriteria =
       (filterMode === "word" && query) ||
       (filterMode === "narrator" && narrator) ||
       (filterMode === "sahaba" && selectedSahabas.length > 0) ||
-      (filterMode === "transmitter" && selectedTransmitters.length > 0);
+      (filterMode === "transmitter" && selectedTransmitters.length > 0) ||
+      (filterMode === "numero" && numero && !isNaN(Number(numero)));
 
     if (hasCriteria) {
       setResults(
@@ -287,6 +319,7 @@ export function SearchBar({
           narrator,
           sahabas: selectedSahabas,
           transmitters: selectedTransmitters,
+          numero,
         })
       );
       setHasSearched(true);
@@ -295,24 +328,12 @@ export function SearchBar({
 
   return (
     <div>
+      {" "}
       <form
         className="mb-6"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (urlUpdateTimer) {
-            clearTimeout(urlUpdateTimer);
-          }
-          updateUrl(
-            filterMode,
-            query,
-            narrator,
-            selectedSahabas,
-            selectedTransmitters
-          );
-        }}
         autoComplete="off"
       >
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4">
           <label
             className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
               filterMode === "word"
@@ -362,8 +383,8 @@ export function SearchBar({
               onChange={() => handleFilterModeChange("sahaba")}
               className="sr-only"
             />
-            <span>Par Compagnons</span>
-          </label>
+            <span>Par Compagnon</span>
+          </label>{" "}
           <label
             className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
               filterMode === "transmitter"
@@ -379,22 +400,43 @@ export function SearchBar({
               onChange={() => handleFilterModeChange("transmitter")}
               className="sr-only"
             />
-            <span>Par Transmetteurs</span>
+            <span>Par Transmetteur</span>
+          </label>
+          <label
+            className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
+              filterMode === "numero"
+                ? "bg-emerald-100 dark:bg-emerald-900/50 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 font-medium"
+                : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+            }`}
+          >
+            <input
+              type="radio"
+              name="filterMode"
+              value="numero"
+              checked={filterMode === "numero"}
+              onChange={() => handleFilterModeChange("numero")}
+              className="sr-only"
+            />
+            <span>Par Numéro</span>
           </label>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:space-x-2 sm:items-start gap-2 sm:gap-0">
           <div className="flex-1 w-full">
+            {" "}
             {filterMode === "word" && (
-              <input
-                type="text"
-                name="queryInput"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Rechercher par mot (3 lettres min)..."
-                className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-600 bg-white dark:bg-gray-800 dark:text-gray-200"
-                autoFocus
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  name="queryInput"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Rechercher par mot (3 lettres min)..."
+                  className="w-full p-2 pr-10 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-600 bg-white dark:bg-gray-800 dark:text-gray-200"
+                  autoFocus
+                />
+                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
+              </div>
             )}
             {filterMode === "narrator" && (
               <SearchSelect
@@ -417,7 +459,7 @@ export function SearchBar({
                 placeholder="Choisir un ou plusieurs rapporteurs"
                 name="sahabaInput"
               />
-            )}
+            )}{" "}
             {filterMode === "transmitter" && (
               <MultiSelect
                 id="transmitter-multiselect"
@@ -428,18 +470,25 @@ export function SearchBar({
                 placeholder="Choisir un ou plusieurs transmetteurs"
                 name="transmitterInput"
               />
+            )}{" "}
+            {filterMode === "numero" && (
+              <div className="relative">
+                <input
+                  type="number"
+                  name="numeroInput"
+                  value={numero}
+                  onChange={(e) => setNumero(e.target.value)}
+                  placeholder="Numéro du hadith"
+                  className="w-full p-2 pr-10 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-600 bg-white dark:bg-gray-800 dark:text-gray-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  min="1"
+                  autoFocus
+                />
+                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
+              </div>
             )}
           </div>
-
-          <button
-            type="submit"
-            className="w-full sm:w-auto p-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition focus:outline-none dark:bg-emerald-700 dark:hover:bg-emerald-800 border border-emerald-600 hover:border-emerald-700 dark:border-emerald-700 dark:hover:border-emerald-800"
-          >
-            Rechercher
-          </button>
         </div>
       </form>
-
       <div className="space-y-8 mt-8">
         {hasSearched ? (
           <>
@@ -458,12 +507,13 @@ export function SearchBar({
                 hadith={hadith}
                 highlight={filterMode === "word" ? query : undefined}
               />
-            ))}
+            ))}{" "}
             {results.length === 0 &&
               (query ||
                 narrator ||
                 selectedSahabas.length > 0 ||
-                selectedTransmitters.length > 0) &&
+                selectedTransmitters.length > 0 ||
+                numero) &&
               !(filterMode === "word" && query && query.length < 3) && (
                 <p className="text-gray-500 italic">
                   Aucun hadith ne correspond à votre recherche.

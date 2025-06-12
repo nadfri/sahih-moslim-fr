@@ -15,7 +15,7 @@ describe("ListOfSahabas", () => {
   it("renders list of sahabas with correct links", () => {
     render(<ListOfSahabas sahabas={mockSahabas} />);
 
-    expect(screen.getByText("Sahaba(s) mentionné(s) :")).toBeInTheDocument();
+    expect(screen.getByText("Sahaba(s) mentionné(s)")).toBeInTheDocument();
 
     const abuBakrLink = screen.getByRole("link", { name: "Abu Bakr" });
     expect(abuBakrLink).toHaveAttribute("href", "/sahabas/abu-bakr");
