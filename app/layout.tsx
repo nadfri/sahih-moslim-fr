@@ -6,6 +6,8 @@ import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 
 import { cookies } from "next/headers";
+import { ReactPlugin } from "@stagewise-plugins/react";
+import { StagewiseToolbar } from "@stagewise/toolbar-next";
 import { ToastContainer } from "react-toastify";
 
 import { SessionWrapper } from "@/src/authentification/SessionWrapper";
@@ -49,7 +51,7 @@ export default async function RootLayout({
           <main className="bg-gradient-to-br from-emerald-50 via-stone-50 to-amber-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 py-4 px-2 md:px-8 flex-1">
             {children}
           </main>
-          <Footer />
+          <Footer />{" "}
         </SessionWrapper>
 
         <ToastContainer
@@ -61,6 +63,12 @@ export default async function RootLayout({
         />
 
         <ScrollBtns />
+
+        <StagewiseToolbar
+          config={{
+            plugins: [ReactPlugin],
+          }}
+        />
       </body>
     </html>
   );

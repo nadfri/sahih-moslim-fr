@@ -21,6 +21,12 @@
 // - Use `vi` for mocking and spying.
 // - Use `@testing-library/user-event` for simulating user interactions.
 
+// FORMATTING & ERROR HANDLING
+// - If code formatting fails after 2-3 attempts, abandon the formatting fixes and proceed with functional changes only.
+// - Avoid infinite loops when trying to fix formatting issues. Let the user handle manual formatting via prettier if needed.
+// - Do not run prettier commands automatically unless specifically requested.
+// - Do not run `pnpm dev` or similar development commands to test code unless specifically requested, as the project may already be running.
+
 // NEXT.JS 15 SPECIFICS (PARAMS & SEARCHPARAMS)
 // - Remember that `params` and `searchParams` are Promises in Next.js 15 Route Handlers and Pages.
 
