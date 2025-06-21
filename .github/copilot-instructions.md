@@ -4,6 +4,7 @@
 
 // PROJECT TECHNOLOGIES & VERSIONS
 // - Default to NextJS 15, React 19, Tailwind CSS v4, and pnpm for new projects or when versions are unspecified.
+// -Terminal use PowerShell commands, not bash.
 
 // CODING STYLE & CONVENTIONS
 // - For new React components, always use `export function YourComponentName() {}`. Do not use arrow functions for component definitions.
@@ -20,6 +21,7 @@
 // - For tests, use Vitest as the test runner.
 // - Use `vi` for mocking and spying.
 // - Use `@testing-library/user-event` for simulating user interactions.
+// - Use for mock hadith data: `import { mockHadith } from '@/__mocks__/';`
 
 // FORMATTING & ERROR HANDLING
 // - If code formatting fails after 2-3 attempts, abandon the formatting fixes and proceed with functional changes only.
