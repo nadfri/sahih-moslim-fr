@@ -29,7 +29,7 @@ export function CopyBoard({ hadith }: { hadith: HadithType }) {
     let textToCopy = "";
 
     // Create header with hadith info
-    const header = `Sahih Moslim - Hadith n°${hadithNumber}\nChapitre: ${chapter}\nRapporté par: ${narrator}\n\n`;
+    const header = `Sahih Moslim - Hadith n°${hadithNumber}\nChapitre: ${chapter}\nD' après: ${narrator}\n\n`;
 
     switch (option) {
       case "fr":

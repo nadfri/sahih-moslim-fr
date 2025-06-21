@@ -92,7 +92,7 @@ describe("CopyBoard", () => {
     const frenchOption = screen.getByText("Français");
     await user.click(frenchOption);
     await waitFor(() => {
-      const expectedText = `Sahih Moslim - Hadith n°123\nChapitre: Test Chapter\nRapporté par: Abu Test\n\nCeci est un **test** de hadith en français.`;
+      const expectedText = `Sahih Moslim - Hadith n°123\nChapitre: Test Chapter\nD' après: Abu Test\n\nCeci est un **test** de hadith en français.`;
       expect(mockWriteText).toHaveBeenCalledWith(expectedText);
     });
   });
@@ -106,7 +106,7 @@ describe("CopyBoard", () => {
     const arabicOption = screen.getByText("Arabe");
     await user.click(arabicOption);
     await waitFor(() => {
-      const expectedText = `Sahih Moslim - Hadith n°123\nChapitre: Test Chapter\nRapporté par: Abu Test\n\nهذا اختبار للحديث باللغة العربية`;
+      const expectedText = `Sahih Moslim - Hadith n°123\nChapitre: Test Chapter\nD' après: Abu Test\n\nهذا اختبار للحديث باللغة العربية`;
       expect(mockWriteText).toHaveBeenCalledWith(expectedText);
     });
   });
@@ -120,7 +120,7 @@ describe("CopyBoard", () => {
     const bothOption = screen.getByText("Les deux");
     await user.click(bothOption);
     await waitFor(() => {
-      const expectedText = `Sahih Moslim - Hadith n°123\nChapitre: Test Chapter\nRapporté par: Abu Test\n\nCeci est un **test** de hadith en français.\n\nهذا اختبار للحديث باللغة العربية`;
+      const expectedText = `Sahih Moslim - Hadith n°123\nChapitre: Test Chapter\nD' après: Abu Test\n\nCeci est un **test** de hadith en français.\n\nهذا اختبار للحديث باللغة العربية`;
       expect(mockWriteText).toHaveBeenCalledWith(expectedText);
     });
   });
