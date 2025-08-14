@@ -6,8 +6,6 @@ import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 
 import { cookies } from "next/headers";
-import { ReactPlugin } from "@stagewise-plugins/react";
-import { StagewiseToolbar } from "@stagewise/toolbar-next";
 import { ToastContainer } from "react-toastify";
 
 import { SessionWrapper } from "@/src/authentification/SessionWrapper";
@@ -63,12 +61,6 @@ export default async function RootLayout({
         />
 
         <ScrollBtns />
-
-        <StagewiseToolbar
-          config={{
-            plugins: [ReactPlugin],
-          }}
-        />
       </body>
     </html>
   );
