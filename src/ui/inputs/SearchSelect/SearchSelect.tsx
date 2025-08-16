@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronDown, ChevronUp, X } from "lucide-react";
 
 type SearchSelectProps = {
@@ -61,31 +61,27 @@ export function SearchSelect({
     inputRef.current?.focus();
   };
 
-  const handleClose = useCallback(() => {
-    setIsOpen(false);
-    if (options.includes(inputValue)) {
-      if (inputValue !== value) {
-        onChange(inputValue);
-      }
-    } else {
-      setInputValue(value);
-    }
-  }, [options, inputValue, value, onChange]);
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
       ) {
-        handleClose();
+        setIsOpen(false);
+        if (options.includes(inputValue)) {
+          if (inputValue !== value) {
+            onChange(inputValue);
+          }
+        } else {
+          setInputValue(value);
+        }
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [handleClose]);
+  }, [options, inputValue, value, onChange]);
 
   useEffect(() => {
     if (document.activeElement !== inputRef.current) {

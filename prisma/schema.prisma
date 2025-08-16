@@ -1,6 +1,7 @@
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
@@ -103,9 +104,16 @@ model Hadith {
   hadithTransmitters HadithTransmitter[]
   mentionedSahabas   Sahaba[]            @relation("HadithToSahaba")
 
+  // Optimized indexes for PostgreSQL
   @@index([chapterId])
   @@index([narratorId])
   @@index([numero])
+  // Composite indexes for complex queries
+  @@index([chapterId, numero])
+  @@index([narratorId, numero])
+  // Text search indexes - will be created manually in migration
+  @@index([matn_fr])
+  @@index([matn_ar])
 }
 
 model Chapter {
@@ -117,6 +125,11 @@ model Chapter {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   hadiths    Hadith[]
+
+  // Optimized indexes for search
+  @@index([name])
+  @@index([slug])
+  @@index([index])
 }
 
 model Narrator {
@@ -127,6 +140,10 @@ model Narrator {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   narratedHadiths Hadith[]
+
+  // Optimized indexes for search
+  @@index([name])
+  @@index([slug])
 }
 
 model Sahaba {
@@ -137,6 +154,10 @@ model Sahaba {
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
   mentionedInHadiths Hadith[] @relation("HadithToSahaba")
+
+  // Optimized indexes for search
+  @@index([name])
+  @@index([slug])
 }
 
 model Transmitter {
@@ -147,6 +168,10 @@ model Transmitter {
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
   hadithTransmitters HadithTransmitter[]
+
+  // Optimized indexes for search
+  @@index([name])
+  @@index([slug])
 }
 
 model HadithTransmitter {

@@ -37,8 +37,9 @@ Ajouter les modèles requis par AuthJS dans votre fichier `prisma/schema.prisma`
 ```prisma
 // This is your Prisma schema file
 datasource db {
-  provider = "sqlite" // ou "postgresql", "mysql", etc.
-  url      = env("DATABASE_URL")
+  provider  = "postgresql" // PostgreSQL via Supabase
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
@@ -132,8 +133,13 @@ export default prisma;
 Créer ou modifier le fichier `.env` :
 
 ```
-# Base de données
-DATABASE_URL="file:./dev.db"
+# Base de données PostgreSQL (Supabase)
+DATABASE_URL="postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:5432/postgres"
+
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL="https://[PROJECT-REF].supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="[ANON-KEY]"
 
 # Authentication
 AUTH_SECRET="votre-secret-très-long-et-aléatoire"

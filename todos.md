@@ -10,7 +10,6 @@
 - [ ] Ensure accessible keyboard navigation
 - [ ] Add proper aria attributes for screen readers
 
-
 ### Pages & UI
 
 - [ ] Add a global page loader/spinner
@@ -23,7 +22,6 @@
 - [ ] Add contact information or feedback form
 - [ ] Implement social media links (if applicable)
 - [ ] Ensure proper accessibility for all footer elements
-
 
 ### Slug Page
 
@@ -43,7 +41,7 @@
 
 - [ ] Implement internationalization (i18n)
 - [ ] Optimize performance
-- [ ] Remove all useMemo and useCallback to benefit from React 19 automatic optimizations
+- [x] Remove all useMemo and useCallback to benefit from React 19 automatic optimizations
 
 ## Documentation
 

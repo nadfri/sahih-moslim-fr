@@ -4,7 +4,6 @@ import { Metadata } from "next";
 
 import { SearchBar } from "@/app/search/SearchBar";
 import {
-  getAllHadiths,
   getNarratorNames,
   getSahabaNames,
   getTransmitterNames,
@@ -23,20 +22,17 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function SearchPage() {
-  const [hadiths, narratorNames, sahabaNames, transmitterNames] =
-    await Promise.all([
-      getAllHadiths(),
-      getNarratorNames(),
-      getSahabaNames(),
-      getTransmitterNames(),
-    ]);
+  const [narratorNames, sahabaNames, transmitterNames] = await Promise.all([
+    getNarratorNames(),
+    getSahabaNames(),
+    getTransmitterNames(),
+  ]);
 
   return (
     <div className="container mx-auto max-w-5xl">
       <h1 className="title">Rechercher un Hadith</h1>
 
       <SearchBar
-        hadiths={hadiths}
         narrators={narratorNames}
         sahabas={sahabaNames}
         transmitters={transmitterNames}

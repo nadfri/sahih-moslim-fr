@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { ItemType, VariantType } from "@/src/types/types";
 import { Card } from "@/src/ui/Card/Card";
@@ -23,15 +23,14 @@ export function FilteredListCard({ items, variant }: Props) {
   const [selected, setSelected] = useState("");
 
   // Dynamically filter items based on input value
-  const filteredItems = useMemo(() => {
-    if (!inputValue) return items;
-    return items.filter((item) =>
-      item.name.toLowerCase().includes(inputValue.toLowerCase())
-    );
-  }, [items, inputValue]);
+  const filteredItems = !inputValue
+    ? items
+    : items.filter((item) =>
+        item.name.toLowerCase().includes(inputValue.toLowerCase())
+      );
 
   // Extract names for SearchSelect options
-  const options = useMemo(() => items.map((item) => item.name), [items]);
+  const options = items.map((item) => item.name);
 
   return (
     <div className="container mx-auto max-w-5xl">
