@@ -1,8 +1,6 @@
-import ReactMarkdown, { Components } from "react-markdown";
-import rehypeRaw from "rehype-raw";
-import remarkGfm from "remark-gfm";
+import { Components } from "react-markdown";
 
-import { highlightTextAsHTML } from "@/src/utils/highlightText";
+import { MarkdownHighlighter } from "@/src/utils/MarkdownHighlighter";
 
 type Props = {
   matn: string;
@@ -36,18 +34,14 @@ export function Matn_fr({ matn, highlight }: Props) {
     ),
   };
 
-  // Preprocess markdown to wrap highlight matches in <mark> for raw HTML rendering
-  const processedMatnFr = highlightTextAsHTML(matn, highlight);
-
   return (
     <div className="space-y-3 text-gray-700 dark:text-gray-300 leading-relaxed text-pretty">
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeRaw]}
-        components={customRenderers} // Add the custom renderers here
+      <MarkdownHighlighter
+        highlight={highlight}
+        components={customRenderers}
       >
-        {processedMatnFr}
-      </ReactMarkdown>
+        {matn}
+      </MarkdownHighlighter>
     </div>
   );
 }

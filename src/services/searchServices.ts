@@ -30,78 +30,11 @@ export type SearchResult = {
 // Combined search in both French and Arabic content
 export async function searchHadithsCombined(
   query: string,
-  filterMode: "text" | "word" = "text",
   limit = 50
 ): Promise<SearchResult[]> {
   if (!query.trim()) return [];
 
   try {
-    // For word-based search, always use ILIKE to match exact words without stemming
-    if (filterMode === "word") {
-      const results = await prisma.$queryRaw<SearchResult[]>`
-        SELECT 
-          h.id,
-          h.numero,
-          h.matn_fr,
-          h.matn_ar,
-          1.0 as rank,
-          json_build_object(
-            'id', c.id,
-            'name', c.name,
-            'slug', c.slug,
-            'index', c.index
-          ) as chapter,
-          json_build_object(
-            'id', n.id,
-            'name', n.name,
-            'slug', n.slug
-          ) as narrator
-        FROM "Hadith" h
-        JOIN "Chapter" c ON h."chapterId" = c.id
-        JOIN "Narrator" n ON h."narratorId" = n.id
-        WHERE 
-          unaccent(h.matn_fr) ILIKE unaccent(${"%" + query + "%"})
-          OR unaccent(h.matn_ar) ILIKE unaccent(${"%" + query + "%"})
-          OR unaccent(n.name) ILIKE unaccent(${"%" + query + "%"})
-        ORDER BY h.numero ASC
-        LIMIT ${limit}
-      `;
-      return results;
-    }
-
-    // For very short queries (3 characters or less), use ILIKE for better results
-    if (query.trim().length <= 3) {
-      const results = await prisma.$queryRaw<SearchResult[]>`
-        SELECT 
-          h.id,
-          h.numero,
-          h.matn_fr,
-          h.matn_ar,
-          1.0 as rank,
-          json_build_object(
-            'id', c.id,
-            'name', c.name,
-            'slug', c.slug,
-            'index', c.index
-          ) as chapter,
-          json_build_object(
-            'id', n.id,
-            'name', n.name,
-            'slug', n.slug
-          ) as narrator
-        FROM "Hadith" h
-        JOIN "Chapter" c ON h."chapterId" = c.id
-        JOIN "Narrator" n ON h."narratorId" = n.id
-        WHERE 
-          h.matn_fr ILIKE ${"%" + query + "%"}
-          OR h.matn_ar ILIKE ${"%" + query + "%"}
-        ORDER BY h.numero ASC
-        LIMIT ${limit}
-      `;
-      return results;
-    }
-
-    // For longer queries, use full-text search
     const results = await prisma.$queryRaw<SearchResult[]>`
       SELECT 
         h.id,

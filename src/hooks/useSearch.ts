@@ -36,7 +36,7 @@ export function useSearch({
   const [hasSearched, setHasSearched] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Debounced effect
+  // Debounced effect - use JSON.stringify for array dependencies
   useEffect(() => {
     const timer = setTimeout(async () => {
       // Check if we have search criteria

@@ -90,16 +90,4 @@ describe("highlightTextAsHTML (HTML strings)", () => {
       '<mark class="bg-yellow-200">النبي</mark> صلى الله عليه وسلم'
     );
   });
-
-  it("handles accent-insensitive matching", () => {
-    expect(highlightTextAsHTML("La prière est importante", "priere")).toBe(
-      'La <mark class="bg-yellow-200">prière</mark> est importante'
-    );
-    expect(highlightTextAsHTML("Le Prophète a dit", "prophete")).toBe(
-      'Le <mark class="bg-yellow-200">Prophète</mark> a dit'
-    );
-    expect(highlightTextAsHTML("André était là", "andre")).toBe(
-      '<mark class="bg-yellow-200">André</mark> était là'
-    );
-  });
 });

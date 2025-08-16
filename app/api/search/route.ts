@@ -35,8 +35,8 @@ export async function GET(request: NextRequest) {
     switch (filterMode) {
       case "word":
         if (query.length >= 3) {
-          // Use PostgreSQL search with word mode
-          const searchResults = await searchHadithsCombined(query, "word", limit);
+          // Use PostgreSQL full-text search
+          const searchResults = await searchHadithsCombined(query, limit);
 
           // Transform SearchResult to HadithType format
           results = searchResults.map((result) => ({

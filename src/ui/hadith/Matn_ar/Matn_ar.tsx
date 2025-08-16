@@ -3,7 +3,7 @@
 import { useId, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
-import { highlightText } from "@/src/utils/highlightText";
+import { TextHighlighter } from "@/src/utils/TextHighlighter";
 
 type Props = {
   matn: string;
@@ -19,8 +19,6 @@ export function Matn_ar({ matn, update, highlight }: Props) {
   const toggleArabicVisibility = () => {
     setIsArabicVisible(!isArabicVisible);
   };
-
-  const processedMatnAr = highlightText(matn, highlight);
 
   return (
     <div className="mt-4 pt-2 border-t border-emerald-100 dark:border-emerald-900">
@@ -65,7 +63,10 @@ export function Matn_ar({ matn, update, highlight }: Props) {
             className="pt-2 text-right font-matn_ar text-xl leading-loose text-pretty dark:text-gray-300"
             dir="rtl"
           >
-            {processedMatnAr}
+            <TextHighlighter
+              text={matn}
+              highlight={highlight}
+            />
           </div>
         </div>
       </div>
