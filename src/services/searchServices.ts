@@ -2,6 +2,7 @@
 
 import { prisma } from "@/prisma/prisma";
 import { HadithType } from "@/src/types/types";
+import { prepareArabicForSearch } from "@/src/utils/normalizeArabicText";
 
 /**
  * PostgreSQL Full-Text Search Services
@@ -27,46 +28,87 @@ export type SearchResult = {
   };
 };
 
-// Combined search in both French and Arabic content
+// Search only in Hadith content (French and Arabic text)
 export async function searchHadithsCombined(
   query: string,
   limit = 50
 ): Promise<SearchResult[]> {
   if (!query.trim()) return [];
 
-  try {
-    const results = await prisma.$queryRaw<SearchResult[]>`
-      SELECT 
-        h.id,
-        h.numero,
-        h.matn_fr,
-        h.matn_ar,
-        GREATEST(
-          ts_rank(to_tsvector('french', h.matn_fr), plainto_tsquery('french', ${query})),
-          ts_rank(to_tsvector('arabic', h.matn_ar), plainto_tsquery('arabic', ${query}))
-        ) as rank,
-        json_build_object(
-          'id', c.id,
-          'name', c.name,
-          'slug', c.slug,
-          'index', c.index
-        ) as chapter,
-        json_build_object(
-          'id', n.id,
-          'name', n.name,
-          'slug', n.slug
-        ) as narrator
-      FROM "Hadith" h
-      JOIN "Chapter" c ON h."chapterId" = c.id
-      JOIN "Narrator" n ON h."narratorId" = n.id
-      WHERE 
-        to_tsvector('french', h.matn_fr) @@ plainto_tsquery('french', ${query})
-        OR to_tsvector('arabic', h.matn_ar) @@ plainto_tsquery('arabic', ${query})
-      ORDER BY rank DESC, h.numero ASC
-      LIMIT ${limit}
-    `;
+  // Normalize Arabic text for better search matching
+  const normalizedQuery = prepareArabicForSearch(query);
 
-    return results;
+  try {
+    // Check if query contains only ASCII characters for ts_query
+    const isAsciiOnly = /^[a-zA-Z\s]+$/.test(normalizedQuery);
+
+    if (isAsciiOnly) {
+      // Use full-text search for ASCII (French) text
+      const results = await prisma.$queryRaw<SearchResult[]>`
+        SELECT 
+          h.id,
+          h.numero,
+          h.matn_fr,
+          h.matn_ar,
+          GREATEST(
+            ts_rank(to_tsvector('french', h.matn_fr), to_tsquery('french', ${normalizedQuery + ":*"})),
+            CASE WHEN LOWER(h.matn_fr) LIKE LOWER(${"%" + normalizedQuery + "%"}) THEN 0.5 ELSE 0 END
+          ) as rank,
+          json_build_object(
+            'id', c.id,
+            'name', c.name,
+            'slug', c.slug,
+            'index', c.index
+          ) as chapter,
+          json_build_object(
+            'id', n.id,
+            'name', n.name,
+            'slug', n.slug
+          ) as narrator
+        FROM "Hadith" h
+        JOIN "Chapter" c ON h."chapterId" = c.id
+        JOIN "Narrator" n ON h."narratorId" = n.id
+        WHERE 
+          to_tsvector('french', h.matn_fr) @@ to_tsquery('french', ${normalizedQuery + ":*"})
+          OR LOWER(h.matn_fr) LIKE LOWER(${"%" + normalizedQuery + "%"})
+        ORDER BY rank DESC
+        LIMIT ${limit}
+      `;
+      return results;
+    } else {
+      // Use LIKE search for non-ASCII (Arabic) text
+      const results = await prisma.$queryRaw<SearchResult[]>`
+        SELECT 
+          h.id,
+          h.numero,
+          h.matn_fr,
+          h.matn_ar,
+          GREATEST(
+            CASE WHEN LOWER(h.matn_fr) LIKE LOWER(${"%" + normalizedQuery + "%"}) THEN 0.5 ELSE 0 END,
+            CASE WHEN REGEXP_REPLACE(h.matn_ar, '[ًٌٍَُِّْٰ]', '', 'g') LIKE ${"%" + normalizedQuery + "%"} THEN 0.8 ELSE 0 END
+          ) as rank,
+          json_build_object(
+            'id', c.id,
+            'name', c.name,
+            'slug', c.slug,
+            'index', c.index
+          ) as chapter,
+          json_build_object(
+            'id', n.id,
+            'name', n.name,
+            'slug', n.slug
+          ) as narrator
+        FROM "Hadith" h
+        JOIN "Chapter" c ON h."chapterId" = c.id
+        JOIN "Narrator" n ON h."narratorId" = n.id
+        WHERE 
+          LOWER(h.matn_fr) LIKE LOWER(${"%" + normalizedQuery + "%"})
+          OR REGEXP_REPLACE(h.matn_ar, '[ًٌٍَُِّْٰ]', '', 'g') LIKE ${"%" + normalizedQuery + "%"}
+        ORDER BY rank DESC
+        LIMIT ${limit}
+      `;
+      return results;
+    }
   } catch (error) {
     console.error("Error in searchHadithsCombined:", error);
     return [];

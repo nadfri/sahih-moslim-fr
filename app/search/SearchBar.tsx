@@ -380,6 +380,13 @@ export function SearchBar({
         </div>
       </form>
 
+      {/* Validation Messages */}
+      {filterMode === "word" && query.length > 0 && query.length < 3 && (
+        <p className="text-red-400 italic">
+          Merci de saisir au moins 3 lettres pour la recherche par mot.
+        </p>
+      )}
+
       {isLoading && (
         <div className="text-center text-gray-600 dark:text-gray-400">
           Recherche en cours...

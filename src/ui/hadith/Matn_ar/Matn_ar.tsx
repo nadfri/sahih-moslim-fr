@@ -1,9 +1,10 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
-import { TextHighlighter } from "@/src/utils/TextHighlighter";
+import { MarkdownHighlighter } from "@/src/utils/MarkdownHighlighter";
+import { containsArabic } from "@/src/utils/normalizeArabicText";
 
 type Props = {
   matn: string;
@@ -11,10 +12,21 @@ type Props = {
   update?: boolean;
 };
 
-export function Matn_ar({ matn, update, highlight }: Props) {
-  const [isArabicVisible, setIsArabicVisible] = useState(false);
+export function Matn_ar({ matn, highlight, update }: Props) {
+  // Auto-show Arabic if searching for Arabic text
+  const shouldAutoShow = highlight && containsArabic(highlight);
+  const [isArabicVisible, setIsArabicVisible] = useState(
+    shouldAutoShow || false
+  );
 
   const arabicContentId = useId();
+
+  // Update visibility when highlight changes
+  useEffect(() => {
+    if (shouldAutoShow) {
+      setIsArabicVisible(true);
+    }
+  }, [shouldAutoShow]);
 
   const toggleArabicVisibility = () => {
     setIsArabicVisible(!isArabicVisible);
@@ -63,10 +75,9 @@ export function Matn_ar({ matn, update, highlight }: Props) {
             className="pt-2 text-right font-matn_ar text-xl leading-loose text-pretty dark:text-gray-300"
             dir="rtl"
           >
-            <TextHighlighter
-              text={matn}
-              highlight={highlight}
-            />
+            <MarkdownHighlighter highlight={highlight}>
+              {matn}
+            </MarkdownHighlighter>
           </div>
         </div>
       </div>

@@ -27,15 +27,11 @@ export function Hadith({
           <ChapterName hadith={hadith} />
 
           {/* Narrator */}
-          <NarratedBy
-            narrator={hadith.narrator}
-            highlight={highlight}
-          />
+          <NarratedBy narrator={hadith.narrator} />
 
           {/* Isnad */}
           <Isnad
             isnadTransmitters={hadith.isnadTransmitters}
-            highlight={highlight}
             update={update}
           />
         </div>
@@ -47,10 +43,7 @@ export function Hadith({
         />
 
         {/* Sahabas */}
-        <ListOfSahabas
-          sahabas={hadith.mentionedSahabas}
-          highlight={highlight}
-        />
+        <ListOfSahabas sahabas={hadith.mentionedSahabas} />
 
         {/* Matn_ar */}
         <Matn_ar

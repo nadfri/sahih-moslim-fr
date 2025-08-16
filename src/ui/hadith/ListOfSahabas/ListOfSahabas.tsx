@@ -2,15 +2,8 @@ import Link from "next/link";
 import { SquareArrowOutUpRight } from "lucide-react";
 
 import { ItemType } from "@/src/types/types";
-import { TextHighlighter } from "@/src/utils/TextHighlighter";
 
-export function ListOfSahabas({
-  sahabas,
-  highlight,
-}: {
-  sahabas: ItemType[];
-  highlight?: string;
-}) {
+export function ListOfSahabas({ sahabas }: { sahabas: ItemType[] }) {
   if (sahabas.length === 0) return null;
 
   return (
@@ -26,11 +19,7 @@ export function ListOfSahabas({
             href={`/sahabas/${sahaba.slug}`}
             className="text-sm bg-emerald-50 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-300 px-2 py-1 rounded-md transition-colors duration-200 hover:bg-emerald-200 dark:hover:bg-emerald-800/50"
           >
-            <TextHighlighter
-              text={sahaba.name}
-              highlight={highlight}
-              as="span"
-            />{" "}
+            {sahaba.name}{" "}
             <SquareArrowOutUpRight className="inline size-3 align-middle" />
           </Link>
         ))}

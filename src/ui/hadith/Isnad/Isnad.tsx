@@ -10,15 +10,13 @@ import {
 } from "lucide-react";
 
 import { ItemType } from "@/src/types/types";
-import { TextHighlighter } from "@/src/utils/TextHighlighter";
 
 type Props = {
   isnadTransmitters: ItemType[];
-  highlight?: string;
   update?: boolean;
 };
 
-export function Isnad({ isnadTransmitters, highlight, update }: Props) {
+export function Isnad({ isnadTransmitters, update }: Props) {
   const [isIsnadVisible, setIsIsnadVisible] = useState(update ?? false);
   const isnadContentId = useId();
 
@@ -74,11 +72,7 @@ export function Isnad({ isnadTransmitters, highlight, update }: Props) {
                 href={`/transmitters/${trans.slug}`}
                 className={linkClassName}
               >
-                <TextHighlighter
-                  text={trans.name}
-                  highlight={highlight}
-                  as="span"
-                />{" "}
+                {trans.name}{" "}
                 <SquareArrowOutUpRight className="inline size-2.5 align-middle" />
               </Link>
             </div>
