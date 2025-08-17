@@ -21,13 +21,26 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const filterMode = searchParams.get("filterMode") || "word";
     const query = searchParams.get("query") || "";
     const narrator = searchParams.get("narrator") || "";
     const sahabas = searchParams.getAll("sahaba");
     const transmitters = searchParams.getAll("transmitter");
     const numero = searchParams.get("numero") || "";
     const offset = parseInt(searchParams.get("offset") || "0");
+
+    // Auto-detect filterMode based on present parameters
+    let filterMode = "word"; // default
+    if (narrator) {
+      filterMode = "narrator";
+    } else if (sahabas.length > 0) {
+      filterMode = "sahaba";
+    } else if (transmitters.length > 0) {
+      filterMode = "transmitter";
+    } else if (numero) {
+      filterMode = "numero";
+    } else if (query) {
+      filterMode = "word";
+    }
     const limit = parseInt(searchParams.get("limit") || "100");
 
     let results: ApiSearchResult[] = [];

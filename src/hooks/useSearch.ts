@@ -22,6 +22,8 @@ export type UseSearchProps = {
   debounceMs?: number;
 };
 
+const DEBOUNCE_MS = 300;
+
 export function useSearch({
   filterMode,
   query,
@@ -29,7 +31,6 @@ export function useSearch({
   sahabas,
   transmitters,
   numero,
-  debounceMs = 300,
 }: UseSearchProps) {
   const [results, setResults] = useState<HadithType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -58,9 +59,8 @@ export function useSearch({
       setError(null);
 
       try {
-        // Build search params
+        // Build search params - no need to send filterMode as it can be inferred
         const searchParams = new URLSearchParams();
-        searchParams.set("filterMode", filterMode);
 
         if (filterMode === "word" && query) {
           searchParams.set("query", query);
@@ -96,10 +96,10 @@ export function useSearch({
       } finally {
         setIsLoading(false);
       }
-    }, debounceMs);
+    }, DEBOUNCE_MS);
 
     return () => clearTimeout(timer);
-  }, [filterMode, query, narrator, sahabas, transmitters, numero, debounceMs]);
+  }, [filterMode, query, narrator, sahabas, transmitters, numero]);
 
   // Reset function
   const resetSearch = () => {

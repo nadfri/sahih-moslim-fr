@@ -7,12 +7,12 @@ import { Search } from "lucide-react";
 
 import { useSearch } from "@/src/hooks/useSearch";
 import { FilterType } from "@/src/types/types";
+import { BadgeNumberOfHadith } from "@/src/ui/hadith/BadgeNumberOfHadith/BadgeNumberOfHadith";
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { MultiSelect } from "@/src/ui/inputs/MultiSelect/MultiSelect";
 import { SearchSelect } from "@/src/ui/inputs/SearchSelect/SearchSelect";
 
 function extractInitials(sp: URLSearchParams) {
-  const filterMode = (sp.get("filterMode") as FilterType) || "word";
   const query = sp.get("query") || "";
   const narrator = sp.get("narrator") || "";
   const numero = sp.get("numero") || "";
@@ -31,6 +31,20 @@ function extractInitials(sp: URLSearchParams) {
     if (queryParams.length > 0) {
       transmitters = queryParams.filter(Boolean);
     }
+  }
+
+  // Auto-detect filterMode based on present parameters
+  let filterMode: FilterType = "word"; // default
+  if (narrator) {
+    filterMode = "narrator";
+  } else if (sahabas.length > 0) {
+    filterMode = "sahaba";
+  } else if (transmitters.length > 0) {
+    filterMode = "transmitter";
+  } else if (numero) {
+    filterMode = "numero";
+  } else if (query) {
+    filterMode = "word";
   }
 
   return {
@@ -96,8 +110,9 @@ export function SearchBar({
     urlNumero: string
   ) => {
     const params = new URLSearchParams();
-    params.set("filterMode", urlFilterMode);
 
+    // Only add the parameter that corresponds to the current filter mode
+    // No need for filterMode parameter since it can be inferred
     if (urlFilterMode === "word" && urlQuery) {
       params.set("query", urlQuery);
     } else if (urlFilterMode === "narrator" && urlNarrator) {
@@ -395,13 +410,18 @@ export function SearchBar({
 
       {/* Search Stats */}
       {(results.length > 0 || hasSearched) && (
-        <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-          {results.length > 0
-            ? `${results.length} hadith${results.length > 1 ? "s" : ""} trouvé${results.length > 1 ? "s" : ""}`
-            : hasSearched && !isLoading
-              ? "Aucun hadith trouvé"
-              : ""}
-        </div>
+        <>
+          {results.length > 0 ? (
+            <BadgeNumberOfHadith
+              count={results.length}
+              size="large"
+            />
+          ) : hasSearched && !isLoading ? (
+            <p className="text-gray-600 dark:text-gray-400">
+              Aucun hadith trouvé...
+            </p>
+          ) : null}
+        </>
       )}
 
       {/* Results */}
