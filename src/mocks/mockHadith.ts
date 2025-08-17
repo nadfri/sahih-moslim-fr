@@ -1,4 +1,4 @@
-import { HadithType } from "../../types/types";
+import { HadithType } from "../types/types";
 
 export const mockHadith: HadithType = {
   id: "1",

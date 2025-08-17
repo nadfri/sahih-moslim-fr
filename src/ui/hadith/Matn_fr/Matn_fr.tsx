@@ -1,4 +1,4 @@
-import { MarkdownHighlighter } from "@/src/utils/MarkdownHighlighter";
+import { MarkdownHighlighter } from "@/src/ui/hadith/MarkdownHighlighter/MarkdownHighlighter";
 
 type Props = {
   matn: string;

@@ -2,6 +2,10 @@
 
 ## Core Features
 
+### Search
+
+- [ ] Handle the 20 results limit in search (pagination or "Load more")
+
 ### Pagination
 
 - [ ] Create pagination component for hadith listings

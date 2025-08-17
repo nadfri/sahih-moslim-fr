@@ -5,6 +5,7 @@ import Mark from "mark.js";
 import ReactMarkdown, { Components } from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
+
 import { prepareArabicForHighlight } from "@/src/utils/normalizeArabicText";
 
 type Props = {
@@ -71,7 +72,7 @@ export function MarkdownHighlighter({ children, highlight }: Props) {
       // Process each text node for Arabic highlighting
       textNodes.forEach((textNode) => {
         const originalText = textNode.textContent || "";
-        
+
         // Create a regex pattern that matches the search term with optional diacritics
         const searchTerm = normalizedHighlight;
         const pattern = searchTerm
@@ -86,13 +87,13 @@ export function MarkdownHighlighter({ children, highlight }: Props) {
           .join("");
 
         const regex = new RegExp(`(${pattern})`, "gi");
-        
+
         if (regex.test(originalText)) {
           const highlightedText = originalText.replace(
             regex,
             '<mark class="bg-yellow-200 dark:bg-yellow-600">$1</mark>'
           );
-          
+
           if (highlightedText !== originalText) {
             const span = document.createElement("span");
             span.innerHTML = highlightedText;

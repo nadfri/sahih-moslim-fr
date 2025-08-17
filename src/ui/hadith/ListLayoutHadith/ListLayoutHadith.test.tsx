@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { mockHadiths } from "@/src/utils/mocks/mockHadiths";
+import { mockHadiths } from "@/src/mocks/mockHadiths";
 import { ListLayoutHadith } from "./ListLayoutHadith";
 
 describe("ListLayoutHadith", () => {

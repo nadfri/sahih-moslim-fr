@@ -2,8 +2,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { mockHadith } from "@/src/mocks/mockHadith";
 import type { HadithType } from "@/src/types/types";
-import { mockHadith } from "@/src/utils/mocks/mockHadith";
 import { Hadith } from "./Hadith";
 
 // Mock the environment variables

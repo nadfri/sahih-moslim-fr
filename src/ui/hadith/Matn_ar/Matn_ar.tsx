@@ -3,7 +3,7 @@
 import { useEffect, useId, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
-import { MarkdownHighlighter } from "@/src/utils/MarkdownHighlighter";
+import { MarkdownHighlighter } from "@/src/ui/hadith/MarkdownHighlighter/MarkdownHighlighter";
 import { containsArabic } from "@/src/utils/normalizeArabicText";
 
 type Props = {

@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { mockHadith } from "@/src/mocks/mockHadith";
 import { HadithType } from "@/src/types/types";
-import { mockHadith } from "@/src/utils/mocks/mockHadith";
 import { ActionsBtns } from "./ActionsBtns";
 
 type LinkProps = {

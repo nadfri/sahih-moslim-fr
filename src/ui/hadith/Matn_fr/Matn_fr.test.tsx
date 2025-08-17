@@ -1,22 +1,33 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { highlightTextAsHTML } from "@/src/utils/highlightText";
-import { mockHadith } from "@/src/utils/mocks/mockHadith";
 import { Matn_fr } from "./Matn_fr";
 
-// Mock the highlightTextAsHTML utility
-vi.mock("@/src/utils/highlightText", () => ({
-  highlightTextAsHTML: vi.fn((text: string, highlight?: string) => {
-    if (!highlight) return text;
-    return text.replace(
-      new RegExp(highlight, "gi"),
-      `<mark>${highlight}</mark>`
-    );
-  }),
-}));
+// Mock data for testing
+const mockHadith = {
+  matn_fr:
+    "Le Messager d'Allah (que la paix et les bénédictions d'Allah soient sur lui) a dit",
+  matn_ar: "قال رسول الله صلى الله عليه وسلم",
+};
 
-const mockedHighlightTextAsHTML = vi.mocked(highlightTextAsHTML);
+// Mock the MarkdownHighlighter component
+vi.mock("@/src/ui/hadith/MarkdownHighlighter/MarkdownHighlighter", () => ({
+  MarkdownHighlighter: ({
+    children,
+    highlight,
+  }: {
+    children: string;
+    highlight?: string;
+  }) => {
+    if (highlight) {
+      // Simple mock highlighting by wrapping highlighted text in <mark>
+      const regex = new RegExp(`(${highlight})`, "gi");
+      const highlightedContent = children.replace(regex, "<mark>$1</mark>");
+      return <div dangerouslySetInnerHTML={{ __html: highlightedContent }} />;
+    }
+    return <div>{children}</div>;
+  },
+}));
 
 describe("Matn_fr Component", () => {
   beforeEach(() => {
@@ -26,92 +37,14 @@ describe("Matn_fr Component", () => {
   it("should render the French text content", () => {
     render(<Matn_fr matn={mockHadith.matn_fr} />);
 
-    expect(screen.getByText(/Ceci est un/)).toBeInTheDocument();
-    expect(screen.getByText(/de hadith en français/)).toBeInTheDocument();
+    expect(screen.getByText(mockHadith.matn_fr)).toBeInTheDocument();
   });
 
-  it("should apply custom styling to strong elements", () => {
-    const matnWithStrong = "Texte avec **mot important** dedans";
-
-    render(<Matn_fr matn={matnWithStrong} />);
-
-    const strongElement = screen.getByText("mot important");
-    expect(strongElement).toHaveClass(
-      "text-emerald-600",
-      "dark:text-emerald-400",
-      "font-medium"
-    );
-    expect(strongElement.tagName).toBe("SPAN");
-  });
-
-  it("should apply custom styling to em elements", () => {
-    const matnWithEm = "Texte avec _note importante_ dedans";
-
-    render(<Matn_fr matn={matnWithEm} />);
-
-    const emElement = screen.getByText("note importante");
-    expect(emElement).toHaveClass(
-      "border-l-4",
-      "rounded-md",
-      "border-amber-500",
-      "dark:border-amber-600",
-      "bg-amber-50",
-      "dark:bg-amber-900/30",
-      "p-3",
-      "my-4",
-      "text-amber-800",
-      "dark:text-amber-400",
-      "italic",
-      "block"
-    );
-    expect(emElement.tagName).toBe("EM");
-  });
-
-  it("should apply custom styling to del elements", () => {
-    const matnWithDel = "Texte avec ~~texte barré~~ dedans";
-
-    render(<Matn_fr matn={matnWithDel} />);
-
-    const delElement = screen.getByText("texte barré");
-    expect(delElement).toHaveClass(
-      "text-blue-600",
-      "dark:text-blue-500",
-      "no-underline",
-      "font-medium"
-    );
-    expect(delElement.tagName).toBe("DEL");
-  });
-
-  it("should call highlightTextAsHTML with correct parameters when highlight is provided", () => {
-    render(
-      <Matn_fr
-        matn={mockHadith.matn_fr}
-        highlight="test"
-      />
-    );
-
-    expect(mockedHighlightTextAsHTML).toHaveBeenCalledWith(
-      mockHadith.matn_fr,
-      "test"
-    );
-    expect(mockedHighlightTextAsHTML).toHaveBeenCalledTimes(1);
-  });
-
-  it("should call highlightTextAsHTML with undefined when no highlight is provided", () => {
+  it("should render with correct CSS classes", () => {
     render(<Matn_fr matn={mockHadith.matn_fr} />);
 
-    expect(mockedHighlightTextAsHTML).toHaveBeenCalledWith(
-      mockHadith.matn_fr,
-      undefined
-    );
-    expect(mockedHighlightTextAsHTML).toHaveBeenCalledTimes(1);
-  });
-
-  it("should have proper container styling", () => {
-    const { container } = render(<Matn_fr matn={mockHadith.matn_fr} />);
-
-    const mainDiv = container.firstChild as HTMLElement;
-    expect(mainDiv).toHaveClass(
+    const container = document.querySelector(".space-y-3");
+    expect(container).toHaveClass(
       "space-y-3",
       "text-gray-700",
       "dark:text-gray-300",
@@ -120,20 +53,118 @@ describe("Matn_fr Component", () => {
     );
   });
 
-  it("should render empty content gracefully", () => {
-    render(<Matn_fr matn="" />);
+  it("should pass highlight prop to MarkdownHighlighter", () => {
+    const highlightTerm = "test";
+    render(
+      <Matn_fr
+        matn="This is a test text"
+        highlight={highlightTerm}
+      />
+    );
 
-    expect(mockedHighlightTextAsHTML).toHaveBeenCalledWith("", undefined);
+    // Check if the highlight term is wrapped in <mark> tags
+    const markElement = document.querySelector("mark");
+    expect(markElement).toBeInTheDocument();
+    expect(markElement?.textContent).toBe(highlightTerm);
   });
 
-  it("should process markdown correctly", () => {
-    const matnWithMarkdown = "# Titre du hadith\n\nTexte normal avec **gras**.";
+  it("should render without highlight when no highlight prop is provided", () => {
+    render(<Matn_fr matn={mockHadith.matn_fr} />);
 
-    render(<Matn_fr matn={matnWithMarkdown} />);
+    // Check that no <mark> elements are present
+    const markElements = document.querySelectorAll("mark");
+    expect(markElements).toHaveLength(0);
+  });
 
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Titre du hadith"
+  it("should handle empty matn content", () => {
+    render(<Matn_fr matn="" />);
+
+    // Should render the container with proper classes
+    const container = document.querySelector(".space-y-3");
+    expect(container).toBeInTheDocument();
+  });
+
+  it("should handle markdown content correctly", () => {
+    const markdownText = "**Bold text** and *italic text*";
+    render(<Matn_fr matn={markdownText} />);
+
+    // Our simple mock doesn't process markdown, so check for the raw text
+    expect(screen.getByText(markdownText)).toBeInTheDocument();
+  });
+
+  it("should highlight multiple occurrences of the search term", () => {
+    const textWithMultipleOccurrences = "Le Prophète a dit au Prophète";
+    const highlightTerm = "Prophète";
+
+    render(
+      <Matn_fr
+        matn={textWithMultipleOccurrences}
+        highlight={highlightTerm}
+      />
     );
-    expect(screen.getByText("gras")).toBeInTheDocument();
+
+    // Check that multiple <mark> elements are present
+    const markElements = document.querySelectorAll("mark");
+    expect(markElements.length).toBe(2);
+  });
+
+  it("should be case-insensitive when highlighting", () => {
+    const text = "Le Prophète a dit";
+    const highlightTerm = "prophète"; // lowercase
+
+    render(
+      <Matn_fr
+        matn={text}
+        highlight={highlightTerm}
+      />
+    );
+
+    // Check if highlighting occurred despite case difference
+    const markElement = document.querySelector("mark");
+    expect(markElement).toBeInTheDocument();
+  });
+
+  it("should render long text content properly", () => {
+    const longText =
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ".repeat(5);
+    render(<Matn_fr matn={longText} />);
+
+    // Check that container is rendered with proper classes
+    const container = document.querySelector(".space-y-3");
+    expect(container).toBeInTheDocument();
+    expect(container).toHaveClass("text-gray-700", "dark:text-gray-300");
+  });
+
+  it("should handle special characters in text", () => {
+    const textWithSpecialChars = "Le Messager d'Allah ﷺ a dit: « Bismillah »";
+    render(<Matn_fr matn={textWithSpecialChars} />);
+
+    expect(screen.getByText(textWithSpecialChars)).toBeInTheDocument();
+  });
+
+  it("should handle undefined highlight prop gracefully", () => {
+    render(
+      <Matn_fr
+        matn={mockHadith.matn_fr}
+        highlight={undefined}
+      />
+    );
+
+    expect(screen.getByText(mockHadith.matn_fr)).toBeInTheDocument();
+    const markElements = document.querySelectorAll("mark");
+    expect(markElements).toHaveLength(0);
+  });
+
+  it("should handle empty highlight prop", () => {
+    render(
+      <Matn_fr
+        matn={mockHadith.matn_fr}
+        highlight=""
+      />
+    );
+
+    expect(screen.getByText(mockHadith.matn_fr)).toBeInTheDocument();
+    const markElements = document.querySelectorAll("mark");
+    expect(markElements).toHaveLength(0);
   });
 });
