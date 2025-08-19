@@ -293,7 +293,7 @@ export function SearchBar({
               <div className="relative">
                 <input
                   type="text"
-                  name="queryInput"
+                  name="query"
                   value={query}
                   onChange={(e) =>
                     handleSearchChange(

@@ -3,10 +3,11 @@
 import { prisma } from "@/prisma/prisma";
 import { HadithType } from "@/src/types/types";
 import { prepareArabicForSearch } from "@/src/utils/normalizeArabicText";
+import { searchCache } from "./searchCache";
 
 /**
  * PostgreSQL Full-Text Search Services
- * Optimized for Supabase with GIN indexes
+ * Optimized for Supabase with GIN indexes and in-memory caching
  */
 
 export type SearchResult = {
@@ -14,7 +15,6 @@ export type SearchResult = {
   numero: number;
   matn_fr: string;
   matn_ar: string;
-  rank: number;
   chapter: {
     id: string;
     name: string;
@@ -29,86 +29,70 @@ export type SearchResult = {
 };
 
 // Search only in Hadith content (French and Arabic text)
+// Optimized for <300ms performance: caching + smaller result sets + efficient queries
 export async function searchHadithsCombined(
   query: string,
-  limit = 50
+  limit = 25 // Reduced default limit for better performance
 ): Promise<SearchResult[]> {
   if (!query.trim()) return [];
 
-  // Normalize Arabic text for better search matching
+  // Check cache first for instant results
+  const cachedResults = searchCache.get(query, limit);
+  if (cachedResults) {
+    return cachedResults;
+  }
+
+  // Normalize the query for better matching
   const normalizedQuery = prepareArabicForSearch(query);
 
   try {
-    // Check if query contains only ASCII characters for ts_query
-    const isAsciiOnly = /^[a-zA-Z\s]+$/.test(normalizedQuery);
+    // Hybrid approach: fast trigram search + fallback unaccent search
+    // Try fast index-optimized search first, then accent-insensitive if needed
+    const results = await prisma.$queryRaw<SearchResult[]>`
+      SELECT 
+        h.id,
+        h.numero,
+        h.matn_fr,
+        h.matn_ar,
+        json_build_object(
+          'id', c.id,
+          'name', c.name,
+          'slug', c.slug,
+          'index', c.index
+        ) as chapter,
+        json_build_object(
+          'id', n.id,
+          'name', n.name,
+          'slug', n.slug
+        ) as narrator
+      FROM "Hadith" h
+      INNER JOIN "Chapter" c ON h."chapterId" = c.id
+      INNER JOIN "Narrator" n ON h."narratorId" = n.id
+      WHERE 
+        -- Fast: use your manual trigram indexes first
+        lower(h.matn_fr) LIKE '%' || lower(${query}) || '%'
+        OR lower(h.matn_ar) LIKE '%' || lower(${query}) || '%'
+        OR lower(h.matn_ar) LIKE '%' || lower(${normalizedQuery}) || '%'
+        OR
+        -- Accent-insensitive fallback (slower but comprehensive)
+        unaccent(lower(h.matn_fr)) LIKE '%' || unaccent(lower(${query})) || '%'
+      ORDER BY 
+        -- Prioritize exact matches from fast indexes
+        CASE 
+          WHEN lower(h.matn_fr) LIKE '%' || lower(${query}) || '%' THEN 1
+          WHEN lower(h.matn_ar) LIKE '%' || lower(${query}) || '%' THEN 2
+          WHEN lower(h.matn_ar) LIKE '%' || lower(${normalizedQuery}) || '%' THEN 3
+          ELSE 4 -- unaccent matches
+        END,
+        length(h.matn_fr) ASC,
+        h.numero ASC
+      LIMIT ${limit}
+    `;
 
-    if (isAsciiOnly) {
-      // Use full-text search for ASCII (French) text
-      const results = await prisma.$queryRaw<SearchResult[]>`
-        SELECT 
-          h.id,
-          h.numero,
-          h.matn_fr,
-          h.matn_ar,
-          GREATEST(
-            ts_rank(to_tsvector('french', h.matn_fr), to_tsquery('french', ${normalizedQuery + ":*"})),
-            CASE WHEN LOWER(h.matn_fr) LIKE LOWER(${"%" + normalizedQuery + "%"}) THEN 0.5 ELSE 0 END
-          ) as rank,
-          json_build_object(
-            'id', c.id,
-            'name', c.name,
-            'slug', c.slug,
-            'index', c.index
-          ) as chapter,
-          json_build_object(
-            'id', n.id,
-            'name', n.name,
-            'slug', n.slug
-          ) as narrator
-        FROM "Hadith" h
-        JOIN "Chapter" c ON h."chapterId" = c.id
-        JOIN "Narrator" n ON h."narratorId" = n.id
-        WHERE 
-          to_tsvector('french', h.matn_fr) @@ to_tsquery('french', ${normalizedQuery + ":*"})
-          OR LOWER(h.matn_fr) LIKE LOWER(${"%" + normalizedQuery + "%"})
-        ORDER BY rank DESC
-        LIMIT ${limit}
-      `;
-      return results;
-    } else {
-      // Use LIKE search for non-ASCII (Arabic) text
-      const results = await prisma.$queryRaw<SearchResult[]>`
-        SELECT 
-          h.id,
-          h.numero,
-          h.matn_fr,
-          h.matn_ar,
-          GREATEST(
-            CASE WHEN LOWER(h.matn_fr) LIKE LOWER(${"%" + normalizedQuery + "%"}) THEN 0.5 ELSE 0 END,
-            CASE WHEN REGEXP_REPLACE(h.matn_ar, '[ًٌٍَُِّْٰ]', '', 'g') LIKE ${"%" + normalizedQuery + "%"} THEN 0.8 ELSE 0 END
-          ) as rank,
-          json_build_object(
-            'id', c.id,
-            'name', c.name,
-            'slug', c.slug,
-            'index', c.index
-          ) as chapter,
-          json_build_object(
-            'id', n.id,
-            'name', n.name,
-            'slug', n.slug
-          ) as narrator
-        FROM "Hadith" h
-        JOIN "Chapter" c ON h."chapterId" = c.id
-        JOIN "Narrator" n ON h."narratorId" = n.id
-        WHERE 
-          LOWER(h.matn_fr) LIKE LOWER(${"%" + normalizedQuery + "%"})
-          OR REGEXP_REPLACE(h.matn_ar, '[ًٌٍَُِّْٰ]', '', 'g') LIKE ${"%" + normalizedQuery + "%"}
-        ORDER BY rank DESC
-        LIMIT ${limit}
-      `;
-      return results;
-    }
+    // Cache the results for faster subsequent queries
+    searchCache.set(query, limit, results);
+
+    return results;
   } catch (error) {
     console.error("Error in searchHadithsCombined:", error);
     return [];

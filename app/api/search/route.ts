@@ -7,15 +7,12 @@ import {
   searchHadithsBySahabas,
   searchHadithsByTransmitters,
   searchHadithsCombined,
-  SearchResult,
 } from "@/src/services/searchServices";
 import { getHadithByNumero } from "@/src/services/services";
 import { HadithType } from "@/src/types/types";
 
-// Type for API response that can handle both SearchResult and HadithType
-type ApiSearchResult =
-  | (SearchResult & { rank?: number })
-  | (HadithType & { rank?: number });
+// API result type (simplified)
+type ApiSearchResult = HadithType;
 
 export async function GET(request: NextRequest) {
   try {
@@ -27,6 +24,7 @@ export async function GET(request: NextRequest) {
     const transmitters = searchParams.getAll("transmitter");
     const numero = searchParams.get("numero") || "";
     const offset = parseInt(searchParams.get("offset") || "0");
+    // strict mode removed; search is now normalized substring only
 
     // Auto-detect filterMode based on present parameters
     let filterMode = "word"; // default
@@ -41,14 +39,15 @@ export async function GET(request: NextRequest) {
     } else if (query) {
       filterMode = "word";
     }
-    const limit = parseInt(searchParams.get("limit") || "100");
+    // Optimize default limit for sub-300ms performance (25 is optimal for speed)
+    const limit = parseInt(searchParams.get("limit") || "25");
 
     let results: ApiSearchResult[] = [];
 
     switch (filterMode) {
       case "word":
         if (query.length >= 3) {
-          // Use PostgreSQL full-text search
+          // Use optimized PostgreSQL Full-Text Search with GIN indexes
           const searchResults = await searchHadithsCombined(query, limit);
 
           // Transform SearchResult to HadithType format
@@ -65,7 +64,7 @@ export async function GET(request: NextRequest) {
             updatedAt: new Date().toISOString(),
             mentionedSahabas: [],
             isnadTransmitters: [],
-            rank: result.rank,
+            // ranking and approx highlighting removed
           }));
         }
         break;

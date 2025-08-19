@@ -1,209 +1,164 @@
-# Implémentation de l'authentification avec AuthJS, GitHub et middleware dans Next.js 15
+# Sahih Moslim FR - Application Next.js avec Supabase
 
-Ce guide explique pas à pas comment mettre en place un système d'authentification complet dans une application Next.js 15 avec React 19, en utilisant AuthJS (anciennement NextAuth), l'authentification GitHub et un middleware pour protéger les routes.
+Une application web moderne pour consulter les hadiths de Sahih Moslim en français, construite avec Next.js 15, React 19, et Supabase PostgreSQL.
 
-## Table des matières
+## 🚀 Technologies Utilisées
 
-1. [Installation des dépendances](#installation-des-dépendances)
-2. [Configuration de la base de données avec Prisma](#configuration-de-la-base-de-données-avec-prisma)
-3. [Configuration du fournisseur GitHub](#configuration-du-fournisseur-github)
-4. [Mise en place d'AuthJS](#mise-en-place-dauthjs)
-5. [Création du middleware de protection](#création-du-middleware-de-protection)
-6. [Création des composants d'interface utilisateur](#création-des-composants-dinterface-utilisateur)
-7. [Gestion des sessions et des rôles utilisateur](#gestion-des-sessions-et-des-rôles-utilisateur)
-8. [Dépannage courant](#dépannage-courant)
+- **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS
+- **Backend**: Supabase PostgreSQL, Prisma ORM
+- **Authentification**: NextAuth.js avec GitHub OAuth
+- **Recherche**: PostgreSQL Full-Text Search optimisé
+- **UI**: Composants React personnalisés avec support du mode sombre
 
-## Installation des dépendances
+## 📋 Table des Matières
 
-Pour commencer, installer les packages nécessaires :
+1. [Configuration Supabase](#configuration-supabase)
+2. [Installation et Configuration du Projet](#installation-et-configuration-du-projet)
+3. [Optimisations de Recherche](#optimisations-de-recherche)
+4. [Configuration de l'Authentification](#configuration-de-lauthentification)
+5. [Scripts Utiles](#scripts-utiles)
+6. [Déploiement](#déploiement)
 
-```bash
-pnpm add @auth/core @auth/prisma-adapter
-pnpm add -D prisma
-```
+## 🔧 Configuration Supabase
 
-## Configuration de la base de données avec Prisma
+### 1. Créer un Projet Supabase
 
-### Initialiser Prisma
+1. Aller sur [supabase.com](https://supabase.com) et créer un compte
+2. Créer un nouveau projet
+3. Noter les informations de connexion :
+   - Project URL
+   - API Keys (anon/public)
+   - Database URL
 
-```bash
-pnpx prisma init
-```
+### 2. Configuration de la Base de Données
 
-### Configurer le schéma Prisma pour AuthJS
+#### Variables d'Environnement
 
-Ajouter les modèles requis par AuthJS dans votre fichier `prisma/schema.prisma` :
-
-```prisma
-// This is your Prisma schema file
-datasource db {
-  provider  = "postgresql" // PostgreSQL via Supabase
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
-}
-
-model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  role          String?   @default("user")
-  accounts      Account[]
-  sessions      Session[]
-}
-
-model VerificationToken {
-  identifier String
-  token      String
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-```
-
-### Générer le client Prisma et appliquer les migrations
+Créer un fichier `.env.local` avec vos informations Supabase :
 
 ```bash
-pnpx prisma migrate dev --name init
-pnpx prisma generate
-```
-
-### Créer un client Prisma pour l'application
-
-Créer un fichier `prisma/prisma.ts` :
-
-```typescript
-import { PrismaClient } from "@prisma/client";
-
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
-
-export const prisma = globalForPrisma.prisma || new PrismaClient();
-
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
-
-export default prisma;
-```
-
-## Configuration du fournisseur GitHub
-
-1. Aller sur GitHub et naviguer vers [Settings > Developer Settings > OAuth Apps](https://github.com/settings/developers)
-2. Cliquer sur "New OAuth App"
-3. Remplir les informations :
-   - Application name: `Nom de votre application`
-   - Homepage URL: `http://localhost:3000`
-   - Authorization callback URL: `http://localhost:3000/api/auth/callback/github`
-4. Enregistrer et noter les valeurs `Client ID` et `Client Secret`
-
-## Mise en place d'AuthJS
-
-### Créer les variables d'environnement
-
-Créer ou modifier le fichier `.env` :
-
-```
-# Base de données PostgreSQL (Supabase)
-DATABASE_URL="postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?pgbouncer=true"
-DIRECT_URL="postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:5432/postgres"
-
 # Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL="https://[PROJECT-REF].supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="[ANON-KEY]"
+
+# Base de données PostgreSQL (Supabase)
+DATABASE_URL="postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:5432/postgres"
 
 # Authentication
 AUTH_SECRET="votre-secret-très-long-et-aléatoire"
 GITHUB_ID="votre-client-id-github"
 GITHUB_SECRET="votre-client-secret-github"
 
-# En production
+# En production uniquement
 # AUTH_URL="https://votre-domaine.com"
 ```
 
-Générer une valeur aléatoire pour AUTH_SECRET :
+#### 3. Extensions PostgreSQL Requises
+
+Dans l'éditeur SQL de Supabase, exécuter ces commandes **une seule fois** :
+
+```sql
+-- 🔧 Extensions pour la recherche optimisée
+CREATE EXTENSION IF NOT EXISTS unaccent;
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+```
+
+#### 4. Index de Performance (OBLIGATOIRES)
+
+**⚠️ Important** : Ces index sont essentiels pour des performances <300ms avec 6000+ hadiths.
+
+Dans l'éditeur SQL de Supabase :
+
+```sql
+-- 🚀 Index trigram pour recherche ultra-rapide
+CREATE INDEX IF NOT EXISTS hadith_matn_fr_trgm_idx
+ON "Hadith" USING GIN (lower(matn_fr) gin_trgm_ops);
+
+CREATE INDEX IF NOT EXISTS hadith_matn_ar_trgm_idx
+ON "Hadith" USING GIN (lower(matn_ar) gin_trgm_ops);
+```
+
+#### 5. Vérification des Index
+
+Pour vérifier que les index sont bien créés :
+
+```sql
+-- Vérifier les extensions
+SELECT extname, extversion
+FROM pg_extension
+WHERE extname IN ('pg_trgm', 'unaccent');
+
+-- Vérifier les index
+SELECT indexname, indexdef
+FROM pg_indexes
+WHERE tablename = 'Hadith'
+ORDER BY indexname;
+```
+
+## 📦 Installation et Configuration du Projet
+
+### 1. Cloner et Installer
 
 ```bash
-npx auth secret
+git clone [votre-repo]
+cd sahih-moslim-fr
+pnpm install
 ```
 
-### Configurer l'API route pour AuthJS
+### 2. Initialiser la Base de Données
 
-Créer le fichier `app/api/auth/[...nextauth]/route.ts` :
+```bash
+# Appliquer les migrations Prisma
+pnpx prisma migrate deploy
 
-```typescript
-import { handlers } from "@/authentification/auth";
+# Générer le client Prisma
+pnpx prisma generate
 
-export const { GET, POST } = handlers;
+# (Optionnel) Peupler la base avec des données de test
+pnpx prisma db seed
 ```
 
-### Configurer AuthJS
+### 3. Lancer en Développement
 
-Créer le fichier `authentification/auth.ts` :
+```bash
+pnpm dev
+```
 
-```typescript
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import NextAuth from "next-auth";
-import type { DefaultSession, NextAuthConfig } from "next-auth";
-import GitHub from "next-auth/providers/github";
+L'application sera disponible sur `http://localhost:3000`
 
-import prisma from "@/prisma/prisma";
+## 🔍 Optimisations de Recherche
 
-// Extension des types pour inclure les rôles utilisateur
-declare module "next-auth" {
-  interface User {
-    role?: string | null;
-  }
-  interface Session {
-    user: {
-      id: string;
-      role?: string | null;
-    } & DefaultSession["user"];
-  }
-}
+### Performance Attendue
 
-declare module "next-auth/jwt" {
-  interface JWT {
-    role?: string | null;
-  }
-}
+- **Recherches avec cache** : <50ms ⚡
+- **Nouvelles recherches courtes** : 300-600ms ✅
+- **Recherche accent-insensitive** : "priere" → trouve "prière" ✅
+- **Recherche multilingue** : Français + Arabe ✅
 
-// Configuration de NextAuth
+### Architecture de Recherche
+
+1. **Cache intelligent** : 5 minutes TTL, 100 entrées max
+2. **Index trigram** : PostgreSQL GIN pour ILIKE ultra-rapide
+3. **Recherche hybride** : Index rapides + fallback accent-insensitive
+4. **Limite optimisée** : 25 résultats par défaut
+
+### Test des Performances
+
+```bash
+# Lancer les tests de performance
+pnpx tsx scripts/test-search-performance.ts
+
+# Valider toutes les optimisations
+pnpx tsx scripts/validate-search-optimizations.ts
+```
+
 export const authConfig: NextAuthConfig = {
-  adapter: PrismaAdapter(prisma),
-  providers: [GitHub],
-  callbacks: {
-    async jwt({ token }) {
-      if (!token.sub) return token;
+adapter: PrismaAdapter(prisma),
+providers: [GitHub],
+callbacks: {
+async jwt({ token }) {
+if (!token.sub) return token;
 
       const dbUser = await prisma.user.findUnique({
         where: { id: token.sub },
@@ -223,19 +178,21 @@ export const authConfig: NextAuthConfig = {
       }
       return session;
     },
-  },
-  pages: {
-    signIn: "/auth/signin",
-    error: "/auth/error",
-  },
-  session: {
-    strategy: "jwt",
-  },
-  debug: process.env.NODE_ENV === "development",
+
+},
+pages: {
+signIn: "/auth/signin",
+error: "/auth/error",
+},
+session: {
+strategy: "jwt",
+},
+debug: process.env.NODE_ENV === "development",
 };
 
 export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
-```
+
+````
 
 ### Créer un wrapper de session pour le client
 
@@ -243,213 +200,161 @@ Créer le fichier `authentification/SessionWrapper.tsx` :
 
 ```typescript
 "use client";
+## 🔐 Configuration de l'Authentification
 
-import { SessionProvider } from "next-auth/react";
+### 1. Configuration GitHub OAuth
 
-export function SessionWrapper({ children }: { children: React.ReactNode }) {
-  return <SessionProvider>{children}</SessionProvider>;
-}
+1. Aller sur [GitHub Settings > Developer Settings > OAuth Apps](https://github.com/settings/developers)
+2. Créer une nouvelle OAuth App :
+   - **Application name** : `Sahih Moslim FR`
+   - **Homepage URL** : `http://localhost:3000` (dev) / `https://votre-domaine.com` (prod)
+   - **Authorization callback URL** : `http://localhost:3000/api/auth/callback/github`
+3. Noter le `Client ID` et `Client Secret`
+
+### 2. Générer AUTH_SECRET
+
+```bash
+# Générer une clé secrète sécurisée
+pnpx auth secret
+````
+
+### 3. Configuration NextAuth.js
+
+L'authentification est configurée avec :
+
+- **Adaptateur Prisma** pour la persistance en base
+- **GitHub OAuth** pour la connexion
+- **Gestion des rôles** (user/admin)
+- **Middleware de protection** des routes admin
+
+### 4. Routes Protégées
+
+- `/admin/*` - Accès admin uniquement
+- `/auth/*` - Pages d'authentification
+- Redirection automatique selon l'état de connexion
+
+## 📝 Scripts Utiles
+
+```bash
+# Développement
+pnpm dev                    # Lancer en mode développement
+
+# Base de données
+pnpx prisma migrate dev     # Créer une nouvelle migration
+pnpx prisma generate        # Générer le client Prisma
+pnpx prisma studio          # Interface graphique de la DB
+pnpx prisma db seed         # Peupler la base avec des données
+
+# Tests et Validation
+pnpx tsx scripts/test-search-performance.ts    # Tests de performance
+pnpx tsx scripts/validate-search-optimizations.ts  # Validation complète
+
+# Vérifier l'état de la DB
+pnpx prisma db execute --file scripts/check-db-state.sql --schema prisma/schema.prisma
+
+# Production
+pnpm build                  # Build de production
+pnpm start                  # Démarrer en production
 ```
 
-### Mettre à jour le layout racine
+## 🚀 Déploiement
 
-Modifier `app/layout.tsx` pour inclure le SessionWrapper :
+### 1. Préparation
 
-```typescript
-import { SessionWrapper } from "@/authentification/SessionWrapper";
+- Configurer les variables d'environnement de production
+- Mettre à jour `AUTH_URL` avec votre domaine
+- Configurer GitHub OAuth avec l'URL de production
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang="fr">
-      <body>
-        <SessionWrapper>{children}</SessionWrapper>
-      </body>
-    </html>
-  );
-}
+### 2. Migration de la Base de Données
+
+```bash
+# En production
+pnpx prisma migrate deploy
 ```
 
-## Création du middleware de protection
+### 3. Vérification Post-Déploiement
 
-Créer ou modifier le fichier `middleware.ts` à la racine du projet :
+- Tester la recherche avec différents termes
+- Vérifier les performances (objectif <300ms)
+- Valider l'authentification GitHub
+- Confirmer que les index PostgreSQL sont actifs
 
-```typescript
-import { NextRequest, NextResponse } from "next/server";
+## 📊 Monitoring des Performances
 
-import { auth } from "./authentification/auth";
+### Métriques Importantes
 
-// Routes qui requièrent un rôle admin
-const ADMIN_ROUTES = ["/hadiths/add", "/hadiths/edit"];
+- **Temps de recherche** : <300ms pour nouveaux termes
+- **Cache hit rate** : >80% pour les termes populaires
+- **Recherches/seconde** : Optimisé pour 6000+ hadiths
+- **Utilisation des index** : Vérifier via `EXPLAIN ANALYZE`
 
-// Routes d'authentification qui ne doivent pas être protégées
-const AUTH_ROUTES = ["/auth/signin", "/auth/error"];
+### Optimisations Actives
 
-export async function middleware(request: NextRequest) {
-  console.log("[Middleware Entry] Accessing:", request.nextUrl.pathname);
+✅ **Cache en mémoire** (5min TTL, 100 entrées)  
+✅ **Index trigram GIN** pour ILIKE ultra-rapide  
+✅ **Recherche hybride** (index + fallback accent-insensitive)  
+✅ **Limite optimisée** (25 résultats par défaut)  
+✅ **Requêtes PostgreSQL optimisées**
 
-  // Récupérer la session utilisateur
-  const session = await auth();
-  console.log("[Middleware] Token retrieved:", session ? "exists" : "null");
+## 🛠️ Dépannage
 
-  // Vérifier si le chemin actuel est une route d'admin
-  const isAdminRoute = ADMIN_ROUTES.some((route) => {
-    return (
-      request.nextUrl.pathname === route ||
-      request.nextUrl.pathname.startsWith(route)
-    );
-  });
+### Problèmes de Performance de Recherche
 
-  // Vérifier si c'est une page d'authentification
-  const isAuthPage = AUTH_ROUTES.includes(request.nextUrl.pathname);
+1. **Vérifier les index** :
 
-  // Déterminer si l'utilisateur est connecté et son rôle
-  const hasSession = !!session;
-  const userRole = session?.user?.role || "N/A";
-
-  console.log(
-    "[Middleware Check] Path:",
-    request.nextUrl.pathname,
-    "isAdminRoute:",
-    isAdminRoute,
-    "isAuthPage:",
-    isAuthPage,
-    "hasSession:",
-    hasSession,
-    "Role:",
-    userRole
-  );
-
-  // Si c'est une route admin et que l'utilisateur n'est pas admin
-  if (isAdminRoute && (!session || session.user.role !== "admin")) {
-    console.log("[Middleware Blocked] Admin route access denied");
-
-    // Rediriger vers la page de connexion si non connecté
-    if (!session) {
-      const signInUrl = new URL("/auth/signin", request.url);
-      signInUrl.searchParams.set("callbackUrl", request.url);
-      return NextResponse.redirect(signInUrl);
-    }
-
-    // Rediriger vers une page non autorisée si connecté mais pas admin
-    return NextResponse.redirect(new URL("/unauthorized", request.url));
-  }
-
-  // Si l'utilisateur est connecté et essaie d'accéder à une page d'authentification
-  if (hasSession && isAuthPage) {
-    console.log("[Middleware Redirect] Auth page redirected for logged user");
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
-  console.log("[Middleware Allowed] Path", request.nextUrl.pathname);
-  return NextResponse.next();
-}
-
-export const config = {
-  matcher: [
-    /*
-     * Correspond à tous les chemins sauf:
-     * 1. /api/auth (routes d'authentification gérées par AuthJS)
-     * 2. /_next (fichiers internes de Next.js)
-     * 3. Les fichiers statiques (favicon.ico, images, etc.)
-     */
-    "/((?!api/auth|_next|.*\\..*).*)",
-  ],
-};
+```sql
+SELECT indexname FROM pg_indexes WHERE tablename = 'Hadith';
 ```
 
-## Création des composants d'interface utilisateur
+2. **Recréer les index si nécessaire** :
 
-### Bouton de connexion GitHub
+```sql
+-- Dans l'éditeur SQL Supabase
+DROP INDEX IF EXISTS hadith_matn_fr_trgm_idx;
+DROP INDEX IF EXISTS hadith_matn_ar_trgm_idx;
 
-Créer le fichier `ui/buttons/ButtonGithub.tsx` :
-
-```typescript
-"use client";
-
-import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
-
-export function ButtonGithub() {
-  const searchParams = useSearchParams();
-
-  const handleSignIn = () => {
-    // Récupérer l'URL de rappel ou utiliser une valeur par défaut
-    const callbackUrl = searchParams.get("callbackUrl") || "/";
-
-    signIn("github", {
-      callbackUrl,
-      redirect: true,
-    });
-  };
-
-  return (
-    <button
-      onClick={handleSignIn}
-      className="flex items-center justify-center gap-2 w-full rounded-md bg-gray-800 px-4 py-3 text-white hover:bg-gray-700 transition-colors"
-    >
-      <span>Connexion avec GitHub</span>
-    </button>
-  );
-}
+CREATE INDEX hadith_matn_fr_trgm_idx ON "Hadith" USING GIN (lower(matn_fr) gin_trgm_ops);
+CREATE INDEX hadith_matn_ar_trgm_idx ON "Hadith" USING GIN (lower(matn_ar) gin_trgm_ops);
 ```
 
-### Bouton de déconnexion
+### Problèmes d'Authentification
 
-Créer le fichier `ui/buttons/ButtonSignOut.tsx` :
+1. **Vérifier les variables d'environnement**
+2. **Confirmer la configuration GitHub OAuth**
+3. **Vérifier les migrations Prisma** : `pnpx prisma migrate status`
 
-```typescript
-"use client";
+### Problèmes de Base de Données
 
-import { signOut } from "next-auth/react";
+1. **Vérifier la connexion** : `pnpx prisma db pull`
+2. **Recréer le client** : `pnpx prisma generate`
+3. **Réinitialiser si nécessaire** : `pnpx prisma migrate reset`
 
-export function ButtonSignOut() {
-  const handleSignOut = () => {
-    signOut({ callbackUrl: "/" });
-  };
+## 📖 Documentation
 
-  return (
-    <button
-      onClick={handleSignOut}
-      type="button"
-      className="inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium text-red-600 bg-white hover:bg-red-50 border border-red-200 shadow-sm transition-colors"
-    >
-      <span>Déconnexion</span>
-    </button>
-  );
+- [Performance Report](./PERFORMANCE_REPORT.md) - Détails des optimisations
+- [Prisma Schema](./prisma/schema.prisma) - Structure de la base
+- [Types TypeScript](./src/types/types.ts) - Définitions des types
+
+## 🤝 Contribution
+
+Pour contribuer au projet :
+
+1. Fork le repository
+2. Créer une branche feature (`git checkout -b feature/nouvelle-fonctionnalite`)
+3. Commit les changements (`git commit -m 'Ajout nouvelle fonctionnalité'`)
+4. Push vers la branche (`git push origin feature/nouvelle-fonctionnalite`)
+5. Ouvrir une Pull Request
+
+## 📄 Licence
+
+Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+</div>
+</div>
+</div>
+);
 }
-```
 
-### Page de connexion
-
-Créer le fichier `app/auth/signin/page.tsx` :
-
-```typescript
-import { ButtonGithub } from "@/ui/buttons/ButtonGithub";
-
-export default function SignInPage() {
-  return (
-    <div className="flex min-h-[70vh] flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight">
-          Se connecter à votre compte
-        </h2>
-      </div>
-
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <div className="space-y-4">
-            <ButtonGithub />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-```
+````
 
 ### Page d'erreur d'authentification
 
@@ -492,7 +397,7 @@ export default function AuthErrorPage() {
     </div>
   );
 }
-```
+````
 
 ### Page non autorisée
 

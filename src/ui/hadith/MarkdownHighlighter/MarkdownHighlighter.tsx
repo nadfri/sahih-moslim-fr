@@ -50,50 +50,31 @@ export function MarkdownHighlighter({ children, highlight }: Props) {
     // Clear previous highlights
     markInstance.unmark();
 
-    // Normalize Arabic text for better highlighting
-    const normalizedHighlight = prepareArabicForHighlight(highlight);
-
-    // Check if we're dealing with Arabic text
-    const isArabic = /[\u0600-\u06FF]/.test(highlight);
-
-    if (isArabic) {
-      // For Arabic text, use manual DOM manipulation for better diacritics handling
-      const container = containerRef.current;
+    const applyArabicHighlight = (term: string, className: string) => {
+      const normalized = prepareArabicForHighlight(term);
+      const container = containerRef.current!;
       const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
-
       const textNodes: Text[] = [];
       let node: Node | null;
       while ((node = walker.nextNode())) {
-        if (node.nodeType === Node.TEXT_NODE) {
-          textNodes.push(node as Text);
-        }
+        if (node.nodeType === Node.TEXT_NODE) textNodes.push(node as Text);
       }
-
-      // Process each text node for Arabic highlighting
       textNodes.forEach((textNode) => {
         const originalText = textNode.textContent || "";
-
-        // Create a regex pattern that matches the search term with optional diacritics
-        const searchTerm = normalizedHighlight;
-        const pattern = searchTerm
+        const pattern = normalized
           .split("")
-          .map((char) => {
-            if (/[\u0600-\u06FF]/.test(char)) {
-              // Add optional diacritics after each Arabic character
-              return char + "[\\u064B-\\u065F\\u0670\\u06D6-\\u06ED]*";
-            }
-            return char;
-          })
+          .map((char) =>
+            /[\u0600-\u06FF]/.test(char)
+              ? char + "[\\u064B-\\u065F\\u0670\\u06D6-\\u06ED]*"
+              : char
+          )
           .join("");
-
         const regex = new RegExp(`(${pattern})`, "gi");
-
         if (regex.test(originalText)) {
           const highlightedText = originalText.replace(
             regex,
-            '<mark class="bg-yellow-200 dark:bg-yellow-600">$1</mark>'
+            `<mark class="${className}">$1</mark>`
           );
-
           if (highlightedText !== originalText) {
             const span = document.createElement("span");
             span.innerHTML = highlightedText;
@@ -101,16 +82,26 @@ export function MarkdownHighlighter({ children, highlight }: Props) {
           }
         }
       });
-    } else {
-      // For non-Arabic text, use standard highlighting
-      markInstance.mark(highlight, {
+    };
+
+    const applyLatinHighlight = (term: string, className: string) => {
+      markInstance.mark(term, {
         accuracy: "partially",
         ignorePunctuation: ":;.,-–—‒_(){}[]!'\"+=".split(""),
         ignoreJoiners: true,
         separateWordSearch: false,
         diacritics: true,
-        className: "bg-yellow-200 dark:bg-yellow-600",
+        className,
       });
+    };
+
+    const isArabicTerm = (term: string) => /[\u0600-\u06FF]/.test(term);
+
+    // Exact highlight only (yellow)
+    if (isArabicTerm(highlight)) {
+      applyArabicHighlight(highlight, "bg-yellow-200 dark:bg-yellow-600");
+    } else {
+      applyLatinHighlight(highlight, "bg-yellow-200 dark:bg-yellow-600");
     }
 
     // Cleanup function
