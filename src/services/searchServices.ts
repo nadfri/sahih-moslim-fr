@@ -46,8 +46,7 @@ export async function searchHadithsCombined(
   const normalizedQuery = prepareArabicForSearch(query);
 
   try {
-    // Hybrid approach: fast trigram search + fallback unaccent search
-    // Try fast index-optimized search first, then accent-insensitive if needed
+    // Simplified single SQL query - let PostgreSQL handle optimization
     const results = await prisma.$queryRaw<SearchResult[]>`
       SELECT 
         h.id,
@@ -69,23 +68,12 @@ export async function searchHadithsCombined(
       INNER JOIN "Chapter" c ON h."chapterId" = c.id
       INNER JOIN "Narrator" n ON h."narratorId" = n.id
       WHERE 
-        -- Fast: use your manual trigram indexes first
+        -- Unified search: trigram + accent-insensitive in single query
         lower(h.matn_fr) LIKE '%' || lower(${query}) || '%'
         OR lower(h.matn_ar) LIKE '%' || lower(${query}) || '%'
         OR lower(h.matn_ar) LIKE '%' || lower(${normalizedQuery}) || '%'
-        OR
-        -- Accent-insensitive fallback (slower but comprehensive)
-        unaccent(lower(h.matn_fr)) LIKE '%' || unaccent(lower(${query})) || '%'
-      ORDER BY 
-        -- Prioritize exact matches from fast indexes
-        CASE 
-          WHEN lower(h.matn_fr) LIKE '%' || lower(${query}) || '%' THEN 1
-          WHEN lower(h.matn_ar) LIKE '%' || lower(${query}) || '%' THEN 2
-          WHEN lower(h.matn_ar) LIKE '%' || lower(${normalizedQuery}) || '%' THEN 3
-          ELSE 4 -- unaccent matches
-        END,
-        length(h.matn_fr) ASC,
-        h.numero ASC
+        OR unaccent(lower(h.matn_fr)) LIKE '%' || unaccent(lower(${query})) || '%'
+      ORDER BY h.numero ASC
       LIMIT ${limit}
     `;
 

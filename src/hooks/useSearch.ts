@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { FilterType, HadithType } from "@/src/types/types";
+import { buildSearchParams } from "@/src/utils/searchUtils";
 
 export type SearchApiResponse = {
   success: boolean;
@@ -59,22 +60,15 @@ export function useSearch({
       setError(null);
 
       try {
-        // Build search params - no need to send filterMode as it can be inferred
-        const searchParams = new URLSearchParams();
-
-        if (filterMode === "word" && query) {
-          searchParams.set("query", query);
-        } else if (filterMode === "narrator" && narrator) {
-          searchParams.set("narrator", narrator);
-        } else if (filterMode === "sahaba" && sahabas.length > 0) {
-          sahabas.forEach((sahaba) => searchParams.append("sahaba", sahaba));
-        } else if (filterMode === "transmitter" && transmitters.length > 0) {
-          transmitters.forEach((transmitter) =>
-            searchParams.append("transmitter", transmitter)
-          );
-        } else if (filterMode === "numero" && numero) {
-          searchParams.set("numero", numero);
-        }
+        // Build search params using utility
+        const searchParams = buildSearchParams(
+          filterMode,
+          query,
+          narrator,
+          sahabas,
+          transmitters,
+          numero
+        );
 
         // Make API call
         const response = await fetch(`/api/search?${searchParams.toString()}`);

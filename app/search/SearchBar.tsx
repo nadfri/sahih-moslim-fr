@@ -11,51 +11,11 @@ import { BadgeNumberOfHadith } from "@/src/ui/hadith/BadgeNumberOfHadith/BadgeNu
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { MultiSelect } from "@/src/ui/inputs/MultiSelect/MultiSelect";
 import { SearchSelect } from "@/src/ui/inputs/SearchSelect/SearchSelect";
-
-function extractInitials(sp: URLSearchParams) {
-  const query = sp.get("query") || "";
-  const narrator = sp.get("narrator") || "";
-  const numero = sp.get("numero") || "";
-
-  let sahabas: string[] = [];
-  if (sp.has("sahaba")) {
-    const queryParams = sp.getAll("sahaba");
-    if (queryParams.length > 0) {
-      sahabas = queryParams.filter(Boolean);
-    }
-  }
-
-  let transmitters: string[] = [];
-  if (sp.has("transmitter")) {
-    const queryParams = sp.getAll("transmitter");
-    if (queryParams.length > 0) {
-      transmitters = queryParams.filter(Boolean);
-    }
-  }
-
-  // Auto-detect filterMode based on present parameters
-  let filterMode: FilterType = "word"; // default
-  if (narrator) {
-    filterMode = "narrator";
-  } else if (sahabas.length > 0) {
-    filterMode = "sahaba";
-  } else if (transmitters.length > 0) {
-    filterMode = "transmitter";
-  } else if (numero) {
-    filterMode = "numero";
-  } else if (query) {
-    filterMode = "word";
-  }
-
-  return {
-    filterMode,
-    query,
-    narrator,
-    sahabas,
-    transmitters,
-    numero,
-  };
-}
+import {
+  buildSearchParams,
+  detectFilterMode,
+  extractSearchParams,
+} from "@/src/utils/searchUtils";
 
 export function SearchBar({
   narrators,
@@ -70,20 +30,20 @@ export function SearchBar({
   const rawSearchParams = useSearchParams();
   const searchParams = rawSearchParams ?? new URLSearchParams();
 
-  const initialValues = extractInitials(searchParams);
+  // Extract initial values using unified utility
+  const initialParams = extractSearchParams(searchParams);
+  const initialFilterMode = detectFilterMode(initialParams);
 
-  const [filterMode, setFilterMode] = useState<FilterType>(
-    initialValues.filterMode
-  );
-  const [query, setQuery] = useState(initialValues.query);
-  const [narrator, setNarrator] = useState(initialValues.narrator);
+  const [filterMode, setFilterMode] = useState<FilterType>(initialFilterMode);
+  const [query, setQuery] = useState(initialParams.query);
+  const [narrator, setNarrator] = useState(initialParams.narrator);
   const [selectedSahabas, setSelectedSahabas] = useState<string[]>(
-    initialValues.sahabas
+    initialParams.sahabas
   );
   const [selectedTransmitters, setSelectedTransmitters] = useState<string[]>(
-    initialValues.transmitters
+    initialParams.transmitters
   );
-  const [numero, setNumero] = useState(initialValues.numero);
+  const [numero, setNumero] = useState(initialParams.numero);
 
   // Use our optimized search hook
   const { results, isLoading, hasSearched } = useSearch({
@@ -101,6 +61,7 @@ export function SearchBar({
   );
 
   // Update URL function
+  // Simplified URL update function using utility
   const updateUrl = (
     urlFilterMode: FilterType,
     urlQuery: string,
@@ -109,26 +70,14 @@ export function SearchBar({
     urlSelectedTransmitters: string[],
     urlNumero: string
   ) => {
-    const params = new URLSearchParams();
-
-    // Only add the parameter that corresponds to the current filter mode
-    // No need for filterMode parameter since it can be inferred
-    if (urlFilterMode === "word" && urlQuery) {
-      params.set("query", urlQuery);
-    } else if (urlFilterMode === "narrator" && urlNarrator) {
-      params.set("narrator", urlNarrator);
-    } else if (urlFilterMode === "sahaba" && urlSelectedSahabas.length > 0) {
-      urlSelectedSahabas.forEach((sahaba) => params.append("sahaba", sahaba));
-    } else if (
-      urlFilterMode === "transmitter" &&
-      urlSelectedTransmitters.length > 0
-    ) {
-      urlSelectedTransmitters.forEach((transmitter) =>
-        params.append("transmitter", transmitter)
-      );
-    } else if (urlFilterMode === "numero" && urlNumero) {
-      params.set("numero", urlNumero);
-    }
+    const params = buildSearchParams(
+      urlFilterMode,
+      urlQuery,
+      urlNarrator,
+      urlSelectedSahabas,
+      urlSelectedTransmitters,
+      urlNumero
+    );
 
     const newUrl = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, "", newUrl);
@@ -175,8 +124,9 @@ export function SearchBar({
 
   // Initialize values from URL on component mount
   useEffect(() => {
-    const initValues = extractInitials(searchParams);
-    setFilterMode(initValues.filterMode);
+    const initValues = extractSearchParams(searchParams);
+    const initFilterMode = detectFilterMode(initValues);
+    setFilterMode(initFilterMode);
     setQuery(initValues.query);
     setNarrator(initValues.narrator);
     setSelectedSahabas(initValues.sahabas);
