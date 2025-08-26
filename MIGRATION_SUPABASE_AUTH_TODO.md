@@ -118,5 +118,18 @@
 - Tests complets avant mise en production
 - Backup de sécurité obligatoire
 
+## 🔧 TODO POST-MIGRATION (Warnings Supabase à corriger plus tard)
+
+### **Function Search Path Mutable** (WARN - Sécurité)
+- `search_hadiths_fr()` - Ajouter `SET search_path = public`
+- `search_hadiths_ar()` - Ajouter `SET search_path = public`  
+- `search_hadiths_combined()` - Ajouter `SET search_path = public`
+
+### **Extension in Public** (WARN - Sécurité)
+- Déplacer extension `unaccent` vers un schéma dédié (ex: `extensions`)
+- Déplacer extension `pg_trgm` vers un schéma dédié (ex: `extensions`)
+
+**Note** : Ces corrections peuvent être faites après la migration auth pour ne pas impacter la recherche existante.
+
 ---
 **Prêt à commencer ? On démarre par quelle phase ?**
