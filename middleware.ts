@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-import { prisma } from "@/prisma/prisma";
+import { edgePrisma } from "@/prisma/prisma-edge";
 
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
@@ -36,8 +36,8 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(signInUrl);
   }
 
-  // Check admin role
-  const profile = await prisma.profile.findUnique({
+  // Check admin role from database (now works in Edge Runtime!)
+  const profile = await edgePrisma.profile.findUnique({
     where: { id: user.id },
     select: { role: true },
   });

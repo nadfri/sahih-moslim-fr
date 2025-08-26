@@ -38,6 +38,7 @@ export async function requireAdmin() {
     return { success: false, message: "Connexion requise" };
   }
 
+  // Check admin role from database
   const profile = await prisma.profile.findUnique({
     where: { id: user.id },
     select: { role: true },
