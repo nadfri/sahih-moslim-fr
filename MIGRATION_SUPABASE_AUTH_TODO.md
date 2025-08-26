@@ -1,6 +1,69 @@
 # 🔄 Migration NextAuth vers Supabase Auth - Plan détaillé
 
-## 📍 ANALYSE DE L'EXISTANT
+## ✅ ÉTAT D'AVANCEMENT
+
+### ✅ PHASE 1 TERMINÉE - Nettoyage des dépendances
+- ✅ Suppression des packages NextAuth du package.json
+- ✅ Nettoyage des imports et fichiers obsolètes
+
+### ✅ PHASE 2 TERMINÉE - Migration BDD et RLS  
+- ✅ Migration du schéma Prisma (suppression tables NextAuth, ajout table profiles)
+- ✅ Activation RLS sur toutes les tables publiques
+- ✅ Politiques RLS : lecture publique, écriture admin uniquement
+
+### ✅ PHASE 3 TERMINÉE - Configuration Supabase Auth
+- ✅ Configuration clients Supabase (browser/server)
+- ✅ Hook useAuth avec React Compiler
+- ✅ Route callback OAuth GitHub
+- ✅ Pages signin/error refactorisées
+
+### ✅ PHASE 4 EN COURS - Refactorisation composants
+- ✅ Migration ButtonSignOut vers useAuth
+- ✅ Migration ButtonGithub vers useAuth  
+- ✅ Migration Header vers useAuth
+- ✅ Suppression SessionWrapper
+- ✅ Migration Layout vers AuthProvider
+
+### ✅ PHASE 5 TERMINÉE - Actions serveur et middleware
+- ✅ Création auth helper simplifié (`src/lib/auth.ts`)
+- ✅ Migration actions serveur vers Supabase Auth
+- ✅ Migration middleware vers Supabase Auth (simplifié)
+- ✅ Suppression routes API hadiths (utilisation Server Actions)
+
+### 🔄 PHASE 6 EN COURS - Nettoyage final
+- ✅ Suppression fichiers NextAuth obsolètes
+- ✅ Application compile et démarre
+- 🔄 Tests à adapter (reporté)
+- 🔄 Formatage code à corriger
+
+### 📋 PHASE 7 À FAIRE - Tests et validation
+- ⏳ Tests fonctionnels de l'auth
+- ⏳ Tests des composants UI
+- ⏳ Tests middleware
+- ⏳ Tests actions serveur
+
+## 📍 ARCHITECTURE FINALE SIMPLIFIÉE
+
+### 🔐 Auth System
+- **Client** : `src/hooks/useAuth.tsx` (hook unique avec AuthProvider)
+- **Server** : `src/lib/auth.ts` (helpers simples getServerUser/requireAdmin)
+- **OAuth** : `app/auth/callback/route.ts` (callback GitHub)
+- **Protection** : `middleware.ts` (simplifié, direct Supabase + Prisma)
+
+### 🗄️ Base de données
+- **Auth** : Supabase auth.users (géré par Supabase)
+- **Profiles** : Table profiles liée à auth.users (rôles utilisateur)
+- **RLS** : Actif sur toutes les tables (sécurité native)
+
+### 🎯 Avantages obtenus
+- ✅ **Simplification** : 1 fichier auth client + 1 fichier auth server
+- ✅ **Sécurité** : RLS natif + politique fine granularité  
+- ✅ **Performance** : React Compiler + moins de code
+- ✅ **Maintenance** : Architecture claire, moins de fichiers éparpillés
+
+---
+
+## 📍 ANALYSE DE L'EXISTANT (historique)
 
 ### ✅ Où on a besoin de l'auth ?
 - **Pages protégées** : `/admin/*` (middleware)

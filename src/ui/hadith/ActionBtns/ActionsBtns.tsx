@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Pencil, ScanEye, TriangleAlert } from "lucide-react";
 
+import { useAuth } from "@/src/hooks/useAuth";
 import { HadithType } from "@/src/types/types";
 import { CopyBoard } from "../../CopyBoard/CopyBoard";
 
@@ -12,8 +13,8 @@ type Props = {
 };
 
 export function ActionsBtns({ hadith, update }: Props) {
-  // Check if we're in development mode
-  const isDevelopment = process.env.NODE_ENV === "development";
+  const { profile } = useAuth();
+  const isAdmin = profile?.role === "ADMIN";
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
@@ -43,7 +44,7 @@ export function ActionsBtns({ hadith, update }: Props) {
           <span>Signaler</span>
         </button>
 
-        {isDevelopment && (
+        {isAdmin && (
           <Link
             href={`/hadiths/${hadith.numero}/edit`}
             className="inline-flex items-center gap-1.5 text-sm font-medium bg-orange-50 dark:bg-orange-700 text-orange-600 dark:text-orange-300 px-3 py-1.5 rounded-md hover:bg-orange-100 dark:hover:bg-orange-900/70 hover:text-orange-700 dark:hover:text-orange-400 transition-all duration-200"

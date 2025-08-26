@@ -34,22 +34,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
 
   useEffect(() => {
-    const fetchProfile = async (userId: string) => {
+    const fetchOrCreateProfile = async (userId: string) => {
       try {
+        // Try to fetch existing profile
         const { data, error } = await supabase
           .from("profiles")
           .select("*")
           .eq("id", userId)
           .single();
 
-        if (error) {
+        if (error && error.code === "PGRST116") {
+          // Profile doesn't exist, create it
+          console.log("Creating new profile for user:", userId);
+          const { data: newProfile, error: createError } = await supabase
+            .from("profiles")
+            .insert({
+              id: userId,
+              role: "USER", // Default role
+            })
+            .select()
+            .single();
+
+          if (createError) {
+            console.error("Error creating profile:", createError);
+            return;
+          }
+
+          setProfile(newProfile);
+        } else if (error) {
           console.error("Error fetching profile:", error);
           return;
+        } else {
+          setProfile(data);
         }
-
-        setProfile(data);
       } catch (error) {
-        console.error("Error fetching profile:", error);
+        console.error("Error with profile:", error);
       }
     };
 
@@ -62,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        await fetchProfile(session.user.id);
+        await fetchOrCreateProfile(session.user.id);
       }
 
       setLoading(false);
@@ -77,7 +96,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        await fetchProfile(session.user.id);
+        await fetchOrCreateProfile(session.user.id);
       } else {
         setProfile(null);
       }

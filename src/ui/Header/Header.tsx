@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { useAuth } from "@/src/hooks/useAuth";
+import { ButtonSignIn } from "../connexion/ButtonSignIn";
 import { ButtonSignOut } from "../connexion/ButtonSignOut";
 import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
 import { Hamburger } from "./Hamburger";
@@ -11,9 +13,13 @@ import { NavBar } from "./NavBar";
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, profile, loading } = useAuth();
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
+  const isAdmin = profile?.role === "ADMIN";
+  const isLoggedIn = !!user;
 
   return (
     <header className="bg-white dark:bg-gray-900 text-emerald-800 dark:text-emerald-400 shadow-sm dark:shadow-gray-800 sticky top-0 z-50 transition-colors duration-200">
@@ -28,8 +34,11 @@ export function Header() {
 
         <div className="flex items-center gap-2 ml-2">
           <div className="hidden md:flex items-center gap-4">
-            <LinkAddHadith />
-            <ButtonSignOut />
+            {/* Admin buttons */}
+            {isAdmin && <LinkAddHadith />}
+
+            {/* Auth buttons */}
+            {!loading && (isLoggedIn ? <ButtonSignOut /> : <ButtonSignIn />)}
           </div>
 
           <ThemeToggle />
@@ -55,8 +64,16 @@ export function Header() {
           />
 
           <div className="flex flex-col gap-2 mt-2">
-            <LinkAddHadith closeMobileMenu={closeMobileMenu} />
-            <ButtonSignOut />
+            {/* Admin buttons */}
+            {isAdmin && <LinkAddHadith closeMobileMenu={closeMobileMenu} />}
+
+            {/* Auth buttons */}
+            {!loading &&
+              (isLoggedIn ? (
+                <ButtonSignOut />
+              ) : (
+                <ButtonSignIn closeMobileMenu={closeMobileMenu} />
+              ))}
           </div>
         </div>
       </div>

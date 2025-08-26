@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 import { prisma } from "@/prisma/prisma";
-import { auth } from "@/src/authentification/auth";
+import { requireAdmin } from "@/src/lib/auth";
 import { getItemFormSchema } from "@/src/ui/forms/schemas/getItemFormSchema";
 import { slugify } from "@/src/utils/slugify";
 import { ItemFormValues, ItemType, VariantType } from "../types/types";
@@ -15,19 +15,6 @@ export type ActionResponse = {
   error?: string;
   data?: ItemType;
 };
-
-// Helper to check admin and return ActionResponse if not
-async function requireAdmin(): Promise<true | ActionResponse> {
-  const session = await auth();
-  if (!session || session.user.role !== "ADMIN") {
-    return {
-      success: false,
-      message: "Non autorisé",
-      error: "Accès administrateur requis.",
-    };
-  }
-  return true;
-}
 
 async function getItems(variant: VariantType): Promise<ItemType[]> {
   switch (variant) {

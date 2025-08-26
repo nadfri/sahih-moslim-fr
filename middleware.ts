@@ -1,48 +1,54 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { Role } from "@prisma/client";
-import { getToken } from "next-auth/jwt";
+import { createServerClient } from "@supabase/ssr";
 
-const secret = process.env.AUTH_SECRET;
+import { prisma } from "@/prisma/prisma";
 
 export async function middleware(req: NextRequest) {
-  console.log(`--- AUTH CHECK VIA getToken POUR: ${req.nextUrl.pathname} ---`);
-
-  const token = await getToken({ req, secret });
-  // console.log(`   Token récupéré:`, token);
-
   const pathname = req.nextUrl.pathname;
   const isProtectedRoute =
     pathname.endsWith("/add") ||
     pathname.endsWith("/edit") ||
-    pathname.endsWith("/admin") ||
-    pathname.includes("/api/hadiths"); // This covers /api/hadiths/add, etc.
+    pathname.endsWith("/admin");
 
-  // Apply auth logic for protected routes
-  if (isProtectedRoute) {
-    if (!token) {
-      console.log(
-        "   PAS de token trouvé (non connecté). Préparation de la redirection vers signin..."
-      );
-      const signInUrl = new URL("/auth/signin", req.nextUrl.origin);
-      signInUrl.searchParams.set("callbackUrl", req.nextUrl.href);
-      console.log(`   Redirection vers: ${signInUrl.toString()}`);
-      return NextResponse.redirect(signInUrl);
-    } else {
-      if (token.role !== Role.ADMIN) {
-        console.log(
-          `   Token trouvé mais rôle insuffisant (${token.role}). Redirection vers la page non autorisée.`
-        );
-        const unauthorizedUrl = new URL("/unauthorized", req.nextUrl.origin);
-        return NextResponse.redirect(unauthorizedUrl);
-      }
-      console.log("   Token trouvé et rôle ADMIN confirmé. Accès autorisé.");
+  if (!isProtectedRoute) return NextResponse.next();
+
+  // Create Supabase client
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => req.cookies.getAll(),
+        setAll: () => {}, // Read-only in middleware
+      },
     }
+  );
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // Redirect if not logged in
+  if (!user) {
+    const signInUrl = new URL("/auth/signin", req.nextUrl.origin);
+    signInUrl.searchParams.set("callbackUrl", req.nextUrl.href);
+    return NextResponse.redirect(signInUrl);
+  }
+
+  // Check admin role
+  const profile = await prisma.profile.findUnique({
+    where: { id: user.id },
+    select: { role: true },
+  });
+
+  if (profile?.role !== "ADMIN") {
+    return NextResponse.redirect(new URL("/unauthorized", req.nextUrl.origin));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/(.*)/add", "/(.*)/edit", "/admin", "/api/hadiths/:path*"],
+  matcher: ["/(.*)/add", "/(.*)/edit", "/admin"],
 };
