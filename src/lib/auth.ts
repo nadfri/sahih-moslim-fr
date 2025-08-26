@@ -44,7 +44,11 @@ export async function requireAdmin() {
     select: { role: true },
   });
 
-  if (profile?.role !== "ADMIN") {
+  if (
+    !profile ||
+    typeof profile.role !== "string" ||
+    profile.role.toUpperCase() !== "ADMIN"
+  ) {
     return { success: false, message: "Accès admin requis" };
   }
 

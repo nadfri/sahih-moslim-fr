@@ -1,4 +1,4 @@
-import { PrismaNeon } from "@prisma/adapter-neon";
+import { PrismaNeonHTTP } from "@prisma/adapter-neon";
 import { PrismaClient } from "@prisma/client";
 
 // Edge-compatible Prisma client for middleware and edge functions
@@ -7,13 +7,14 @@ export function createEdgePrisma() {
     throw new Error("DATABASE_URL is required for edge Prisma client");
   }
 
-  const adapter = new PrismaNeon({
-    connectionString: process.env.DATABASE_URL,
-  });
+  // Use the HTTP adapter in edge environments (no WebSocket constructor available)
+  // PrismaNeonHTTP expects the connection string as the first argument.
+  // pass an empty options object as second argument to match adapter signature
+  const adapter = new PrismaNeonHTTP(process.env.DATABASE_URL, {});
 
   // @ts-expect-error - Adapter type compatibility will be resolved in future Prisma versions
   return new PrismaClient({ adapter });
 }
 
-// Use this in middleware and edge functions
-export const edgePrisma = createEdgePrisma();
+// Note: do not create a singleton at module import time. Call createEdgePrisma()
+// lazily from Edge code to avoid initialization errors during bundling.

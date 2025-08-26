@@ -7,6 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
+import { deleteHadith, editHadith } from "@/src/services/hadith-actions";
 import { HadithType, ItemType } from "@/src/types/types";
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { Input } from "@/src/ui/inputs/Input/Input";
@@ -143,15 +144,8 @@ export function EditHadithForm({
     };
 
     try {
-      const response = await fetch(`/api/hadiths/edit/${hadith.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-      const result = await response.json();
-      if (response.ok) {
+      const result = await editHadith(hadith.id, payload);
+      if (result.success) {
         toast.success("Hadith modifié avec succès!");
         router.push("/");
       } else {
@@ -169,19 +163,16 @@ export function EditHadithForm({
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      const response = await fetch(`/api/hadiths/delete/${hadith.id}`, {
-        method: "DELETE",
-      });
-      const result = await response.json();
-      if (response.ok) {
+      const result = await deleteHadith(hadith.id);
+      if (result.success) {
         toast.success("Hadith supprimé avec succès!");
         router.push("/");
       } else {
-        toast.error(result.message || "Erreur lors de la suppréssion");
+        toast.error(result.message || "Erreur lors de la suppression");
       }
     } catch (error) {
       toast.error("Erreur de connexion au serveur");
-      console.error("Erreur lors de la suppréssion:", error);
+      console.error("Erreur lors de la suppression:", error);
     } finally {
       setIsDeleting(false);
       setShowDeleteModal(false);

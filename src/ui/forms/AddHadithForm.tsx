@@ -8,6 +8,7 @@ import { createPortal } from "react-dom"; // Import createPortal
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
+import { addHadith } from "@/src/services/hadith-actions";
 import { HadithType, ItemType, VariantType } from "@/src/types/types";
 /*UI*/
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
@@ -128,17 +129,9 @@ export function AddHadithForm({
     };
 
     try {
-      const response = await fetch("/api/hadiths/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const result = await addHadith(payload);
 
-      const result = await response.json();
-
-      if (response.ok) {
+      if (result.success) {
         toast.success("Hadith ajouté avec succès!");
 
         // Update local state and reset form

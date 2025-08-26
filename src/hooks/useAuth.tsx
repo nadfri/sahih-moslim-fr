@@ -36,39 +36,55 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const fetchOrCreateProfile = async (userId: string) => {
       try {
-        // Try to fetch existing profile
-        const { data, error } = await supabase
+        // Try to fetch existing profile. Use maybeSingle() so Supabase doesn't
+        // return an error when the row is missing — it will return null data.
+        const { data, error, status } = await supabase
           .from("profiles")
           .select("*")
           .eq("id", userId)
-          .single();
+          .maybeSingle();
 
-        if (error && error.code === "PGRST116") {
+        if (error) {
+          // Log full error for debugging
+
+          console.error("Error fetching profile (supabase error):", error, {
+            status,
+          });
+          return;
+        }
+
+        if (!data) {
           // Profile doesn't exist, create it
+
           console.log("Creating new profile for user:", userId);
-          const { data: newProfile, error: createError } = await supabase
+          const {
+            data: newProfile,
+            error: createError,
+            status: createStatus,
+          } = await supabase
             .from("profiles")
             .insert({
               id: userId,
               role: "USER", // Default role
             })
             .select()
-            .single();
+            .maybeSingle();
 
           if (createError) {
-            console.error("Error creating profile:", createError);
+            console.error(
+              "Error creating profile (supabase error):",
+              createError,
+              { createStatus }
+            );
             return;
           }
 
-          setProfile(newProfile);
-        } else if (error) {
-          console.error("Error fetching profile:", error);
-          return;
+          setProfile(newProfile ?? null);
         } else {
-          setProfile(data);
+          setProfile(data ?? null);
         }
-      } catch (error) {
-        console.error("Error with profile:", error);
+      } catch (err) {
+        console.error("Unexpected error with profile:", err);
       }
     };
 

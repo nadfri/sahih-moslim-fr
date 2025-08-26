@@ -64,5 +64,17 @@ export async function requireAdmin() {
     };
   }
 
+  // Accept role values in any case (e.g. 'admin', 'ADMIN')
+  if (
+    typeof profile.role !== "string" ||
+    profile.role.toUpperCase() !== "ADMIN"
+  ) {
+    return {
+      success: false,
+      message: "Non autorisé",
+      error: "Accès administrateur requis.",
+    };
+  }
+
   return true;
 }
