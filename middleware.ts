@@ -18,40 +18,25 @@ export async function middleware(req: NextRequest) {
     pathname.endsWith("/admin") ||
     pathname.includes("/api/hadiths"); // This covers /api/hadiths/add, etc.
 
-  // In production, block access to protected routes and return 404
-  if (process.env.NODE_ENV === "production") {
-    if (isProtectedRoute) {
+  // Apply auth logic for protected routes
+  if (isProtectedRoute) {
+    if (!token) {
       console.log(
-        `   [PROD] Accès bloqué à la route protégée: ${pathname}. Rewrite vers /404.`
+        "   PAS de token trouvé (non connecté). Préparation de la redirection vers signin..."
       );
-      // Rewrite vers la page 404 de Next.js (affiche la vraie page 404 custom)
-      return NextResponse.rewrite(new URL("/404", req.nextUrl.origin), {
-        status: 404,
-      });
-    }
-  } else {
-    // In development or other environments, apply existing auth logic
-    if (isProtectedRoute) {
-      if (!token) {
+      const signInUrl = new URL("/auth/signin", req.nextUrl.origin);
+      signInUrl.searchParams.set("callbackUrl", req.nextUrl.href);
+      console.log(`   Redirection vers: ${signInUrl.toString()}`);
+      return NextResponse.redirect(signInUrl);
+    } else {
+      if (token.role !== Role.ADMIN) {
         console.log(
-          "   PAS de token trouvé (non connecté). Préparation de la redirection vers signin..."
+          `   Token trouvé mais rôle insuffisant (${token.role}). Redirection vers la page non autorisée.`
         );
-        const signInUrl = new URL("/auth/signin", req.nextUrl.origin);
-        signInUrl.searchParams.set("callbackUrl", req.nextUrl.href);
-        console.log(`   Redirection vers: ${signInUrl.toString()}`);
-        return NextResponse.redirect(signInUrl);
-      } else {
-        if (token.role !== Role.ADMIN) {
-          console.log(
-            `   Token trouvé mais rôle insuffisant (${token.role}). Redirection vers la page non autorisée.`
-          );
-          const unauthorizedUrl = new URL("/unauthorized", req.nextUrl.origin);
-          return NextResponse.redirect(unauthorizedUrl);
-        }
-        console.log(
-          "   [DEV] Token trouvé et rôle ADMIN confirmé. Accès autorisé."
-        );
+        const unauthorizedUrl = new URL("/unauthorized", req.nextUrl.origin);
+        return NextResponse.redirect(unauthorizedUrl);
       }
+      console.log("   Token trouvé et rôle ADMIN confirmé. Accès autorisé.");
     }
   }
 

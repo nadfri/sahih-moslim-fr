@@ -1,7 +1,6 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 
 import { Metadata } from "next";
-import { redirect } from "next/navigation";
 
 // Import services to fetch data
 import {
@@ -19,10 +18,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AddHadithPage() {
-  if (process.env.NODE_ENV === "production") {
-    redirect("/");
-  }
-
   const [
     initialNumeros,
     chaptersData,

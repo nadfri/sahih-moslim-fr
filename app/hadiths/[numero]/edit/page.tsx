@@ -20,9 +20,6 @@ type Params = Promise<{ numero: string }>;
 
 export default async function EditPage(props: { params: Params }) {
   const params = await props.params;
-  if (process.env.NODE_ENV === "production") {
-    redirect("/");
-  }
   const numero = params.numero;
   const [
     hadith,

@@ -8,7 +8,7 @@ import "./globals.css";
 import { cookies } from "next/headers";
 import { ToastContainer } from "react-toastify";
 
-import { SessionWrapper } from "@/src/authentification/SessionWrapper";
+import { AuthProvider } from "@/src/hooks/useAuth";
 import { Footer } from "@/src/ui/Footer/Footer";
 import { Header } from "@/src/ui/Header/Header";
 import { ScrollBtns } from "@/src/ui/ScrollBtns/ScrollBtns";
@@ -44,13 +44,13 @@ export default async function RootLayout({
         suppressHydrationWarning
         data-theme={theme}
       >
-        <SessionWrapper>
+        <AuthProvider>
           <Header />
           <main className="bg-gradient-to-br from-emerald-50 via-stone-50 to-amber-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 py-4 px-2 md:px-8 flex-1">
             {children}
           </main>
           <Footer />{" "}
-        </SessionWrapper>
+        </AuthProvider>
 
         <ToastContainer
           position="top-right"
