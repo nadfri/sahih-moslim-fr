@@ -12,7 +12,6 @@ export function createEdgePrisma() {
   // pass an empty options object as second argument to match adapter signature
   const adapter = new PrismaNeonHTTP(process.env.DATABASE_URL, {});
 
-  // @ts-expect-error - Adapter type compatibility will be resolved in future Prisma versions
   return new PrismaClient({ adapter });
 }
 
