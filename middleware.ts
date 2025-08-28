@@ -78,8 +78,6 @@ export async function middleware(req: NextRequest) {
   }
 
   return NextResponse.redirect(unauthUrl);
-
-  return NextResponse.next();
 }
 
 export const config = {

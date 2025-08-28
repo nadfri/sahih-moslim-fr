@@ -20,7 +20,7 @@ type AuthContextType = {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
-  signInWithGitHub: () => Promise<void>;
+  signInWithGitHub: (callbackUrl?: string) => Promise<void>;
   signOut: () => Promise<void>;
 };
 
@@ -123,12 +123,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, [supabase]);
 
-  const signInWithGitHub = async () => {
+  const signInWithGitHub = async (callbackUrl?: string) => {
     try {
+      // Convert absolute URL to relative path for the callback
+      const nextParam = callbackUrl
+        ? new URL(callbackUrl).pathname + new URL(callbackUrl).search
+        : "/";
+
+      const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextParam)}`;
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "github",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo,
         },
       });
 

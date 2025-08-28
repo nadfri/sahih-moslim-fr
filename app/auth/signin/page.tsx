@@ -12,13 +12,19 @@ export const metadata: Metadata = {
     "Connectez-vous avec votre compte GitHub pour accéder aux fonctionnalités d'administration",
 };
 
-export default async function SignInPage() {
+export default async function SignInPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ callbackUrl?: string }>;
+}) {
   // Check if user is already authenticated
   const user = await getServerUser();
 
   if (user) {
-    // User is already authenticated, redirect to home
-    redirect("/");
+    // User is already authenticated, redirect to callbackUrl or home
+    const params = await searchParams;
+    const callbackUrl = params.callbackUrl || "/";
+    redirect(callbackUrl);
   }
 
   return (

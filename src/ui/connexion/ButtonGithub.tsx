@@ -2,17 +2,20 @@
 
 import { useState } from "react";
 import { Github, LoaderCircle } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 import { useAuth } from "@/src/hooks/useAuth";
 
 export function ButtonGithub() {
   const { signInWithGitHub } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
 
   const handleSignIn = async () => {
     setIsLoading(true);
     try {
-      await signInWithGitHub();
+      await signInWithGitHub(callbackUrl || undefined);
     } catch (error) {
       console.error("Error during sign in:", error);
       setIsLoading(false);
