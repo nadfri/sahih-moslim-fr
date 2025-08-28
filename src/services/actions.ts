@@ -64,7 +64,7 @@ export async function addItem(
   const parseResult = schema.safeParse(data);
 
   if (!parseResult.success) {
-    const errorMessages = parseResult.error.errors
+    const errorMessages = parseResult.error.issues
       .map((e) => e.message)
       .join(". ");
     return {
@@ -171,7 +171,7 @@ export async function editItem(
   const parseResult = schema.safeParse(data);
 
   if (!parseResult.success) {
-    const errorMessages = parseResult.error.errors
+    const errorMessages = parseResult.error.issues
       .map((e) => e.message)
       .join(". ");
 
