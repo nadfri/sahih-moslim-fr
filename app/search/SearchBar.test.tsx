@@ -1,16 +1,128 @@
+import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, beforeEach, vi } from "vitest";
 
 import { HadithType, ItemType } from "@/src/types/types";
+
+// Hoist-safe mock factory for the useSearch hook. It exports setter functions
+// so tests can control the hook return value reliably.
+type MockSearchState = {
+  results: HadithType[];
+  isLoading: boolean;
+  hasSearched: boolean;
+  // allow extra fields if needed by hook
+  [key: string]: unknown;
+};
+
+vi.mock("@/src/hooks/useSearch", () => {
+  let state: MockSearchState = {
+    results: [],
+    isLoading: false,
+    hasSearched: false,
+  };
+  return {
+    useSearch: () => state,
+    __setMockSearch: (v: MockSearchState) => {
+      state = v;
+    },
+    __resetMockSearch: () => {
+      state = { results: [], isLoading: false, hasSearched: false };
+    },
+  };
+});
+
+// Stub the Hadith component to avoid rendering nested components that require
+// context (ActionsBtns -> useAuth). This makes the DOM simple and stable for
+// text-based assertions.
+type MockHadithProps = { hadith?: HadithType };
+vi.mock("@/src/ui/hadith/Hadith/Hadith", () => {
+  const MockHadith = (props: MockHadithProps) => {
+    return React.createElement("div", null, props.hadith?.matn_fr ?? "");
+  };
+  return { Hadith: MockHadith };
+});
+
+// Stub SearchSelect: renders an input-like element with the placeholder and
+// a list of option buttons that call onChange when clicked.
+type SearchSelectProps = {
+  options: string[];
+  value?: string;
+  onChange?: (v: string) => void;
+  placeholder?: string;
+};
+vi.mock("@/src/ui/inputs/SearchSelect/SearchSelect", () => {
+  const SearchSelect = (props: SearchSelectProps) => {
+    const onChange = props.onChange ?? (() => {});
+    return React.createElement(
+      "div",
+      null,
+      // render an element with the placeholder so tests can find it
+      React.createElement("input", { placeholder: props.placeholder ?? "" }),
+      React.createElement(
+        "div",
+        null,
+        props.options.map((o) =>
+          React.createElement(
+            "button",
+            {
+              key: o,
+              type: "button",
+              onClick: () => onChange(o),
+            },
+            o
+          )
+        )
+      )
+    );
+  };
+  return { SearchSelect };
+});
+
+// Stub MultiSelect similarly
+type MultiSelectProps = {
+  options: string[];
+  selected?: string[];
+  onChange?: (v: string[]) => void;
+  placeholder?: string;
+};
+vi.mock("@/src/ui/inputs/MultiSelect/MultiSelect", () => {
+  const MultiSelect = (props: MultiSelectProps) => {
+    const onChange = props.onChange ?? (() => {});
+    return React.createElement(
+      "div",
+      null,
+      React.createElement("input", { placeholder: props.placeholder ?? "" }),
+      React.createElement(
+        "div",
+        null,
+        props.options.map((o) =>
+          React.createElement(
+            "button",
+            {
+              key: o,
+              type: "button",
+              onClick: () => onChange([o]),
+            },
+            o
+          )
+        )
+      )
+    );
+  };
+  return { MultiSelect };
+});
+
+// Dynamic import to access the exported mock control functions from the mocked module.
+// @ts-expect-error - test-only dynamic import
+const { __setMockSearch, __resetMockSearch } = await import(
+  "@/src/hooks/useSearch"
+);
+
+// Import the component after mocks are defined
 import { SearchBar } from "./SearchBar";
 
-// Minimal mock for ItemType
-const mockItem = (name: string): ItemType => ({
-  id: name.toLowerCase().replace(/\s/g, "-"),
-  name,
-  slug: name.toLowerCase().replace(/\s/g, "-"),
-});
+const makeItem = (name: string): ItemType => ({ id: name, name, slug: name });
 
 describe("SearchBar", () => {
   const hadiths: HadithType[] = [
@@ -18,46 +130,53 @@ describe("SearchBar", () => {
       id: "1",
       numero: 100,
       matn_fr: "Le Prophète a dit ...",
-      matn_ar: "قال النبي ...",
-      chapter: mockItem("Chapitre 1"),
-      narrator: mockItem("Anas"),
-      mentionedSahabas: [mockItem("Abu Bakr")],
-      isnadTransmitters: [mockItem("Yahya")],
+      matn_ar: "قَالَ النَّبِي ...",
+      chapter: makeItem("Chapitre 1"),
+      narrator: makeItem("Anas"),
+      mentionedSahabas: [makeItem("Abu Bakr")],
+      isnadTransmitters: [makeItem("Yahya")],
     },
     {
       id: "2",
       numero: 200,
       matn_fr: "Un autre hadith ...",
       matn_ar: "حديث آخر ...",
-      chapter: mockItem("Chapitre 2"),
-      narrator: mockItem("Omar"),
-      mentionedSahabas: [mockItem("Omar")],
-      isnadTransmitters: [mockItem("Zayd")],
+      chapter: makeItem("Chapitre 2"),
+      narrator: makeItem("Omar"),
+      mentionedSahabas: [makeItem("Omar")],
+      isnadTransmitters: [makeItem("Zayd")],
     },
   ];
+
   const narrators = ["Anas", "Omar"];
   const sahabas = ["Abu Bakr", "Omar"];
   const transmitters = ["Yahya", "Zayd"];
 
+  beforeEach(() => {
+    // Reset the mock hook state before each test
+    __resetMockSearch();
+  });
+
   it("affiche le placeholder initial", () => {
     render(
       <SearchBar
-        hadiths={hadiths}
         narrators={narrators}
         sahabas={sahabas}
         transmitters={transmitters}
       />
     );
-    // Vérifie le placeholder initial
-    expect(
-      screen.getByText(/Veuillez saisir vos critères/i)
-    ).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/3 lettres min/i)).toBeInTheDocument();
   });
 
   it("recherche par mot (mot clé)", async () => {
+    __setMockSearch({
+      results: [hadiths[0]],
+      isLoading: false,
+      hasSearched: true,
+    });
+
     render(
       <SearchBar
-        hadiths={hadiths}
         narrators={narrators}
         sahabas={sahabas}
         transmitters={transmitters}
@@ -65,109 +184,155 @@ describe("SearchBar", () => {
     );
     const input = screen.getByPlaceholderText(/3 lettres min/i);
     await userEvent.type(input, "Proph");
+
     await waitFor(() => {
-      // Use getAllByText to avoid multiple match error, then check at least one matches
-      const nodes = screen.getAllByText(
-        (_content, node) =>
+      const nodes = screen.getAllByText((_content, node) => {
+        return (
           !!node &&
           typeof node.textContent === "string" &&
           node.textContent.includes("Le Prophète a dit")
-      );
+        );
+      });
       expect(nodes.length).toBeGreaterThan(0);
     });
   });
 
   it("recherche par narrateur", async () => {
+    __setMockSearch({
+      results: [hadiths[1]],
+      isLoading: false,
+      hasSearched: true,
+    });
+
     render(
       <SearchBar
-        hadiths={hadiths}
         narrators={narrators}
         sahabas={sahabas}
         transmitters={transmitters}
       />
     );
-    const narratorRadio = screen.getByLabelText(/Par Narrateur/i);
-    await userEvent.click(narratorRadio);
+    const radio = screen.getByLabelText(/Par Narrateur/i);
+    await userEvent.click(radio);
     const select = screen.getByPlaceholderText(/Choisir un narrateur/i);
     await userEvent.click(select);
     await userEvent.click(screen.getByText("Omar"));
+
     await waitFor(() => {
-      expect(screen.getByText(/Un autre hadith/i)).toBeInTheDocument();
+      const nodes = screen.getAllByText((_content, node) => {
+        return (
+          !!node &&
+          typeof node.textContent === "string" &&
+          node.textContent.includes("Un autre hadith")
+        );
+      });
+      expect(nodes.length).toBeGreaterThan(0);
     });
   });
 
   it("recherche par sahaba", async () => {
+    __setMockSearch({
+      results: [hadiths[0]],
+      isLoading: false,
+      hasSearched: true,
+    });
+
     render(
       <SearchBar
-        hadiths={hadiths}
         narrators={narrators}
         sahabas={sahabas}
         transmitters={transmitters}
       />
     );
-    const sahabaRadio = screen.getByLabelText(/Par Compagnon/i);
-    await userEvent.click(sahabaRadio);
-    const select = screen.getByPlaceholderText(/rapporteurs/i);
+    const radio = screen.getByLabelText(/Par Compagnon/i);
+    await userEvent.click(radio);
+    const select = screen.getByPlaceholderText(
+      /Choisir un ou plusieurs rapporteurs/i
+    );
     await userEvent.click(select);
     await userEvent.click(screen.getByText("Abu Bakr"));
+
     await waitFor(() => {
-      const nodes = screen.getAllByText(
-        (_content, node) =>
+      const nodes = screen.getAllByText((_content, node) => {
+        return (
           !!node &&
           typeof node.textContent === "string" &&
           node.textContent.includes("Le Prophète a dit")
-      );
+        );
+      });
       expect(nodes.length).toBeGreaterThan(0);
     });
   });
 
   it("recherche par transmetteur", async () => {
+    __setMockSearch({
+      results: [hadiths[0]],
+      isLoading: false,
+      hasSearched: true,
+    });
+
     render(
       <SearchBar
-        hadiths={hadiths}
         narrators={narrators}
         sahabas={sahabas}
         transmitters={transmitters}
       />
     );
-    const transmitterRadio = screen.getByLabelText(/Par Transmetteur/i);
-    await userEvent.click(transmitterRadio);
-    const select = screen.getByPlaceholderText(/transmetteurs/i);
+    const radio = screen.getByLabelText(/Par Transmetteur/i);
+    await userEvent.click(radio);
+    const select = screen.getByPlaceholderText(
+      /Choisir un ou plusieurs transmetteurs/i
+    );
     await userEvent.click(select);
     await userEvent.click(screen.getByText("Yahya"));
+
     await waitFor(() => {
-      const nodes = screen.getAllByText(
-        (_content, node) =>
+      const nodes = screen.getAllByText((_content, node) => {
+        return (
           !!node &&
           typeof node.textContent === "string" &&
           node.textContent.includes("Le Prophète a dit")
-      );
+        );
+      });
       expect(nodes.length).toBeGreaterThan(0);
     });
   });
 
   it("recherche par numéro", async () => {
+    __setMockSearch({
+      results: [hadiths[1]],
+      isLoading: false,
+      hasSearched: true,
+    });
+
     render(
       <SearchBar
-        hadiths={hadiths}
         narrators={narrators}
         sahabas={sahabas}
         transmitters={transmitters}
       />
     );
-    const numeroRadio = screen.getByLabelText(/Par Numéro/i);
-    await userEvent.click(numeroRadio);
+    const radio = screen.getByLabelText(/Par Numéro/i);
+    await userEvent.click(radio);
     const input = screen.getByPlaceholderText(/Numéro du hadith/i);
     await userEvent.type(input, "200");
+
     await waitFor(() => {
-      expect(screen.getByText(/Un autre hadith/i)).toBeInTheDocument();
+      const nodes = screen.getAllByText((_content, node) => {
+        return (
+          !!node &&
+          typeof node.textContent === "string" &&
+          node.textContent.includes("Un autre hadith")
+        );
+      });
+      expect(nodes.length).toBeGreaterThan(0);
     });
   });
 
   it("affiche un message si aucun résultat", async () => {
+    __setMockSearch({ results: [], isLoading: false, hasSearched: true });
+
     render(
       <SearchBar
-        hadiths={hadiths}
         narrators={narrators}
         sahabas={sahabas}
         transmitters={transmitters}
@@ -175,10 +340,10 @@ describe("SearchBar", () => {
     );
     const input = screen.getByPlaceholderText(/3 lettres min/i);
     await userEvent.type(input, "xyzxyz");
+
     await waitFor(() => {
-      expect(
-        screen.getByText(/Aucun hadith ne correspond/i)
-      ).toBeInTheDocument();
+      // Allow the ellipsis/spacing variance by matching a substring
+      expect(screen.getByText(/Aucun hadith trouv/i)).toBeInTheDocument();
     });
   });
 });

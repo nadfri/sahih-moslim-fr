@@ -85,27 +85,36 @@ describe("Header", () => {
   });
 
   it("shows 'Ajouter' link in development mode", () => {
-    // Set NODE_ENV to development
-    vi.stubEnv("NODE_ENV", "development");
+    // When user is admin, the 'Ajouter' link should be visible
+    mockUseAuth.mockReturnValueOnce({
+      user: { name: "Admin" },
+      profile: { role: "ADMIN" },
+      loading: false,
+      signInWithGitHub: vi.fn(),
+      signOut: vi.fn(),
+    } as unknown as ReturnType<typeof mockUseAuth>);
 
     render(<Header />);
 
-    // In development mode, 'Ajouter' links should be visible
     const addLinks = screen.getAllByRole("link", { name: /ajouter/i });
     expect(addLinks.length).toBeGreaterThan(0);
-    // Check at least one of them has the correct href
     expect(
       addLinks.some((link) => link.getAttribute("href") === "/hadiths/add")
     ).toBeTruthy();
   });
 
   it("hides 'Ajouter' link in production mode", () => {
-    // Set NODE_ENV to production
-    vi.stubEnv("NODE_ENV", "production");
+    // When user is not admin, the 'Ajouter' link should not be visible
+    mockUseAuth.mockReturnValueOnce({
+      user: null,
+      profile: null,
+      loading: false,
+      signInWithGitHub: vi.fn(),
+      signOut: vi.fn(),
+    });
 
     render(<Header />);
 
-    // In production mode, 'Ajouter' link should not be visible
     const addLinks = screen.queryAllByRole("link", { name: /ajouter/i });
     expect(addLinks.length).toBe(0);
   });

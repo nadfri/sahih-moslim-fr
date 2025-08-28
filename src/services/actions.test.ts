@@ -5,7 +5,7 @@ import { cleanupTestData, testDataHelpers } from "@/__tests__/test-helpers";
 import { addHadith, deleteHadith, editHadith } from "@/src/services/actions";
 
 // Mock auth to always allow admin
-vi.mock("@/src/lib/auth", () => ({
+vi.mock("@/src/lib/auth/auth", () => ({
   requireAdmin: vi.fn().mockResolvedValue(true),
 }));
 

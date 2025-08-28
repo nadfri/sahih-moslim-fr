@@ -11,8 +11,8 @@ const mockHadith = {
     "Le Messager d'Allah (que la paix et les bénédictions d'Allah soient sur lui) a dit : Quiconque ment délibérément à mon sujet",
 };
 
-// Mock the MarkdownHighlighter component
-vi.mock("@/src/utils/MarkdownHighlighter", () => ({
+// Mock the MarkdownHighlighter component used by Matn_fr/Matn_ar
+vi.mock("@/src/ui/hadith/MarkdownHighlighter/MarkdownHighlighter", () => ({
   MarkdownHighlighter: ({
     children,
     highlight,
@@ -21,7 +21,6 @@ vi.mock("@/src/utils/MarkdownHighlighter", () => ({
     highlight?: string;
   }) => {
     if (highlight) {
-      // Simple mock highlighting by wrapping highlighted text in <mark>
       const regex = new RegExp(`(${highlight})`, "gi");
       const highlightedContent = children.replace(regex, "<mark>$1</mark>");
       return <div dangerouslySetInnerHTML={{ __html: highlightedContent }} />;
@@ -38,6 +37,20 @@ vi.mock("@/src/utils/normalizeArabicText", () => ({
     return arabicRegex.test(text);
   }),
 }));
+
+// Helper to find elements where textContent normalized equals target
+function normalizeText(s?: string) {
+  return (s || "").replace(/\s+/g, " ").trim();
+}
+
+function findByNormalizedText(target: string) {
+  const nodes = Array.from(
+    document.querySelectorAll("div, span, p")
+  ) as HTMLElement[];
+  return nodes.find(
+    (n) => normalizeText(n.textContent) === normalizeText(target)
+  );
+}
 
 describe("Matn Components Integration", () => {
   beforeEach(() => {
@@ -79,8 +92,15 @@ describe("Matn Components Integration", () => {
     );
 
     // Arabic should auto-show because highlight contains Arabic
-    const arabicContainer = document.querySelector("[id]");
-    expect(arabicContainer).toHaveClass("grid-rows-[1fr]", "opacity-100");
+    const arabicNode = findByNormalizedText(mockHadith.matn_ar) as
+      | HTMLElement
+      | undefined;
+    const arabicContainer = arabicNode?.closest("div[id]");
+    const toggleButton = screen.getByRole("button", {
+      name: /voir la version arabe|masquer la version arabe/i,
+    });
+    expect(toggleButton).toHaveAttribute("aria-expanded", "true");
+    expect(arabicContainer?.className).toContain("opacity-100");
 
     // Check that highlighting occurred in Arabic text
     const markElements = document.querySelectorAll("mark");
@@ -104,8 +124,15 @@ describe("Matn Components Integration", () => {
     );
 
     // Arabic should not auto-show for French terms
-    const arabicContainer = document.querySelector("[id]");
-    expect(arabicContainer).toHaveClass("grid-rows-[0fr]", "opacity-0");
+    const arabicNode = findByNormalizedText(mockHadith.matn_ar) as
+      | HTMLElement
+      | undefined;
+    const arabicContainer = arabicNode?.closest("div[id]");
+    const toggleButton = screen.getByRole("button", {
+      name: /voir la version arabe|masquer la version arabe/i,
+    });
+    expect(toggleButton).toHaveAttribute("aria-expanded", "false");
+    expect(arabicContainer?.className).toContain("opacity-0");
 
     // French highlighting should work
     const markElements = document.querySelectorAll("mark");
@@ -121,20 +148,28 @@ describe("Matn Components Integration", () => {
       </div>
     );
 
-    const toggleButton = screen.getByRole("button");
-    const arabicContainer = document.querySelector("[id]");
+    const toggleButton = screen.getByRole("button", {
+      name: /ouvrir le menu|voir la version arabe|masquer la version arabe/i,
+    });
+    const arabicNode = findByNormalizedText(mockHadith.matn_ar) as
+      | HTMLElement
+      | undefined;
+    const arabicContainer = arabicNode?.closest("div[id]");
 
     // Initially hidden
-    expect(arabicContainer).toHaveClass("grid-rows-[0fr]", "opacity-0");
+    expect(toggleButton).toHaveAttribute("aria-expanded", "false");
+    expect(arabicContainer?.className).toContain("opacity-0");
 
     // Show Arabic
     fireEvent.click(toggleButton);
-    expect(arabicContainer).toHaveClass("grid-rows-[1fr]", "opacity-100");
+    expect(toggleButton).toHaveAttribute("aria-expanded", "true");
+    expect(arabicContainer?.className).toContain("opacity-100");
     expect(toggleButton).toHaveTextContent("Masquer la version arabe");
 
     // Hide Arabic
     fireEvent.click(toggleButton);
-    expect(arabicContainer).toHaveClass("grid-rows-[0fr]", "opacity-0");
+    expect(toggleButton).toHaveAttribute("aria-expanded", "false");
+    expect(arabicContainer?.className).toContain("opacity-0");
     expect(toggleButton).toHaveTextContent("Voir la version arabe");
 
     // French text should remain visible throughout
@@ -158,8 +193,15 @@ describe("Matn Components Integration", () => {
     );
 
     // Arabic should auto-show for Arabic search terms
-    const arabicContainer = document.querySelector("[id]");
-    expect(arabicContainer).toHaveClass("grid-rows-[1fr]", "opacity-100");
+    const arabicNode = findByNormalizedText("قال النبي ﷺ") as
+      | HTMLElement
+      | undefined;
+    const arabicContainer = arabicNode?.closest("div[id]");
+    const toggleButton = screen.getByRole("button", {
+      name: /voir la version arabe|masquer la version arabe/i,
+    });
+    expect(toggleButton).toHaveAttribute("aria-expanded", "true");
+    expect(arabicContainer?.className).toContain("opacity-100");
 
     // Both texts should be visible
     expect(screen.getByText("Le Prophète ﷺ a dit")).toBeInTheDocument();
@@ -185,8 +227,15 @@ describe("Matn Components Integration", () => {
     expect(markElements).toHaveLength(0);
 
     // Arabic should not auto-show for empty highlight
-    const arabicContainer = document.querySelector("[id]");
-    expect(arabicContainer).toHaveClass("grid-rows-[0fr]", "opacity-0");
+    const arabicNode = findByNormalizedText(mockHadith.matn_ar) as
+      | HTMLElement
+      | undefined;
+    const arabicContainer = arabicNode?.closest("div[id]");
+    const toggleButton = screen.getByRole("button", {
+      name: /voir la version arabe|masquer la version arabe/i,
+    });
+    expect(toggleButton).toHaveAttribute("aria-expanded", "false");
+    expect(arabicContainer?.className).toContain("opacity-0");
   });
 
   it("should handle undefined highlight props", () => {

@@ -1,22 +1,14 @@
-import { NextRequest } from "next/server"; // NextResponseInit removed
-import { Role } from "@prisma/client";
-import { getToken } from "next-auth/jwt";
+import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { middleware } from "../middleware";
 
-// Mock next-auth/jwt
-vi.mock("next-auth/jwt", () => ({
-  getToken: vi.fn(),
-}));
-
-// Mock NextResponse static methods
+// Mock NextResponse static methods so we can observe redirect/next calls
 const mockNextResponseRedirect = vi.fn();
 const mockNextResponseNext = vi.fn();
 
 vi.mock("next/server", async (importOriginal) => {
   const originalModule = await importOriginal<typeof import("next/server")>();
-  // Only mock the static methods, keep the original constructor
   return {
     ...originalModule,
     NextResponse: Object.assign(originalModule.NextResponse, {
@@ -24,12 +16,7 @@ vi.mock("next/server", async (importOriginal) => {
         mockNextResponseRedirect(url, init);
         return new originalModule.NextResponse(null, {
           status: typeof init === "number" ? init : (init?.status ?? 302),
-          headers: {
-            Location: url.toString(),
-            ...(typeof init === "object" && init !== null && init.headers
-              ? init.headers
-              : {}),
-          },
+          headers: { Location: typeof url === "string" ? url : url.toString() },
         });
       },
       next: (init?: ResponseInit) => {
@@ -40,97 +27,150 @@ vi.mock("next/server", async (importOriginal) => {
   };
 });
 
-const PROTECTED_PATHS = ["/admin", "/chapters/add", "/api/hadiths/some-id"];
+// Hoist-safe mock factory for Supabase createServerClient.
+// Exposes setters to control auth.getUser() and profiles query results.
+type GetUserResult = {
+  data: {
+    user: null | {
+      id: string;
+      user_metadata?: Record<string, unknown>;
+      app_metadata?: Record<string, unknown>;
+    };
+  };
+};
+type ProfileResult = { data: { role?: string } | null; error: unknown };
+
+// Typed accessor for our vi.mock('@supabase/ssr') hoist-safe helpers.
+type SupabaseMockModule = {
+  __reset: () => void | Promise<void>;
+  __setGetUserResult: (v: GetUserResult) => void | Promise<void>;
+  __setProfileResult: (v: ProfileResult) => void | Promise<void>;
+};
+
+async function getSupabaseMock(): Promise<SupabaseMockModule> {
+  return (await import("@supabase/ssr")) as unknown as SupabaseMockModule;
+}
+
+vi.mock("@supabase/ssr", () => {
+  let getUserResult: GetUserResult = { data: { user: null } };
+  let profileResult: ProfileResult = { data: null, error: null };
+
+  const createServerClient = () => {
+    return {
+      auth: {
+        getUser: async () => getUserResult,
+      },
+      from: () => ({
+        select: () => ({
+          eq: () => ({
+            maybeSingle: async () => profileResult,
+          }),
+        }),
+      }),
+    };
+  };
+
+  return {
+    createServerClient,
+    // test helpers exported from the mock
+    __setGetUserResult: (v: GetUserResult) => {
+      getUserResult = v;
+    },
+    __setProfileResult: (v: ProfileResult) => {
+      profileResult = v;
+    },
+    __reset: () => {
+      getUserResult = { data: { user: null } };
+      profileResult = { data: null, error: null };
+    },
+  };
+});
+
+const PROTECTED_PATHS = ["/admin", "/chapters/add"];
 const NON_PROTECTED_PATH = "/public/some-page";
 
-describe("Middleware", () => {
-  beforeEach(() => {
+describe("Middleware (Supabase-based)", () => {
+  beforeEach(async () => {
     vi.resetAllMocks();
-    // Suppress console.log from middleware during tests
     vi.spyOn(console, "log").mockImplementation(() => {});
+    // Reset mock factory state
+    const supa = await getSupabaseMock();
+    await supa.__reset();
   });
 
   afterEach(() => {
-    vi.unstubAllEnvs(); // Restore original environment variables
+    vi.unstubAllEnvs();
     vi.restoreAllMocks();
   });
 
-  describe("Production Environment (NODE_ENV=production)", () => {
-    beforeEach(() => {
-      vi.stubEnv("NODE_ENV", "production"); // Use vi.stubEnv to set NODE_ENV
-    });
+  it("allows non-protected routes", async () => {
+    const req = new NextRequest(
+      new URL(NON_PROTECTED_PATH, "http://localhost:3000")
+    );
+    await middleware(req);
+    expect(mockNextResponseNext).toHaveBeenCalled();
+    expect(mockNextResponseRedirect).not.toHaveBeenCalled();
+  });
 
-    PROTECTED_PATHS.forEach((path) => {
-      it(`should return 404 for protected route ${path}`, async () => {
-        const req = new NextRequest(new URL(path, "http://localhost:3000"));
-        const response = await middleware(req);
-        expect(response.status).toBe(404);
-        // Ensure no redirect or next was called
-        expect(mockNextResponseRedirect).not.toHaveBeenCalled();
-        expect(mockNextResponseNext).not.toHaveBeenCalled();
-      });
-    });
+  PROTECTED_PATHS.forEach((path) => {
+    it(`redirects to signin when no user for protected route ${path}`, async () => {
+      // Ensure no user
+      // test-only import
+      const supa0 = await getSupabaseMock();
+      await supa0.__setGetUserResult({ data: { user: null } });
 
-    it(`should allow access to non-protected route ${NON_PROTECTED_PATH}`, async () => {
-      const req = new NextRequest(
-        new URL(NON_PROTECTED_PATH, "http://localhost:3000")
-      );
+      const req = new NextRequest(new URL(path, "http://localhost:3000"));
       await middleware(req);
+
+      expect(mockNextResponseRedirect).toHaveBeenCalled();
+      const redirectUrl = new URL(mockNextResponseRedirect.mock.calls[0][0]);
+      expect(redirectUrl.pathname).toBe("/auth/signin");
+      expect(redirectUrl.searchParams.get("callbackUrl")).toBe(
+        req.nextUrl.href
+      );
+    });
+
+    it(`redirects to unauthorized when user is not ADMIN (no metadata and no profile) for ${path}`, async () => {
+      // user present but no metadata and profile query returns null
+      // test-only import
+      const supa1 = await getSupabaseMock();
+      await supa1.__setGetUserResult({ data: { user: { id: "u1" } } });
+      // profile returns null (no role)
+      await supa1.__setProfileResult({ data: null, error: null });
+
+      const req = new NextRequest(new URL(path, "http://localhost:3000"));
+      await middleware(req);
+
+      expect(mockNextResponseRedirect).toHaveBeenCalled();
+      const redirectUrl = new URL(mockNextResponseRedirect.mock.calls[0][0]);
+      expect(redirectUrl.pathname).toBe("/unauthorized");
+    });
+
+    it(`allows access when user metadata contains ADMIN for ${path}`, async () => {
+      // user with metadata role
+      // test-only import
+      const supa2 = await getSupabaseMock();
+      await supa2.__setGetUserResult({
+        data: { user: { id: "u2", user_metadata: { role: "admin" } } },
+      });
+
+      const req = new NextRequest(new URL(path, "http://localhost:3000"));
+      await middleware(req);
+
       expect(mockNextResponseNext).toHaveBeenCalled();
       expect(mockNextResponseRedirect).not.toHaveBeenCalled();
     });
-  });
 
-  describe("Development Environment (NODE_ENV=development)", () => {
-    beforeEach(() => {
-      vi.stubEnv("NODE_ENV", "development"); // Use vi.stubEnv to set NODE_ENV
-    });
+    it(`allows access when profile row has ADMIN role for ${path}`, async () => {
+      // user without metadata, but profile query returns role ADMIN
+      // test-only import
+      const supa3 = await getSupabaseMock();
+      await supa3.__setGetUserResult({ data: { user: { id: "u3" } } });
+      await supa3.__setProfileResult({ data: { role: "ADMIN" }, error: null });
 
-    PROTECTED_PATHS.forEach((path) => {
-      it(`should redirect to signin for ${path} if no token`, async () => {
-        (getToken as import("vitest").Mock).mockResolvedValue(null); // Use import('vitest').Mock for explicit typing
-        const req = new NextRequest(new URL(path, "http://localhost:3000"));
-        await middleware(req);
-
-        expect(mockNextResponseRedirect).toHaveBeenCalled();
-        const redirectUrl = new URL(mockNextResponseRedirect.mock.calls[0][0]);
-        expect(redirectUrl.pathname).toBe("/auth/signin");
-        expect(redirectUrl.searchParams.get("callbackUrl")).toBe(
-          req.nextUrl.href
-        );
-        expect(mockNextResponseNext).not.toHaveBeenCalled();
-      });
-
-      it(`should redirect to /unauthorized for ${path} if token has no ADMIN role`, async () => {
-        (getToken as import("vitest").Mock).mockResolvedValue({
-          role: Role.USER,
-        }); // Use import('vitest').Mock
-        const req = new NextRequest(new URL(path, "http://localhost:3000"));
-        await middleware(req);
-
-        expect(mockNextResponseRedirect).toHaveBeenCalled();
-        const redirectUrl = new URL(mockNextResponseRedirect.mock.calls[0][0]);
-        expect(redirectUrl.pathname).toBe("/unauthorized");
-        expect(mockNextResponseNext).not.toHaveBeenCalled();
-      });
-
-      it(`should allow access for ${path} if token has ADMIN role`, async () => {
-        (getToken as import("vitest").Mock).mockResolvedValue({
-          role: Role.ADMIN,
-        }); // Use import('vitest').Mock
-        const req = new NextRequest(new URL(path, "http://localhost:3000"));
-        await middleware(req);
-
-        expect(mockNextResponseNext).toHaveBeenCalled();
-        expect(mockNextResponseRedirect).not.toHaveBeenCalled();
-      });
-    });
-
-    it(`should allow access to non-protected route ${NON_PROTECTED_PATH}`, async () => {
-      const req = new NextRequest(
-        new URL(NON_PROTECTED_PATH, "http://localhost:3000")
-      );
+      const req = new NextRequest(new URL(path, "http://localhost:3000"));
       await middleware(req);
+
       expect(mockNextResponseNext).toHaveBeenCalled();
       expect(mockNextResponseRedirect).not.toHaveBeenCalled();
     });

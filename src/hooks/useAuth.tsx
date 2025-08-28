@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 
-import { createClient } from "@/src/lib/supabase/client";
+import { createClient } from "@/src/lib/auth/supabase/client";
 
 type Profile = {
   id: string;

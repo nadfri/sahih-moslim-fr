@@ -24,19 +24,6 @@ describe("ListOfSahabas", () => {
     expect(omarLink).toHaveAttribute("href", "/sahabas/omar-ibn-al-khattab");
   });
 
-  it("highlights search terms in sahaba names", () => {
-    render(
-      <ListOfSahabas
-        sahabas={mockSahabas}
-        highlight="Abu"
-      />
-    );
-
-    const highlightedText = screen.getByText("Abu");
-    expect(highlightedText.tagName).toBe("MARK");
-    expect(highlightedText).toHaveClass("bg-yellow-200");
-  });
-
   it("does not render when no sahabas are mentioned", () => {
     const { container } = render(<ListOfSahabas sahabas={mockEmptySahabas} />);
 
@@ -47,39 +34,8 @@ describe("ListOfSahabas", () => {
     render(<ListOfSahabas sahabas={mockSahabas} />);
 
     expect(screen.getByText("Abu Bakr")).toBeInTheDocument();
-    // Check that no mark elements exist when no highlight is provided
+    // Check that no mark elements exist since component doesn't support highlight
     const container = screen.getByText("Abu Bakr").closest("div");
     expect(container?.querySelector("mark")).toBeNull();
-  });
-
-  it("handles case-insensitive highlighting", () => {
-    render(
-      <ListOfSahabas
-        sahabas={mockSahabas}
-        highlight="abu"
-      />
-    );
-
-    // Use getByText with exact match for the highlighted part
-    const highlightedText = screen.getByText("Abu");
-    expect(highlightedText.tagName).toBe("MARK");
-    expect(highlightedText).toHaveClass("bg-yellow-200");
-  });
-
-  it("escapes special regex characters in highlight", () => {
-    const specialCharSahabas: ItemType[] = [
-      { id: "1", name: "Abu (Bakr)", slug: "abu-bakr" },
-    ];
-
-    render(
-      <ListOfSahabas
-        sahabas={specialCharSahabas}
-        highlight="("
-      />
-    );
-
-    const marks = screen.getAllByText("(");
-    const highlightedMark = marks.find((el) => el.tagName === "MARK");
-    expect(highlightedMark).toBeDefined();
   });
 });

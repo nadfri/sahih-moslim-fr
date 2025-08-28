@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { prisma } from "@/prisma/prisma";
-import { requireAdmin } from "@/src/lib/auth";
+import { requireAdmin } from "@/src/lib/auth/auth";
 import { cleanupTestData, testDataHelpers } from "@/__tests__/test-helpers";
 
 // Mock Supabase auth

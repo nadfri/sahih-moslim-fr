@@ -5,6 +5,17 @@ import { prisma } from "@/prisma/prisma";
  * Use this in afterEach or beforeEach to ensure clean test environment
  */
 export async function cleanupTestData() {
+  // Safety gate: refuse to run dangerous cleanup when running against production
+  // unless explicitly allowed via env var. This protects accidental wipes.
+  if (
+    process.env.NODE_ENV === "production" &&
+    process.env.ALLOW_LARGE_CLEANUP !== "true"
+  ) {
+    throw new Error(
+      "Refusing to run test cleanup in production environment without explicit ALLOW_LARGE_CLEANUP=true"
+    );
+  }
+
   // Delete in correct order to respect foreign key constraints
   await prisma.hadithTransmitter.deleteMany({
     where: {

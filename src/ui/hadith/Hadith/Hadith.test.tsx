@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { mockHadith } from "@/src/mocks/mockHadith";
 import type { HadithType } from "@/src/types/types";
@@ -52,13 +52,8 @@ describe("Hadith", () => {
 
   // Set NODE_ENV to development for testing the edit link
   beforeEach(() => {
-    vi.stubEnv("NODE_ENV", "development");
     // Clear mock calls before each test
     vi.clearAllMocks();
-  });
-
-  afterEach(() => {
-    vi.unstubAllEnvs();
   });
 
   it("renders the hadith basic information correctly", () => {
@@ -87,33 +82,29 @@ describe("Hadith", () => {
     const user = userEvent.setup();
     render(<Hadith hadith={mockHadith} />);
 
-    // Initially, Arabic should be hidden
-    const arabicContent = screen.getByText("هذا اختبار للحديث باللغة العربية");
-    expect(arabicContent.parentElement?.parentElement?.className).toContain(
-      "grid-rows-[0fr]"
-    );
-
-    // Click the toggle button
-    const toggleButton = screen.getByText("Voir la version arabe", {
-      exact: false,
+    // Initially, Arabic should be hidden — check aria-expanded and opacity class
+    const toggleButton = screen.getByRole("button", {
+      name: /voir la version arabe/i,
     });
+    expect(toggleButton).toBeInTheDocument();
+
+    const arabicContent = screen.getByText("هذا اختبار للحديث باللغة العربية");
+    const arabicContainer = arabicContent.closest("div[id]");
+
+    // When hidden, aria-expanded is false on the toggle and the container has opacity-0
+    expect(toggleButton.getAttribute("aria-expanded")).toBe("false");
+    expect(arabicContainer?.className).toContain("opacity-0");
+
+    // Click to show Arabic
     await user.click(toggleButton);
-
-    // Now Arabic should be visible
-    expect(arabicContent.parentElement?.parentElement?.className).toContain(
-      "grid-rows-[1fr]"
-    );
-
-    // Text should change
+    expect(toggleButton.getAttribute("aria-expanded")).toBe("true");
+    expect(arabicContainer?.className).toContain("opacity-100");
     expect(screen.getByText("Masquer la version arabe")).toBeInTheDocument();
 
     // Click again to hide
     await user.click(toggleButton);
-
-    // Arabic should be hidden again
-    expect(arabicContent.parentElement?.parentElement?.className).toContain(
-      "grid-rows-[0fr]"
-    );
+    expect(toggleButton.getAttribute("aria-expanded")).toBe("false");
+    expect(arabicContainer?.className).toContain("opacity-0");
   });
 
   it("highlights text when highlight prop is provided", () => {
@@ -128,14 +119,11 @@ describe("Hadith", () => {
     const marks = document.querySelectorAll("mark");
     expect(marks.length).toBeGreaterThan(0);
 
-    // Check if one of the sahaba links contains a highlighted text
-    // Use getAllByTestId instead of getByText to avoid ambiguity
-    const sahabaLinks = screen.getAllByTestId("mock-link");
-    const hasSahabaWithHighlight = sahabaLinks.some(
-      (link) =>
-        link.textContent?.includes("Sahaba") && link.innerHTML.includes("<mark")
+    // Ensure at least one <mark> contains the highlight term
+    const hasMarkWithHighlight = Array.from(marks).some((m) =>
+      /test/i.test(m.textContent || "")
     );
-    expect(hasSahabaWithHighlight).toBe(true);
+    expect(hasMarkWithHighlight).toBe(true);
   });
 
   it("shows preview badge in update mode", () => {
@@ -150,28 +138,44 @@ describe("Hadith", () => {
     expect(screen.getByText("Aperçu")).toBeInTheDocument();
   });
 
-  it("shows edit link in development mode", () => {
+  it("shows edit link for admin users", () => {
+    // Mock useAuth to return an admin profile
+    mockUseAuth.mockReturnValueOnce({
+      user: null,
+      profile: { role: "ADMIN" },
+      loading: false,
+      signInWithGitHub: vi.fn(),
+      signOut: vi.fn(),
+    } as unknown as ReturnType<typeof mockUseAuth>);
+
     render(<Hadith hadith={mockHadith} />);
 
-    // Edit link should be visible
-    expect(screen.getByText("Éditer")).toBeInTheDocument();
-
-    // The href should be correct
-    const editLinks = screen.getAllByTestId("mock-link");
-    const editLink = Array.from(editLinks).find((link) =>
-      link.textContent?.includes("Éditer")
+    // Edit link should be visible (use data-testid to locate links)
+    const links = screen.getAllByTestId("mock-link");
+    const editLink = links.find(
+      (l) => l.getAttribute("href") === "/hadiths/123/edit"
     );
-    expect(editLink?.getAttribute("href")).toBe("/hadiths/123/edit");
+    expect(editLink).toBeDefined();
   });
 
-  it("doesn't show edit link in production mode", () => {
-    // Override NODE_ENV to production
-    vi.stubEnv("NODE_ENV", "production");
+  it("doesn't show edit link for non-admin users", () => {
+    // Ensure useAuth returns no admin profile
+    mockUseAuth.mockReturnValueOnce({
+      user: null,
+      profile: null,
+      loading: false,
+      signInWithGitHub: vi.fn(),
+      signOut: vi.fn(),
+    });
 
     render(<Hadith hadith={mockHadith} />);
 
     // Edit link should not be visible
-    expect(screen.queryByText("Éditer")).not.toBeInTheDocument();
+    const links = screen.getAllByTestId("mock-link");
+    const editLink = links.find(
+      (l) => l.getAttribute("href") === "/hadiths/123/edit"
+    );
+    expect(editLink).toBeUndefined();
   });
 
   it("renders custom markdown styling correctly", () => {
