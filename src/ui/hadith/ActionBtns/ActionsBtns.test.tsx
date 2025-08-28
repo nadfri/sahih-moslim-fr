@@ -17,6 +17,19 @@ type CopyBoardProps = {
   hadith: HadithType;
 };
 
+// Mock useAuth hook
+const mockUseAuth = vi.fn(() => ({
+  user: null,
+  profile: null,
+  loading: false,
+  signInWithGitHub: vi.fn(),
+  signOut: vi.fn(),
+}));
+
+vi.mock("@/src/hooks/useAuth", () => ({
+  useAuth: () => mockUseAuth(),
+}));
+
 // Mock Next.js Link component
 vi.mock("next/link", () => ({
   default: ({ children, href, ...props }: LinkProps) => (

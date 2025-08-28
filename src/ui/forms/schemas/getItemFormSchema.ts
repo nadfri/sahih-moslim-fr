@@ -28,20 +28,37 @@ export function getItemFormSchema(
       .transform((val) => (val === "" ? null : val))
       .nullable()
       .optional(),
-    index:
-      variant === "chapters"
-        ? z.coerce
-            .number({ message: "L'index est requis" })
-            .int({ message: "L'index doit être un nombre entier" })
-            .positive({ message: "L'index doit être un nombre positif" })
-            .refine(
-              (index) =>
-                !items.some(
-                  (chapter) =>
-                    (id ? chapter.id !== id : true) && chapter.index === index
-                ),
-              "Cet index est déjà utilisé. Veuillez en choisir un autre."
-            )
-        : z.number().optional().nullable(),
+    index: z
+      .number()
+      .optional()
+      .nullable()
+      .refine(
+        (index) => {
+          if (variant === "chapters") {
+            return index !== null && index !== undefined;
+          }
+          return true;
+        },
+        { message: "L'index est requis pour les chapitres" }
+      )
+      .refine(
+        (index) => {
+          if (variant === "chapters" && index !== null && index !== undefined) {
+            return (
+              Number.isInteger(index) &&
+              index > 0 &&
+              !items.some(
+                (chapter) =>
+                  (id ? chapter.id !== id : true) && chapter.index === index
+              )
+            );
+          }
+          return true;
+        },
+        {
+          message:
+            "L'index doit être un nombre entier positif et unique pour les chapitres",
+        }
+      ),
   });
 }

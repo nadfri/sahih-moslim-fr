@@ -3,10 +3,11 @@
 import { useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { toast } from "react-toastify";
 
 import { editItem } from "@/src/services/actions";
-import { ItemFormValues, ItemType, VariantType } from "@/src/types/types";
+import { ItemType, VariantType } from "@/src/types/types";
 import { getItemFormSchema } from "@/src/ui/forms/schemas/getItemFormSchema";
 import { Input } from "@/src/ui/inputs/Input/Input";
 import { Dialog } from "../../Dialog/Dialog";
@@ -50,13 +51,13 @@ export function EditItemFormDialog({
     register,
     handleSubmit: handleFormSubmit,
     formState: { errors },
-  } = useForm<ItemFormValues>({
+  } = useForm({
     resolver: zodResolver(ItemEditSchema),
     mode: "onChange",
     defaultValues: item,
   });
 
-  function editItemSubmit(formData: ItemFormValues) {
+  function editItemSubmit(formData: z.infer<typeof ItemEditSchema>) {
     startTransition(async () => {
       try {
         const response = await editItem(variant, { ...formData, id: item.id });

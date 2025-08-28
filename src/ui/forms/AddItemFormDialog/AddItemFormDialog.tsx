@@ -3,10 +3,11 @@
 import { useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { toast } from "react-toastify";
 
 import { addItem } from "@/src/services/actions";
-import { ItemFormValues, ItemType, VariantType } from "@/src/types/types";
+import { ItemType, VariantType } from "@/src/types/types";
 import { getItemFormSchema } from "@/src/ui/forms/schemas/getItemFormSchema";
 import { Input } from "@/src/ui/inputs/Input/Input";
 import { nextAvailableIndex } from "@/src/utils/nextAvailableIndex";
@@ -45,7 +46,7 @@ export function AddItemFormDialog({ open, onCancel, items, variant }: Props) {
     handleSubmit: handleFormSubmit,
     formState: { errors },
     reset,
-  } = useForm<ItemFormValues>({
+  } = useForm({
     resolver: zodResolver(ItemAddSchema),
     mode: "onChange",
     defaultValues: {
@@ -55,7 +56,7 @@ export function AddItemFormDialog({ open, onCancel, items, variant }: Props) {
     },
   });
 
-  function addItemSubmit(formData: ItemFormValues) {
+  function addItemSubmit(formData: z.infer<typeof ItemAddSchema>) {
     startTransition(async () => {
       try {
         const response = await addItem(variant, formData);

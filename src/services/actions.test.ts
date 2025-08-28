@@ -1,19 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { prisma } from "@/prisma/prisma";
-import { cleanupTestData, testDataHelpers } from "@/src/lib/test-helpers";
-import {
-  addHadith,
-  deleteHadith,
-  editHadith,
-} from "@/src/services/hadith-actions";
+import { cleanupTestData, testDataHelpers } from "@/__tests__/test-helpers";
+import { addHadith, deleteHadith, editHadith } from "@/src/services/actions";
 
 // Mock auth to always allow admin
 vi.mock("@/src/lib/auth", () => ({
   requireAdmin: vi.fn().mockResolvedValue(true),
 }));
 
-describe("Hadith Actions", () => {
+describe("Actions (hadith)", () => {
   beforeEach(async () => {
     // Clean up before each test
     await cleanupTestData();
@@ -43,10 +39,10 @@ describe("Hadith Actions", () => {
         numero: 900001,
         matn_fr: "Test French text",
         matn_ar: "Test Arabic text",
-        chapterName: chapter.name,
-        narratorName: narrator.name,
-        mentionedSahabasNames: [sahaba.name],
-        isnadTransmittersNames: [transmitter.name],
+        chapter: chapter.name,
+        narrator: narrator.name,
+        mentionedSahabas: [sahaba.name],
+        isnadTransmitters: [transmitter.name],
       };
 
       // Add hadith
@@ -101,10 +97,10 @@ describe("Hadith Actions", () => {
         numero: 900001, // Same as first hadith
         matn_fr: "Different text",
         matn_ar: "Different Arabic text",
-        chapterName: chapter.name,
-        narratorName: narrator.name,
-        mentionedSahabasNames: [],
-        isnadTransmittersNames: [],
+        chapter: chapter.name,
+        narrator: narrator.name,
+        mentionedSahabas: [],
+        isnadTransmitters: [],
       };
 
       const result = await addHadith(duplicateData);
@@ -118,10 +114,10 @@ describe("Hadith Actions", () => {
         numero: -1, // Invalid numero
         matn_fr: "", // Empty required field
         matn_ar: "Valid Arabic",
-        chapterName: "Test Chapter",
-        narratorName: "Test Narrator",
-        mentionedSahabasNames: [],
-        isnadTransmittersNames: [],
+        chapter: "Test Chapter",
+        narrator: "Test Narrator",
+        mentionedSahabas: [],
+        isnadTransmitters: [],
       };
 
       const result = await addHadith(invalidData);
@@ -139,10 +135,10 @@ describe("Hadith Actions", () => {
         numero: 900001,
         matn_fr: "Test text",
         matn_ar: "Test Arabic",
-        chapterName: "Non-existent Chapter",
-        narratorName: narrator.name,
-        mentionedSahabasNames: [],
-        isnadTransmittersNames: [],
+        chapter: "Non-existent Chapter",
+        narrator: narrator.name,
+        mentionedSahabas: [],
+        isnadTransmitters: [],
       };
 
       const result = await addHadith(data);
@@ -177,10 +173,10 @@ describe("Hadith Actions", () => {
         numero: 900001,
         matn_fr: "Updated French text",
         matn_ar: "Updated Arabic text",
-        chapterName: chapter.name,
-        narratorName: narrator.name,
-        mentionedSahabasNames: [],
-        isnadTransmittersNames: [],
+        chapter: chapter.name,
+        narrator: narrator.name,
+        mentionedSahabas: [],
+        isnadTransmitters: [],
       };
 
       const result = await editHadith(originalHadith.id, updateData);
@@ -202,10 +198,10 @@ describe("Hadith Actions", () => {
         numero: 900001,
         matn_fr: "Test text",
         matn_ar: "Test Arabic",
-        chapterName: "Test Chapter",
-        narratorName: "Test Narrator",
-        mentionedSahabasNames: [],
-        isnadTransmittersNames: [],
+        chapter: "Test Chapter",
+        narrator: "Test Narrator",
+        mentionedSahabas: [],
+        isnadTransmitters: [],
       };
 
       const result = await editHadith("non-existent-id", updateData);

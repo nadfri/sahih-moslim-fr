@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { prisma } from "@/prisma/prisma";
 import { requireAdmin } from "@/src/lib/auth";
-import { cleanupTestData, testDataHelpers } from "@/src/lib/test-helpers";
+import { cleanupTestData, testDataHelpers } from "@/__tests__/test-helpers";
 
 // Mock Supabase auth
 vi.mock("@/src/lib/auth", () => ({

@@ -5,9 +5,8 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { z } from "zod";
 
-import { deleteHadith, editHadith } from "@/src/services/hadith-actions";
+import { deleteHadith, editHadith } from "@/src/services/actions";
 import { HadithType, ItemType } from "@/src/types/types";
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { Input } from "@/src/ui/inputs/Input/Input";
@@ -19,36 +18,10 @@ import { cleanArabicText } from "@/src/utils/cleanArabicText";
 import { wrapProphetNames } from "@/src/utils/wrapProphetNames";
 import { ConfirmDeleteModal } from "../ConfirmDeleteModal/ConfirmDeleteModal";
 import { MultiSelect } from "../inputs/MultiSelect/MultiSelect";
-
-const createEditHadithSchema = (
-  existingNumeros: number[],
-  initialNumero: number
-) => {
-  return z.object({
-    numero: z.coerce
-      .number({
-        required_error: "Le numéro est requis",
-        invalid_type_error: "Le numéro doit être un nombre",
-      })
-      .int({ message: "Le numéro doit être un nombre entier" })
-      .positive({ message: "Le numéro doit être un nombre positif" })
-      .refine(
-        (numero) =>
-          numero === initialNumero || !existingNumeros.includes(numero),
-        {
-          message: "Ce numéro existe déjà. Veuillez en choisir un autre.",
-        }
-      ),
-    chapter: z.string().min(1, "Le chapitre est requis"),
-    narrator: z.string().min(1, "Le narrateur est requis"),
-    mentionedSahabas: z.array(z.string()),
-    isnadTransmitters: z.array(z.string()),
-    matn_fr: z.string().min(1, "Le texte du hadith est requis"),
-    matn_ar: z.string().min(1, "Le texte arabe est requis"),
-  });
-};
-
-type HadithFormValues = z.infer<ReturnType<typeof createEditHadithSchema>>;
+import {
+  createEditHadithSchema,
+  type EditHadithFormValues,
+} from "@/src/schemas/hadithSchemas";
 
 type EditHadithFormProps = {
   hadith: HadithType;
@@ -81,7 +54,7 @@ export function EditHadithForm({
     watch,
     setValue,
     formState: { errors },
-  } = useForm<HadithFormValues>({
+  } = useForm({
     resolver: zodResolver(hadithSchema),
     mode: "onChange",
     defaultValues: {
@@ -103,7 +76,7 @@ export function EditHadithForm({
   const transmitterOptions = transmittersData.map((t) => t.name);
 
   // Handle form submission for editing
-  const onSubmit = async (data: HadithFormValues) => {
+  const onSubmit = async (data: EditHadithFormValues) => {
     setIsSubmitting(true);
 
     // Find IDs corresponding to selected names/titles using props
@@ -137,10 +110,10 @@ export function EditHadithForm({
       numero: data.numero,
       matn_fr: data.matn_fr,
       matn_ar: data.matn_ar,
-      chapterName: selectedChapter.name,
-      narratorName: selectedNarrator.name,
-      mentionedSahabasNames: selectedSahabas.map((s) => s.name),
-      isnadTransmittersNames: selectedTransmitters.map((t) => t.name),
+      chapter: selectedChapter.name,
+      narrator: selectedNarrator.name,
+      mentionedSahabas: selectedSahabas.map((s) => s.name),
+      isnadTransmitters: selectedTransmitters.map((t) => t.name),
     };
 
     try {
@@ -182,7 +155,7 @@ export function EditHadithForm({
   // Construct preview object for live preview
   const previewHadith: HadithType = {
     ...hadith,
-    numero: formValues.numero || 0,
+    numero: (formValues.numero as number) || hadith.numero,
     chapter: {
       ...hadith.chapter,
       name: formValues.chapter || hadith.chapter.name,

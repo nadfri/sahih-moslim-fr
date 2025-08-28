@@ -3,10 +3,7 @@ import { z } from "zod";
 export const createHadithSchema = (existingNumeros: number[]) => {
   return z.object({
     numero: z.coerce
-      .number({
-        required_error: "Le numéro est requis",
-        invalid_type_error: "Le numéro doit être un nombre",
-      })
+      .number()
       .int({ message: "Le numéro doit être un nombre entier" })
       .positive({ message: "Le numéro doit être un nombre positif" })
       .refine((numero) => !existingNumeros.includes(numero), {

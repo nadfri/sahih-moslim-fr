@@ -11,6 +11,14 @@ const mockUseSession = vi.fn(() => ({
   data: null as null | { user: { name: string } },
 }));
 
+const mockUseAuth = vi.fn(() => ({
+  user: null,
+  profile: null,
+  loading: false,
+  signInWithGitHub: vi.fn(),
+  signOut: vi.fn(),
+}));
+
 // Mock modules
 vi.mock("next/navigation", () => ({
   usePathname: () => mockPathname(),
@@ -19,6 +27,10 @@ vi.mock("next/navigation", () => ({
 vi.mock("next-auth/react", () => ({
   useSession: () => mockUseSession(),
   signOut: vi.fn(),
+}));
+
+vi.mock("@/src/hooks/useAuth", () => ({
+  useAuth: () => mockUseAuth(),
 }));
 
 describe("Header", () => {

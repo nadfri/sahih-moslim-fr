@@ -8,8 +8,12 @@ import { createPortal } from "react-dom"; // Import createPortal
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
-import { addHadith } from "@/src/services/hadith-actions";
+import { addHadith } from "@/src/services/actions";
 import { HadithType, ItemType, VariantType } from "@/src/types/types";
+import {
+  createHadithFormSchema,
+  type HadithFormValues,
+} from "@/src/schemas/hadithSchemas";
 /*UI*/
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { Input } from "@/src/ui/inputs/Input/Input";
@@ -23,10 +27,6 @@ import { BtnAddItem } from "../hadith/BtnAddItem/BtnAddItem";
 import { MultiSelect } from "../inputs/MultiSelect/MultiSelect";
 import { MultiSelectDragNDrop } from "../inputs/MultiSelectDragNDrop/MultiSelectDragNDrop";
 import { AddItemFormDialog } from "./AddItemFormDialog/AddItemFormDialog";
-import {
-  createHadithSchema,
-  HadithFormValues,
-} from "./schemas/createHadithSchema";
 
 type Props = {
   initialNumeros: number[];
@@ -50,7 +50,7 @@ export function AddHadithForm({
   const [isOpenDialog, setIsOpenDialog] = useState(false);
   const [variant, setVariant] = useState<VariantType | null>(null);
 
-  const hadithSchema = createHadithSchema(existingNumeros);
+  const hadithSchema = createHadithFormSchema(existingNumeros);
 
   const {
     register,
@@ -60,7 +60,7 @@ export function AddHadithForm({
     setValue,
     reset,
     formState: { errors },
-  } = useForm<HadithFormValues>({
+  } = useForm({
     resolver: zodResolver(hadithSchema),
     mode: "onChange",
     defaultValues: {
@@ -122,10 +122,10 @@ export function AddHadithForm({
       numero: data.numero,
       matn_fr: data.matn_fr,
       matn_ar: data.matn_ar,
-      chapterName: selectedChapter.name,
-      narratorName: selectedNarrator.name,
-      mentionedSahabasNames: selectedSahabas.map((s) => s.name),
-      isnadTransmittersNames: selectedTransmitters.map((t) => t.name),
+      chapter: selectedChapter.name,
+      narrator: selectedNarrator.name,
+      mentionedSahabas: selectedSahabas.map((s) => s.name),
+      isnadTransmitters: selectedTransmitters.map((t) => t.name),
     };
 
     try {
@@ -171,7 +171,7 @@ export function AddHadithForm({
   // Construct preview object matching HadithType exactly
   const previewHadith: HadithType = {
     id: "preview-id",
-    numero: formValues.numero || 0,
+    numero: (formValues.numero as number) || 0,
     chapter: {
       id: "preview-chapter-id",
       name: formValues.chapter || "Sélectionnez un chapitre...",

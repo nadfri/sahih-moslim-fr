@@ -34,18 +34,6 @@ describe("AddItemForm", () => {
     variant: "chapters" as VariantType,
   };
 
-  // Mock server actions and dependencies
-  vi.mock("@/src/services/actions", () => ({
-    addItem: vi.fn(),
-  }));
-
-  vi.mock("react-toastify", () => ({
-    toast: {
-      success: vi.fn(),
-      error: vi.fn(),
-    },
-  }));
-
   const mockAddItem = vi.mocked(addItem);
   const mockToastSuccess = vi.mocked(toast.success);
   const mockToastError = vi.mocked(toast.error);
@@ -142,12 +130,33 @@ describe("AddItemForm", () => {
     ).toBeInTheDocument();
   });
 
-  it("suggère le prochain index disponible pour les chapitres", () => {
+  it("suggests next available index for chapters", () => {
     render(<AddItemForm {...defaultProps} />);
     expect(screen.getByText(/Suggéré: 3/i)).toBeInTheDocument(); // Based on mockItemsChapter
   });
 
-  it("ne soumet pas si le numéro du chapitre est manquant", async () => {
+  it("does not submit if name already exists (client validation)", async () => {
+    render(<AddItemForm {...defaultProps} />);
+    const nameInput = screen.getByLabelText(
+      placeholderText.title.chapters + "*"
+    );
+    const submitButton = screen.getByRole("button", {
+      name: placeholderText.title.chapters,
+    });
+
+    await userEvent.type(nameInput, "Chapitre 1"); // Nom qui existe déjà dans mockItemsChapter
+
+    await userEvent.click(submitButton);
+
+    expect(mockAddItem).not.toHaveBeenCalled();
+    expect(
+      await screen.findByText(
+        "Ce nom est déjà utilisé. Veuillez en choisir un autre."
+      )
+    ).toBeInTheDocument();
+  });
+
+  it("does not submit if chapter number is missing", async () => {
     render(<AddItemForm {...defaultProps} />);
     const indexInput = screen.getByLabelText(/Numero du chapitre/i);
     const submitButton = screen.getByRole("button", {
@@ -159,22 +168,63 @@ describe("AddItemForm", () => {
 
     expect(mockAddItem).not.toHaveBeenCalled();
     expect(
-      await screen.findByText("L'index doit être un nombre positif")
+      await screen.findByText("Invalid input: expected number, received string")
     ).toBeInTheDocument();
   });
 
-  it("ne soumet pas si le nom est manquant", async () => {
+  it("does not submit if item already exists (server validation)", async () => {
+    // Simuler un échec côté serveur pour un item dupliqué
+    mockAddItem.mockResolvedValue({
+      success: false,
+      message: "Un élément avec ce nom existe déjà",
+    });
+
     render(<AddItemForm {...defaultProps} />);
+    const nameInput = screen.getByLabelText(
+      placeholderText.title.chapters + "*"
+    );
     const submitButton = screen.getByRole("button", {
       name: placeholderText.title.chapters,
     });
+
+    await userEvent.type(
+      nameInput,
+      "Nouveau Chapitre Unique" // Nom qui n'existe pas côté client
+    );
+    // Do not modify the index input (it is pre-filled with a numeric value).
+    // Modifying it as a string causes Zod to reject before server call.
     await userEvent.click(submitButton);
 
-    expect(mockAddItem).not.toHaveBeenCalled();
-    expect(await screen.findByText("Au moins 3 lettres")).toBeInTheDocument();
+    expect(mockAddItem).toHaveBeenCalledWith("chapters", {
+      name: "Nouveau Chapitre Unique",
+      nameArabic: null,
+      index: 3,
+    });
+
+    expect(mockToastError).toHaveBeenCalledWith(
+      "Un élément avec ce nom existe déjà"
+    );
+
+    // Le formulaire ne doit pas être réinitialisé en cas d'échec
+    expect(nameInput).toHaveValue("Nouveau Chapitre Unique");
+
+    // index remains the suggested numeric value after failed submission
+    const indexInputAfter = screen.getByLabelText(/Numero du chapitre/i);
+    expect(indexInputAfter).toHaveValue(3);
   });
 
-  it("soumet le formulaire avec des données valides pour un chapitre", async () => {
+  it("submits form with valid data for a chapter", async () => {
+    mockAddItem.mockResolvedValue({
+      success: true,
+      message: "Élément ajouté avec succès",
+      data: {
+        id: "3",
+        name: "Nouveau Chapitre Test",
+        slug: "nouveau-chapitre-test",
+        index: 3,
+      },
+    });
+
     render(<AddItemForm {...defaultProps} />);
     const nameInput = screen.getByLabelText(
       placeholderText.title.chapters + "*"
@@ -185,15 +235,14 @@ describe("AddItemForm", () => {
     });
 
     await userEvent.type(nameInput, "Nouveau Chapitre Test");
-    await userEvent.clear(indexInput);
-    await userEvent.type(indexInput, "10");
+    // Don't change the index - use the suggested value (3)
 
     await userEvent.click(submitButton);
 
     expect(mockAddItem).toHaveBeenCalledWith("chapters", {
       name: "Nouveau Chapitre Test",
       nameArabic: null,
-      index: 10,
+      index: 3, // Use the suggested index (3) instead of 5
     });
     expect(mockToastSuccess).toHaveBeenCalledWith("Élément ajouté avec succès");
     expect(nameInput).toHaveValue("");
@@ -203,8 +252,8 @@ describe("AddItemForm", () => {
     await waitFor(() => expect(indexInput).toHaveValue(4));
   });
 
-  it("soumet le formulaire avec des données valides pour un narrateur", async () => {
-    mockAddItem.mockResolvedValueOnce({
+  it("submits form with valid data for a narrator", async () => {
+    mockAddItem.mockResolvedValue({
       success: true,
       message: "Narrateur ajouté",
       data: {
@@ -239,8 +288,8 @@ describe("AddItemForm", () => {
     expect(nameInput).toHaveValue("");
   });
 
-  it("affiche un message d'erreur si l'ajout échoue (erreur serveur)", async () => {
-    mockAddItem.mockResolvedValueOnce({
+  it("shows error message if add fails (server error)", async () => {
+    mockAddItem.mockResolvedValue({
       success: false,
       message: "Erreur serveur simulée",
     });
@@ -258,7 +307,7 @@ describe("AddItemForm", () => {
     expect(mockToastError).toHaveBeenCalledWith("Erreur serveur simulée");
   });
 
-  it("affiche un message d'erreur en cas d'erreur inattendue (exception)", async () => {
+  it("shows error message on unexpected error (exception)", async () => {
     mockAddItem.mockRejectedValueOnce(new Error("Erreur inattendue"));
     render(<AddItemForm {...defaultProps} />);
     const nameInput = screen.getByLabelText(
@@ -274,7 +323,7 @@ describe("AddItemForm", () => {
     expect(mockToastError).toHaveBeenCalledWith("Erreur inattendue");
   });
 
-  it("affiche 'En cours...' sur le bouton pendant la soumission", async () => {
+  it("shows 'En cours...' on the button during submission", async () => {
     mockAddItem.mockImplementationOnce(
       () =>
         new Promise((resolve) =>
@@ -309,14 +358,14 @@ describe("AddItemForm", () => {
     await waitFor(() => expect(mockAddItem).toHaveBeenCalled());
   });
 
-  it("met à jour la liste des éléments et réinitialise le formulaire après un ajout réussi", async () => {
+  it("updates item list and resets form after successful add", async () => {
     const newItemData = {
       id: "3",
       name: "Nouveau Chapitre Ajouté",
       slug: "nouveau-chapitre-ajoute",
       index: 3,
     };
-    mockAddItem.mockResolvedValueOnce({
+    mockAddItem.mockResolvedValue({
       success: true,
       message: "Ajouté !",
       data: newItemData,

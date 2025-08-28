@@ -1,12 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { prisma } from "@/prisma/prisma";
-import { testDataHelpers } from "@/src/lib/test-helpers";
-import {
-  addHadith,
-  deleteHadith,
-  editHadith,
-} from "@/src/services/hadith-actions";
+import { testDataHelpers } from "@/__tests__/test-helpers";
+import { addHadith, deleteHadith, editHadith } from "@/src/services/actions";
 
 // Mock requireAdmin before importing services
 vi.mock("@/src/lib/auth", () => ({
@@ -72,10 +68,10 @@ describe("Hadith CRUD - Sequence (Add -> Edit -> Delete)", () => {
         numero,
         matn_fr: `French text for test hadith ${suffix}`,
         matn_ar: `Arabic text for test hadith ${suffix}`,
-        chapterName: chapter.name,
-        narratorName: narrator.name,
-        mentionedSahabasNames: [sahaba.name],
-        isnadTransmittersNames: [transmitter.name],
+        chapter: chapter.name,
+        narrator: narrator.name,
+        mentionedSahabas: [sahaba.name],
+        isnadTransmitters: [transmitter.name],
       };
 
       const addResult = await addHadith(hadithData);

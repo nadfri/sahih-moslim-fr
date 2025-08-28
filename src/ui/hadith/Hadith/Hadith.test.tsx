@@ -6,6 +6,19 @@ import { mockHadith } from "@/src/mocks/mockHadith";
 import type { HadithType } from "@/src/types/types";
 import { Hadith } from "./Hadith";
 
+// Mock useAuth hook
+const mockUseAuth = vi.fn(() => ({
+  user: null,
+  profile: null,
+  loading: false,
+  signInWithGitHub: vi.fn(),
+  signOut: vi.fn(),
+}));
+
+vi.mock("@/src/hooks/useAuth", () => ({
+  useAuth: () => mockUseAuth(),
+}));
+
 // Mock the environment variables
 vi.mock("next/link", () => ({
   __esModule: true,

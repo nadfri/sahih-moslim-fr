@@ -4,7 +4,7 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterEach } from "vitest";
 
-import { cleanupTestData } from "@/src/lib/test-helpers";
+import { cleanupTestData } from "@/__tests__/test-helpers";
 
 // Clean up React Testing Library after each test
 afterEach(() => cleanup());
