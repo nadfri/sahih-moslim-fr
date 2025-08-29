@@ -4,15 +4,14 @@ import { describe, expect, it, vi } from "vitest";
 
 import { ButtonSignOut } from "./ButtonSignOut";
 
-// Mock next-auth/react
-vi.mock("next-auth/react", () => ({
-  signOut: vi.fn(),
-  useSession: () => ({ status: "authenticated" }), // Mock useSession
+// Mock the refactored useAuth hook
+const mockSignOut = vi.fn();
+vi.mock("@/src/hooks/useAuth", () => ({
+  useAuth: () => ({ user: { id: 1 }, loading: false, signOut: mockSignOut }),
 }));
 
 describe("ButtonSignOut", () => {
-  it("renders with PowerOff icon and triggers signOut with redirect to home page", async () => {
-    const { signOut } = await import("next-auth/react");
+  it("renders with PowerOff icon and triggers signOut when clicked", async () => {
     const user = userEvent.setup();
 
     render(<ButtonSignOut />);
@@ -26,11 +25,8 @@ describe("ButtonSignOut", () => {
     expect(powerOffIcon).toBeInTheDocument();
     expect(powerOffIcon?.getAttribute("aria-hidden")).toBe("true");
 
-    // Click the button and verify signOut was called with correct parameters
+    // Click the button and verify signOut was called
     await user.click(button);
-    expect(signOut).toHaveBeenCalledWith({
-      redirectTo: "/",
-      redirect: true,
-    });
+    expect(mockSignOut).toHaveBeenCalled();
   });
 });

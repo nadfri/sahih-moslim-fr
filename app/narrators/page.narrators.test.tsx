@@ -4,12 +4,10 @@ import { describe, expect, it } from "vitest";
 
 describe("NarratorsPage", () => {
   it("renders narrators list", async () => {
-    // Dynamically import the server component and render it as a promise
+    // Dynamically import the server component and render its returned node
     const { default: NarratorsPage } = await import("./page");
-    // Render the async server component using .then
-    await NarratorsPage().then((node) => {
-      render(<>{node}</>);
-    });
+    const node = await NarratorsPage();
+    render(<>{node}</>);
     // Check for expected content
     expect(await screen.findByText(/narrateur/i)).toBeInTheDocument();
 

@@ -1,4 +1,5 @@
 import { prisma } from "@/prisma/prisma";
+import { randomUUID } from "crypto";
 
 /**
  * Clean up test data from the database
@@ -68,26 +69,39 @@ export async function cleanupTestData() {
  * All test data uses "test-" prefix to be easily identifiable and cleanable
  */
 export const testDataHelpers = {
-  createTestChapter: (index: number) => ({
-    name: `Test Chapter ${index}`,
-    slug: `test-chapter-${index}`,
-    index: 9000 + index, // Test chapters start at 9000
-  }),
+  createTestChapter: (index: number) => {
+    const uid = randomUUID();
+    return {
+      name: `Test Chapter ${index}-${uid}`,
+      slug: `test-chapter-${index}-${uid}`,
+      // Use a large random index to avoid collisions
+      index: 900000 + Math.floor(Math.random() * 900000),
+    };
+  },
 
-  createTestNarrator: (index: number) => ({
-    name: `Test Narrator ${index}`,
-    slug: `test-narrator-${index}`,
-  }),
+  createTestNarrator: (index: number) => {
+    const uid = randomUUID();
+    return {
+      name: `Test Narrator ${index}-${uid}`,
+      slug: `test-narrator-${index}-${uid}`,
+    };
+  },
 
-  createTestSahaba: (index: number) => ({
-    name: `Test Sahaba ${index}`,
-    slug: `test-sahaba-${index}`,
-  }),
+  createTestSahaba: (index: number) => {
+    const uid = randomUUID();
+    return {
+      name: `Test Sahaba ${index}-${uid}`,
+      slug: `test-sahaba-${index}-${uid}`,
+    };
+  },
 
-  createTestTransmitter: (index: number) => ({
-    name: `Test Transmitter ${index}`,
-    slug: `test-transmitter-${index}`,
-  }),
+  createTestTransmitter: (index: number) => {
+    const uid = randomUUID();
+    return {
+      name: `Test Transmitter ${index}-${uid}`,
+      slug: `test-transmitter-${index}-${uid}`,
+    };
+  },
 
   createTestHadith: (number: number) => ({
     numero: 900000 + number, // Test hadiths start at 900000

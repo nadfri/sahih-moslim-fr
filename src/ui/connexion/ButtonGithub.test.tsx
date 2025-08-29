@@ -4,20 +4,21 @@ import { describe, expect, it, vi } from "vitest";
 
 import { ButtonGithub } from "./ButtonGithub";
 
-// Simple mocks for the required dependencies
-vi.mock("next-auth/react", () => ({
-  signIn: vi.fn(),
-}));
-
+// Mock search params to provide a callbackUrl
 vi.mock("next/navigation", () => ({
   useSearchParams: () => ({
     get: (key: string) => (key === "callbackUrl" ? "/test-callback" : null),
   }),
 }));
 
+// Provide a mock for the refactored useAuth hook
+const mockSignInWithGitHub = vi.fn();
+vi.mock("@/src/hooks/useAuth", () => ({
+  useAuth: () => ({ signInWithGitHub: mockSignInWithGitHub }),
+}));
+
 describe("ButtonGithub", () => {
-  it("renders with correct text and triggers signIn on click", async () => {
-    const { signIn } = await import("next-auth/react");
+  it("renders with correct text and triggers signInWithGitHub on click", async () => {
     const user = userEvent.setup();
 
     render(<ButtonGithub />);
@@ -32,11 +33,8 @@ describe("ButtonGithub", () => {
     const svgIcon = document.querySelector("svg");
     expect(svgIcon).toBeInTheDocument();
 
-    // Click the button and verify signIn was called
+    // Click the button and verify signInWithGitHub was called with the callbackUrl
     await user.click(button);
-    expect(signIn).toHaveBeenCalledWith("github", {
-      callbackUrl: "/test-callback",
-      redirect: true,
-    });
+    expect(mockSignInWithGitHub).toHaveBeenCalledWith("/test-callback");
   });
 });

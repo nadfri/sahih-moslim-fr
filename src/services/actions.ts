@@ -449,14 +449,27 @@ export async function addHadith(
       };
     }
 
-    // Find related entities
-    const chapter = await prisma.chapter.findUnique({
-      where: { name: validData.chapter },
+    // Find related entities.
+    // First try to resolve by slug (unique). If not found, fallback to a name lookup.
+    const chapterSlug = slugify(validData.chapter);
+    let chapter = await prisma.chapter.findUnique({
+      where: { slug: chapterSlug },
     });
+    if (!chapter) {
+      chapter = await prisma.chapter.findFirst({
+        where: { name: validData.chapter },
+      });
+    }
 
-    const narrator = await prisma.narrator.findUnique({
-      where: { name: validData.narrator },
+    const narratorSlug = slugify(validData.narrator);
+    let narrator = await prisma.narrator.findUnique({
+      where: { slug: narratorSlug },
     });
+    if (!narrator) {
+      narrator = await prisma.narrator.findFirst({
+        where: { name: validData.narrator },
+      });
+    }
 
     if (!chapter) {
       return {
@@ -603,13 +616,25 @@ export async function editHadith(
     }
 
     // Find related entities (same logic as add)
-    const chapter = await prisma.chapter.findUnique({
-      where: { name: validData.chapter },
+    const chapterSlug = slugify(validData.chapter);
+    let chapter = await prisma.chapter.findUnique({
+      where: { slug: chapterSlug },
     });
+    if (!chapter) {
+      chapter = await prisma.chapter.findFirst({
+        where: { name: validData.chapter },
+      });
+    }
 
-    const narrator = await prisma.narrator.findUnique({
-      where: { name: validData.narrator },
+    const narratorSlug = slugify(validData.narrator);
+    let narrator = await prisma.narrator.findUnique({
+      where: { slug: narratorSlug },
     });
+    if (!narrator) {
+      narrator = await prisma.narrator.findFirst({
+        where: { name: validData.narrator },
+      });
+    }
 
     if (!chapter || !narrator) {
       return {
