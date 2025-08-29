@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { prisma } from "./prisma/prisma";
 
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
@@ -11,14 +12,22 @@ export async function middleware(req: NextRequest) {
 
   if (!isProtectedRoute) return NextResponse.next();
 
-  // Create Supabase client
+  // Create a NextResponse that we will return (so we can attach cookies if needed)
+  const supabaseResponse = NextResponse.next({ request: req });
+
+  // Create Supabase client, wiring cookies to the response per docs
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll: () => req.cookies.getAll(),
-        setAll: () => {}, // Read-only in middleware
+        setAll: (cookiesToSet) => {
+          // Attach any cookies Supabase wants to set to the response
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          );
+        },
       },
     }
   );
@@ -48,32 +57,21 @@ export async function middleware(req: NextRequest) {
 
   // If metadata indicates ADMIN, allow.
   if (metaRole === "ADMIN") {
-    return NextResponse.next();
+    return supabaseResponse;
   }
 
-  // Fallback: metadata didn't provide ADMIN. Query the public `profiles`
-  // table via Supabase (PostgREST) to determine the user's application role.
-  // This avoids importing Prisma in the Edge runtime and is safe here.
+  // Fallback: check profiles table via Prisma for authoritative role.
   try {
-    const { data: profileData, error: profileError } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .maybeSingle();
+    const profile = await prisma.profile.findUnique({
+      where: { id: user.id },
+      select: { role: true },
+    });
 
-    if (profileError) {
-      // Can't validate role — treat as unauthorized
-      return NextResponse.redirect(unauthUrl);
-    }
-
-    if (
-      typeof profileData?.role === "string" &&
-      profileData.role.toUpperCase() === "ADMIN"
-    ) {
-      return NextResponse.next();
+    if (profile?.role === "ADMIN") {
+      return supabaseResponse;
     }
   } catch {
-    // Any unexpected error — deny access conservatively
+    // If Prisma fails, deny conservatively
     return NextResponse.redirect(unauthUrl);
   }
 
@@ -81,5 +79,8 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
+  // Run middleware in Node.js runtime so server-side libraries (Supabase) work.
+  // This avoids Edge-runtime errors for packages that use Node APIs.
+  runtime: "nodejs",
   matcher: ["/(.*)/add", "/(.*)/edit", "/admin"],
 };

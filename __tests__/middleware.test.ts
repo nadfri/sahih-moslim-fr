@@ -51,6 +51,24 @@ async function getSupabaseMock(): Promise<SupabaseMockModule> {
   return (await import("@supabase/ssr")) as unknown as SupabaseMockModule;
 }
 
+// Hoist-safe mock factory for Prisma client used in middleware fallback
+type PrismaMockModule = {
+  prisma: {
+    profile: {
+      findUnique: (args: {
+        where: { id: string };
+        select: { role: boolean };
+      }) => Promise<{ role?: string } | null>;
+    };
+  };
+  __reset: () => void | Promise<void>;
+  __setProfileResult: (v: { role?: string } | null) => void | Promise<void>;
+};
+
+async function getPrismaMock(): Promise<PrismaMockModule> {
+  return (await import("../prisma/prisma")) as unknown as PrismaMockModule;
+}
+
 vi.mock("@supabase/ssr", () => {
   let getUserResult: GetUserResult = { data: { user: null } };
   let profileResult: ProfileResult = { data: null, error: null };
@@ -86,6 +104,30 @@ vi.mock("@supabase/ssr", () => {
   };
 });
 
+// Mock the local Prisma client used by middleware (prisma.profile.findUnique)
+vi.mock("../prisma/prisma", () => {
+  let profileResult: { role?: string } | null = null;
+
+  const prisma = {
+    profile: {
+      findUnique: async () => {
+        // return the configured profileResult (simulates Prisma result)
+        return profileResult;
+      },
+    },
+  };
+
+  return {
+    prisma,
+    __setProfileResult: (v: { role?: string } | null) => {
+      profileResult = v;
+    },
+    __reset: () => {
+      profileResult = null;
+    },
+  };
+});
+
 const PROTECTED_PATHS = ["/admin", "/chapters/add"];
 const NON_PROTECTED_PATH = "/public/some-page";
 
@@ -96,6 +138,8 @@ describe("Middleware (Supabase-based)", () => {
     // Reset mock factory state
     const supa = await getSupabaseMock();
     await supa.__reset();
+    const prismaMock = await getPrismaMock();
+    await prismaMock.__reset();
   });
 
   afterEach(() => {
@@ -135,8 +179,9 @@ describe("Middleware (Supabase-based)", () => {
       // test-only import
       const supa1 = await getSupabaseMock();
       await supa1.__setGetUserResult({ data: { user: { id: "u1" } } });
-      // profile returns null (no role)
-      await supa1.__setProfileResult({ data: null, error: null });
+      // profile returns null (no role) via prisma mock
+      const prismaMock = await getPrismaMock();
+      await prismaMock.__setProfileResult(null);
 
       const req = new NextRequest(new URL(path, "http://localhost:3000"));
       await middleware(req);
@@ -166,7 +211,8 @@ describe("Middleware (Supabase-based)", () => {
       // test-only import
       const supa3 = await getSupabaseMock();
       await supa3.__setGetUserResult({ data: { user: { id: "u3" } } });
-      await supa3.__setProfileResult({ data: { role: "ADMIN" }, error: null });
+      const prismaMock = await getPrismaMock();
+      await prismaMock.__setProfileResult({ role: "ADMIN" });
 
       const req = new NextRequest(new URL(path, "http://localhost:3000"));
       await middleware(req);
