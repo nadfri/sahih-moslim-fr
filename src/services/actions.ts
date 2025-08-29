@@ -55,7 +55,7 @@ async function getItems(variant: VariantType): Promise<ItemType[]> {
 }
 
 // =============================================================================
-// ACTIONS POUR LES ITEMS (chapters, narrators, sahabas, transmitters)
+// ACTIONS FOR ITEMS (chapters, narrators, sahabas, transmitters)
 // =============================================================================
 
 /* Add Item */
@@ -98,6 +98,7 @@ export async function addItem(
           },
         });
         break;
+
       case "narrators":
         created = await prisma.narrator.create({
           data: {
@@ -107,6 +108,7 @@ export async function addItem(
           },
         });
         break;
+
       case "sahabas":
         created = await prisma.sahaba.create({
           data: {
@@ -116,6 +118,7 @@ export async function addItem(
           },
         });
         break;
+
       case "transmitters":
         created = await prisma.transmitter.create({
           data: {
@@ -127,7 +130,8 @@ export async function addItem(
         break;
     }
 
-    revalidatePath("/admin");
+    revalidatePath("/" + variant);
+    revalidatePath("/search");
 
     return {
       success: true,
@@ -260,7 +264,8 @@ export async function editItem(
         break;
     }
 
-    revalidatePath("/admin");
+    revalidatePath("/" + variant);
+    revalidatePath("/search");
 
     return {
       success: true,
@@ -377,7 +382,8 @@ export async function deleteItem(
         break;
     }
 
-    revalidatePath("/admin");
+    revalidatePath("/" + variant);
+    revalidatePath("/search");
 
     return {
       success: true,
@@ -407,7 +413,7 @@ export async function deleteItem(
 }
 
 // =============================================================================
-// ACTIONS POUR LES HADITHS
+// ACTIONS FOR HADITHS
 // =============================================================================
 
 /* ADD HADITH */
@@ -530,10 +536,8 @@ export async function addHadith(
       });
     }
 
-    // Revalidate only in production
-    if (process.env.NODE_ENV !== "test") {
-      revalidatePath("/");
-    }
+    revalidatePath("/");
+
     return {
       success: true,
       message: `Hadith #${newHadith.numero} ajouté avec succès`,
@@ -679,11 +683,9 @@ export async function editHadith(
       });
     }
 
-    // Revalidate only in production
-    if (process.env.NODE_ENV !== "test") {
-      revalidatePath("/");
-      revalidatePath(`/hadiths/${validData.numero}`);
-    }
+    revalidatePath("/");
+    revalidatePath(`/hadiths/${validData.numero}`);
+
     return {
       success: true,
       message: `Hadith #${validData.numero} modifié avec succès`,
@@ -731,10 +733,8 @@ export async function deleteHadith(hadithId: string): Promise<ActionResponse> {
       where: { id: hadithId },
     });
 
-    // Revalidate only in production
-    if (process.env.NODE_ENV !== "test") {
-      revalidatePath("/");
-    }
+    revalidatePath("/");
+
     return {
       success: true,
       message: `Hadith #${hadith.numero} supprimé avec succès`,

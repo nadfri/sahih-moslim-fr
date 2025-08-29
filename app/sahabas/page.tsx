@@ -2,6 +2,10 @@
 
 import { getAllSahabas } from "@/src/services/services";
 import { FilteredListCard } from "@/src/ui/FilteredListCard/FilteredListCard";
+import { Metadata } from "next";
+
+export const dynamic = "force-static";
+export const revalidate = 86400; // 1 day
 
 export default async function SahabasPage() {
   const sahabas = await getAllSahabas();
@@ -16,4 +20,16 @@ export default async function SahabasPage() {
       />
     </div>
   );
+}
+
+// Generate static metadata
+export async function generateMetadata(): Promise<Metadata> {
+  const title = "Les Sahabas dans Moslim";
+  const description =
+    "Découvrez les Sahabas dans les hadiths de la collection Sahih Moslim.";
+
+  return {
+    title,
+    description,
+  };
 }

@@ -4,6 +4,9 @@ import { Descriptive } from "@/src/ui/Descriptive/Descriptive";
 import { BadgeNumberOfHadith } from "@/src/ui/hadith/BadgeNumberOfHadith/BadgeNumberOfHadith";
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 
+export const dynamic = "force-static";
+export const revalidate = 86400; // 1 day
+
 export default async function Home() {
   const hadiths = await getAllHadiths();
   return (

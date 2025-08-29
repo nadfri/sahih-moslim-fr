@@ -9,6 +9,9 @@ import {
   getTransmitterNames,
 } from "@/src/services/services";
 
+export const dynamic = "force-static";
+export const revalidate = 86400; // 1 day
+
 // Generate static metadata
 export async function generateMetadata(): Promise<Metadata> {
   const title = "Rechercher dans Moslim";
