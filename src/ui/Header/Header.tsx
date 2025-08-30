@@ -16,13 +16,14 @@ export function Header() {
   const { user, profile, loading } = useAuth();
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
   const isAdmin = profile?.role === "ADMIN";
   const isLoggedIn = !!user;
 
   return (
-    <header className="bg-white dark:bg-gray-900 text-emerald-800 dark:text-emerald-400 shadow-sm dark:shadow-gray-800 sticky top-0 z-50 transition-colors duration-200">
+    <header className="bg-white dark:bg-gray-900 text-emerald-800 dark:text-emerald-400 shadow-sm dark:shadow-gray-800 sticky top-0 z-50">
       <div className="flex justify-between items-center relative px-1 p-2">
         {/* Logo */}
         <Logo closeMobileMenu={closeMobileMenu} />

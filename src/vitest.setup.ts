@@ -24,7 +24,11 @@ beforeAll(async () => {
   // Detect Vitest environment instead of relying on NODE_ENV which may not be set.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const isVitest = typeof (import.meta as any).vitest !== "undefined";
-  if (isVitest && !process.env.SKIP_DB_CLEANUP) {
+
+  // Always perform test DB cleanup when running under Vitest.
+  // The cleanup function itself has a safety gate to avoid running in production
+  // unless explicitly allowed via ALLOW_LARGE_CLEANUP=true.
+  if (isVitest) {
     try {
       await cleanupTestData();
     } catch (error) {
