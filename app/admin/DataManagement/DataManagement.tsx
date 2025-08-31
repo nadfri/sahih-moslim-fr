@@ -19,24 +19,28 @@ const exportOptions = [
   {
     label: "Chapitres",
     endpoint: "/api/export/chapters",
+    filename: "chapters.json",
     icon: BookOpen,
     color: "text-emerald-600 dark:text-emerald-400",
   },
   {
     label: "Compagnons",
     endpoint: "/api/export/sahabas",
+    filename: "sahabas.json",
     icon: Users,
     color: "text-amber-600 dark:text-amber-400",
   },
   {
     label: "Transmetteurs",
     endpoint: "/api/export/transmitters",
+    filename: "transmitters.json",
     icon: User,
     color: "text-stone-600 dark:text-stone-400",
   },
   {
     label: "Hadiths",
     endpoint: "/api/export/hadiths",
+    filename: "hadiths.json",
     icon: FileText,
     color: "text-emerald-700 dark:text-emerald-300",
   },
@@ -211,10 +215,7 @@ export function DataManagement() {
                       <button
                         key={option.endpoint}
                         onClick={() =>
-                          handleExport(
-                            option.endpoint,
-                            `${option.label.toLowerCase()}.json`
-                          )
+                          handleExport(option.endpoint, option.filename)
                         }
                         className="group flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg border border-emerald-200 dark:border-emerald-800 hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-md transition-all duration-200"
                       >

@@ -1,0 +1,517 @@
+[
+  {
+    "name": "Abbad ibn Tamim",
+    "slug": "abbad-ibn-tamim",
+    "nameArabic": null
+  },
+  {
+    "name": "Abbas",
+    "slug": "abbas",
+    "nameArabic": null
+  },
+  {
+    "name": "Abbas ibn Abd al-Muttalib",
+    "slug": "abbas-ibn-abd-al-muttalib",
+    "nameArabic": null
+  },
+  {
+    "name": "Abd al-Aziz ibn Muhammad ad-Darawardi",
+    "slug": "abd-al-aziz-ibn-muhammad-ad-darawardi",
+    "nameArabic": "عبد العزيز بن محمد الدراوردي"
+  },
+  {
+    "name": "Abd al-Aziz ibn Suhayb",
+    "slug": "abd-al-aziz-ibn-suhayb",
+    "nameArabic": "عبد العزيز بن صهيب"
+  },
+  {
+    "name": "Abd al-Rahman ibn Awf",
+    "slug": "abd-al-rahman-ibn-awf",
+    "nameArabic": null
+  },
+  {
+    "name": "Abd ar-Rahman ibn Mahdi",
+    "slug": "abd-ar-rahman-ibn-mahdi",
+    "nameArabic": "عبد الرحمن بن مهدي"
+  },
+  {
+    "name": "Abda",
+    "slug": "abda",
+    "nameArabic": null
+  },
+  {
+    "name": "Abdallah ibn Abbas",
+    "slug": "abdallah-ibn-abbas",
+    "nameArabic": null
+  },
+  {
+    "name": "Abdallah ibn Amr ibn al-Aas",
+    "slug": "abdallah-ibn-amr-ibn-al-aas",
+    "nameArabic": null
+  },
+  {
+    "name": "Abdallah ibn Jafar",
+    "slug": "abdallah-ibn-jafar",
+    "nameArabic": null
+  },
+  {
+    "name": "Abdallah ibn Mas'ud",
+    "slug": "abdallah-ibn-masud",
+    "nameArabic": null
+  },
+  {
+    "name": "Abdallah ibn Noumayr",
+    "slug": "abdallah-ibn-noumayr",
+    "nameArabic": "عبد الله بن نمير"
+  },
+  {
+    "name": "Abdallah ibn Omar",
+    "slug": "abdallah-ibn-omar",
+    "nameArabic": null
+  },
+  {
+    "name": "Abdallah ibn Yazid",
+    "slug": "abdallah-ibn-yazid",
+    "nameArabic": "عبد الله بن يزيد"
+  },
+  {
+    "name": "Abdallah ibn Zaid",
+    "slug": "abdallah-ibn-zaid",
+    "nameArabic": null
+  },
+  {
+    "name": "Abdur Rahman ibn Abou Bakra",
+    "slug": "abdur-rahman-ibn-abou-bakra",
+    "nameArabic": null
+  },
+  {
+    "name": "Abou Abdallah As-Sunabihi",
+    "slug": "abou-abdallah-as-sunabihi",
+    "nameArabic": null
+  },
+  {
+    "name": "Abou Awanah",
+    "slug": "abou-awanah",
+    "nameArabic": "أبو عوانة"
+  },
+  {
+    "name": "Abou Ayyub al Ansari",
+    "slug": "abou-ayyub-al-ansari",
+    "nameArabic": null
+  },
+  {
+    "name": "Abou Bakr as-Siddiq",
+    "slug": "abou-bakr-as-siddiq",
+    "nameArabic": null
+  },
+  {
+    "name": "Abou Bakr ibn Abou Shaiba",
+    "slug": "abou-bakr-ibn-abou-shaiba",
+    "nameArabic": null
+  },
+  {
+    "name": "Abou Barza al-Aslami",
+    "slug": "abou-barza-al-aslami",
+    "nameArabic": null
+  },
+  {
+    "name": "Abou Chourayh Al Khouza'i",
+    "slug": "abou-chourayh-al-khouzai",
+    "nameArabic": null
+  },
+  {
+    "name": "Abou Darda",
+    "slug": "abou-darda",
+    "nameArabic": null
+  },
+  {
+    "name": "Abou Hani",
+    "slug": "abou-hani",
+    "nameArabic": "ابو هانئ"
+  },
+  {
+    "name": "Abou Hassin",
+    "slug": "abou-hassin",
+    "nameArabic": "أبو حصين"
+  },
+  {
+    "name": "Abou Huraira",
+    "slug": "abou-huraira",
+    "nameArabic": null
+  },
+  {
+    "name": "Abou Moussa al-Achari",
+    "slug": "abou-moussa-al-achari",
+    "nameArabic": null
+  },
+  {
+    "name": "Abou Musa al-Ash'ari",
+    "slug": "abou-musa-al-ashari",
+    "nameArabic": null
+  },
+  {
+    "name": "Abou Othman Moslim ibn Yassar",
+    "slug": "abou-othman-moslim-ibn-yassar",
+    "nameArabic": "ابو عثمان مسلم بن يسار"
+  },
+  {
+    "name": "Abou Qatada",
+    "slug": "abou-qatada",
+    "nameArabic": null
+  },
+  {
+    "name": "Abou Sa'id al-Khudri",
+    "slug": "abou-said-al-khudri",
+    "nameArabic": null
+  },
+  {
+    "name": "Abou Salama",
+    "slug": "abou-salama",
+    "nameArabic": null
+  },
+  {
+    "name": "Abou Sufyan",
+    "slug": "abou-sufyan",
+    "nameArabic": null
+  },
+  {
+    "name": "Abou Umama",
+    "slug": "abou-umama",
+    "nameArabic": null
+  },
+  {
+    "name": "Abu Salih as-Sammam",
+    "slug": "abu-salih-as-sammam",
+    "nameArabic": "أبو صالح السمان"
+  },
+  {
+    "name": "Aisha bint Abi Bakr",
+    "slug": "aisha-bint-abi-bakr",
+    "nameArabic": null
+  },
+  {
+    "name": "Al Mughirah ibn Shu'bah",
+    "slug": "al-mughirah-ibn-shubah",
+    "nameArabic": "المغيرة بن شعبة"
+  },
+  {
+    "name": "Al-Walid ibn Muslim",
+    "slug": "al-walid-ibn-muslim",
+    "nameArabic": "الوليد بن مسلم"
+  },
+  {
+    "name": "Ali ibn Abi Talib",
+    "slug": "ali-ibn-abi-talib",
+    "nameArabic": null
+  },
+  {
+    "name": "Ali ibn Rabi'ah",
+    "slug": "ali-ibn-rabiah",
+    "nameArabic": null
+  },
+  {
+    "name": "Amir ibn Saad",
+    "slug": "amir-ibn-saad",
+    "nameArabic": "عامر بن سعد"
+  },
+  {
+    "name": "Amr ibn al-Aas",
+    "slug": "amr-ibn-al-aas",
+    "nameArabic": null
+  },
+  {
+    "name": "Anas ibn Malik",
+    "slug": "anas-ibn-malik",
+    "nameArabic": null
+  },
+  {
+    "name": "Asma bint Abi Bakr",
+    "slug": "asma-bint-abi-bakr",
+    "nameArabic": null
+  },
+  {
+    "name": "Bilal ibn Rabah",
+    "slug": "bilal-ibn-rabah",
+    "nameArabic": null
+  },
+  {
+    "name": "Bishr ibn al-Hakam",
+    "slug": "bishr-ibn-al-hakam",
+    "nameArabic": "بشر بن الحكم"
+  },
+  {
+    "name": "Burayda ibn al-Husayb",
+    "slug": "burayda-ibn-al-husayb",
+    "nameArabic": null
+  },
+  {
+    "name": "Dawud ibn Rashid",
+    "slug": "dawud-ibn-rashid",
+    "nameArabic": "داود بن رشيد"
+  },
+  {
+    "name": "Fatima bint Muhammad",
+    "slug": "fatima-bint-muhammad",
+    "nameArabic": null
+  },
+  {
+    "name": "Ghundar",
+    "slug": "ghundar",
+    "nameArabic": "غُنْدَر"
+  },
+  {
+    "name": "Hafs ibn Asim",
+    "slug": "hafs-ibn-asim",
+    "nameArabic": "حفص بن عاصم"
+  },
+  {
+    "name": "Hafsa bint Omar",
+    "slug": "hafsa-bint-omar",
+    "nameArabic": null
+  },
+  {
+    "name": "Hamza ibn Abd al-Muttalib",
+    "slug": "hamza-ibn-abd-al-muttalib",
+    "nameArabic": null
+  },
+  {
+    "name": "Ibn Jabir",
+    "slug": "ibn-jabir",
+    "nameArabic": "ابْنِ جَابِرٍ"
+  },
+  {
+    "name": "Imran ibn Husain",
+    "slug": "imran-ibn-husain",
+    "nameArabic": null
+  },
+  {
+    "name": "Inconnu",
+    "slug": "inconnu",
+    "nameArabic": null
+  },
+  {
+    "name": "Ismail ibn Ulayyah",
+    "slug": "ismail-ibn-ulayyah",
+    "nameArabic": "إسماعيل بن علية"
+  },
+  {
+    "name": "Itban ibn Malik",
+    "slug": "itban-ibn-malik",
+    "nameArabic": null
+  },
+  {
+    "name": "Jabir ibn Abdallah",
+    "slug": "jabir-ibn-abdallah",
+    "nameArabic": null
+  },
+  {
+    "name": "Jarir Ibn Abdallah",
+    "slug": "jarir-ibn-abdallah",
+    "nameArabic": null
+  },
+  {
+    "name": "Junada ibn Abi Omayya",
+    "slug": "junada-ibn-abi-omayya",
+    "nameArabic": null
+  },
+  {
+    "name": "Khabbab ibn al-Aratt",
+    "slug": "khabbab-ibn-al-aratt",
+    "nameArabic": null
+  },
+  {
+    "name": "Khubayb ibn Abd al-Rahman",
+    "slug": "khubayb-ibn-abd-al-rahman",
+    "nameArabic": "خُبَيْبِ بْنِ عَبْدِ الرَّحْمَنِ"
+  },
+  {
+    "name": "Malik ibn al-Huwayrith",
+    "slug": "malik-ibn-al-huwayrith",
+    "nameArabic": null
+  },
+  {
+    "name": "Mansur ibn al-Muʿtamir",
+    "slug": "mansur-ibn-al-mutamir",
+    "nameArabic": "منصور بن المعتمر"
+  },
+  {
+    "name": "Mousayib ibn Hazan",
+    "slug": "mousayib-ibn-hazan",
+    "nameArabic": null
+  },
+  {
+    "name": "Muadh ibn Jabal",
+    "slug": "muadh-ibn-jabal",
+    "nameArabic": null
+  },
+  {
+    "name": "Muadh ibn Muadh",
+    "slug": "muadh-ibn-muadh",
+    "nameArabic": "معاذ بن معاذ"
+  },
+  {
+    "name": "Muhammad ibn Abdallah ibn Noumayr",
+    "slug": "muhammad-ibn-abdallah-ibn-noumayr",
+    "nameArabic": "محمد بن عبد الله بن نمير"
+  },
+  {
+    "name": "Muhammad ibn al-Muthanna",
+    "slug": "muhammad-ibn-al-muthanna",
+    "nameArabic": "مُحَمَّدُ بْنُ الْمُثَنَّى"
+  },
+  {
+    "name": "Muhammad ibn Ibrahim",
+    "slug": "muhammad-ibn-ibrahim",
+    "nameArabic": "محمد بن إبراهيم"
+  },
+  {
+    "name": "Muhammad ibn Jafar",
+    "slug": "muhammad-ibn-jafar",
+    "nameArabic": "محمد بن جعفر"
+  },
+  {
+    "name": "Muhammad ibn Ubayd al-Ghubari",
+    "slug": "muhammad-ibn-ubayd-al-ghubari",
+    "nameArabic": "محمد بن عبيد الغبري"
+  },
+  {
+    "name": "Muhammad ibn Yahya ibn Abi Omar el-Mekki",
+    "slug": "muhammad-ibn-yahya-ibn-abi-omar-el-mekki",
+    "nameArabic": "محمد بن يحيى بن أبي عمر المكي"
+  },
+  {
+    "name": "Nou'man ibn Qawqal",
+    "slug": "nouman-ibn-qawqal",
+    "nameArabic": null
+  },
+  {
+    "name": "Omar ibn al-Khattab",
+    "slug": "omar-ibn-al-khattab",
+    "nameArabic": null
+  },
+  {
+    "name": "Oqba ibn Amr",
+    "slug": "oqba-ibn-amr",
+    "nameArabic": null
+  },
+  {
+    "name": "Othman ibn Affan",
+    "slug": "othman-ibn-affan",
+    "nameArabic": null
+  },
+  {
+    "name": "Oubada ibn as-Samit",
+    "slug": "oubada-ibn-as-samit",
+    "nameArabic": null
+  },
+  {
+    "name": "Oum Salama",
+    "slug": "oum-salama",
+    "nameArabic": null
+  },
+  {
+    "name": "Ousama ibn Zayd",
+    "slug": "ousama-ibn-zayd",
+    "nameArabic": null
+  },
+  {
+    "name": "Rib’i ibn Hirash",
+    "slug": "ribi-ibn-hirash",
+    "nameArabic": null
+  },
+  {
+    "name": "Sa'd ibn Abi Waqqas",
+    "slug": "sad-ibn-abi-waqqas",
+    "nameArabic": null
+  },
+  {
+    "name": "Said ibn Abi Ayyoub",
+    "slug": "said-ibn-abi-ayyoub",
+    "nameArabic": "سعيد بن ابي ايوب"
+  },
+  {
+    "name": "Said ibn Oubayd",
+    "slug": "said-ibn-oubayd",
+    "nameArabic": "سعيد بن عبيد"
+  },
+  {
+    "name": "Salman al-Farsi",
+    "slug": "salman-al-farsi",
+    "nameArabic": null
+  },
+  {
+    "name": "Shu'ba ibn al-Hajjaj",
+    "slug": "shuba-ibn-al-hajjaj",
+    "nameArabic": null
+  },
+  {
+    "name": "Sofian Ibn Abdillah Al Thaqafi",
+    "slug": "sofian-ibn-abdillah-al-thaqafi",
+    "nameArabic": null
+  },
+  {
+    "name": "Talha ibn Ubayd Allah",
+    "slug": "talha-ibn-ubayd-allah",
+    "nameArabic": null
+  },
+  {
+    "name": "Tamim ad-Dari",
+    "slug": "tamim-ad-dari",
+    "nameArabic": null
+  },
+  {
+    "name": "Tariq ibn Ouchaym",
+    "slug": "tariq-ibn-ouchaym",
+    "nameArabic": null
+  },
+  {
+    "name": "Tariq ibn Shihab",
+    "slug": "tariq-ibn-shihab",
+    "nameArabic": null
+  },
+  {
+    "name": "Ubayd Allah ibn Muadh al-Anbari",
+    "slug": "ubayd-allah-ibn-muadh-al-anbari",
+    "nameArabic": "عبيد الله بن معاذ العنبرى"
+  },
+  {
+    "name": "Umayr ibn Hani",
+    "slug": "umayr-ibn-hani",
+    "nameArabic": "عُمَيْرُ بْنُ هَانِئٍ"
+  },
+  {
+    "name": "Yahya ibn Ma'mar",
+    "slug": "yahya-ibn-mamar",
+    "nameArabic": null
+  },
+  {
+    "name": "Yahya ibn Yamur",
+    "slug": "yahya-ibn-yamur",
+    "nameArabic": null
+  },
+  {
+    "name": "Yazid al-Faqir",
+    "slug": "yazid-al-faqir",
+    "nameArabic": null
+  },
+  {
+    "name": "Yazid ibn al-Had",
+    "slug": "yazid-ibn-al-had",
+    "nameArabic": "يزيد بن الهاد"
+  },
+  {
+    "name": "Zayd ibn Thabit",
+    "slug": "zayd-ibn-thabit",
+    "nameArabic": null
+  },
+  {
+    "name": "Zubair ibn al-Awwam",
+    "slug": "zubair-ibn-al-awwam",
+    "nameArabic": null
+  },
+  {
+    "name": "Zuhayr ibn Harb",
+    "slug": "zuhayr-ibn-harb",
+    "nameArabic": "زهير بن حرب"
+  }
+]
