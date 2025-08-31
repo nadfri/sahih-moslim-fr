@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId, useRef } from "react";
 import {
   Download,
   Upload,
@@ -12,23 +12,8 @@ import {
   HardDrive,
   ChevronDown,
   ChevronUp,
+  X,
 } from "lucide-react";
-
-import type { ItemType, VariantType } from "@/src/types/types";
-import { FilteredCardsEdit } from "@/src/ui/admin/FilteredCardsEdit/FilteredCardsEdit";
-import { AddItemForm } from "@/src/ui/forms/AddItemForm/AddItemForm";
-
-type Props = {
-  chapters: ItemType[];
-  sahabas: ItemType[];
-  transmitters: ItemType[];
-};
-
-const variantOptions: { label: string; value: VariantType }[] = [
-  { label: "Chapitres", value: "chapters" },
-  { label: "Compagnons", value: "sahabas" },
-  { label: "Transmetteurs", value: "transmitters" },
-];
 
 const exportOptions = [
   {
@@ -84,30 +69,15 @@ const importOptions = [
   },
 ];
 
-export function AdminDashboard({ chapters, sahabas, transmitters }: Props) {
-  const [selectedVariant, setSelectedVariant] =
-    useState<VariantType>("chapters");
+export function DataManagement() {
   const [isDataManagementOpen, setIsDataManagementOpen] = useState(false);
-
-  let currentItems: ItemType[];
-
-  switch (selectedVariant) {
-    case "chapters":
-      currentItems = chapters;
-      break;
-
-    case "sahabas":
-      currentItems = sahabas;
-      break;
-
-    case "transmitters":
-      currentItems = transmitters;
-      break;
-
-    default:
-      currentItems = chapters; // Fallback case
-      break;
-  }
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedEndpoint, setSelectedEndpoint] = useState<string>("");
+  const [isImporting, setIsImporting] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const titleId = useId();
 
   const handleExport = async (endpoint: string, filename: string) => {
     try {
@@ -126,27 +96,6 @@ export function AdminDashboard({ chapters, sahabas, transmitters }: Props) {
     } catch (error) {
       console.error("Export error:", error);
       alert("Erreur lors de l'export");
-    }
-  };
-
-  const handleImport = async (endpoint: string, file: File) => {
-    try {
-      const text = await file.text();
-      const data = JSON.parse(text);
-
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) throw new Error("Import failed");
-
-      const result = await response.json();
-      alert(result.message);
-    } catch (error) {
-      console.error("Import error:", error);
-      alert("Erreur lors de l'import");
     }
   };
 
@@ -170,9 +119,49 @@ export function AdminDashboard({ chapters, sahabas, transmitters }: Props) {
     alert("Fonctionnalité de restore à implémenter");
   };
 
+  const handleImportClick = (endpoint: string) => {
+    setSelectedEndpoint(endpoint);
+    setIsImportModalOpen(true);
+  };
+
+  const handleImportConfirm = async () => {
+    if (!selectedFile || !selectedEndpoint) return;
+
+    setIsImporting(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      const response = await fetch(`/api/import/${selectedEndpoint}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        alert("Import réussi !");
+        window.location.reload();
+      } else {
+        alert("Erreur lors de l'import");
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+      alert("Erreur lors de l'import");
+    } finally {
+      setIsImporting(false);
+      setIsImportModalOpen(false);
+      setSelectedFile(null);
+      setSelectedEndpoint("");
+    }
+  };
+
+  const handleImportCancel = () => {
+    setIsImportModalOpen(false);
+    setSelectedFile(null);
+    setSelectedEndpoint("");
+  };
+
   return (
-    <div className="space-y-8">
-      {/* Export/Import Section */}
+    <>
       <div className="bg-gradient-to-br from-white to-emerald-50/30 dark:from-gray-800 dark:to-emerald-950/20 rounded-xl shadow-lg border border-emerald-100 dark:border-emerald-900/50 overflow-hidden">
         <button
           onClick={() => setIsDataManagementOpen(!isDataManagementOpen)}
@@ -286,7 +275,10 @@ export function AdminDashboard({ chapters, sahabas, transmitters }: Props) {
                           accept=".json"
                           onChange={(e) => {
                             const file = e.target.files?.[0];
-                            if (file) handleImport(option.endpoint, file);
+                            if (file) {
+                              setSelectedFile(file);
+                              handleImportClick(option.endpoint);
+                            }
                           }}
                           className="sr-only"
                         />
@@ -336,42 +328,72 @@ export function AdminDashboard({ chapters, sahabas, transmitters }: Props) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-        {variantOptions.map((option) => (
-          <label
-            key={option.value}
-            className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
-              selectedVariant === option.value
-                ? "bg-emerald-100 dark:bg-emerald-900/50 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 font-medium"
-                : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
-            }`}
-          >
-            <input
-              type="radio"
-              name="variantSelector"
-              value={option.value}
-              checked={selectedVariant === option.value}
-              onChange={() => setSelectedVariant(option.value)}
-              className="sr-only"
-            />
-            <span className="font-medium">{option.label}</span>
-          </label>
-        ))}
-      </div>
-
-      <AddItemForm
-        key={selectedVariant}
-        items={currentItems}
-        variant={selectedVariant}
-      />
-
-      <div>
-        <FilteredCardsEdit
-          key={selectedVariant}
-          items={currentItems}
-          variant={selectedVariant}
-        />
-      </div>
-    </div>
+      {/* Import Confirmation Modal */}
+      {isImportModalOpen && (
+        <div
+          ref={ref}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/70 px-2 transition-opacity duration-200 fadeIn"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+        >
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-sm w-full moveUp">
+            <div className="flex items-center justify-between mb-2">
+              <h2
+                className="text-lg font-semibold dark:text-white"
+                id={titleId}
+              >
+                Confirmer l'import
+              </h2>
+              <button
+                onClick={() => {
+                  if (ref.current) {
+                    ref.current.classList.replace("fadeIn", "fadeOut");
+                    timeoutRef.current = setTimeout(handleImportCancel, 200);
+                  }
+                }}
+                disabled={isImporting}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="mb-4 dark:text-gray-300">
+              Êtes-vous sûr de vouloir importer ce fichier JSON ?
+            </div>
+            {selectedFile && (
+              <div className="mb-4 p-3 rounded bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300 text-sm">
+                <div className="font-medium mb-1">Fichier sélectionné :</div>
+                <div>{selectedFile.name}</div>
+                <div className="text-xs mt-1 opacity-75">
+                  Taille : {(selectedFile.size / 1024).toFixed(1)} KB
+                </div>
+              </div>
+            )}
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => {
+                  if (ref.current) {
+                    ref.current.classList.replace("fadeIn", "fadeOut");
+                    timeoutRef.current = setTimeout(handleImportCancel, 200);
+                  }
+                }}
+                disabled={isImporting}
+                className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-100"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleImportConfirm}
+                disabled={isImporting}
+                className="px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white dark:bg-emerald-700 dark:hover:bg-emerald-800 dark:text-white"
+              >
+                {isImporting ? "Importation..." : "Importer"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

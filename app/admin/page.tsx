@@ -5,7 +5,7 @@ import {
   getAllSahabas,
   getAllTransmitters,
 } from "@/src/services/services";
-import { AdminDashboard } from "@/src/ui/admin/AdminDashboard/AdminDashboard";
+import { AdminDashboard } from "@/app/admin/AdminDashboard/AdminDashboard";
 
 export default async function AdminPage() {
   const [chapters, sahabas, transmitters] = await Promise.all([

@@ -3,8 +3,8 @@
 import { useState } from "react";
 
 import { useAuth } from "@/src/hooks/useAuth";
-import { ButtonSignIn } from "../connexion/ButtonSignIn";
-import { ButtonSignOut } from "../connexion/ButtonSignOut";
+import { ButtonSignIn } from "../../../app/auth/signin/ButtonSignIn";
+import { ButtonSignOut } from "../../../app/auth/signin/ButtonSignOut";
 import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
 import { Hamburger } from "./Hamburger";
 import { LinkAddHadith } from "./LinkAddHadith";
