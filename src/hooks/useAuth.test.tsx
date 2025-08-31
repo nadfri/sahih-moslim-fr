@@ -3,7 +3,7 @@ import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 
 // Hoist-safe mock for the Supabase client used by AuthProvider
-vi.mock("@/src/lib/supabase/client", () => ({
+vi.mock("@/src/lib/auth/supabase/client", () => ({
   createClient: () => ({
     auth: {
       getSession: async () => ({ data: { session: null } }),

@@ -78,7 +78,7 @@ describe("ActionsBtns Component", () => {
     render(
       <ActionsBtns
         hadith={mockHadith}
-        update={true}
+        edit={true}
       />
     );
 
@@ -208,7 +208,7 @@ describe("ActionsBtns Component", () => {
     render(
       <ActionsBtns
         hadith={mockHadith}
-        update={true}
+        edit={true}
       />
     );
 

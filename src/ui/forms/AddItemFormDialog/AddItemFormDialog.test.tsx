@@ -46,14 +46,14 @@ const mockChapterItem: ItemType = {
 };
 const mockExistingChapters: ItemType[] = [mockChapterItem];
 
-const mockNarratorItem: ItemType = {
-  id: "nar1",
-  name: "Narrateur Un",
-  slug: "narrateur-un",
-  nameArabic: "الراوي الأول",
-  hadithCount: 20,
+const mockTransmitterItem: ItemType = {
+  id: "trans1",
+  name: "Transmetteur Un",
+  slug: "transmetteur-un",
+  nameArabic: "الناقل الأول",
+  hadithCount: 8,
 };
-const mockExistingNarrators: ItemType[] = [mockNarratorItem];
+const mockExistingTransmitters: ItemType[] = [mockTransmitterItem];
 
 const mockSahabaItem: ItemType = {
   id: "sah1",
@@ -112,16 +112,16 @@ describe("AddItemFormDialog", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders the dialog with correct title for narrators", () => {
+  it("renders the dialog with correct title for transmitters", () => {
     render(
       <AddItemFormDialog
         {...currentDefaultProps}
-        variant="narrators"
-        items={mockExistingNarrators}
+        variant="transmitters"
+        items={mockExistingTransmitters}
       />
     );
     expect(
-      screen.getByRole("dialog", { name: "Ajouter un narrateur" })
+      screen.getByRole("dialog", { name: "Ajouter un transmetteur" })
     ).toBeInTheDocument();
   });
 
@@ -153,12 +153,12 @@ describe("AddItemFormDialog", () => {
     expect(screen.getByLabelText("Index*")).toHaveValue(5);
   });
 
-  it("does not render index field for narrators", () => {
+  it("does not render index field for transmitters", () => {
     render(
       <AddItemFormDialog
         {...currentDefaultProps}
-        variant="narrators"
-        items={mockExistingNarrators}
+        variant="transmitters"
+        items={mockExistingTransmitters}
       />
     );
     expect(screen.queryByLabelText("Index*")).not.toBeInTheDocument();
@@ -286,28 +286,28 @@ describe("AddItemFormDialog", () => {
     });
   });
 
-  it("submits the form with valid narrator data", async () => {
-    const newNarratorName = "Nouveau Narrateur Test";
-    const newNarratorArabicName = "الراوي الجديد";
+  it("submits the form with valid transmitter data", async () => {
+    const newTransmitterName = "Nouveau Transmetteur Test";
+    const newTransmitterArabicName = "الناقل الجديد";
     mockAddItem.mockResolvedValueOnce({
       success: true,
-      message: "Narrateur ajouté!",
+      message: "Transmetteur ajouté!",
     });
-    mockNextAvailableIndex.mockReturnValue(undefined); // Pour les narrateurs
+    mockNextAvailableIndex.mockReturnValue(undefined); // Pour les transmetteurs
 
     render(
       <AddItemFormDialog
         {...currentDefaultProps}
-        variant="narrators"
-        items={mockExistingNarrators}
+        variant="transmitters"
+        items={mockExistingTransmitters}
       />
     );
-    const nameInput = screen.getByLabelText("Nom du narrateur*");
+    const nameInput = screen.getByLabelText("Nom du transmetteur*");
     const arabicNameInput = screen.getByLabelText("Nom en arabe (optionnel)");
     const submitButton = screen.getByRole("button", { name: "Ajouter" });
 
-    await userEvent.type(nameInput, newNarratorName);
-    await userEvent.type(arabicNameInput, newNarratorArabicName);
+    await userEvent.type(nameInput, newTransmitterName);
+    await userEvent.type(arabicNameInput, newTransmitterArabicName);
     await userEvent.click(submitButton);
 
     await waitFor(() => {
@@ -316,15 +316,15 @@ describe("AddItemFormDialog", () => {
         nameArabic: string;
         index?: number | null;
       } = {
-        name: newNarratorName,
-        nameArabic: newNarratorArabicName,
+        name: newTransmitterName,
+        nameArabic: newTransmitterArabicName,
       };
-      expect(mockAddItem).toHaveBeenCalledWith("narrators", expectedPayload);
+      expect(mockAddItem).toHaveBeenCalledWith("transmitters", expectedPayload);
       const submittedData = mockAddItem.mock.calls[0][1] as ItemFormValues;
       expect(submittedData.index).toBeUndefined();
     });
     await waitFor(() => {
-      expect(mockToastSuccess).toHaveBeenCalledWith("Narrateur ajouté!");
+      expect(mockToastSuccess).toHaveBeenCalledWith("Transmetteur ajouté!");
     });
     expect(currentDefaultProps.onCancel).toHaveBeenCalledTimes(1);
   });
@@ -436,22 +436,22 @@ describe("AddItemFormDialog", () => {
     expect(indexInput).toHaveValue(chapterIndex); // It should retain the value from the last successful nextAvailableIndex call for this render cycle
   });
 
-  it("resets the form after successful submission for narrators", async () => {
-    const newNarratorName = "Narrateur Reset Test";
+  it("resets the form after successful submission for transmitters", async () => {
+    const newTransmitterName = "Transmetteur Reset Test";
     mockAddItem.mockResolvedValueOnce({ success: true, message: "OK" });
     mockNextAvailableIndex.mockReturnValue(undefined);
     render(
       <AddItemFormDialog
         {...currentDefaultProps}
-        variant="narrators"
-        items={mockExistingNarrators}
+        variant="transmitters"
+        items={mockExistingTransmitters}
       />
     );
-    const nameInput = screen.getByLabelText("Nom du narrateur*");
+    const nameInput = screen.getByLabelText("Nom du transmetteur*");
     const arabicNameInput = screen.getByLabelText("Nom en arabe (optionnel)");
     const submitButton = screen.getByRole("button", { name: "Ajouter" });
 
-    await userEvent.type(nameInput, newNarratorName);
+    await userEvent.type(nameInput, newTransmitterName);
     await userEvent.click(submitButton);
 
     await waitFor(() => expect(mockAddItem).toHaveBeenCalled());

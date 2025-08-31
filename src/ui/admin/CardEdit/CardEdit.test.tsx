@@ -58,7 +58,7 @@ const mockChapterItem: ItemType = {
   hadithCount: 15,
 };
 
-const mockNarratorItem: ItemType = {
+const mockSahabaItem: ItemType = {
   id: "2",
   name: "Omar ibn al-Khattab",
   slug: "omar-ibn-al-khattab",
@@ -66,7 +66,19 @@ const mockNarratorItem: ItemType = {
   nameArabic: "عمر بن الخطاب",
 };
 
-const mockItems: ItemType[] = [mockChapterItem, mockNarratorItem];
+const mockTransmitterItem: ItemType = {
+  id: "3",
+  name: "Abu Huraira",
+  slug: "abu-huraira",
+  hadithCount: 30,
+  nameArabic: "أبو هريرة",
+};
+
+const mockItems: ItemType[] = [
+  mockChapterItem,
+  mockSahabaItem,
+  mockTransmitterItem,
+];
 
 describe("CardEdit Component", () => {
   it("should render item information correctly", () => {
@@ -87,9 +99,9 @@ describe("CardEdit Component", () => {
   it("should render Arabic name when provided", () => {
     render(
       <CardEdit
-        item={mockNarratorItem}
+        item={mockSahabaItem}
         items={mockItems}
-        variant="narrators"
+        variant="sahabas"
       />
     );
 
@@ -98,14 +110,14 @@ describe("CardEdit Component", () => {
   });
 
   it("should not render index when not provided", () => {
-    const itemWithoutIndex = { ...mockNarratorItem };
+    const itemWithoutIndex = { ...mockSahabaItem };
     delete itemWithoutIndex.index;
 
     render(
       <CardEdit
         item={itemWithoutIndex}
         items={mockItems}
-        variant="narrators"
+        variant="sahabas"
       />
     );
 
@@ -225,21 +237,7 @@ describe("CardEdit Component", () => {
 
     rerender(
       <CardEdit
-        item={mockNarratorItem}
-        items={mockItems}
-        variant="narrators"
-      />
-    );
-
-    await user.click(screen.getByLabelText("Supprimer"));
-    expect(screen.getByText("Supprimer ce narrateur ?")).toBeInTheDocument();
-  });
-
-  it("should handle sahaba variant correctly", async () => {
-    const user = userEvent.setup();
-    render(
-      <CardEdit
-        item={mockNarratorItem}
+        item={mockSahabaItem}
         items={mockItems}
         variant="sahabas"
       />
@@ -253,7 +251,7 @@ describe("CardEdit Component", () => {
     const user = userEvent.setup();
     render(
       <CardEdit
-        item={mockNarratorItem}
+        item={mockTransmitterItem}
         items={mockItems}
         variant="transmitters"
       />
@@ -261,5 +259,19 @@ describe("CardEdit Component", () => {
 
     await user.click(screen.getByLabelText("Supprimer"));
     expect(screen.getByText("Supprimer ce transmetteur ?")).toBeInTheDocument();
+  });
+
+  it("should render transmitter information correctly", () => {
+    render(
+      <CardEdit
+        item={mockTransmitterItem}
+        items={mockItems}
+        variant="transmitters"
+      />
+    );
+
+    expect(screen.getByText("Abu Huraira")).toBeInTheDocument();
+    expect(screen.getByText("أبو هريرة")).toBeInTheDocument();
+    expect(screen.getByTestId("hadith-badge")).toHaveTextContent("30 hadiths");
   });
 });

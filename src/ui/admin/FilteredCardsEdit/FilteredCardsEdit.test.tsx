@@ -41,16 +41,6 @@ const mockChapters: ItemType[] = [
   { id: "3", name: "La Prière", slug: "la-priere", index: 3, hadithCount: 30 },
 ];
 
-const mockNarrators: ItemType[] = [
-  {
-    id: "1",
-    name: "Omar ibn al-Khattab",
-    slug: "omar-ibn-al-khattab",
-    hadithCount: 20,
-  },
-  { id: "2", name: "Abu Bakr", slug: "abu-bakr", hadithCount: 10 },
-];
-
 const mockSahabas: ItemType[] = [
   {
     id: "1",
@@ -76,17 +66,6 @@ describe("FilteredCardsEdit Component", () => {
     );
 
     expect(screen.getByText("Liste des chapitres")).toBeInTheDocument();
-  });
-
-  it("should render correct title for narrators variant", () => {
-    render(
-      <FilteredCardsEdit
-        items={mockNarrators}
-        variant="narrators"
-      />
-    );
-
-    expect(screen.getByText("Liste des narrateurs")).toBeInTheDocument();
   });
 
   it("should render correct title for sahabas variant", () => {
@@ -199,26 +178,15 @@ describe("FilteredCardsEdit Component", () => {
   it("should show correct no results message for different variants", async () => {
     const user = userEvent.setup();
 
-    // Test narrators
-    const { rerender } = render(
-      <FilteredCardsEdit
-        items={mockNarrators}
-        variant="narrators"
-      />
-    );
-    const searchInput = screen.getByTestId("search-input");
-
-    await user.type(searchInput, "inexistant");
-    expect(screen.getByText("Aucun narrateur trouvé")).toBeInTheDocument();
-
     // Test sahabas
-    await user.clear(searchInput);
-    rerender(
+    const { rerender } = render(
       <FilteredCardsEdit
         items={mockSahabas}
         variant="sahabas"
       />
     );
+    const searchInput = screen.getByTestId("search-input");
+
     await user.type(searchInput, "inexistant");
     expect(screen.getByText("Aucun sahaba trouvé")).toBeInTheDocument();
 

@@ -52,7 +52,7 @@ describe("Test Database Cleanup and Helpers", () => {
     // Mock non-admin user
     mockRequireAdmin.mockResolvedValueOnce({
       success: false,
-      message: "Acc\u00e8s admin requis",
+      message: "Accès admin requis",
     });
 
     const result2 = await requireAdmin();

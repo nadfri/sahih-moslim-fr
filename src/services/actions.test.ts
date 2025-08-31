@@ -15,9 +15,9 @@ vi.mock("next/cache", () => ({
 import { prisma } from "@/prisma/prisma";
 import { cleanupTestData, testDataHelpers } from "@/__tests__/test-helpers";
 import { addHadith, deleteHadith, editHadith } from "@/src/services/actions";
-import { hadithSchema } from "@/src/services/hadithSchemaServer";
+import { hadithSchemaServer } from "@/src/services/hadithSchemaServer";
 import type { z } from "zod";
-type HadithInput = z.infer<typeof hadithSchema>;
+type HadithInput = z.infer<typeof hadithSchemaServer>;
 
 describe("Actions (hadith) - robust", () => {
   // Keep a targeted cleanup before each test to ensure isolation. We avoid
@@ -30,9 +30,6 @@ describe("Actions (hadith) - robust", () => {
     // Create isolated entities with UUID-backed names
     const chapterData = testDataHelpers.createTestChapter(1);
     const chapter = await prisma.chapter.create({ data: chapterData });
-
-    const narratorData = testDataHelpers.createTestNarrator(1);
-    const narrator = await prisma.narrator.create({ data: narratorData });
 
     const sahabaData = testDataHelpers.createTestSahaba(1);
     const sahaba = await prisma.sahaba.create({ data: sahabaData });
@@ -49,7 +46,6 @@ describe("Actions (hadith) - robust", () => {
       matn_fr: "Payload French",
       matn_ar: "Payload Arabic",
       chapter: chapter.name,
-      narrator: narrator.name,
       mentionedSahabas: [sahaba.name],
       isnadTransmitters: [transmitter.name],
     };
@@ -87,15 +83,12 @@ describe("Actions (hadith) - robust", () => {
 
   it("validates error cases for addHadith", async () => {
     // missing chapter should fail
-    const narrator = await prisma.narrator.create({
-      data: testDataHelpers.createTestNarrator(2),
-    });
+
     const payload: HadithInput = {
       numero: 900002,
       matn_fr: "x",
       matn_ar: "x",
       chapter: "non-existent-chapter",
-      narrator: narrator.name,
       mentionedSahabas: [],
       isnadTransmitters: [],
     };

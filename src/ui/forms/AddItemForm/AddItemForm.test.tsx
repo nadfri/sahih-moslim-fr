@@ -41,13 +41,13 @@ describe("AddItemForm", () => {
   const placeholderText = {
     title: {
       chapters: "Ajouter un chapitre",
-      narrators: "Ajouter un narrateur",
       sahabas: "Ajouter un compagnon",
+      transmitters: "Ajouter un transmetteur",
     },
     name: {
       chapters: "Nom du chapitre",
-      narrators: "Nom du narrateur",
       sahabas: "Nom du compagnon",
+      transmitters: "Nom du transmetteur",
     },
   };
 
@@ -82,27 +82,27 @@ describe("AddItemForm", () => {
     ).toBeInTheDocument();
   });
 
-  it("displays the title and correct fields for narrators", () => {
+  it("displays the title and correct fields for transmitters", () => {
     render(
       <AddItemForm
         {...defaultProps}
-        variant="narrators"
-        items={[]} // Example: provide empty or specific items for narrators
+        variant="transmitters"
+        items={[]} // Example: provide empty or specific items for transmitters
       />
     );
     expect(
       screen.getByRole("heading", {
-        name: placeholderText.title.narrators,
+        name: placeholderText.title.transmitters,
       })
     ).toBeInTheDocument();
     expect(
       screen.queryByLabelText(/Numero du chapitre/i)
     ).not.toBeInTheDocument();
     expect(
-      screen.getByLabelText(placeholderText.title.narrators + "*")
+      screen.getByLabelText(placeholderText.title.transmitters + "*")
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: placeholderText.title.narrators })
+      screen.getByRole("button", { name: placeholderText.title.transmitters })
     ).toBeInTheDocument();
   });
 
@@ -252,39 +252,39 @@ describe("AddItemForm", () => {
     await waitFor(() => expect(indexInput).toHaveValue(4));
   });
 
-  it("submits form with valid data for a narrator", async () => {
+  it("submits form with valid data for a transmitter", async () => {
     mockAddItem.mockResolvedValue({
       success: true,
-      message: "Narrateur ajouté",
+      message: "Transmetteur ajouté",
       data: {
-        id: "nar-1",
-        name: "Nouveau Narrateur Test",
-        slug: "nouveau-narrateur-test",
+        id: "trans-1",
+        name: "Nouveau Transmetteur Test",
+        slug: "nouveau-transmetteur-test",
       },
     });
     render(
       <AddItemForm
         {...defaultProps}
-        variant="narrators"
+        variant="transmitters"
         items={[]}
       />
     );
     const nameInput = screen.getByLabelText(
-      placeholderText.title.narrators + "*"
+      placeholderText.title.transmitters + "*"
     );
     const submitButton = screen.getByRole("button", {
-      name: placeholderText.title.narrators,
+      name: placeholderText.title.transmitters,
     });
 
-    await userEvent.type(nameInput, "Nouveau Narrateur Test");
+    await userEvent.type(nameInput, "Nouveau Transmetteur Test");
     await userEvent.click(submitButton);
 
-    expect(mockAddItem).toHaveBeenCalledWith("narrators", {
-      name: "Nouveau Narrateur Test",
+    expect(mockAddItem).toHaveBeenCalledWith("transmitters", {
+      name: "Nouveau Transmetteur Test",
       nameArabic: null,
       index: undefined,
     });
-    expect(mockToastSuccess).toHaveBeenCalledWith("Narrateur ajouté");
+    expect(mockToastSuccess).toHaveBeenCalledWith("Transmetteur ajouté");
     expect(nameInput).toHaveValue("");
   });
 

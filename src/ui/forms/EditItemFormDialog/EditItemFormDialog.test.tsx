@@ -60,25 +60,6 @@ const mockExistingChapters: ItemType[] = [
   },
 ];
 
-const mockNarratorItem: ItemType = {
-  id: "nar1",
-  name: "Narrateur Un",
-  slug: "narrateur-un",
-  nameArabic: "الراوي الأول",
-  hadithCount: 20,
-};
-
-const mockExistingNarrators: ItemType[] = [
-  mockNarratorItem,
-  {
-    id: "nar2",
-    name: "Narrateur Deux",
-    slug: "narrateur-deux",
-    nameArabic: "الراوي الثاني",
-    hadithCount: 15,
-  },
-];
-
 const mockTransmitterItem: ItemType = {
   id: "trans1",
   name: "Transmetteur Un",
@@ -357,45 +338,45 @@ describe("EditItemFormDialog", () => {
     expect(props.onCancel).not.toHaveBeenCalled();
   });
 
-  // Test for a different variant, e.g., narrators, where index might be optional
-  describe("with variant='narrators'", () => {
-    const getNarratorProps = () => ({
+  // Test for transmitters variant, where index is optional
+  describe("with variant='transmitters'", () => {
+    const getTransmitterProps = () => ({
       ...getDefaultProps(),
-      item: mockNarratorItem,
-      items: mockExistingNarrators,
-      variant: "narrators" as VariantType,
+      item: mockTransmitterItem,
+      items: mockExistingTransmitters,
+      variant: "transmitters" as VariantType,
     });
 
     beforeEach(() => {
       mockEditItem.mockResolvedValue({
         // Reset mock for this describe block if needed
         success: true,
-        message: "Narrateur modifié!",
-        data: { ...mockNarratorItem, name: "Narrateur Modifié" },
+        message: "Transmetteur modifié!",
+        data: { ...mockTransmitterItem, name: "Transmetteur Modifié" },
       });
     });
 
-    it("renders the dialog with correct initial values for a narrator", () => {
-      render(<EditItemFormDialog {...getNarratorProps()} />);
+    it("renders the dialog with correct initial values for a transmitter", () => {
+      render(<EditItemFormDialog {...getTransmitterProps()} />);
       expect(
-        screen.getByRole("dialog", { name: "Éditer le narrateur" })
+        screen.getByRole("dialog", { name: "Éditer le transmetteur" })
       ).toBeInTheDocument();
-      expect(screen.queryByLabelText("Index*")).not.toBeInTheDocument(); // Index field should not be present for narrators
-      expect(screen.getByLabelText("Nom du narrateur*")).toHaveValue(
-        mockNarratorItem.name
+      expect(screen.queryByLabelText("Index*")).not.toBeInTheDocument(); // Index field should not be present for transmitters
+      expect(screen.getByLabelText("Nom du transmetteur*")).toHaveValue(
+        mockTransmitterItem.name
       );
       expect(screen.getByLabelText("Nom en arabe (optionnel)")).toHaveValue(
-        mockNarratorItem.nameArabic
+        mockTransmitterItem.nameArabic
       );
     });
 
-    it("submits the form for a narrator (index optional)", async () => {
-      const narratorProps = getNarratorProps();
-      render(<EditItemFormDialog {...narratorProps} />);
-      const nameInput = screen.getByLabelText("Nom du narrateur*");
+    it("submits the form for a transmitter (index optional)", async () => {
+      const transmitterProps = getTransmitterProps();
+      render(<EditItemFormDialog {...transmitterProps} />);
+      const nameInput = screen.getByLabelText("Nom du transmetteur*");
       const submitButton = screen.getByRole("button", { name: "Enregistrer" });
 
-      const newName = "Narrateur Un Modifié";
+      const newName = "Transmetteur Un Modifié";
 
       await userEvent.clear(nameInput);
 
@@ -404,14 +385,14 @@ describe("EditItemFormDialog", () => {
       await userEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(mockEditItem).toHaveBeenCalledWith(narratorProps.variant, {
-          id: mockNarratorItem.id,
+        expect(mockEditItem).toHaveBeenCalledWith(transmitterProps.variant, {
+          id: mockTransmitterItem.id,
           name: newName,
-          nameArabic: mockNarratorItem.nameArabic,
+          nameArabic: mockTransmitterItem.nameArabic,
         });
       });
-      expect(mockToastSuccess).toHaveBeenCalledWith("Narrateur modifié!");
-      expect(narratorProps.onCancel).toHaveBeenCalledTimes(1);
+      expect(mockToastSuccess).toHaveBeenCalledWith("Transmetteur modifié!");
+      expect(transmitterProps.onCancel).toHaveBeenCalledTimes(1);
     });
   });
 

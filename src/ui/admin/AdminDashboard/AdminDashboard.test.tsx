@@ -54,12 +54,11 @@ describe("AdminDashboard Component", () => {
     expect(
       screen.getByRole("radio", { name: /Chapitres/ })
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("radio", { name: /Narrateurs/ })
-    ).toBeInTheDocument();
+
     expect(
       screen.getByRole("radio", { name: /Compagnons/ })
     ).toBeInTheDocument();
+
     expect(
       screen.getByRole("radio", { name: /Transmetteurs/ })
     ).toBeInTheDocument();
@@ -77,22 +76,6 @@ describe("AdminDashboard Component", () => {
     );
     expect(screen.getByTestId("filtered-cards-edit")).toHaveTextContent(
       "chapters - 2 items"
-    );
-  });
-
-  it("should switch to narrators when selected", async () => {
-    const user = userEvent.setup();
-    render(<AdminDashboard {...defaultProps} />);
-
-    const narratorsRadio = screen.getByRole("radio", { name: /Narrateurs/ });
-    await user.click(narratorsRadio);
-
-    expect(narratorsRadio).toBeChecked();
-    expect(screen.getByTestId("add-item-form")).toHaveTextContent(
-      "narrators - 1 items"
-    );
-    expect(screen.getByTestId("filtered-cards-edit")).toHaveTextContent(
-      "narrators - 1 items"
     );
   });
 
@@ -136,22 +119,12 @@ describe("AdminDashboard Component", () => {
     const chaptersLabel = screen
       .getByRole("radio", { name: /Chapitres/ })
       .closest("label");
-    const narratorsLabel = screen
-      .getByRole("radio", { name: /Narrateurs/ })
-      .closest("label");
 
     // Selected (chapters) should have emerald styling
     expect(chaptersLabel).toHaveClass(
       "bg-emerald-100",
       "border-emerald-300",
       "text-emerald-600"
-    );
-
-    // Unselected (narrators) should have gray styling
-    expect(narratorsLabel).toHaveClass(
-      "bg-white",
-      "border-gray-300",
-      "text-gray-700"
     );
   });
 
@@ -165,7 +138,6 @@ describe("AdminDashboard Component", () => {
   it("should handle empty arrays gracefully", () => {
     const emptyProps = {
       chapters: [],
-      narrators: [],
       sahabas: [],
       transmitters: [],
     };
@@ -187,12 +159,6 @@ describe("AdminDashboard Component", () => {
     // Initially chapters
     expect(screen.getByTestId("add-item-form")).toHaveTextContent(
       "chapters - 2 items"
-    );
-
-    // Switch to narrators
-    await user.click(screen.getByRole("radio", { name: /Narrateurs/ }));
-    expect(screen.getByTestId("add-item-form")).toHaveTextContent(
-      "narrators - 1 items"
     );
 
     // Switch to sahabas

@@ -34,7 +34,5 @@ describe("ListLayoutHadith", () => {
     // Hadiths content
     expect(screen.getByText("Premier hadith")).toBeInTheDocument();
     expect(screen.getByText("Deuxième hadith")).toBeInTheDocument();
-    expect(screen.getByText("Narrateur 1")).toBeInTheDocument();
-    expect(screen.getByText("Narrateur 2")).toBeInTheDocument();
   });
 });

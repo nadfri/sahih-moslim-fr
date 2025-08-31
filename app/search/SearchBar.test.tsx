@@ -132,7 +132,6 @@ describe("SearchBar", () => {
       matn_fr: "Le Prophète a dit ...",
       matn_ar: "قَالَ النَّبِي ...",
       chapter: makeItem("Chapitre 1"),
-      narrator: makeItem("Anas"),
       mentionedSahabas: [makeItem("Abu Bakr")],
       isnadTransmitters: [makeItem("Yahya")],
     },
@@ -142,13 +141,11 @@ describe("SearchBar", () => {
       matn_fr: "Un autre hadith ...",
       matn_ar: "حديث آخر ...",
       chapter: makeItem("Chapitre 2"),
-      narrator: makeItem("Omar"),
       mentionedSahabas: [makeItem("Omar")],
       isnadTransmitters: [makeItem("Zayd")],
     },
   ];
 
-  const narrators = ["Anas", "Omar"];
   const sahabas = ["Abu Bakr", "Omar"];
   const transmitters = ["Yahya", "Zayd"];
 
@@ -160,7 +157,6 @@ describe("SearchBar", () => {
   it("affiche le placeholder initial", () => {
     render(
       <SearchBar
-        narrators={narrators}
         sahabas={sahabas}
         transmitters={transmitters}
       />
@@ -177,7 +173,6 @@ describe("SearchBar", () => {
 
     render(
       <SearchBar
-        narrators={narrators}
         sahabas={sahabas}
         transmitters={transmitters}
       />
@@ -197,38 +192,6 @@ describe("SearchBar", () => {
     });
   });
 
-  it("recherche par narrateur", async () => {
-    __setMockSearch({
-      results: [hadiths[1]],
-      isLoading: false,
-      hasSearched: true,
-    });
-
-    render(
-      <SearchBar
-        narrators={narrators}
-        sahabas={sahabas}
-        transmitters={transmitters}
-      />
-    );
-    const radio = screen.getByLabelText(/Par Narrateur/i);
-    await userEvent.click(radio);
-    const select = screen.getByPlaceholderText(/Choisir un narrateur/i);
-    await userEvent.click(select);
-    await userEvent.click(screen.getByText("Omar"));
-
-    await waitFor(() => {
-      const nodes = screen.getAllByText((_content, node) => {
-        return (
-          !!node &&
-          typeof node.textContent === "string" &&
-          node.textContent.includes("Un autre hadith")
-        );
-      });
-      expect(nodes.length).toBeGreaterThan(0);
-    });
-  });
-
   it("recherche par sahaba", async () => {
     __setMockSearch({
       results: [hadiths[0]],
@@ -238,7 +201,6 @@ describe("SearchBar", () => {
 
     render(
       <SearchBar
-        narrators={narrators}
         sahabas={sahabas}
         transmitters={transmitters}
       />
@@ -272,7 +234,6 @@ describe("SearchBar", () => {
 
     render(
       <SearchBar
-        narrators={narrators}
         sahabas={sahabas}
         transmitters={transmitters}
       />
@@ -306,7 +267,6 @@ describe("SearchBar", () => {
 
     render(
       <SearchBar
-        narrators={narrators}
         sahabas={sahabas}
         transmitters={transmitters}
       />
@@ -333,7 +293,6 @@ describe("SearchBar", () => {
 
     render(
       <SearchBar
-        narrators={narrators}
         sahabas={sahabas}
         transmitters={transmitters}
       />

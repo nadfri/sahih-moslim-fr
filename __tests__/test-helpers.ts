@@ -93,6 +93,7 @@ export const testDataHelpers = {
     numero: 900000 + number, // Test hadiths start at 900000
     matn_fr: `French text for test hadith ${number}`,
     matn_ar: `Arabic text for test hadith ${number}`,
+    matn_en: `English text for test hadith ${number}`,
   }),
 
   createTestProfile: (userId: string, role: "USER" | "ADMIN" = "USER") => ({
