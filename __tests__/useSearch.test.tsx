@@ -7,6 +7,7 @@ import type { HadithType } from "@/src/types/types";
 
 function TestConsumer(props: UseSearchProps) {
   const { results, isLoading, hasSearched, error } = useSearch(props);
+
   return (
     <div>
       <div data-testid="loading">{String(isLoading)}</div>
@@ -42,7 +43,6 @@ describe("useSearch (smoke)", () => {
       <TestConsumer
         filterMode="word"
         query="ab"
-        narrator=""
         sahabas={[]}
         transmitters={[]}
         numero=""
@@ -74,7 +74,6 @@ describe("useSearch (smoke)", () => {
       <TestConsumer
         filterMode="word"
         query="hello"
-        narrator=""
         sahabas={[]}
         transmitters={[]}
         numero=""

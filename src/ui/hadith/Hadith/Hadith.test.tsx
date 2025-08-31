@@ -65,9 +65,6 @@ describe("Hadith", () => {
     // Check hadith number
     expect(screen.getByText("123")).toBeInTheDocument();
 
-    // Check narrator
-    expect(screen.getByText("Abu Test")).toBeInTheDocument();
-
     // Check hadith text (with markdown rendered)
     expect(
       screen.getByText("Ceci est un", { exact: false })
@@ -130,7 +127,7 @@ describe("Hadith", () => {
     render(
       <Hadith
         hadith={mockHadith}
-        update={true}
+        edit={true}
       />
     );
 

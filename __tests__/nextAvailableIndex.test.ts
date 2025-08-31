@@ -1,18 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import type { ItemType, VariantType } from "../src/types/types";
+import type { ItemType } from "../src/types/types";
 import { nextAvailableIndex } from "../src/utils/nextAvailableIndex";
 
 describe("nextAvailableIndex", () => {
-  it('should return undefined if variant is not "chapters"', () => {
-    const items: ItemType[] = [
-      { id: "1", index: 1, name: "Chapter 1", slug: "chapter-1" },
-    ];
-    expect(
-      nextAvailableIndex(items, "narrators" as VariantType)
-    ).toBeUndefined();
-  });
-
   it('should return 1 if items array is empty and variant is "chapters"', () => {
     const items: ItemType[] = [];
     expect(nextAvailableIndex(items, "chapters")).toBe(1);

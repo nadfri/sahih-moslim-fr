@@ -22,13 +22,7 @@ describe("Test Database Cleanup and Helpers", () => {
       data: testDataHelpers.createTestChapter(1),
     });
 
-    const testNarrator = await prisma.narrator.create({
-      data: testDataHelpers.createTestNarrator(1),
-    });
-
-    // Verify data exists (we only assert the prefix because slugs are unique)
     expect(testChapter.slug.startsWith("test-chapter-")).toBe(true);
-    expect(testNarrator.slug.startsWith("test-narrator-")).toBe(true);
 
     // Data should be found
     const foundChapter = await prisma.chapter.findUnique({

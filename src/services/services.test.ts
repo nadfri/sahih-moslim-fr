@@ -4,16 +4,12 @@ import { prisma } from "@/prisma/prisma";
 import {
   getAllChapters,
   getAllHadiths,
-  getAllNarrators,
   getAllSahabas,
   getAllTransmitters,
   getChapterBySlug,
   getChapterWithHadiths,
   getHadithByNumero,
   getHadithNumeros,
-  getNarratorBySlug,
-  getNarratorNames,
-  getNarratorWithHadiths,
   getSahabaBySlug,
   getSahabaNames,
   getSahabaWithHadiths,
@@ -135,71 +131,7 @@ describe("Service functions integration", () => {
     });
   });
 
-  describe("Narrators", () => {
-    it("getAllNarrators returns narrators with hadithCount", async () => {
-      const narrators = await getAllNarrators();
-      expect(Array.isArray(narrators)).toBe(true);
-
-      if (narrators.length > 0) {
-        const narrator = narrators[0];
-        expect(narrator).toHaveProperty("id");
-        expect(narrator).toHaveProperty("name");
-        expect(narrator).toHaveProperty("slug");
-        expect(narrator).toHaveProperty("hadithCount");
-        expect(typeof narrator.id).toBe("string");
-        expect(typeof narrator.name).toBe("string");
-        expect(typeof narrator.slug).toBe("string");
-        expect(typeof narrator.hadithCount).toBe("number");
-        expect(narrator.hadithCount).toBeGreaterThanOrEqual(0);
-      }
-    });
-
-    it("getNarratorBySlug returns a narrator or null", async () => {
-      const narrators = await getAllNarrators();
-      if (narrators.length > 0) {
-        const slug = narrators[0].slug;
-        const narrator = await getNarratorBySlug(slug);
-        expect(narrator).not.toBeNull();
-        if (narrator) {
-          expect(narrator.slug).toBe(slug);
-          expect(typeof narrator.hadithCount).toBe("number");
-        }
-      }
-
-      // Test with non-existent slug
-      const nonExistentNarrator = await getNarratorBySlug("non-existent-slug");
-      expect(nonExistentNarrator).toBeNull();
-    });
-
-    it("getNarratorWithHadiths returns narrator and hadiths", async () => {
-      const narrators = await getAllNarrators();
-      if (narrators.length > 0) {
-        const slug = narrators[0].slug;
-        const { narrator, hadiths } = await getNarratorWithHadiths(slug);
-        if (narrator) {
-          expect(narrator.slug).toBe(slug);
-          expect(Array.isArray(hadiths)).toBe(true);
-          // Verify all hadiths have this narrator
-          hadiths.forEach((hadith) => {
-            expect(hadith.narrator.name).toBe(narrator.name);
-          });
-        } else {
-          expect(hadiths).toEqual([]);
-        }
-      }
-    });
-
-    it("getNarratorNames returns all narrator names", async () => {
-      const names = await getNarratorNames();
-      expect(Array.isArray(names)).toBe(true);
-      if (names.length > 0) {
-        expect(typeof names[0]).toBe("string");
-        // Check if names are unique
-        const uniqueNames = new Set(names);
-        expect(uniqueNames.size).toBe(names.length);
-      }
-    });
-  });
+  // ...existing code...
 
   describe("Sahabas", () => {
     it("getAllSahabas returns sahabas with hadithCount", async () => {

@@ -10,7 +10,6 @@ export const createHadithSchema = (existingNumeros: number[]) => {
         message: "Ce numéro existe déjà. Veuillez en choisir un autre.",
       }),
     chapter: z.string().min(1, "Le chapitre est requis"),
-    // narrator: z.string().min(1, "Le narrateur est requis"),
     mentionedSahabas: z.array(z.string()),
     isnadTransmitters: z.array(z.string()),
     matn_fr: z.string().min(1, "Le texte du hadith est requis"),

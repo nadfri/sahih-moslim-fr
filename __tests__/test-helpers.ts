@@ -6,10 +6,8 @@ import { randomUUID } from "crypto";
  * Use this in afterEach or beforeEach to ensure clean test environment
  */
 export async function cleanupTestData() {
-  // Safety gate: refuse to run dangerous cleanup when running against production
-  // unless explicitly allowed via env var. This protects accidental wipes.
   if (
-    process.env.NODE_ENV === "production" &&
+    process.env.NODE_ENV !== "test" &&
     process.env.ALLOW_LARGE_CLEANUP !== "true"
   ) {
     throw new Error(
@@ -32,16 +30,12 @@ export async function cleanupTestData() {
       OR: [
         { numero: { gte: 900000 } }, // Test hadiths
         { chapter: { slug: { startsWith: "test-" } } },
-        { narrator: { slug: { startsWith: "test-" } } },
+        // { narrator: { slug: { startsWith: "test-" } } },
       ],
     },
   });
 
   await prisma.chapter.deleteMany({
-    where: { slug: { startsWith: "test-" } },
-  });
-
-  await prisma.narrator.deleteMany({
     where: { slug: { startsWith: "test-" } },
   });
 
@@ -76,14 +70,6 @@ export const testDataHelpers = {
       slug: `test-chapter-${index}-${uid}`,
       // Use a large random index to avoid collisions
       index: 900000 + Math.floor(Math.random() * 900000),
-    };
-  },
-
-  createTestNarrator: (index: number) => {
-    const uid = randomUUID();
-    return {
-      name: `Test Narrator ${index}-${uid}`,
-      slug: `test-narrator-${index}-${uid}`,
     };
   },
 

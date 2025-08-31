@@ -53,9 +53,6 @@ describe("Header", () => {
     const chaptersLinks = screen.getAllByRole("link", { name: /chapitres/i });
     expect(chaptersLinks.length).toBeGreaterThan(0);
 
-    const narratorsLinks = screen.getAllByRole("link", { name: /narrateurs/i });
-    expect(narratorsLinks.length).toBeGreaterThan(0);
-
     const companionsLinks = screen.getAllByRole("link", {
       name: /compagnons/i,
     });
