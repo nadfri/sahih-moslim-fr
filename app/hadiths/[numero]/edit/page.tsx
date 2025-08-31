@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 
 import {
   getAllChapters,
-  getAllNarrators,
   getAllSahabas,
   getAllTransmitters,
   getHadithByNumero,
@@ -21,21 +20,14 @@ type Params = Promise<{ numero: string }>;
 export default async function EditPage(props: { params: Params }) {
   const params = await props.params;
   const numero = params.numero;
-  const [
-    hadith,
-    existingNumeros,
-    chaptersData,
-    narratorsData,
-    sahabasData,
-    transmittersData,
-  ] = await Promise.all([
-    getHadithByNumero(numero),
-    getHadithNumeros(),
-    getAllChapters(),
-    getAllNarrators(),
-    getAllSahabas(),
-    getAllTransmitters(),
-  ]);
+  const [hadith, existingNumeros, chaptersData, sahabasData, transmittersData] =
+    await Promise.all([
+      getHadithByNumero(numero),
+      getHadithNumeros(),
+      getAllChapters(),
+      getAllSahabas(),
+      getAllTransmitters(),
+    ]);
 
   if (!hadith) {
     redirect("/hadiths");
@@ -56,7 +48,6 @@ export default async function EditPage(props: { params: Params }) {
         hadith={hadith}
         existingNumeros={otherNumeros}
         chaptersData={chaptersData}
-        narratorsData={narratorsData}
         sahabasData={sahabasData}
         transmittersData={transmittersData}
       />

@@ -96,6 +96,49 @@ WHERE tablename = 'Hadith'
 ORDER BY indexname;
 ```
 
+## 🧪 Configuration des Tests
+
+### Base de Données de Test Locale
+
+Pour éviter d'utiliser Supabase en production pour les tests, nous utilisons une base de données PostgreSQL locale via Docker.
+
+#### 1. Lancer la Base de Données de Test
+
+```bash
+# Lancer PostgreSQL en arrière-plan
+docker-compose up -d
+
+# Vérifier que le conteneur fonctionne
+docker ps
+```
+
+#### 2. Appliquer les Migrations à la DB de Test
+
+```bash
+# Charger l'environnement de test et appliquer les migrations
+DATABASE_URL="postgresql://test_user:test_password@localhost:5432/test_db?schema=public" npx prisma migrate deploy
+```
+
+#### 3. Variables d'Environnement pour les Tests
+
+Copier `.env.test.example` vers `.env.test` et ajuster si nécessaire :
+
+```bash
+cp .env.test.example .env.test
+```
+
+#### 4. Exécuter les Tests
+
+```bash
+# Exécuter tous les tests
+npm test
+
+# Avec couverture
+npm run test:coverage
+```
+
+**Note** : Les tests nettoient automatiquement la DB avant chaque exécution pour éviter les interférences.
+
 ## 📦 Installation et Configuration du Projet
 
 ### 1. Cloner et Installer
@@ -348,6 +391,7 @@ Pour contribuer au projet :
 ## 📄 Licence
 
 Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
 </div>
 </div>
 </div>

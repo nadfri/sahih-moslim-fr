@@ -4,7 +4,8 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getHadithByNumero } from "@/src/services/services";
-import { Hadith } from "../../../src/ui/hadith/Hadith/Hadith";
+import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
+import { getNarratorName } from "@/src/utils/getNarratorName";
 
 export type ParamsType = Promise<{ numero: string }>;
 
@@ -20,7 +21,7 @@ export default async function PageByNumero({ params }: { params: ParamsType }) {
   return (
     <>
       <h1 className="title">
-        N°{numero} - {hadith.narrator.name}
+        N°{numero} - {getNarratorName(hadith)}
       </h1>
       <Hadith hadith={hadith} />
     </>
@@ -44,7 +45,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `N°${numero} - ${hadith.narrator.name}`,
+    title: `N°${numero} - ${getNarratorName(hadith)}`,
     description: hadith.matn_fr.substring(0, 160) + "...",
   };
 }

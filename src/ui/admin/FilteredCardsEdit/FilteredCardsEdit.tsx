@@ -17,11 +17,6 @@ const variantOptions = {
     placeholder: "Rechercher un chapitre...",
     name: "chapitre",
   },
-  narrators: {
-    label: "Liste des narrateurs",
-    placeholder: "Rechercher un narrateur...",
-    name: "narrateur",
-  },
   sahabas: {
     label: "Liste des sahabas",
     placeholder: "Rechercher un sahaba...",

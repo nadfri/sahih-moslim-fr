@@ -2,16 +2,14 @@
 
 import {
   getAllChapters,
-  getAllNarrators,
   getAllSahabas,
   getAllTransmitters,
 } from "@/src/services/services";
 import { AdminDashboard } from "@/src/ui/admin/AdminDashboard/AdminDashboard";
 
 export default async function AdminPage() {
-  const [chapters, narrators, sahabas, transmitters] = await Promise.all([
+  const [chapters, sahabas, transmitters] = await Promise.all([
     getAllChapters(),
-    getAllNarrators(),
     getAllSahabas(),
     getAllTransmitters(),
   ]);
@@ -22,7 +20,6 @@ export default async function AdminPage() {
 
       <AdminDashboard
         chapters={chapters}
-        narrators={narrators}
         sahabas={sahabas}
         transmitters={transmitters}
       />

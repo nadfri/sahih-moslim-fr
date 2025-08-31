@@ -3,7 +3,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
-  searchHadithsByNarrator,
   searchHadithsBySahabas,
   searchHadithsByTransmitters,
   searchHadithsCombined,
@@ -21,7 +20,7 @@ export async function GET(request: NextRequest) {
 
     // Extract and standardize search parameters
     const params = extractSearchParams(searchParams);
-    const { query, narrator, sahabas, transmitters, numero } = params;
+    const { query, sahabas, transmitters, numero } = params;
 
     const offset = parseInt(searchParams.get("offset") || "0");
     const limit = parseInt(searchParams.get("limit") || "25");
@@ -41,18 +40,11 @@ export async function GET(request: NextRequest) {
           results = searchResults.map((result) => ({
             ...result,
             chapterId: result.chapter.id,
-            narratorId: result.narrator.id,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             mentionedSahabas: [],
             isnadTransmitters: [],
           }));
-        }
-        break;
-
-      case "narrator":
-        if (narrator) {
-          results = await searchHadithsByNarrator(narrator, offset, limit);
         }
         break;
 

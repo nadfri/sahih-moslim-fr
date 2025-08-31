@@ -16,7 +16,6 @@ export type SearchApiResponse = {
 export type UseSearchProps = {
   filterMode: FilterType;
   query: string;
-  narrator: string;
   sahabas: string[];
   transmitters: string[];
   numero: string;
@@ -28,7 +27,6 @@ const DEBOUNCE_MS = 300;
 export function useSearch({
   filterMode,
   query,
-  narrator,
   sahabas,
   transmitters,
   numero,
@@ -44,7 +42,6 @@ export function useSearch({
       // Check if we have search criteria
       const hasCriteria =
         (filterMode === "word" && query.length >= 3) ||
-        (filterMode === "narrator" && narrator) ||
         (filterMode === "sahaba" && sahabas.length > 0) ||
         (filterMode === "transmitter" && transmitters.length > 0) ||
         (filterMode === "numero" && numero && !isNaN(Number(numero)));
@@ -64,7 +61,6 @@ export function useSearch({
         const searchParams = buildSearchParams(
           filterMode,
           query,
-          narrator,
           sahabas,
           transmitters,
           numero
@@ -93,7 +89,7 @@ export function useSearch({
     }, DEBOUNCE_MS);
 
     return () => clearTimeout(timer);
-  }, [filterMode, query, narrator, sahabas, transmitters, numero]);
+  }, [filterMode, query, sahabas, transmitters, numero]);
 
   // Reset function
   const resetSearch = () => {

@@ -21,10 +21,6 @@ const variantOptions = {
     title: "Supprimer ce chapitre ?",
     description: "Êtes-vous sûr de vouloir supprimer ce chapitre ",
   },
-  narrators: {
-    title: "Supprimer ce narrateur ?",
-    description: "Êtes-vous sûr de vouloir supprimer ce narrateur ",
-  },
   sahabas: {
     title: "Supprimer ce compagnon ?",
     description: "Êtes-vous sûr de vouloir supprimer ce compagnon ",

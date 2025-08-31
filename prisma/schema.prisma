@@ -38,25 +38,23 @@ model Hadith {
   numero             Int                 @unique
   matn_fr            String
   matn_ar            String
+  matn_en            String
   chapterId          String
-  narratorId         String
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
-  narrator           Narrator            @relation(fields: [narratorId], references: [id])
   chapter            Chapter             @relation(fields: [chapterId], references: [id])
   hadithTransmitters HadithTransmitter[]
   mentionedSahabas   Sahaba[]            @relation("HadithToSahaba")
 
   // Optimized indexes for PostgreSQL
   @@index([chapterId])
-  @@index([narratorId])
   @@index([numero])
   // Composite indexes for complex queries
   @@index([chapterId, numero])
-  @@index([narratorId, numero])
   // Text search indexes - will be created manually in migration
   @@index([matn_fr])
   @@index([matn_ar])
+  @@index([matn_en])
 }
 
 model Chapter {
@@ -73,20 +71,6 @@ model Chapter {
   @@index([name])
   @@index([slug])
   @@index([index])
-}
-
-model Narrator {
-  id              String   @id @default(cuid())
-  name            String   @unique
-  slug            String   @unique
-  nameArabic      String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  narratedHadiths Hadith[]
-
-  // Optimized indexes for search
-  @@index([name])
-  @@index([slug])
 }
 
 model Sahaba {

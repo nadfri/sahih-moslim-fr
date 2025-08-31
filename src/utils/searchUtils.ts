@@ -7,16 +7,16 @@ import { FilterType } from "@/src/types/types";
  */
 export function detectFilterMode(params: {
   query?: string;
-  narrator?: string;
+  // narrator?: string; // removed
   sahabas?: string[];
   transmitters?: string[];
   numero?: string;
 }): FilterType {
-  const { query, narrator, sahabas = [], transmitters = [], numero } = params;
+  const { query, sahabas = [], transmitters = [], numero } = params;
 
   // Priority order: specific filters first, then general word search
   if (numero) return "numero";
-  if (narrator) return "narrator";
+  // if (narrator) return "narrator";
   if (sahabas.length > 0) return "sahaba";
   if (transmitters.length > 0) return "transmitter";
   if (query) return "word";
@@ -30,7 +30,7 @@ export function detectFilterMode(params: {
 export function extractSearchParams(searchParams: URLSearchParams) {
   return {
     query: searchParams.get("query") || "",
-    narrator: searchParams.get("narrator") || "",
+    // narrator: searchParams.get("narrator") || "",
     sahabas: searchParams.getAll("sahaba"),
     transmitters: searchParams.getAll("transmitter"),
     numero: searchParams.get("numero") || "",
@@ -43,7 +43,7 @@ export function extractSearchParams(searchParams: URLSearchParams) {
 export function buildSearchParams(
   filterMode: FilterType,
   query: string,
-  narrator: string,
+  // narrator: string,
   sahabas: string[],
   transmitters: string[],
   numero: string
@@ -55,8 +55,8 @@ export function buildSearchParams(
     case "word":
       if (query) params.set("query", query);
       break;
-    case "narrator":
-      if (narrator) params.set("narrator", narrator);
+      // case "narrator":
+      //   if (narrator) params.set("narrator", narrator);
       break;
     case "sahaba":
       sahabas.forEach((sahaba) => params.append("sahaba", sahaba));

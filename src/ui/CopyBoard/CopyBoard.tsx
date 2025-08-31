@@ -5,6 +5,7 @@ import { Check, Files, LinkIcon } from "lucide-react";
 
 import { useClickOutside } from "@/src/hooks/useClickOutside";
 import { HadithType } from "@/src/types/types";
+import { getNarratorName } from "@/src/utils/getNarratorName";
 
 type CopyOption = "fr" | "ar" | "both" | "link";
 
@@ -14,7 +15,6 @@ export function CopyBoard({ hadith }: { hadith: HadithType }) {
   const frenchText = hadith.matn_fr;
   const arabicText = hadith.matn_ar;
   const hadithNumber = hadith.numero;
-  const narrator = hadith.narrator.name;
   const chapter = hadith.chapter.name;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -29,7 +29,7 @@ export function CopyBoard({ hadith }: { hadith: HadithType }) {
     let textToCopy = "";
 
     // Create header with hadith info
-    const header = `Sahih Moslim - Hadith n°${hadithNumber}\nChapitre: ${chapter}\nD' après: ${narrator}\n\n`;
+    const header = `Sahih Moslim - Hadith n°${hadithNumber}\nChapitre: ${chapter}\nD' après: ${getNarratorName(hadith)}\n\n`;
 
     switch (option) {
       case "fr":

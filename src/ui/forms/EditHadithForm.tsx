@@ -12,7 +12,6 @@ import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { Input } from "@/src/ui/inputs/Input/Input";
 import { MdTextArea } from "@/src/ui/inputs/MdTextArea/MdTextArea";
 import { MultiSelectDragNDrop } from "@/src/ui/inputs/MultiSelectDragNDrop/MultiSelectDragNDrop";
-import { SearchSelect } from "@/src/ui/inputs/SearchSelect/SearchSelect";
 import { Select } from "@/src/ui/inputs/Select/Select";
 import { cleanArabicText } from "@/src/utils/cleanArabicText";
 import { wrapProphetNames } from "@/src/utils/wrapProphetNames";
@@ -21,13 +20,13 @@ import { MultiSelect } from "../inputs/MultiSelect/MultiSelect";
 import {
   createEditHadithSchema,
   type EditHadithFormValues,
-} from "@/src/schemas/hadithSchemas";
+} from "@/src/services/hadithSchemaServer";
 
 type EditHadithFormProps = {
   hadith: HadithType;
   existingNumeros: number[];
   chaptersData: ItemType[];
-  narratorsData: ItemType[];
+  // narratorsData: ItemType[];
   sahabasData: ItemType[];
   transmittersData: ItemType[];
 };
@@ -36,7 +35,7 @@ export function EditHadithForm({
   hadith,
   existingNumeros,
   chaptersData,
-  narratorsData,
+  // narratorsData,
   sahabasData,
   transmittersData,
 }: EditHadithFormProps) {
@@ -60,18 +59,19 @@ export function EditHadithForm({
     defaultValues: {
       numero: hadith.numero,
       chapter: hadith.chapter.name,
-      narrator: hadith.narrator.name,
+      // narrator: hadith.narrator.name,
       mentionedSahabas: hadith.mentionedSahabas.map((s) => s.name),
       isnadTransmitters: hadith.isnadTransmitters.map((t) => t.name),
       matn_fr: hadith.matn_fr,
       matn_ar: hadith.matn_ar,
+      matn_en: hadith.matn_en ?? "",
     },
   });
 
   const formValues = watch();
 
   const chapterOptions = chaptersData.map((chapter) => chapter.name);
-  const narratorOptions = narratorsData.map((n) => n.name);
+  // const narratorOptions = narratorsData.map((n) => n.name);
   const sahabaOptions = sahabasData.map((s) => s.name);
   const transmitterOptions = transmittersData.map((t) => t.name);
 
@@ -83,9 +83,9 @@ export function EditHadithForm({
     const selectedChapter = chaptersData.find(
       (chapter) => chapter.name === data.chapter
     );
-    const selectedNarrator = narratorsData.find(
-      (n) => n.name === data.narrator
-    );
+    // const selectedNarrator = narratorsData.find(
+    //   (n) => n.name === data.narrator
+    // );
     const selectedSahabas = sahabasData.filter((s) =>
       data.mentionedSahabas.includes(s.name)
     );
@@ -100,8 +100,8 @@ export function EditHadithForm({
           transmitter !== undefined
       );
 
-    if (!selectedChapter || !selectedNarrator) {
-      toast.error("Chapitre ou narrateur sélectionné invalide.");
+    if (!selectedChapter) {
+      toast.error("Chapitre sélectionné invalide.");
       setIsSubmitting(false);
       return;
     }
@@ -110,8 +110,9 @@ export function EditHadithForm({
       numero: data.numero,
       matn_fr: data.matn_fr,
       matn_ar: data.matn_ar,
+      matn_en: data.matn_en ?? "",
       chapter: selectedChapter.name,
-      narrator: selectedNarrator.name,
+      // narrator: selectedNarrator.name,
       mentionedSahabas: selectedSahabas.map((s) => s.name),
       isnadTransmitters: selectedTransmitters.map((t) => t.name),
     };
@@ -161,11 +162,11 @@ export function EditHadithForm({
       name: formValues.chapter || hadith.chapter.name,
       slug: hadith.chapter.slug || "preview-chapter-slug",
     },
-    narrator: {
-      ...hadith.narrator,
-      name: formValues.narrator || hadith.narrator.name,
-      slug: hadith.narrator.slug || "preview-narrator-slug",
-    },
+    // narrator: {
+    //   ...hadith.narrator,
+    //   name: formValues.narrator || hadith.narrator.name,
+    //   slug: hadith.narrator.slug || "preview-narrator-slug",
+    // },
     mentionedSahabas: (formValues.mentionedSahabas || []).map((name, i) => ({
       id: `preview-sahaba-id-${i}`,
       name: name,
@@ -217,24 +218,7 @@ export function EditHadithForm({
               />
             )}
           />
-          {/* Narrator */}
-          <Controller
-            name="narrator"
-            control={control}
-            render={({ field }) => (
-              <SearchSelect
-                id="narrator"
-                label="Narrateur*"
-                options={narratorOptions}
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="Rechercher un narrateur..."
-                name={field.name}
-                error={!!errors.narrator}
-                errorMessage={errors.narrator?.message}
-              />
-            )}
-          />
+          {/* Narrator supprimé */}
 
           {/* IsnadTransmitters */}
           <Controller
@@ -343,7 +327,7 @@ export function EditHadithForm({
         <div className="bg-gray-100 dark:bg-gray-900 rounded-lg p-1">
           <Hadith
             hadith={previewHadith}
-            update
+            edit
           />
         </div>
       </div>

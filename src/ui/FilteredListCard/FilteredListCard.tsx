@@ -14,7 +14,6 @@ type Props = {
 const placeholder = {
   chapters: "Rechercher un chapitre...",
   sahabas: "Rechercher un compagnon...",
-  narrators: "Rechercher un narrateur...",
   transmitters: "Rechercher un transmetteur...",
 };
 

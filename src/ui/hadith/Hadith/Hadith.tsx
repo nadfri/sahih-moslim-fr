@@ -5,15 +5,14 @@ import { Isnad } from "../Isnad/Isnad";
 import { ListOfSahabas } from "../ListOfSahabas/ListOfSahabas";
 import { Matn_ar } from "../Matn_ar/Matn_ar";
 import { Matn_fr } from "../Matn_fr/Matn_fr";
-import { NarratedBy } from "../NarratedBy/NarratedBy";
 
 export function Hadith({
   hadith,
-  update,
+  edit,
   highlight,
 }: {
   hadith: HadithType;
-  update?: boolean;
+  edit?: boolean;
   highlight?: string;
 }) {
   return (
@@ -26,13 +25,10 @@ export function Hadith({
         <div className="mb-5">
           <ChapterName hadith={hadith} />
 
-          {/* Narrator */}
-          <NarratedBy narrator={hadith.narrator} />
-
           {/* Isnad */}
           <Isnad
             isnadTransmitters={hadith.isnadTransmitters}
-            update={update}
+            edit={edit}
           />
         </div>
 
@@ -49,13 +45,13 @@ export function Hadith({
         <Matn_ar
           matn={hadith.matn_ar}
           highlight={highlight}
-          update={update}
+          edit={edit}
         />
 
         {/* Action buttons section */}
         <ActionsBtns
           hadith={hadith}
-          update={update}
+          edit={edit}
         />
       </div>
     </div>

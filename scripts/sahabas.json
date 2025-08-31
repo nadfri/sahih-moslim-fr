@@ -1,0 +1,274 @@
+[
+  {
+    "id": "cm9vcgarm0000hq44chyvfj3g",
+    "name": "Abdallah ibn Omar",
+    "slug": "abdallah-ibn-omar",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441049973
+  },
+  {
+    "id": "cm9vcgarn0001hq448s762h00",
+    "name": "Abdallah ibn Abi Umayya",
+    "slug": "abdallah-ibn-abi-umayya",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441049978
+  },
+  {
+    "id": "cm9vcgarn0002hq4456q5ntv4",
+    "name": "Abdallah ibn Abbas",
+    "slug": "abdallah-ibn-abbas",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441049982
+  },
+  {
+    "id": "cm9vcgarn0003hq44xxq156nr",
+    "name": "Abou Bakr As-Siddiq",
+    "slug": "abou-bakr-as-siddiq",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441049987
+  },
+  {
+    "id": "cm9vcgarn0004hq44javr0mtf",
+    "name": "Abou Darda",
+    "slug": "abou-darda",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441049992
+  },
+  {
+    "id": "cm9vcgarn0005hq44j0v9kvnf",
+    "name": "Abou Huraira",
+    "slug": "abou-huraira",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441049997
+  },
+  {
+    "id": "cm9vcgarn0006hq441whh7wv3",
+    "name": "Abou Talib",
+    "slug": "abou-talib",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050001
+  },
+  {
+    "id": "cm9vcgarn0007hq44sfnidn1g",
+    "name": "Abou Ayyub Al-Ansari",
+    "slug": "abou-ayyub-al-ansari",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050007
+  },
+  {
+    "id": "cm9vcgarn0008hq44agwokdmw",
+    "name": "Abou Dharr Al-Ghifari",
+    "slug": "abou-dharr-al-ghifari",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050013
+  },
+  {
+    "id": "cm9vcgarn0009hq44r3jcdyxt",
+    "name": "Abou Muslim Al-Khawlani",
+    "slug": "abou-muslim-al-khawlani",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050017
+  },
+  {
+    "id": "cm9vcgarn000ahq44ajv49uy6",
+    "name": "Al-Ashajj Abd al-Qays",
+    "slug": "al-ashajj-abd-al-qays",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050022
+  },
+  {
+    "id": "cm9vcgarn000bhq44o4rk0edf",
+    "name": "Al Mughirah ibn Shu'bah",
+    "slug": "al-mughirah-ibn-shubah",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050027
+  },
+  {
+    "id": "cm9vcgarn000chq44bboisieo",
+    "name": "Ali ibn Abi Talib",
+    "slug": "ali-ibn-abi-talib",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050032
+  },
+  {
+    "id": "cm9vcgarn000dhq449s2aoas6",
+    "name": "Anas ibn Malik",
+    "slug": "anas-ibn-malik",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050037
+  },
+  {
+    "id": "cm9vcgarn000ehq44b546jgbm",
+    "name": "Bilal ibn Rabah",
+    "slug": "bilal-ibn-rabah",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050042
+  },
+  {
+    "id": "cm9vcgarn000fhq44iaedfe1b",
+    "name": "Fatimah bint Muhammad",
+    "slug": "fatimah-bint-muhammad",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050046
+  },
+  {
+    "id": "cm9vcgarn000ghq44ea0as91l",
+    "name": "Hassan ibn Ali",
+    "slug": "hassan-ibn-ali",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050051
+  },
+  {
+    "id": "cm9vcgarn000hhq44r2u13re0",
+    "name": "Houmayd ibn Abder Rahman Al Houmayri",
+    "slug": "houmayd-ibn-abder-rahman-al-houmayri",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050056
+  },
+  {
+    "id": "cm9vcgarn000ihq44oth8ensx",
+    "name": "Omar ibn al-Khattab",
+    "slug": "omar-ibn-al-khattab",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050061
+  },
+  {
+    "id": "cm9vcgarn000jhq44eiv1j507",
+    "name": "Othman ibn Affan",
+    "slug": "othman-ibn-affan",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050067
+  },
+  {
+    "id": "cm9vcgarn000khq44jc8vms2h",
+    "name": "Ma'bad Al Jouhani",
+    "slug": "mabad-al-jouhani",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050072
+  },
+  {
+    "id": "cm9vcgarn000lhq44mbjibk16",
+    "name": "Muadh ibn Jabal",
+    "slug": "muadh-ibn-jabal",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050077
+  },
+  {
+    "id": "cm9vcgarn000mhq445ie9lc8c",
+    "name": "Mujahid ibn Jabr",
+    "slug": "mujahid-ibn-jabr",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050082
+  },
+  {
+    "id": "cm9vcgarn000nhq44b8mfwpoi",
+    "name": "Nou'man ibn Qawqal",
+    "slug": "nouman-ibn-qawqal",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050087
+  },
+  {
+    "id": "cm9vcgarn000ohq446eqiaa31",
+    "name": "Salman Al-Farsi",
+    "slug": "salman-al-farsi",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050091
+  },
+  {
+    "id": "cm9vcgarn000phq441yye4p9i",
+    "name": "Zayd ibn Harithah",
+    "slug": "zayd-ibn-harithah",
+    "nameArabic": null,
+    "createdAt": 1745498018435,
+    "updatedAt": 1746441050097
+  },
+  {
+    "id": "cmazhortc0001hqdc181t8j84",
+    "name": "Oubada ibn as-Samit",
+    "slug": "oubada-ibn-as-samit",
+    "nameArabic": null,
+    "createdAt": 1747925458897,
+    "updatedAt": 1747925609614
+  },
+  {
+    "id": "cmazm2vsz0009hqdc0tstyxjk",
+    "name": "Itban ibn Malik",
+    "slug": "itban-ibn-malik",
+    "nameArabic": null,
+    "createdAt": 1747932835715,
+    "updatedAt": 1747932835715
+  },
+  {
+    "id": "cmb0ycf8j0004hqg8vfvcxi7v",
+    "name": "Salim ibn Abdallah",
+    "slug": "salim-ibn-abdallah",
+    "nameArabic": null,
+    "createdAt": 1748013902372,
+    "updatedAt": 1748013902372
+  },
+  {
+    "id": "cmb0yjs900007hqg8dc0k77ia",
+    "name": "Bushair ibn Kaab",
+    "slug": "bushair-ibn-kaab",
+    "nameArabic": null,
+    "createdAt": 1748014245828,
+    "updatedAt": 1748014245828
+  },
+  {
+    "id": "cmb0yjylr0008hqg84eoinl0q",
+    "name": "Imran ibn Husain",
+    "slug": "imran-ibn-husain",
+    "nameArabic": null,
+    "createdAt": 1748014254063,
+    "updatedAt": 1748014254063
+  },
+  {
+    "id": "cmb3ma7to000chqskzq1nyg6p",
+    "name": "Abou Sa'id al-Khudri",
+    "slug": "abou-said-al-khudri",
+    "nameArabic": null,
+    "createdAt": 1748175042589,
+    "updatedAt": 1748175042589
+  },
+  {
+    "id": "cmb3mlktq000fhqsk2fsa4253",
+    "name": "Abdallah ibn Mas'ud",
+    "slug": "abdallah-ibn-masud",
+    "nameArabic": null,
+    "createdAt": 1748175572654,
+    "updatedAt": 1748175572654
+  },
+  {
+    "id": "cmb3mnqdc000ghqsk8o1vl0xw",
+    "name": "Abou Rafi'",
+    "slug": "abou-rafi",
+    "nameArabic": null,
+    "createdAt": 1748175673153,
+    "updatedAt": 1748175673153
+  }
+]

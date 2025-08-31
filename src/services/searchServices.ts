@@ -21,11 +21,6 @@ export type SearchResult = {
     slug: string;
     index: number;
   };
-  narrator: {
-    id: string;
-    name: string;
-    slug: string;
-  };
 };
 
 // Search only in Hadith content (French and Arabic text)
@@ -59,14 +54,8 @@ export async function searchHadithsCombined(
           'slug', c.slug,
           'index', c.index
         ) as chapter,
-        json_build_object(
-          'id', n.id,
-          'name', n.name,
-          'slug', n.slug
-        ) as narrator
       FROM "Hadith" h
       INNER JOIN "Chapter" c ON h."chapterId" = c.id
-      INNER JOIN "Narrator" n ON h."narratorId" = n.id
       WHERE 
         -- Unified search: trigram + accent-insensitive in single query
         lower(h.matn_fr) LIKE '%' || lower(${query}) || '%'
@@ -83,48 +72,6 @@ export async function searchHadithsCombined(
     return results;
   } catch (error) {
     console.error("Error in searchHadithsCombined:", error);
-    return [];
-  }
-}
-
-// Optimized search by narrator with pagination
-export async function searchHadithsByNarrator(
-  narratorName: string,
-  offset = 0,
-  limit = 20
-): Promise<HadithType[]> {
-  try {
-    const hadiths = await prisma.hadith.findMany({
-      where: {
-        narrator: {
-          name: narratorName,
-        },
-      },
-      include: {
-        chapter: true,
-        narrator: true,
-        mentionedSahabas: true,
-        hadithTransmitters: {
-          include: {
-            transmitter: true,
-          },
-          orderBy: {
-            order: "asc",
-          },
-        },
-      },
-      orderBy: { numero: "asc" },
-      skip: offset,
-      take: limit,
-    });
-
-    // Transform to match HadithType
-    return hadiths.map((hadith) => ({
-      ...hadith,
-      isnadTransmitters: hadith.hadithTransmitters.map((ht) => ht.transmitter),
-    }));
-  } catch (error) {
-    console.error("Error in searchHadithsByNarrator:", error);
     return [];
   }
 }
@@ -150,7 +97,6 @@ export async function searchHadithsBySahabas(
       },
       include: {
         chapter: true,
-        narrator: true,
         mentionedSahabas: true,
         hadithTransmitters: {
           include: {
@@ -206,7 +152,6 @@ export async function searchHadithsByTransmitters(
       },
       include: {
         chapter: true,
-        narrator: true,
         mentionedSahabas: true,
         hadithTransmitters: {
           include: {

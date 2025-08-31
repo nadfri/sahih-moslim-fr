@@ -1,5 +1,3 @@
-"use client";
-
 import { z } from "zod";
 
 // =============================================================================
@@ -7,12 +5,12 @@ import { z } from "zod";
 // =============================================================================
 
 // Schéma pour les hadiths (côté serveur)
-export const hadithSchema = z.object({
+export const hadithSchemaServer = z.object({
   numero: z.number().int().positive(),
   matn_fr: z.string().min(1, "Le texte français est requis"),
   matn_ar: z.string().min(1, "Le texte arabe est requis"),
+  matn_en: z.string().optional(),
   chapter: z.string().min(1, "Le chapitre est requis"),
-  narrator: z.string().min(1, "Le narrateur est requis"),
   mentionedSahabas: z.array(z.string()),
   isnadTransmitters: z.array(z.string()),
 });
@@ -37,16 +35,14 @@ export const createHadithFormSchema = (
         }
       ),
     chapter: z.string().min(1, "Le chapitre est requis"),
-    narrator: z.string().min(1, "Le narrateur est requis"),
     mentionedSahabas: z.array(z.string()),
     isnadTransmitters: z.array(z.string()),
     matn_fr: z.string().min(1, "Le texte du hadith est requis"),
     matn_ar: z.string().min(1, "Le texte arabe est requis"),
-    isnad: z.string().nullable().optional(),
+    matn_en: z.string().optional(),
   });
 };
 
-// Schéma pour l'édition (sans le champ isnad)
 export const createEditHadithSchema = (
   existingNumeros: number[],
   initialNumero: number
@@ -64,11 +60,11 @@ export const createEditHadithSchema = (
         }
       ),
     chapter: z.string().min(1, "Le chapitre est requis"),
-    narrator: z.string().min(1, "Le narrateur est requis"),
     mentionedSahabas: z.array(z.string()),
     isnadTransmitters: z.array(z.string()),
     matn_fr: z.string().min(1, "Le texte du hadith est requis"),
     matn_ar: z.string().min(1, "Le texte arabe est requis"),
+    matn_en: z.string().optional(),
   });
 };
 

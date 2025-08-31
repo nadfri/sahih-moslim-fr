@@ -12,13 +12,6 @@ export const mockHadiths: HadithType[] = [
       slug: "test-chapter",
       hadithCount: 10,
     },
-    narrator: {
-      id: "n1",
-      name: "Narrateur 1",
-      slug: "narrateur-1",
-      hadithCount: 5,
-      nameArabic: null,
-    },
     mentionedSahabas: [
       {
         id: "s1",
@@ -48,13 +41,6 @@ export const mockHadiths: HadithType[] = [
       name: "Test Chapter",
       slug: "test-chapter",
       hadithCount: 10,
-    },
-    narrator: {
-      id: "n2",
-      name: "Narrateur 2",
-      slug: "narrateur-2",
-      hadithCount: 3,
-      nameArabic: null,
     },
     mentionedSahabas: [
       {

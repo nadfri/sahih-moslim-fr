@@ -23,14 +23,14 @@ type Props = {
 const placeholderText = {
   title: {
     chapters: "Éditer le chapitre",
-    narrators: "Éditer le narrateur",
+    // narrators: "Éditer le narrateur",
     sahabas: "Éditer le compagnon",
     transmitters: "Éditer le transmetteur",
   },
 
   name: {
     chapters: "Nom du chapitre",
-    narrators: "Nom du narrateur",
+    // narrators: "Nom du narrateur",
     sahabas: "Nom du compagnon",
     transmitters: "Nom du transmetteur",
   },

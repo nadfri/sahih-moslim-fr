@@ -13,12 +13,11 @@ import { HadithType, ItemType, VariantType } from "@/src/types/types";
 import {
   createHadithFormSchema,
   type HadithFormValues,
-} from "@/src/schemas/hadithSchemas";
+} from "@/src/services/hadithSchemaServer";
 /*UI*/
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { Input } from "@/src/ui/inputs/Input/Input";
 import { MdTextArea } from "@/src/ui/inputs/MdTextArea/MdTextArea";
-import { SearchSelect } from "@/src/ui/inputs/SearchSelect/SearchSelect";
 import { Select } from "@/src/ui/inputs/Select/Select";
 /*Utils*/
 import { cleanArabicText } from "@/src/utils/cleanArabicText";
@@ -31,7 +30,6 @@ import { AddItemFormDialog } from "./AddItemFormDialog/AddItemFormDialog";
 type Props = {
   initialNumeros: number[];
   chaptersData: ItemType[];
-  narratorsData: ItemType[];
   sahabasData: ItemType[];
   transmittersData: ItemType[];
 };
@@ -39,7 +37,6 @@ type Props = {
 export function AddHadithForm({
   initialNumeros,
   chaptersData,
-  narratorsData,
   sahabasData,
   transmittersData,
 }: Props) {
@@ -66,19 +63,17 @@ export function AddHadithForm({
     defaultValues: {
       numero: initialNumeros.length > 0 ? Math.max(...initialNumeros) + 1 : 1,
       chapter: "La Foi",
-      narrator: "Abou Huraira",
       mentionedSahabas: [],
       isnadTransmitters: [],
       matn_fr: "",
-      isnad: "",
       matn_ar: "",
+      matn_en: "",
     },
   });
 
   const formValues = watch();
 
   const chapterOptions = chaptersData.map((chapter) => chapter.name);
-  const narratorOptions = narratorsData.map((n) => n.name);
   const sahabaOptions = sahabasData.map((s) => s.name);
   const transmitterOptions = transmittersData.map((t) => t.name);
 
@@ -100,9 +95,6 @@ export function AddHadithForm({
     const selectedChapter = chaptersData.find(
       (chapter) => chapter.name === data.chapter
     );
-    const selectedNarrator = narratorsData.find(
-      (narrator) => narrator.name === data.narrator
-    ); // Keep alphabetical order for sahabas (filter from original data)
     const selectedSahabas = sahabasData.filter((sahaba) =>
       data.mentionedSahabas.includes(sahaba.name)
     );
@@ -112,7 +104,7 @@ export function AddHadithForm({
       .map((name) => transmittersData.find((t) => t.name === name))
       .filter((t): t is NonNullable<typeof t> => t !== undefined);
 
-    if (!selectedChapter || !selectedNarrator) {
+    if (!selectedChapter) {
       toast.error("Chapitre ou narrateur sélectionné invalide.");
       setIsSubmitting(false);
       return;
@@ -122,8 +114,8 @@ export function AddHadithForm({
       numero: data.numero,
       matn_fr: data.matn_fr,
       matn_ar: data.matn_ar,
+      matn_en: data.matn_en || "", // Placeholder for English text
       chapter: selectedChapter.name,
-      narrator: selectedNarrator.name,
       mentionedSahabas: selectedSahabas.map((s) => s.name),
       isnadTransmitters: selectedTransmitters.map((t) => t.name),
     };
@@ -143,12 +135,11 @@ export function AddHadithForm({
         reset({
           numero: Math.max(...updatedNumeros) + 1,
           chapter: "La Foi",
-          narrator: "Abou Huraira",
           mentionedSahabas: [],
           isnadTransmitters: [],
           matn_fr: "",
-          isnad: "",
           matn_ar: "",
+          matn_en: "",
         });
       } else {
         toast.error(result.message || "Une erreur est survenue");
@@ -163,7 +154,6 @@ export function AddHadithForm({
 
   const items = {
     chapters: chaptersData,
-    narrators: narratorsData,
     sahabas: sahabasData,
     transmitters: transmittersData,
   };
@@ -176,11 +166,6 @@ export function AddHadithForm({
       id: "preview-chapter-id",
       name: formValues.chapter || "Sélectionnez un chapitre...",
       slug: "preview-chapter-slug",
-    },
-    narrator: {
-      id: "preview-narrator-id",
-      name: formValues.narrator || "Sélectionnez un narrateur...",
-      slug: "preview-narrator-slug",
     },
     mentionedSahabas: (formValues.mentionedSahabas || []).map((name, i) => ({
       id: `preview-sahaba-id-${i}`,
@@ -196,6 +181,7 @@ export function AddHadithForm({
     ),
     matn_fr: formValues.matn_fr || "...",
     matn_ar: formValues.matn_ar || "...",
+    matn_en: formValues.matn_en || "...",
   };
 
   return (
@@ -233,27 +219,6 @@ export function AddHadithForm({
               )}
             />
             <BtnAddItem onOpen={() => handleOpenDialog("chapters")} />
-          </div>
-          {/* Narrator */}
-          <div className="flex justify-between items-end gap-1">
-            <Controller
-              name="narrator"
-              control={control}
-              render={({ field }) => (
-                <SearchSelect
-                  id="narrator"
-                  label="Narrateur*"
-                  options={narratorOptions}
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="Rechercher un narrateur..."
-                  name={field.name}
-                  error={!!errors.narrator}
-                  errorMessage={errors.narrator?.message}
-                />
-              )}
-            />
-            <BtnAddItem onOpen={() => handleOpenDialog("narrators")} />
           </div>
 
           {/* IsnadTransmitters */}
@@ -350,7 +315,7 @@ export function AddHadithForm({
         <div className="bg-gray-100 dark:bg-gray-900 rounded-lg p-1">
           <Hadith
             hadith={previewHadith}
-            update
+            edit
           />
         </div>
       </div>

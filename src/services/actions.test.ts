@@ -15,7 +15,7 @@ vi.mock("next/cache", () => ({
 import { prisma } from "@/prisma/prisma";
 import { cleanupTestData, testDataHelpers } from "@/__tests__/test-helpers";
 import { addHadith, deleteHadith, editHadith } from "@/src/services/actions";
-import { hadithSchema } from "@/src/schemas/hadithSchemas";
+import { hadithSchema } from "@/src/services/hadithSchemaServer";
 import type { z } from "zod";
 type HadithInput = z.infer<typeof hadithSchema>;
 

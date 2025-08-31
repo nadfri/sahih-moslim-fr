@@ -9,17 +9,17 @@ import { CopyBoard } from "../../CopyBoard/CopyBoard";
 
 type Props = {
   hadith: HadithType;
-  update?: boolean;
+  edit?: boolean;
 };
 
-export function ActionsBtns({ hadith, update }: Props) {
+export function ActionsBtns({ hadith, edit }: Props) {
   const { profile } = useAuth();
   const isAdmin = profile?.role === "ADMIN";
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
-      {/* Preview badge shown only in update mode */}
-      {update && (
+      {/* Preview badge shown only in edit mode */}
+      {edit && (
         <span className="text-sm font-medium bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-1 rounded inline-flex items-center gap-1">
           <ScanEye
             className="h-3.5 w-3.5"

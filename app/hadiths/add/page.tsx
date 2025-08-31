@@ -5,7 +5,6 @@ import { Metadata } from "next";
 // Import services to fetch data
 import {
   getAllChapters,
-  getAllNarrators,
   getAllSahabas,
   getAllTransmitters,
   getHadithNumeros,
@@ -18,19 +17,13 @@ export const metadata: Metadata = {
 };
 
 export default async function AddHadithPage() {
-  const [
-    initialNumeros,
-    chaptersData,
-    narratorsData,
-    sahabasData,
-    transmittersData,
-  ] = await Promise.all([
-    getHadithNumeros(),
-    getAllChapters(),
-    getAllNarrators(),
-    getAllSahabas(),
-    getAllTransmitters(),
-  ]);
+  const [initialNumeros, chaptersData, sahabasData, transmittersData] =
+    await Promise.all([
+      getHadithNumeros(),
+      getAllChapters(),
+      getAllSahabas(),
+      getAllTransmitters(),
+    ]);
 
   return (
     <>
@@ -38,7 +31,6 @@ export default async function AddHadithPage() {
       <AddHadithForm
         initialNumeros={initialNumeros}
         chaptersData={chaptersData}
-        narratorsData={narratorsData}
         sahabasData={sahabasData}
         transmittersData={transmittersData}
       />

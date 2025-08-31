@@ -2,9 +2,13 @@
 import "@testing-library/jest-dom/vitest";
 
 import { cleanup } from "@testing-library/react";
-import { afterEach, beforeAll, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, vi } from "vitest";
 
 import { cleanupTestData } from "@/__tests__/test-helpers";
+
+// Load test environment variables
+import { config } from "dotenv";
+config({ path: ".env.test" });
 
 // Mock Next.js server helpers that rely on runtime stores not present in Vitest.
 // This ensures functions like revalidatePath don't throw during tests.
@@ -16,6 +20,21 @@ vi.mock("next/cache", () => ({
 
 // Clean up React Testing Library after each test
 afterEach(() => cleanup());
+
+// Clean up test data before each test to ensure isolation
+beforeEach(async () => {
+  // Detect Vitest environment
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isVitest = typeof (import.meta as any).vitest !== "undefined";
+
+  if (isVitest) {
+    try {
+      await cleanupTestData();
+    } catch (error) {
+      console.warn("Failed to cleanup test data in beforeEach:", error);
+    }
+  }
+});
 
 // Clean up test data from database once before the test suite runs to provide a
 // clean starting state. Running cleanup afterEach across parallel test files

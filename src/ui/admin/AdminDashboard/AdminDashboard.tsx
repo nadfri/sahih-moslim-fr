@@ -8,24 +8,17 @@ import { AddItemForm } from "@/src/ui/forms/AddItemForm/AddItemForm";
 
 type Props = {
   chapters: ItemType[];
-  narrators: ItemType[];
   sahabas: ItemType[];
   transmitters: ItemType[];
 };
 
 const variantOptions: { label: string; value: VariantType }[] = [
   { label: "Chapitres", value: "chapters" },
-  { label: "Narrateurs", value: "narrators" },
   { label: "Compagnons", value: "sahabas" },
   { label: "Transmetteurs", value: "transmitters" },
 ];
 
-export function AdminDashboard({
-  chapters,
-  narrators,
-  sahabas,
-  transmitters,
-}: Props) {
+export function AdminDashboard({ chapters, sahabas, transmitters }: Props) {
   const [selectedVariant, setSelectedVariant] =
     useState<VariantType>("chapters");
 
@@ -34,10 +27,6 @@ export function AdminDashboard({
   switch (selectedVariant) {
     case "chapters":
       currentItems = chapters;
-      break;
-
-    case "narrators":
-      currentItems = narrators;
       break;
 
     case "sahabas":
@@ -55,7 +44,7 @@ export function AdminDashboard({
 
   return (
     <div className="space-y-12">
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
         {variantOptions.map((option) => (
           <label
             key={option.value}

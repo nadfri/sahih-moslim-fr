@@ -3,11 +3,7 @@
 import { Metadata } from "next";
 
 import { SearchBar } from "@/app/search/SearchBar";
-import {
-  getNarratorNames,
-  getSahabaNames,
-  getTransmitterNames,
-} from "@/src/services/services";
+import { getSahabaNames, getTransmitterNames } from "@/src/services/services";
 
 export const dynamic = "force-static";
 export const revalidate = 86400; // 1 day
@@ -25,8 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function SearchPage() {
-  const [narratorNames, sahabaNames, transmitterNames] = await Promise.all([
-    getNarratorNames(),
+  const [sahabaNames, transmitterNames] = await Promise.all([
     getSahabaNames(),
     getTransmitterNames(),
   ]);
@@ -36,7 +31,6 @@ export default async function SearchPage() {
       <h1 className="title">Rechercher un Hadith</h1>
 
       <SearchBar
-        narrators={narratorNames}
         sahabas={sahabaNames}
         transmitters={transmitterNames}
       />

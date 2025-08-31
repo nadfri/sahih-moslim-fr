@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
@@ -10,7 +9,7 @@ import { requireAdmin } from "@/src/lib/auth/auth";
 import { getItemFormSchema } from "@/src/ui/forms/schemas/getItemFormSchema";
 import { slugify } from "@/src/utils/slugify";
 import { ItemFormValues, ItemType, VariantType } from "../types/types";
-import { hadithSchema } from "../schemas/hadithSchemas";
+import { hadithSchemaServer } from "./hadithSchemaServer";
 
 export type ActionResponse = {
   success: boolean;
@@ -24,15 +23,7 @@ async function getItems(variant: VariantType): Promise<ItemType[]> {
   switch (variant) {
     case "chapters":
       return prisma.chapter.findMany();
-    case "narrators":
-      return prisma.narrator.findMany({
-        select: {
-          id: true,
-          name: true,
-          nameArabic: true,
-          slug: true,
-        },
-      });
+    // case "narrators": (supprimé)
     case "sahabas":
       return prisma.sahaba.findMany({
         select: {
@@ -95,16 +86,6 @@ export async function addItem(
             nameArabic: validatedData.nameArabic,
             slug,
             index: Number(validatedData.index),
-          },
-        });
-        break;
-
-      case "narrators":
-        created = await prisma.narrator.create({
-          data: {
-            name: validatedData.name,
-            nameArabic: validatedData.nameArabic,
-            slug,
           },
         });
         break;
@@ -232,16 +213,7 @@ export async function editItem(
           },
         });
         break;
-      case "narrators":
-        updated = await prisma.narrator.update({
-          where: { id: validatedData.id },
-          data: {
-            name: validatedData.name,
-            nameArabic: validatedData.nameArabic,
-            slug,
-          },
-        });
-        break;
+      // case "narrators": (supprimé)
       case "sahabas":
         updated = await prisma.sahaba.update({
           where: { id: validatedData.id },
@@ -326,54 +298,36 @@ export async function deleteItem(
   try {
     let deleted;
     let affectedHadiths = 0;
-    if (variant === "chapters" || variant === "narrators") {
+    if (variant === "chapters") {
       // 1. Vérifier les hadiths liés
       const hadiths = await prisma.hadith.findMany({
-        where: variant === "chapters" ? { chapterId: id } : { narratorId: id },
+        where: { chapterId: id },
         select: { id: true },
       });
       affectedHadiths = hadiths.length;
       if (affectedHadiths > 0) {
         // 2. Chercher ou créer l'élément 'Inconnu'
-        let unknown;
-        if (variant === "chapters") {
-          unknown = await prisma.chapter.upsert({
-            where: { slug: "inconnu" },
-            update: {},
-            create: {
-              name: "Inconnu",
-              slug: "inconnu",
-              index: 999,
-            },
-          });
-          // 3. Mettre à jour les hadiths
-          await prisma.hadith.updateMany({
-            where: { chapterId: id },
-            data: { chapterId: unknown.id },
-          });
-        } else if (variant === "narrators") {
-          unknown = await prisma.narrator.upsert({
-            where: { slug: "inconnu" },
-            update: {},
-            create: {
-              name: "Inconnu",
-              slug: "inconnu",
-            },
-          });
-          await prisma.hadith.updateMany({
-            where: { narratorId: id },
-            data: { narratorId: unknown.id },
-          });
-        }
+        const unknown = await prisma.chapter.upsert({
+          where: { slug: "inconnu" },
+          update: {},
+          create: {
+            name: "Inconnu",
+            slug: "inconnu",
+            index: 999,
+          },
+        });
+        // 3. Mettre à jour les hadiths
+        await prisma.hadith.updateMany({
+          where: { chapterId: id },
+          data: { chapterId: unknown.id },
+        });
       }
     }
     switch (variant) {
       case "chapters":
         deleted = await prisma.chapter.delete({ where: { id } });
         break;
-      case "narrators":
-        deleted = await prisma.narrator.delete({ where: { id } });
-        break;
+      // case "narrators": (supprimé)
       case "sahabas":
         deleted = await prisma.sahaba.delete({ where: { id } });
         break;
@@ -418,14 +372,14 @@ export async function deleteItem(
 
 /* ADD HADITH */
 export async function addHadith(
-  data: z.infer<typeof hadithSchema>
+  data: z.infer<typeof hadithSchemaServer>
 ): Promise<ActionResponse> {
   // Check admin permission
   const adminCheck = await requireAdmin();
   if (adminCheck !== true) return adminCheck;
 
   // Validate data
-  const parseResult = hadithSchema.safeParse(data);
+  const parseResult = hadithSchemaServer.safeParse(data);
   if (!parseResult.success) {
     return {
       success: false,
@@ -461,27 +415,10 @@ export async function addHadith(
       });
     }
 
-    const narratorSlug = slugify(validData.narrator);
-    let narrator = await prisma.narrator.findUnique({
-      where: { slug: narratorSlug },
-    });
-    if (!narrator) {
-      narrator = await prisma.narrator.findFirst({
-        where: { name: validData.narrator },
-      });
-    }
-
     if (!chapter) {
       return {
         success: false,
         message: `Chapitre "${validData.chapter}" non trouvé`,
-      };
-    }
-
-    if (!narrator) {
-      return {
-        success: false,
-        message: `Narrateur "${validData.narrator}" non trouvé`,
       };
     }
 
@@ -523,8 +460,8 @@ export async function addHadith(
         numero: validData.numero,
         matn_fr: validData.matn_fr,
         matn_ar: validData.matn_ar,
+        matn_en: validData.matn_en ?? "",
         chapterId: chapter.id,
-        narratorId: narrator.id,
         mentionedSahabas: {
           connect: sahabas.map((s) => ({ id: s.id })),
         },
@@ -569,14 +506,14 @@ export async function addHadith(
 /* EDIT HADITH */
 export async function editHadith(
   hadithId: string,
-  data: z.infer<typeof hadithSchema>
+  data: z.infer<typeof hadithSchemaServer>
 ): Promise<ActionResponse> {
   // Check admin permission
   const adminCheck = await requireAdmin();
   if (adminCheck !== true) return adminCheck;
 
   // Validate data
-  const parseResult = hadithSchema.safeParse(data);
+  const parseResult = hadithSchemaServer.safeParse(data);
   if (!parseResult.success) {
     return {
       success: false,
@@ -626,20 +563,10 @@ export async function editHadith(
       });
     }
 
-    const narratorSlug = slugify(validData.narrator);
-    let narrator = await prisma.narrator.findUnique({
-      where: { slug: narratorSlug },
-    });
-    if (!narrator) {
-      narrator = await prisma.narrator.findFirst({
-        where: { name: validData.narrator },
-      });
-    }
-
-    if (!chapter || !narrator) {
+    if (!chapter) {
       return {
         success: false,
-        message: "Chapitre ou narrateur non trouvé",
+        message: "Chapitre non trouvé",
       };
     }
 
@@ -659,8 +586,8 @@ export async function editHadith(
         numero: validData.numero,
         matn_fr: validData.matn_fr,
         matn_ar: validData.matn_ar,
+        matn_en: validData.matn_en ?? "",
         chapterId: chapter.id,
-        narratorId: narrator.id,
       },
     });
 
@@ -709,7 +636,7 @@ export async function editHadith(
     }
 
     revalidatePath("/");
-    revalidatePath(`/hadiths/${validData.numero}`);
+    // revalidatePath(`/hadiths/${validData.numero}`);
 
     return {
       success: true,
@@ -772,13 +699,4 @@ export async function deleteHadith(hadithId: string): Promise<ActionResponse> {
       error: error instanceof Error ? error.message : String(error),
     };
   }
-}
-
-/* DELETE WITH REDIRECT */
-export async function deleteHadithAndRedirect(hadithId: string) {
-  const result = await deleteHadith(hadithId);
-  if (result.success) {
-    redirect("/");
-  }
-  return result;
 }

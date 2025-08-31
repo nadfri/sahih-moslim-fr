@@ -10,7 +10,6 @@ import { FilterType } from "@/src/types/types";
 import { BadgeNumberOfHadith } from "@/src/ui/hadith/BadgeNumberOfHadith/BadgeNumberOfHadith";
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { MultiSelect } from "@/src/ui/inputs/MultiSelect/MultiSelect";
-import { SearchSelect } from "@/src/ui/inputs/SearchSelect/SearchSelect";
 import {
   buildSearchParams,
   detectFilterMode,
@@ -18,11 +17,9 @@ import {
 } from "@/src/utils/searchUtils";
 
 export function SearchBar({
-  narrators,
   sahabas,
   transmitters,
 }: {
-  narrators: string[];
   sahabas: string[];
   transmitters: string[];
 }) {
@@ -36,20 +33,17 @@ export function SearchBar({
 
   const [filterMode, setFilterMode] = useState<FilterType>(initialFilterMode);
   const [query, setQuery] = useState(initialParams.query);
-  const [narrator, setNarrator] = useState(initialParams.narrator);
   const [selectedSahabas, setSelectedSahabas] = useState<string[]>(
     initialParams.sahabas
   );
   const [selectedTransmitters, setSelectedTransmitters] = useState<string[]>(
     initialParams.transmitters
   );
-  const [numero, setNumero] = useState(initialParams.numero);
+  const [numero, setNumero] = useState(initialParams.numero ?? "");
 
-  // Use our optimized search hook
   const { results, isLoading, hasSearched } = useSearch({
     filterMode,
     query,
-    narrator,
     sahabas: selectedSahabas,
     transmitters: selectedTransmitters,
     numero,
@@ -59,13 +53,10 @@ export function SearchBar({
   const [urlUpdateTimer, setUrlUpdateTimer] = useState<NodeJS.Timeout | null>(
     null
   );
-
   // Update URL function
-  // Simplified URL update function using utility
   const updateUrl = (
     urlFilterMode: FilterType,
     urlQuery: string,
-    urlNarrator: string,
     urlSelectedSahabas: string[],
     urlSelectedTransmitters: string[],
     urlNumero: string
@@ -73,12 +64,10 @@ export function SearchBar({
     const params = buildSearchParams(
       urlFilterMode,
       urlQuery,
-      urlNarrator,
       urlSelectedSahabas,
       urlSelectedTransmitters,
       urlNumero
     );
-
     const newUrl = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, "", newUrl);
   };
@@ -86,19 +75,16 @@ export function SearchBar({
   // Handle filter mode change
   const handleFilterModeChange = (newFilterMode: FilterType) => {
     setFilterMode(newFilterMode);
-    updateUrl(newFilterMode, "", "", [], [], "");
   };
 
   // Handle search input changes with debounced URL updates
   const handleSearchChange = (
     newQuery: string,
-    newNarrator: string,
     newSelectedSahabas: string[],
     newSelectedTransmitters: string[],
     newNumero: string
   ) => {
     setQuery(newQuery);
-    setNarrator(newNarrator);
     setSelectedSahabas(newSelectedSahabas);
     setSelectedTransmitters(newSelectedTransmitters);
     setNumero(newNumero);
@@ -107,31 +93,26 @@ export function SearchBar({
     if (urlUpdateTimer) {
       clearTimeout(urlUpdateTimer);
     }
-
     const timer = setTimeout(() => {
       updateUrl(
         filterMode,
         newQuery,
-        newNarrator,
         newSelectedSahabas,
         newSelectedTransmitters,
         newNumero
       );
     }, 500);
-
     setUrlUpdateTimer(timer);
   };
 
-  // Initialize values from URL on component mount
   useEffect(() => {
     const initValues = extractSearchParams(searchParams);
     const initFilterMode = detectFilterMode(initValues);
     setFilterMode(initFilterMode);
     setQuery(initValues.query);
-    setNarrator(initValues.narrator);
     setSelectedSahabas(initValues.sahabas);
     setSelectedTransmitters(initValues.transmitters);
-    setNumero(initValues.numero);
+    setNumero(initValues.numero ?? "");
   }, []);
 
   // Cleanup timer
@@ -149,7 +130,7 @@ export function SearchBar({
         className="mb-6"
         autoComplete="off"
       >
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
           <label
             className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
               filterMode === "word"
@@ -167,23 +148,7 @@ export function SearchBar({
             />
             <span>Par mot</span>
           </label>
-          <label
-            className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
-              filterMode === "narrator"
-                ? "bg-emerald-100 dark:bg-emerald-900/50 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 font-medium"
-                : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
-            }`}
-          >
-            <input
-              type="radio"
-              name="filterMode"
-              value="narrator"
-              checked={filterMode === "narrator"}
-              onChange={() => handleFilterModeChange("narrator")}
-              className="sr-only"
-            />
-            <span>Par Narrateur</span>
-          </label>
+          {/* Narrator filter removed */}
           <label
             className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
               filterMode === "sahaba"
@@ -248,7 +213,6 @@ export function SearchBar({
                   onChange={(e) =>
                     handleSearchChange(
                       e.target.value,
-                      narrator,
                       selectedSahabas,
                       selectedTransmitters,
                       numero
@@ -261,25 +225,6 @@ export function SearchBar({
                 <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
               </div>
             )}
-            {filterMode === "narrator" && (
-              <SearchSelect
-                id="narrator-select"
-                label=""
-                options={narrators}
-                value={narrator}
-                onChange={(value) =>
-                  handleSearchChange(
-                    query,
-                    value,
-                    selectedSahabas,
-                    selectedTransmitters,
-                    numero
-                  )
-                }
-                placeholder="Choisir un narrateur"
-                name="narratorInput"
-              />
-            )}
             {filterMode === "sahaba" && (
               <MultiSelect
                 id="sahaba-multiselect"
@@ -289,7 +234,6 @@ export function SearchBar({
                 onChange={(values) =>
                   handleSearchChange(
                     query,
-                    narrator,
                     values,
                     selectedTransmitters,
                     numero
@@ -306,13 +250,7 @@ export function SearchBar({
                 options={transmitters}
                 selected={selectedTransmitters}
                 onChange={(values) =>
-                  handleSearchChange(
-                    query,
-                    narrator,
-                    selectedSahabas,
-                    values,
-                    numero
-                  )
+                  handleSearchChange(query, selectedSahabas, values, numero)
                 }
                 placeholder="Choisir un ou plusieurs transmetteurs"
                 name="transmitterInput"
@@ -327,7 +265,6 @@ export function SearchBar({
                   onChange={(e) =>
                     handleSearchChange(
                       query,
-                      narrator,
                       selectedSahabas,
                       selectedTransmitters,
                       e.target.value
