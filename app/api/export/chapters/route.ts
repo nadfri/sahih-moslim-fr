@@ -9,7 +9,6 @@ export async function GET() {
       select: {
         index: true,
         name: true,
-        slug: true,
         nameArabic: true,
       },
       orderBy: { index: "asc" },

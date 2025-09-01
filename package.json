@@ -27,7 +27,6 @@
     "@supabase/supabase-js": "^2.56.0",
     "@uiw/react-md-editor": "^4.0.7",
     "babel-plugin-react-compiler": "19.1.0-rc.1",
-    "better-sqlite3": "^12.2.0",
     "lucide-react": "^0.542.0",
     "mark.js": "^8.11.1",
     "next": "15.5.2",

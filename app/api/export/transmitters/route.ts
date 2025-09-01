@@ -8,7 +8,6 @@ export async function GET() {
     const transmitters = await prisma.transmitter.findMany({
       select: {
         name: true,
-        slug: true,
         nameArabic: true,
       },
       orderBy: { name: "asc" },

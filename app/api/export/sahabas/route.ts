@@ -8,7 +8,6 @@ export async function GET() {
     const sahabas = await prisma.sahaba.findMany({
       select: {
         name: true,
-        slug: true,
         nameArabic: true,
       },
       orderBy: { name: "asc" },

@@ -7,6 +7,8 @@ if (process.env.NODE_ENV === "test") {
   config({ path: ".env.test" });
 }
 
+console.log("ENV=", process.env.NODE_ENV);
+
 const globalForPrisma = global as unknown as {
   prisma: PrismaClient;
 };

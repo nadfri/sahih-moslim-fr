@@ -2,211 +2,176 @@
   {
     "index": 0,
     "name": "Introduction",
-    "slug": "introduction",
     "nameArabic": null
   },
   {
     "index": 1,
     "name": "La Foi",
-    "slug": "la-foi",
     "nameArabic": null
   },
   {
     "index": 2,
     "name": "Purification",
-    "slug": "purification",
     "nameArabic": null
   },
   {
     "index": 3,
     "name": "Menstruations",
-    "slug": "menstruations",
     "nameArabic": null
   },
   {
     "index": 4,
     "name": "Prières",
-    "slug": "prieres",
     "nameArabic": null
   },
   {
     "index": 5,
     "name": "Mosquées et lieux de prière",
-    "slug": "mosquees-et-lieux-de-priere",
     "nameArabic": null
   },
   {
     "index": 6,
     "name": "Prière du voyageur",
-    "slug": "priere-du-voyageur",
     "nameArabic": null
   },
   {
     "index": 7,
     "name": "Prière du vendredi",
-    "slug": "priere-du-vendredi",
     "nameArabic": null
   },
   {
     "index": 8,
     "name": "Prière des deux fêtes",
-    "slug": "priere-des-deux-fetes",
     "nameArabic": null
   },
   {
     "index": 9,
     "name": "Prière pour la pluie",
-    "slug": "priere-pour-la-pluie",
     "nameArabic": null
   },
   {
     "index": 10,
     "name": "Prière des éclipses",
-    "slug": "priere-des-eclipses",
     "nameArabic": null
   },
   {
     "index": 11,
     "name": "Prière des funérailles",
-    "slug": "priere-des-funerailles",
     "nameArabic": null
   },
   {
     "index": 12,
     "name": "Zakat",
-    "slug": "zakat",
     "nameArabic": null
   },
   {
     "index": 13,
     "name": "Jeûne",
-    "slug": "jeune",
     "nameArabic": null
   },
   {
     "index": 14,
     "name": "Retraite spirituelle",
-    "slug": "retraite-spirituelle",
     "nameArabic": null
   },
   {
     "index": 15,
     "name": "Pèlerinage",
-    "slug": "pelerinage",
     "nameArabic": null
   },
   {
     "index": 16,
     "name": "Mariage",
-    "slug": "mariage",
     "nameArabic": null
   },
   {
     "index": 17,
     "name": "Allaitement",
-    "slug": "allaitement",
     "nameArabic": null
   },
   {
     "index": 18,
     "name": "Divorce",
-    "slug": "divorce",
     "nameArabic": null
   },
   {
     "index": 19,
     "name": "Invoquer des malédictions",
-    "slug": "invoquer-des-maledictions",
     "nameArabic": null
   },
   {
     "index": 20,
     "name": "Affranchissement",
-    "slug": "affranchissement",
     "nameArabic": null
   },
   {
     "index": 21,
     "name": "Transactions",
-    "slug": "transactions",
     "nameArabic": null
   },
   {
     "index": 22,
     "name": "Irrigations",
-    "slug": "irrigations",
     "nameArabic": null
   },
   {
     "index": 23,
     "name": "Successions",
-    "slug": "successions",
     "nameArabic": null
   },
   {
     "index": 24,
     "name": "Donations",
-    "slug": "donations",
     "nameArabic": null
   },
   {
     "index": 25,
     "name": "Testaments",
-    "slug": "testaments",
     "nameArabic": null
   },
   {
     "index": 26,
     "name": "Voeux",
-    "slug": "voeux",
     "nameArabic": null
   },
   {
     "index": 27,
     "name": "Serments",
-    "slug": "serments",
     "nameArabic": null
   },
   {
     "index": 28,
     "name": "Serments collectifs",
-    "slug": "serments-collectifs",
     "nameArabic": null
   },
   {
     "index": 29,
     "name": "Peines légales",
-    "slug": "peines-legales",
     "nameArabic": null
   },
   {
     "index": 30,
     "name": "Jugements",
-    "slug": "jugements",
     "nameArabic": null
   },
   {
     "index": 31,
     "name": "Objets trouvés",
-    "slug": "objets-trouves",
     "nameArabic": null
   },
   {
     "index": 32,
     "name": "Jihad et Expéditions",
-    "slug": "jihad-et-expeditions",
     "nameArabic": null
   },
   {
     "index": 33,
     "name": "Commandements",
-    "slug": "commandements",
     "nameArabic": null
   },
   {
     "index": 999,
     "name": "Inconnu",
-    "slug": "inconnu",
     "nameArabic": null
   }
 ]

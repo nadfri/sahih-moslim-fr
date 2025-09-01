@@ -5,15 +5,16 @@ import {
   Download,
   Upload,
   Database,
-  FileText,
+  BookText,
   Users,
+  UsersRound,
   BookOpen,
-  User,
   HardDrive,
   ChevronDown,
   ChevronUp,
   X,
 } from "lucide-react";
+import { toast } from "react-toastify";
 
 const exportOptions = [
   {
@@ -27,49 +28,49 @@ const exportOptions = [
     label: "Compagnons",
     endpoint: "/api/export/sahabas",
     filename: "sahabas.json",
-    icon: Users,
-    color: "text-amber-600 dark:text-amber-400",
+    icon: UsersRound,
+    color: "text-emerald-600 dark:text-emerald-400",
   },
   {
     label: "Transmetteurs",
     endpoint: "/api/export/transmitters",
     filename: "transmitters.json",
-    icon: User,
-    color: "text-stone-600 dark:text-stone-400",
+    icon: Users,
+    color: "text-emerald-600 dark:text-emerald-400",
   },
   {
     label: "Hadiths",
     endpoint: "/api/export/hadiths",
     filename: "hadiths.json",
-    icon: FileText,
-    color: "text-emerald-700 dark:text-emerald-300",
+    icon: BookText,
+    color: "text-emerald-600 dark:text-emerald-400",
   },
 ];
 
 const importOptions = [
   {
     label: "Chapitres",
-    endpoint: "/api/import/chapters",
+    endpoint: "chapters",
     icon: BookOpen,
-    color: "text-emerald-600 dark:text-emerald-400",
+    color: "text-amber-600 dark:text-amber-400",
   },
   {
     label: "Compagnons",
-    endpoint: "/api/import/sahabas",
-    icon: Users,
+    endpoint: "sahabas",
+    icon: UsersRound,
     color: "text-amber-600 dark:text-amber-400",
   },
   {
     label: "Transmetteurs",
-    endpoint: "/api/import/transmitters",
-    icon: User,
-    color: "text-stone-600 dark:text-stone-400",
+    endpoint: "transmitters",
+    icon: UsersRound,
+    color: "text-amber-600 dark:text-amber-400",
   },
   {
     label: "Hadiths",
-    endpoint: "/api/import/hadiths",
-    icon: FileText,
-    color: "text-emerald-700 dark:text-emerald-300",
+    endpoint: "hadiths",
+    icon: BookText,
+    color: "text-amber-600 dark:text-amber-400",
   },
 ];
 
@@ -79,6 +80,7 @@ export function DataManagement() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedEndpoint, setSelectedEndpoint] = useState<string>("");
   const [isImporting, setIsImporting] = useState(false);
+  const [isGeneratingBackup, setIsGeneratingBackup] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const titleId = useId();
@@ -97,30 +99,137 @@ export function DataManagement() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+      toast.success("✅ Export réussi !", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     } catch (error) {
       console.error("Export error:", error);
-      alert("Erreur lors de l'export");
+      toast.error("❌ Erreur lors de l'export", {
+        position: "top-right",
+        autoClose: 5000,
+      });
     }
   };
 
-  const handleBackup = async () => {
-    try {
-      const response = await fetch("/api/backup");
-      if (!response.ok) throw new Error("Backup failed");
+  const handleDownloadBackup = async () => {
+    setIsGeneratingBackup(true);
 
-      const result = await response.json();
-      alert(result.message);
+    try {
+      toast.info("🔄 Génération du backup SQL en cours...", {
+        position: "top-right",
+        autoClose: false,
+      });
+
+      const response = await fetch("/api/full-backup", {
+        method: "GET",
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la génération du backup");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+
+      // Utiliser le nom du fichier fourni par l'API via Content-Disposition
+      const contentDisposition = response.headers.get("Content-Disposition");
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="([^"]+)"/);
+        if (filenameMatch) {
+          a.download = filenameMatch[1];
+        } else {
+          // Fallback si le header n'est pas correctement formaté
+          a.download = `sahih-muslim-fr-backup-${new Date().toISOString().split("T")[0]}.sql`;
+        }
+      } else {
+        // Fallback si le header n'existe pas
+        a.download = `sahih-muslim-fr-backup-${new Date().toISOString().split("T")[0]}.sql`;
+      }
+
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      toast.dismiss();
+      toast.success("✅ Backup SQL téléchargé avec succès !", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     } catch (error) {
-      console.error("Backup error:", error);
-      alert("Erreur lors du backup");
+      console.error("Erreur lors du téléchargement du backup:", error);
+      toast.dismiss();
+      toast.error(
+        `❌ Erreur lors du téléchargement: ${
+          error instanceof Error ? error.message : "Erreur inconnue"
+        }`,
+        {
+          position: "top-right",
+          autoClose: 5000,
+        }
+      );
+    } finally {
+      setIsGeneratingBackup(false);
     }
   };
 
   const handleRestore = async (file: File) => {
-    // For restore, we'd need to upload the file and call the API
-    // But for simplicity, just alert
-    console.log("Restore file:", file);
-    alert("Fonctionnalité de restore à implémenter");
+    const confirmed = window.confirm(
+      "⚠️ ATTENTION: Cette action va supprimer TOUTES les données actuelles et les remplacer par celles du fichier SQL. Cette action est IRRÉVERSIBLE et nécessite un fichier .sql généré par pg_dump.\n\nVoulez-vous continuer ?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      toast.info("🔄 Restauration SQL en cours...", {
+        position: "top-right",
+        autoClose: false,
+      });
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/full-restore", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.error || "Erreur lors de la restauration complète"
+        );
+      }
+
+      const result = await response.json();
+
+      toast.dismiss();
+      toast.success(
+        `✅ Restauration SQL terminée avec succès !\n\n⏰ Restauré le: ${new Date(result.restoredAt).toLocaleString()}\n\n⚠️ Toutes les données précédentes ont été supprimées.`,
+        {
+          position: "top-right",
+          autoClose: 8000,
+        }
+      );
+
+      // Recharger la page pour voir les changements
+      setTimeout(() => window.location.reload(), 2000);
+    } catch (error) {
+      console.error("Erreur lors de la restauration complète:", error);
+      toast.dismiss();
+      toast.error(
+        `❌ Erreur lors de la restauration: ${
+          error instanceof Error ? error.message : "Erreur inconnue"
+        }`,
+        {
+          position: "top-right",
+          autoClose: 5000,
+        }
+      );
+    }
   };
 
   const handleImportClick = (endpoint: string) => {
@@ -142,14 +251,23 @@ export function DataManagement() {
       });
 
       if (response.ok) {
-        alert("Import réussi !");
-        window.location.reload();
+        toast.success("✅ Import réussi !", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        setTimeout(() => window.location.reload(), 1000);
       } else {
-        alert("Erreur lors de l'import");
+        toast.error("❌ Erreur lors de l'import", {
+          position: "top-right",
+          autoClose: 5000,
+        });
       }
     } catch (error) {
       console.error("Erreur:", error);
-      alert("Erreur lors de l'import");
+      toast.error("❌ Erreur lors de l'import", {
+        position: "top-right",
+        autoClose: 5000,
+      });
     } finally {
       setIsImporting(false);
       setIsImportModalOpen(false);
@@ -301,11 +419,21 @@ export function DataManagement() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <button
-                onClick={handleBackup}
-                className="flex items-center justify-center gap-3 p-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 font-medium"
+                onClick={handleDownloadBackup}
+                disabled={isGeneratingBackup}
+                className="flex items-center justify-center gap-3 p-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 text-white rounded-lg shadow-md hover:shadow-lg disabled:hover:shadow-md transition-all duration-200 font-medium"
               >
-                <Database className="w-5 h-5" />
-                Créer un Backup
+                {isGeneratingBackup ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                    Génération...
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-5 h-5" />
+                    Télécharger Backup
+                  </>
+                )}
               </button>
               <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-stone-500 to-stone-600 rounded-lg shadow-md">
                 <HardDrive className="w-5 h-5 text-stone-200" />
