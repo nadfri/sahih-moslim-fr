@@ -143,3 +143,22 @@ body[data-theme="dark"]::-webkit-scrollbar-thumb {
   background: #017855; /* emerald-500 */
   border: 1px solid #111827;
 }
+
+/* Scrollbar styling for .scrollbar-thin elements */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #10b981; /* emerald-500 */
+  border-radius: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #f0fdf4;
+}
+[data-theme="dark"] .scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #065f46; /* emerald-700 */
+}
+[data-theme="dark"] .scrollbar-thin::-webkit-scrollbar-track {
+  background: #111827;
+}

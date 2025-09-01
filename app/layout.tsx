@@ -55,6 +55,7 @@ export default async function RootLayout({
         <ToastContainer
           position="top-right"
           autoClose={3000}
+          pauseOnHover={false}
           closeOnClick
           draggable
           theme="colored"
