@@ -74,6 +74,8 @@ const importOptions = [
   },
 ];
 
+type PreviewItem = { name?: string; label?: string; [key: string]: unknown };
+
 export function DataManagement() {
   const [isDataManagementOpen, setIsDataManagementOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -81,6 +83,7 @@ export function DataManagement() {
   const [selectedEndpoint, setSelectedEndpoint] = useState<string>("");
   const [isImporting, setIsImporting] = useState(false);
   const [isGeneratingBackup, setIsGeneratingBackup] = useState(false);
+  const [previewItems, setPreviewItems] = useState<PreviewItem[]>([]);
   const ref = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const titleId = useId();
@@ -396,6 +399,20 @@ export function DataManagement() {
                             const file = e.target.files?.[0];
                             if (file) {
                               setSelectedFile(file);
+                              const reader = new FileReader();
+                              reader.onload = (event) => {
+                                try {
+                                  const json = JSON.parse(
+                                    event.target?.result as string
+                                  );
+                                  setPreviewItems(
+                                    Array.isArray(json) ? json : []
+                                  );
+                                } catch {
+                                  setPreviewItems([]);
+                                }
+                              };
+                              reader.readAsText(file);
                               handleImportClick(option.endpoint);
                             }
                           }}
@@ -497,6 +514,28 @@ export function DataManagement() {
                 <div className="text-xs mt-1 opacity-75">
                   Taille : {(selectedFile.size / 1024).toFixed(1)} KB
                 </div>
+              </div>
+            )}
+            {previewItems.length > 0 && (
+              <div className="mb-4 max-h-48 overflow-auto rounded bg-gray-50 dark:bg-gray-800 p-2 text-xs scrollbar-thin scrollbar-thumb-emerald-400 dark:scrollbar-thumb-emerald-700 scrollbar-track-gray-200 dark:scrollbar-track-gray-900 text-gray-800 dark:text-emerald-200">
+                <div className="font-medium mb-1 text-emerald-700 dark:text-emerald-300">
+                  Aperçu des items à importer :
+                </div>
+                <ul className="list-disc pl-4">
+                  {previewItems.slice(0, 10).map((item, idx) => (
+                    <li
+                      key={idx}
+                      className="mb-1 text-sm text-emerald-700 dark:text-emerald-300"
+                    >
+                      {item.name || item.label || JSON.stringify(item)}
+                    </li>
+                  ))}
+                  {previewItems.length > 10 && (
+                    <li className="text-xs text-gray-500 dark:text-gray-400">
+                      ...et {previewItems.length - 10} autres
+                    </li>
+                  )}
+                </ul>
               </div>
             )}
             <div className="flex justify-end gap-2">
