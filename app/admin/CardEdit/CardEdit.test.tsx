@@ -17,7 +17,7 @@ vi.mock("@/src/services/actions", () => ({
   deleteItem: vi.fn(),
 }));
 
-vi.mock("../../ConfirmDeleteModal/ConfirmDeleteModal", () => ({
+vi.mock("../../../src/ui/ConfirmDeleteModal/ConfirmDeleteModal", () => ({
   ConfirmDeleteModal: vi.fn(
     ({ open, onCancel, onConfirm, title, description, hadithCount }) =>
       open ? (
@@ -32,7 +32,7 @@ vi.mock("../../ConfirmDeleteModal/ConfirmDeleteModal", () => ({
   ),
 }));
 
-vi.mock("../../forms/EditItemFormDialog/EditItemFormDialog", () => ({
+vi.mock("../../../src/ui/forms/EditItemFormDialog/EditItemFormDialog", () => ({
   EditItemFormDialog: vi.fn(({ open, onCancel, item, variant }) =>
     open ? (
       <div data-testid="edit-item-dialog">
@@ -44,11 +44,14 @@ vi.mock("../../forms/EditItemFormDialog/EditItemFormDialog", () => ({
   ),
 }));
 
-vi.mock("../../hadith/BadgeNumberOfHadith/BadgeNumberOfHadith", () => ({
-  BadgeNumberOfHadith: vi.fn(({ count }) => (
-    <span data-testid="hadith-badge">{count} hadiths</span>
-  )),
-}));
+vi.mock(
+  "../../../src/ui/hadith/BadgeNumberOfHadith/BadgeNumberOfHadith",
+  () => ({
+    BadgeNumberOfHadith: vi.fn(({ count }) => (
+      <span data-testid="hadith-badge">{count} hadiths</span>
+    )),
+  })
+);
 
 const mockChapterItem: ItemType = {
   id: "1",

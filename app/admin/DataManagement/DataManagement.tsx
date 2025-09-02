@@ -15,66 +15,66 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "react-toastify";
+import { ItemFormValues } from "@/src/types/types";
 
-const exportOptions = [
+const dataOptions = [
   {
+    key: "chapters",
     label: "Chapitres",
-    endpoint: "/api/export/chapters",
-    filename: "chapters.json",
     icon: BookOpen,
-    color: "text-emerald-600 dark:text-emerald-400",
+    export: {
+      endpoint: "/api/export/chapters",
+      filename: "chapters.json",
+      color: "text-emerald-600 dark:text-emerald-400",
+    },
+    import: {
+      endpoint: "chapters",
+      color: "text-amber-600 dark:text-amber-400",
+    },
   },
   {
+    key: "sahabas",
     label: "Compagnons",
-    endpoint: "/api/export/sahabas",
-    filename: "sahabas.json",
     icon: UsersRound,
-    color: "text-emerald-600 dark:text-emerald-400",
+    export: {
+      endpoint: "/api/export/sahabas",
+      filename: "sahabas.json",
+      color: "text-emerald-600 dark:text-emerald-400",
+    },
+    import: {
+      endpoint: "sahabas",
+      color: "text-amber-600 dark:text-amber-400",
+    },
   },
   {
+    key: "transmitters",
     label: "Transmetteurs",
-    endpoint: "/api/export/transmitters",
-    filename: "transmitters.json",
     icon: Users,
-    color: "text-emerald-600 dark:text-emerald-400",
+    export: {
+      endpoint: "/api/export/transmitters",
+      filename: "transmitters.json",
+      color: "text-emerald-600 dark:text-emerald-400",
+    },
+    import: {
+      endpoint: "transmitters",
+      color: "text-amber-600 dark:text-amber-400",
+    },
   },
   {
+    key: "hadiths",
     label: "Hadiths",
-    endpoint: "/api/export/hadiths",
-    filename: "hadiths.json",
     icon: BookText,
-    color: "text-emerald-600 dark:text-emerald-400",
+    export: {
+      endpoint: "/api/export/hadiths",
+      filename: "hadiths.json",
+      color: "text-emerald-600 dark:text-emerald-400",
+    },
+    import: {
+      endpoint: "hadiths",
+      color: "text-amber-600 dark:text-amber-400",
+    },
   },
 ];
-
-const importOptions = [
-  {
-    label: "Chapitres",
-    endpoint: "chapters",
-    icon: BookOpen,
-    color: "text-amber-600 dark:text-amber-400",
-  },
-  {
-    label: "Compagnons",
-    endpoint: "sahabas",
-    icon: UsersRound,
-    color: "text-amber-600 dark:text-amber-400",
-  },
-  {
-    label: "Transmetteurs",
-    endpoint: "transmitters",
-    icon: UsersRound,
-    color: "text-amber-600 dark:text-amber-400",
-  },
-  {
-    label: "Hadiths",
-    endpoint: "hadiths",
-    icon: BookText,
-    color: "text-amber-600 dark:text-amber-400",
-  },
-];
-
-type PreviewItem = { name?: string; label?: string; [key: string]: unknown };
 
 export function DataManagement() {
   const [isDataManagementOpen, setIsDataManagementOpen] = useState(false);
@@ -83,7 +83,7 @@ export function DataManagement() {
   const [selectedEndpoint, setSelectedEndpoint] = useState<string>("");
   const [isImporting, setIsImporting] = useState(false);
   const [isGeneratingBackup, setIsGeneratingBackup] = useState(false);
-  const [previewItems, setPreviewItems] = useState<PreviewItem[]>([]);
+  const [previewItems, setPreviewItems] = useState<ItemFormValues[]>([]);
   const ref = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const titleId = useId();
@@ -102,16 +102,10 @@ export function DataManagement() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      toast.success("✅ Export réussi !", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      toast.success("✅ Export réussi !");
     } catch (error) {
       console.error("Export error:", error);
-      toast.error("❌ Erreur lors de l'export", {
-        position: "top-right",
-        autoClose: 5000,
-      });
+      toast.error("❌ Erreur lors de l'export");
     }
   };
 
@@ -240,6 +234,24 @@ export function DataManagement() {
     setIsImportModalOpen(true);
   };
 
+  // Reusable file input change handler used by import inputs
+  const handleFileChange = (file: File | undefined, importEndpoint: string) => {
+    if (!file) return;
+    setSelectedFile(file);
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const json = JSON.parse(event.target?.result as string);
+        setPreviewItems(Array.isArray(json) ? json : []);
+      } catch {
+        setPreviewItems([]);
+      }
+    };
+    reader.readAsText(file);
+    handleImportClick(importEndpoint);
+  };
+
   const handleImportConfirm = async () => {
     if (!selectedFile || !selectedEndpoint) return;
 
@@ -330,13 +342,16 @@ export function DataManagement() {
                   </h3>
                 </div>
                 <div className="grid grid-cols-1 gap-2">
-                  {exportOptions.map((option) => {
+                  {dataOptions.map((option) => {
                     const Icon = option.icon;
                     return (
                       <button
-                        key={option.endpoint}
+                        key={`${option.key}-export`}
                         onClick={() =>
-                          handleExport(option.endpoint, option.filename)
+                          handleExport(
+                            option.export.endpoint,
+                            option.export.filename
+                          )
                         }
                         className="group flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg border border-emerald-200 dark:border-emerald-800 hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-md transition-all duration-200"
                       >
@@ -344,7 +359,9 @@ export function DataManagement() {
                           <div
                             className={`p-2 rounded-md bg-emerald-50 dark:bg-emerald-900/30 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900/50 transition-colors`}
                           >
-                            <Icon className={`w-5 h-5 ${option.color}`} />
+                            <Icon
+                              className={`w-5 h-5 ${option.export.color}`}
+                            />
                           </div>
                           <div className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
                             {option.label}
@@ -371,18 +388,20 @@ export function DataManagement() {
                   </h3>
                 </div>
                 <div className="grid grid-cols-1 gap-2">
-                  {importOptions.map((option) => {
+                  {dataOptions.map((option) => {
                     const Icon = option.icon;
                     return (
                       <label
-                        key={option.endpoint}
+                        key={`${option.key}-import`}
                         className="group flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg border border-amber-200 dark:border-amber-800 hover:border-amber-300 dark:hover:border-amber-700 hover:shadow-md transition-all duration-200 cursor-pointer"
                       >
                         <div className="flex items-center gap-3">
                           <div
                             className={`p-2 rounded-md bg-amber-50 dark:bg-amber-900/30 group-hover:bg-amber-100 dark:group-hover:bg-amber-900/50 transition-colors`}
                           >
-                            <Icon className={`w-5 h-5 ${option.color}`} />
+                            <Icon
+                              className={`w-5 h-5 ${option.import.color}`}
+                            />
                           </div>
                           <div className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-amber-700 dark:group-hover:text-amber-300 transition-colors">
                             {option.label}
@@ -397,24 +416,7 @@ export function DataManagement() {
                           accept=".json"
                           onChange={(e) => {
                             const file = e.target.files?.[0];
-                            if (file) {
-                              setSelectedFile(file);
-                              const reader = new FileReader();
-                              reader.onload = (event) => {
-                                try {
-                                  const json = JSON.parse(
-                                    event.target?.result as string
-                                  );
-                                  setPreviewItems(
-                                    Array.isArray(json) ? json : []
-                                  );
-                                } catch {
-                                  setPreviewItems([]);
-                                }
-                              };
-                              reader.readAsText(file);
-                              handleImportClick(option.endpoint);
-                            }
+                            handleFileChange(file, option.import.endpoint);
                           }}
                           className="sr-only"
                         />
@@ -527,7 +529,7 @@ export function DataManagement() {
                       key={idx}
                       className="mb-1 text-sm text-emerald-700 dark:text-emerald-300"
                     >
-                      {item.name || item.label || JSON.stringify(item)}
+                      {item.name}
                     </li>
                   ))}
                   {previewItems.length > 10 && (
