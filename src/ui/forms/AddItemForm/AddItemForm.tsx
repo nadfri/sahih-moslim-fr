@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -33,10 +33,9 @@ const placeholderText = {
 };
 
 export function AddItemForm({ items: serverItems, variant }: Props) {
-  const [items, setItems] = useState<ItemType[]>(serverItems);
   const [isPending, startTransition] = useTransition();
 
-  const ItemAddSchema = getItemFormSchema(items, variant);
+  const ItemAddSchema = getItemFormSchema(serverItems, variant);
 
   const {
     register,
@@ -49,9 +48,17 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
     defaultValues: {
       name: "",
       nameArabic: "",
-      index: nextAvailableIndex(items, variant),
+      index: nextAvailableIndex(serverItems, variant),
     },
   });
+
+  useEffect(() => {
+    reset({
+      name: "",
+      nameArabic: "",
+      index: nextAvailableIndex(serverItems, variant),
+    });
+  }, [serverItems, variant, reset]);
 
   function addItemSubmit(formData: z.infer<typeof ItemAddSchema>) {
     startTransition(async () => {
@@ -60,19 +67,6 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
 
         if (response.success && response.data) {
           toast.success(response.message);
-
-          const newItem = response.data as ItemType;
-
-          const newList = [...items, newItem];
-          setItems(newList);
-
-          const newSuggestedIndex = nextAvailableIndex(newList, variant);
-
-          reset({
-            name: "",
-            nameArabic: "",
-            index: newSuggestedIndex,
-          });
         } else {
           toast.error(response.message || "Une erreur est survenue.");
         }
@@ -100,7 +94,7 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
           {variant === "chapters" && (
             <div>
               <p className="text-xs text-gray-500 dark:text-gray-400 m-0 text-right relative top-4">
-                Suggéré: {nextAvailableIndex(items, variant)}
+                Suggéré: {nextAvailableIndex(serverItems, variant)}
               </p>
 
               <Input
