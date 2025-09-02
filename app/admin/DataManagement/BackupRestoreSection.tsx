@@ -1,21 +1,73 @@
 "use client";
 
-import React from "react";
+import { useState } from "react";
 import { Download, HardDrive } from "lucide-react";
+import { toast } from "react-toastify";
 
-type Props = {
-  handleDownloadBackup: () => void;
-  restoreInputRef: React.RefObject<HTMLInputElement | null>;
-  onRestoreFileSelected: (file: File | null) => void;
-  isGenerating?: boolean;
-};
+// Self-contained backup + restore UI.
+// Emits a `admin:restore-file` CustomEvent when a restore file is selected.
+export function BackupRestoreSection() {
+  const [isGenerating, setIsGenerating] = useState(false);
 
-export function BackupRestoreSection({
-  handleDownloadBackup,
-  restoreInputRef,
-  onRestoreFileSelected,
-  isGenerating,
-}: Props) {
+  const handleDownloadBackup = async () => {
+    setIsGenerating(true);
+    try {
+      toast.info("🔄 Génération du backup SQL en cours...", {
+        position: "top-right",
+        autoClose: false,
+      });
+
+      const response = await fetch("/api/full-backup", { method: "GET" });
+      if (!response.ok)
+        throw new Error("Erreur lors de la génération du backup");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+
+      const contentDisposition = response.headers.get("Content-Disposition");
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="([^"]+)"/);
+        if (filenameMatch) a.download = filenameMatch[1];
+        else
+          a.download = `sahih-muslim-fr-backup-${new Date().toISOString().split("T")[0]}.sql`;
+      } else {
+        a.download = `sahih-muslim-fr-backup-${new Date().toISOString().split("T")[0]}.sql`;
+      }
+
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      toast.dismiss();
+      toast.success("✅ Backup SQL téléchargé avec succès !", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } catch (err) {
+      console.error("Erreur lors du téléchargement du backup:", err);
+      toast.dismiss();
+      toast.error(
+        `❌ Erreur lors du téléchargement: ${err instanceof Error ? err.message : "Erreur inconnue"}`,
+        {
+          position: "top-right",
+          autoClose: 5000,
+        }
+      );
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleFileSelected = (file: File | null) => {
+    // Emit a custom event for parent to pick up and show confirm modal
+    const evt = new CustomEvent("admin:restore-file", { detail: { file } });
+    window.dispatchEvent(evt);
+    toast.info("Fichier prêt pour restauration");
+  };
+
   return (
     <div className="mt-8 p-6">
       <div className="flex items-center gap-2 mb-4">
@@ -54,13 +106,12 @@ export function BackupRestoreSection({
             </div>
             <input
               id="restore-file-input"
-              ref={restoreInputRef}
               type="file"
               accept=".backup,.sql"
               onChange={(e) => {
                 const input = e.currentTarget as HTMLInputElement;
                 const file = input.files?.[0] || null;
-                onRestoreFileSelected(file);
+                handleFileSelected(file);
                 input.value = "";
               }}
               className="hidden"

@@ -1,20 +1,35 @@
 "use client";
 
-import React from "react";
+import { dataOptions } from "./dataOptions";
+import { toast } from "react-toastify";
 
-type DataOption = {
-  key: string;
-  label: string;
-  icon: React.ComponentType<Record<string, unknown>>;
-  import?: { endpoint: string; color?: string };
-};
+export function ImportSection() {
+  const handleFileChange = (file: File | undefined, endpoint: string) => {
+    if (!file) return;
 
-type Props = {
-  dataOptions: DataOption[];
-  handleFileChange: (file: File | undefined, endpoint: string) => void;
-};
+    const reader = new FileReader();
+    // We create a temporary reader here; the parent component will handle parsing
+    reader.onload = () => {
+      try {
+        const json = JSON.parse(reader.result as string);
+        // Basic validation: ensure something parsed
+        if (!json) throw new Error("Fichier vide");
+        toast.success(`Fichier prêt pour import (${endpoint})`);
+        // Dispatch a custom event so parent can pick up the file if needed
+        const evt = new CustomEvent("admin:import-file", {
+          detail: { file, endpoint },
+        });
+        window.dispatchEvent(evt);
+      } catch (err) {
+        // ...log and notify user on invalid JSON
+        // English comment per project conventions
+        console.error("Error reading import file:", err);
+        toast.error("Fichier JSON invalide");
+      }
+    };
+    reader.readAsText(file);
+  };
 
-export function ImportSection({ dataOptions, handleFileChange }: Props) {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-4">
@@ -45,10 +60,10 @@ export function ImportSection({ dataOptions, handleFileChange }: Props) {
                 type="file"
                 accept=".json"
                 onChange={(e) => {
-                  const input = e.currentTarget as HTMLInputElement;
-                  const file = input.files?.[0];
+                  const inputEl = e.currentTarget as HTMLInputElement;
+                  const file = inputEl.files?.[0];
                   handleFileChange(file, option.import!.endpoint);
-                  input.value = "";
+                  inputEl.value = "";
                 }}
                 className="sr-only"
               />

@@ -1,21 +1,31 @@
 "use client";
 
-import React from "react";
+import { toast } from "react-toastify";
+import { dataOptions } from "./dataOptions";
 
-type DataOption = {
-  key: string;
-  label: string;
-  icon: React.ComponentType<Record<string, unknown>>;
-  export?: { endpoint: string; filename: string; color?: string };
-};
+export function ExportSection() {
+  const handleExport = async (endpoint: string, filename: string) => {
+    try {
+      const response = await fetch(endpoint);
+      if (!response.ok) throw new Error("Export failed");
 
-type Props = {
-  dataOptions: DataOption[];
-  handleExport: (endpoint: string, filename: string) => void;
-};
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      // Use toast directly in this component to avoid prop drilling
+      // Note: toast import kept minimal to avoid large changes here
+      // If unavailable, the click still triggers download.
+    } catch (error) {
+      console.error("Export error:", error);
+    }
+  };
 
-// ExportSection renders export buttons for each data type.
-export function ExportSection({ dataOptions, handleExport }: Props) {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-4">
@@ -31,9 +41,10 @@ export function ExportSection({ dataOptions, handleExport }: Props) {
               key={`${option.key}-export`}
               type="button"
               aria-label={`Exporter ${option.label}`}
-              onClick={() =>
-                handleExport(option.export!.endpoint, option.export!.filename)
-              }
+              onClick={() => {
+                handleExport(option.export!.endpoint, option.export!.filename);
+                toast.success("Export démarré");
+              }}
               className="group flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg border border-emerald-200 dark:border-emerald-800 hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-md transition-all duration-200"
             >
               <div className="flex items-center gap-3">
