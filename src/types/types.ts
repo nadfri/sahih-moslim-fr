@@ -15,6 +15,23 @@ export const SchemaItemStructure = z.object({
 });
 export type ItemType = z.infer<typeof SchemaItemStructure>;
 
+// Permissive schema for imports/preview: exported items may not include id/slug
+export const ImportItemSchema = z.object({
+  id: z.string().optional(),
+  index: z.number().optional(),
+  name: z.string(),
+  slug: z.string().optional(),
+  nameArabic: z.string().nullable().optional(),
+  hadithCount: z.number().optional(),
+});
+export type ImportItemType = z.infer<typeof ImportItemSchema>;
+
+// Schema for chapter imports where `index` must be present.
+export const ChapterImportSchema = ImportItemSchema.extend({
+  index: z.number(),
+});
+export type ChapterImportType = z.infer<typeof ChapterImportSchema>;
+
 export type ItemFormValues = Omit<ItemType, "id" | "slug" | "hadithCount">;
 
 export const HadithSchema = z.object({

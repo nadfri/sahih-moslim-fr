@@ -1,15 +1,13 @@
 "use client";
 
 import { useState, useId, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
-  Download,
-  Upload,
   Database,
   BookText,
   Users,
   UsersRound,
   BookOpen,
-  HardDrive,
   ChevronDown,
   ChevronUp,
   X,
@@ -18,9 +16,14 @@ import { toast } from "react-toastify";
 import {
   ExportedHadithType,
   ExportedHadithSchema,
-  SchemaItemStructure,
   ItemType,
+  ImportItemSchema,
+  ChapterImportSchema,
 } from "@/src/types/types";
+import { ExportSection } from "./ExportSection";
+import { ImportSection } from "./ImportSection";
+import { BackupRestoreSection } from "./BackupRestoreSection";
+// ImportModal available if needed elsewhere
 
 const dataOptions = [
   {
@@ -84,13 +87,19 @@ const dataOptions = [
 export function DataManagement() {
   const [isDataManagementOpen, setIsDataManagementOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedEndpoint, setSelectedEndpoint] = useState<string>("");
   const [isImporting, setIsImporting] = useState(false);
-  const [failedHadiths, setFailedHadiths] = useState<
-    { numero?: number; reason: string }[]
-  >([]);
   const [isGeneratingBackup, setIsGeneratingBackup] = useState(false);
+  const [failedItems, setFailedItems] = useState<
+    Array<{ item?: unknown; reason: string }>
+  >([]);
+  const [pendingRestoreFile, setPendingRestoreFile] = useState<File | null>(
+    null
+  );
+  const [isRestoring, setIsRestoring] = useState(false);
+
   const [previewItems, setPreviewItems] = useState<
     Array<ExportedHadithType | ItemType>
   >([]);
@@ -98,6 +107,7 @@ export function DataManagement() {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const restoreInputRef = useRef<HTMLInputElement | null>(null);
   const titleId = useId();
+  const router = useRouter();
 
   // Return a compact preview string for an item or hadith
   const getPreviewText = (item: ExportedHadithType | ItemType) => {
@@ -107,6 +117,15 @@ export function DataManagement() {
     const hadith = item as ExportedHadithType;
 
     return `Hadith #${hadith.numero}`;
+  };
+
+  // Safely extract a display label from an unknown failed item
+  const getFailedItemLabel = (obj: unknown) => {
+    if (!obj || typeof obj !== "object") return "Item";
+    const record = obj as Record<string, unknown>;
+    if (typeof record.numero === "number") return `Hadith #${record.numero}`;
+    if (typeof record.name === "string") return record.name;
+    return "Item";
   };
 
   const handleExport = async (endpoint: string, filename: string) => {
@@ -194,13 +213,9 @@ export function DataManagement() {
     }
   };
 
-  const handleRestore = async (file: File) => {
-    const confirmed = window.confirm(
-      "⚠️ ATTENTION: Cette action va supprimer TOUTES les données actuelles et les remplacer par celles du fichier SQL. Cette action est IRRÉVERSIBLE et nécessite un fichier .sql généré par pg_dump.\n\nVoulez-vous continuer ?"
-    );
-
-    if (!confirmed) return;
-
+  // Show a confirmation modal before executing the restore.
+  const performRestore = async (file: File) => {
+    setIsRestoring(true);
     try {
       toast.info("🔄 Restauration SQL en cours...", {
         position: "top-right",
@@ -216,7 +231,7 @@ export function DataManagement() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({}));
         throw new Error(
           errorData.error || "Erreur lors de la restauration complète"
         );
@@ -233,20 +248,22 @@ export function DataManagement() {
         }
       );
 
-      // Recharger la page pour voir les changements
-      setTimeout(() => window.location.reload(), 2000);
+      // server performs revalidation and redirect; ensure client navigates home
+      router.push("/");
     } catch (error) {
       console.error("Erreur lors de la restauration complète:", error);
       toast.dismiss();
       toast.error(
-        `❌ Erreur lors de la restauration: ${
-          error instanceof Error ? error.message : "Erreur inconnue"
-        }`,
+        `❌ Erreur lors de la restauration: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
         {
           position: "top-right",
           autoClose: 5000,
         }
       );
+    } finally {
+      setIsRestoring(false);
+      setPendingRestoreFile(null);
+      setIsRestoreModalOpen(false);
     }
   };
 
@@ -264,13 +281,26 @@ export function DataManagement() {
     reader.onload = (event) => {
       try {
         const json = JSON.parse(event.target?.result as string);
-        const arr = Array.isArray(json) ? json : [];
+        // Support multiple export shapes:
+        // - array directly: [{...}, {...}]
+        // - wrapped object: { chapters: [...]} or { data: [...] }
+        let arr: unknown[] = [];
+        if (Array.isArray(json)) {
+          arr = json;
+        } else if (json && typeof json === "object") {
+          // find the first property that is an array
+          const values = Object.values(json as Record<string, unknown>);
+          const firstArray = values.find((v) => Array.isArray(v));
+          if (Array.isArray(firstArray)) arr = firstArray as unknown[];
+        }
 
         // Choose validation schema based on endpoint
         if (importEndpoint === "hadiths") {
           const parsed = ExportedHadithSchema.array().safeParse(arr);
           if (parsed.success) {
             setPreviewItems(parsed.data);
+            // only open confirmation modal when preview is valid
+            handleImportClick(importEndpoint);
           } else {
             setPreviewItems([]);
             toast.error(
@@ -281,11 +311,54 @@ export function DataManagement() {
               parsed.error.issues
             );
           }
-        } else {
-          // validate generic item structure (chapter / sahaba / transmitter)
-          const parsed = SchemaItemStructure.array().safeParse(arr);
+        } else if (importEndpoint === "chapters") {
+          // validate chapters where index must be present
+          const parsed = ChapterImportSchema.array().safeParse(arr);
           if (parsed.success) {
-            setPreviewItems(parsed.data);
+            // normalize preview items to ItemType-ish for display: ensure id/slug exist-ish
+            const normalized = parsed.data.map((it) => ({
+              id:
+                (it.id as string) ||
+                `preview-${Math.random().toString(36).slice(2, 8)}`,
+              index: it.index as number | undefined,
+              name: it.name,
+              slug:
+                (it.slug as string) ||
+                (it.name || "").toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+              nameArabic: it.nameArabic,
+              hadithCount: it.hadithCount,
+            }));
+            setPreviewItems(normalized as ItemType[]);
+            // only open confirmation modal when preview is valid
+            handleImportClick(importEndpoint);
+          } else {
+            setPreviewItems([]);
+            toast.error(
+              "❌ Fichier JSON invalide pour l'import (format chapters attendu)"
+            );
+            console.debug(
+              "Import preview validation errors:",
+              parsed.error.issues
+            );
+          }
+        } else {
+          // validate generic item structure (sahaba / transmitter)
+          const parsed = ImportItemSchema.array().safeParse(arr);
+          if (parsed.success) {
+            const normalized = parsed.data.map((it) => ({
+              id:
+                (it.id as string) ||
+                `preview-${Math.random().toString(36).slice(2, 8)}`,
+              index: it.index as number | undefined,
+              name: it.name,
+              slug:
+                (it.slug as string) ||
+                (it.name || "").toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+              nameArabic: it.nameArabic,
+              hadithCount: it.hadithCount,
+            }));
+            setPreviewItems(normalized as ItemType[]);
+            handleImportClick(importEndpoint);
           } else {
             setPreviewItems([]);
             toast.error(
@@ -303,7 +376,6 @@ export function DataManagement() {
       }
     };
     reader.readAsText(file);
-    handleImportClick(importEndpoint);
   };
 
   const handleImportConfirm = async () => {
@@ -327,9 +399,9 @@ export function DataManagement() {
           Array.isArray(data.failed) &&
           data.failed.length > 0
         ) {
-          setFailedHadiths(data.failed);
+          setFailedItems(data.failed);
           toast.warn(
-            `⚠️ ${data.failed.length} hadith(s) n'ont pas pu être importés. Voir détails.`,
+            `⚠️ ${data.failed.length} item(s) n'ont pas pu être importés. Voir détails.`,
             { position: "top-right", autoClose: 5000 }
           );
         } else {
@@ -337,7 +409,8 @@ export function DataManagement() {
             position: "top-right",
             autoClose: 3000,
           });
-          setTimeout(() => window.location.reload(), 1000);
+          // trigger client-side refresh so server revalidation is reflected
+          router.refresh();
         }
       } else {
         toast.error("❌ Erreur lors de l'import", {
@@ -401,156 +474,28 @@ export function DataManagement() {
         >
           <div className="p-6 pt-0">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Export */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 mb-4">
-                  <Download className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                  <h3 className="text-lg font-semibold text-emerald-700 dark:text-emerald-300">
-                    Exporter en JSON
-                  </h3>
-                </div>
-                <div className="grid grid-cols-1 gap-2">
-                  {dataOptions.map((option) => {
-                    const Icon = option.icon;
-                    return (
-                      <button
-                        key={`${option.key}-export`}
-                        type="button"
-                        aria-label={`Exporter ${option.label}`}
-                        onClick={() =>
-                          handleExport(
-                            option.export.endpoint,
-                            option.export.filename
-                          )
-                        }
-                        className="group flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg border border-emerald-200 dark:border-emerald-800 hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-md transition-all duration-200"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`p-2 rounded-md bg-emerald-50 dark:bg-emerald-900/30 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900/50 transition-colors`}
-                          >
-                            <Icon
-                              className={`w-5 h-5 ${option.export.color}`}
-                            />
-                          </div>
-                          <div className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
-                            {option.label}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
-                          <span className="text-sm font-medium">
-                            Télécharger
-                          </span>
-                          <Download className="w-4 h-4" />
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Import */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 mb-4">
-                  <Upload className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-                  <h3 className="text-lg font-semibold text-amber-700 dark:text-amber-300">
-                    Importer depuis JSON
-                  </h3>
-                </div>
-                <div className="grid grid-cols-1 gap-2">
-                  {dataOptions.map((option) => {
-                    const Icon = option.icon;
-                    return (
-                      <label
-                        key={`${option.key}-import`}
-                        className="group flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg border border-amber-200 dark:border-amber-800 hover:border-amber-300 dark:hover:border-amber-700 hover:shadow-md transition-all duration-200 cursor-pointer"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`p-2 rounded-md bg-amber-50 dark:bg-amber-900/30 group-hover:bg-amber-100 dark:group-hover:bg-amber-900/50 transition-colors`}
-                          >
-                            <Icon
-                              className={`w-5 h-5 ${option.import.color}`}
-                            />
-                          </div>
-                          <div className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-amber-700 dark:group-hover:text-amber-300 transition-colors">
-                            {option.label}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
-                          <span className="text-sm font-medium">Importer</span>
-                          <Upload className="w-4 h-4" />
-                        </div>
-                        <input
-                          type="file"
-                          accept=".json"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            handleFileChange(file, option.import.endpoint);
-                          }}
-                          className="sr-only"
-                        />
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
+              <ExportSection
+                dataOptions={dataOptions}
+                handleExport={handleExport}
+              />
+              <ImportSection
+                dataOptions={dataOptions}
+                handleFileChange={handleFileChange}
+              />
             </div>
           </div>
 
-          {/* Backup/Restore */}
-          <div className="mt-8 p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <HardDrive className="w-5 h-5 text-stone-600 dark:text-stone-400" />
-              <h3 className="text-lg font-semibold text-stone-700 dark:text-stone-300">
-                Sauvegarde Base de Données
-              </h3>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <button
-                onClick={handleDownloadBackup}
-                type="button"
-                aria-label="Télécharger le backup SQL"
-                disabled={isGeneratingBackup}
-                className="flex items-center justify-center gap-3 p-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 text-white rounded-lg shadow-md hover:shadow-lg disabled:hover:shadow-md transition-all duration-200 font-medium"
-              >
-                {isGeneratingBackup ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                    Génération...
-                  </>
-                ) : (
-                  <>
-                    <Download className="w-5 h-5" />
-                    Télécharger Backup
-                  </>
-                )}
-              </button>
-              <label
-                htmlFor="restore-file-input"
-                aria-label="Restaurer depuis backup"
-                className="flex items-center gap-3 p-3 bg-gradient-to-r from-stone-500 to-stone-600 rounded-lg shadow-md cursor-pointer"
-              >
-                <HardDrive className="w-5 h-5 text-stone-200" />
-                <div className="flex-1">
-                  <div className="font-medium text-stone-100 mb-1">
-                    Restaurer depuis Backup
-                  </div>
-                  <input
-                    id="restore-file-input"
-                    ref={restoreInputRef}
-                    type="file"
-                    accept=".sql"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleRestore(file);
-                    }}
-                    className="hidden"
-                  />
-                </div>
-              </label>
-            </div>
-          </div>
+          <BackupRestoreSection
+            handleDownloadBackup={handleDownloadBackup}
+            restoreInputRef={restoreInputRef}
+            isGenerating={isGeneratingBackup}
+            onRestoreFileSelected={(file) => {
+              if (file) {
+                setPendingRestoreFile(file);
+                setIsRestoreModalOpen(true);
+              }
+            }}
+          />
         </div>
       </div>
 
@@ -657,8 +602,8 @@ export function DataManagement() {
           </div>
         </div>
       )}
-      {/* Failed hadiths modal */}
-      {failedHadiths.length > 0 && (
+      {/* Failed items modal (generic for hadiths/items) */}
+      {failedItems.length > 0 && (
         <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/40 dark:bg-black/70 px-2">
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-md w-full">
             <div className="flex items-center justify-between mb-2">
@@ -666,32 +611,104 @@ export function DataManagement() {
                 Échecs d'import
               </h2>
               <button
-                onClick={() => setFailedHadiths([])}
+                onClick={() => setFailedItems([])}
                 className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="mb-4 text-sm dark:text-gray-300">
-              Certains hadiths n'ont pas pu être importés. Voir la liste
+              Certains éléments n'ont pas pu être importés. Voir la liste
               ci‑dessous :
             </div>
             <ul className="mb-4 text-sm list-disc pl-4 space-y-1">
-              {failedHadiths.map((f) => (
+              {failedItems.map((f, i) => (
                 <li
-                  key={f.numero ?? Math.random()}
+                  key={i}
                   className="text-red-700 dark:text-red-400"
                 >
-                  Hadith #{f.numero ?? "?"} — {f.reason}
+                  {`${getFailedItemLabel(f.item)} — ${f.reason}`}
                 </li>
               ))}
             </ul>
             <div className="flex justify-end">
               <button
-                onClick={() => setFailedHadiths([])}
+                onClick={() => setFailedItems([])}
                 className="px-3 py-2 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white"
               >
                 Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Restore Confirmation Modal */}
+      {isRestoreModalOpen && pendingRestoreFile && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/70 px-2"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="restore-title"
+        >
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-sm w-full">
+            <div className="flex items-center justify-between mb-2">
+              <h2
+                className="text-lg font-semibold dark:text-white"
+                id="restore-title"
+              >
+                Confirmer la restauration
+              </h2>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsRestoreModalOpen(false);
+                  setPendingRestoreFile(null);
+                }}
+                disabled={isRestoring}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="mb-4 dark:text-gray-300">
+              Êtes-vous sûr de vouloir restaurer la base de données depuis ce
+              fichier ?
+            </div>
+            <div className="mb-4 p-3 rounded bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 text-sm">
+              <div className="font-medium mb-1">Fichier sélectionné :</div>
+              <div>{pendingRestoreFile.name}</div>
+              <div className="text-xs mt-1 opacity-75">
+                Taille : {(pendingRestoreFile.size / 1024).toFixed(1)} KB
+              </div>
+            </div>
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsRestoreModalOpen(false);
+                  setPendingRestoreFile(null);
+                }}
+                disabled={isRestoring}
+                className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-100"
+              >
+                Annuler
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (pendingRestoreFile) performRestore(pendingRestoreFile);
+                }}
+                disabled={isRestoring}
+                className="px-4 py-2 rounded-md bg-stone-600 hover:bg-stone-700 text-white dark:bg-stone-700 dark:hover:bg-stone-800 dark:text-white"
+              >
+                {isRestoring ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent inline-block mr-2"></div>
+                    Restauration...
+                  </>
+                ) : (
+                  "Restaurer"
+                )}
               </button>
             </div>
           </div>
