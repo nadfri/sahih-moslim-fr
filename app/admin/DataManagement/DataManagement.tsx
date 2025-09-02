@@ -15,7 +15,12 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "react-toastify";
-import { ItemFormValues } from "@/src/types/types";
+import {
+  ExportedHadithType,
+  ExportedHadithSchema,
+  SchemaItemStructure,
+  ItemType,
+} from "@/src/types/types";
 
 const dataOptions = [
   {
@@ -83,10 +88,22 @@ export function DataManagement() {
   const [selectedEndpoint, setSelectedEndpoint] = useState<string>("");
   const [isImporting, setIsImporting] = useState(false);
   const [isGeneratingBackup, setIsGeneratingBackup] = useState(false);
-  const [previewItems, setPreviewItems] = useState<ItemFormValues[]>([]);
+  const [previewItems, setPreviewItems] = useState<
+    Array<ExportedHadithType | ItemType>
+  >([]);
   const ref = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const titleId = useId();
+
+  // Return a compact preview string for an item or hadith
+  const getPreviewText = (item: ExportedHadithType | ItemType) => {
+    // If item has a name property, it's a chapter/sahaba/transmitter
+    if ("name" in item) return item.name;
+    // Otherwise treat as hadith export shape
+    const hadith = item as ExportedHadithType;
+
+    return `Hadith #${hadith.numero}`;
+  };
 
   const handleExport = async (endpoint: string, filename: string) => {
     try {
@@ -243,9 +260,42 @@ export function DataManagement() {
     reader.onload = (event) => {
       try {
         const json = JSON.parse(event.target?.result as string);
-        setPreviewItems(Array.isArray(json) ? json : []);
+        const arr = Array.isArray(json) ? json : [];
+
+        // Choose validation schema based on endpoint
+        if (importEndpoint === "hadiths") {
+          const parsed = ExportedHadithSchema.array().safeParse(arr);
+          if (parsed.success) {
+            setPreviewItems(parsed.data);
+          } else {
+            setPreviewItems([]);
+            toast.error(
+              "❌ Fichier JSON invalide pour l'import (format hadiths attendu)"
+            );
+            console.debug(
+              "Import preview validation errors:",
+              parsed.error.issues
+            );
+          }
+        } else {
+          // validate generic item structure (chapter / sahaba / transmitter)
+          const parsed = SchemaItemStructure.array().safeParse(arr);
+          if (parsed.success) {
+            setPreviewItems(parsed.data);
+          } else {
+            setPreviewItems([]);
+            toast.error(
+              "❌ Fichier JSON invalide pour l'import (format items attendu)"
+            );
+            console.debug(
+              "Import preview validation errors:",
+              parsed.error.issues
+            );
+          }
+        }
       } catch {
         setPreviewItems([]);
+        toast.error("❌ Impossible de lire le fichier JSON");
       }
     };
     reader.readAsText(file);
@@ -524,12 +574,16 @@ export function DataManagement() {
                   Aperçu des items à importer :
                 </div>
                 <ul className="list-disc pl-4">
-                  {previewItems.slice(0, 10).map((item, idx) => (
+                  {previewItems.slice(-10).map((item) => (
                     <li
-                      key={idx}
+                      key={
+                        "id" in item
+                          ? item.id
+                          : `hadith-${(item as ExportedHadithType).numero}`
+                      }
                       className="mb-1 text-sm text-emerald-700 dark:text-emerald-300"
                     >
-                      {item.name}
+                      {getPreviewText(item)}
                     </li>
                   ))}
                   {previewItems.length > 10 && (

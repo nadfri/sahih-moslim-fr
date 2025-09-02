@@ -56,6 +56,7 @@ export default async function RootLayout({
           position="top-right"
           autoClose={3000}
           pauseOnHover={false}
+          pauseOnFocusLoss={false}
           closeOnClick
           draggable
           theme="colored"

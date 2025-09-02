@@ -28,6 +28,7 @@ export async function GET() {
             transmitter: {
               select: {
                 name: true,
+                slug: true,
               },
             },
           },
@@ -48,7 +49,7 @@ export async function GET() {
       chapterIndex: h.chapter.index,
       chapterName: h.chapter.name,
       mentionedSahabas: h.mentionedSahabas.map((s) => s.name),
-      transmitters: h.hadithTransmitters.map((ht) => ht.transmitter.name),
+      isnad: h.hadithTransmitters.map((ht) => ht.transmitter.name),
     }));
 
     return new NextResponse(JSON.stringify(transformedHadiths, null, 2), {
