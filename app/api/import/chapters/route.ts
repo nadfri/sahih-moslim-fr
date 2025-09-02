@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 
@@ -30,26 +31,39 @@ export async function POST(request: NextRequest) {
         .replace(/^-+|-+$/g, "");
     }
 
+    type Chapter = z.infer<typeof ChapterSchema>;
     const results = [];
+    const failed: { item: Partial<Chapter>; reason: string }[] = [];
     for (const chapter of chapters) {
-      const slug = slugify(chapter.name);
-      const result = await prisma.chapter.upsert({
-        where: { name: chapter.name },
-        update: {
-          ...chapter,
-          slug,
-        },
-        create: {
-          ...chapter,
-          slug,
-        },
-      });
-      results.push(result);
+      try {
+        const slug = slugify(chapter.name);
+        const result = await prisma.chapter.upsert({
+          where: { name: chapter.name },
+          update: {
+            ...chapter,
+            slug,
+          },
+          create: {
+            ...chapter,
+            slug,
+          },
+        });
+        results.push(result);
+      } catch (e) {
+        failed.push({
+          item: chapter,
+          reason: (e as Error).message || "upsert failed",
+        });
+      }
     }
+
+    revalidatePath("/admin");
+    revalidatePath("/chapters");
 
     return NextResponse.json({
       message: `Imported ${results.length} chapters`,
       imported: results.length,
+      failed,
     });
   } catch (error) {
     console.error("Error importing chapters:", error);

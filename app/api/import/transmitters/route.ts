@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 
@@ -28,26 +29,41 @@ export async function POST(request: NextRequest) {
         .replace(/^-+|-+$/g, "");
     }
 
+    type Transmitter = z.infer<typeof TransmitterSchema>;
     const results = [];
+    const failed: { item: Partial<Transmitter>; reason: string }[] = [];
     for (const transmitter of transmitters) {
-      const slug = slugify(transmitter.name);
-      const result = await prisma.transmitter.upsert({
-        where: { name: transmitter.name },
-        update: {
-          ...transmitter,
-          slug,
-        },
-        create: {
-          ...transmitter,
-          slug,
-        },
-      });
-      results.push(result);
+      try {
+        const slug = slugify(transmitter.name);
+        const result = await prisma.transmitter.upsert({
+          where: { name: transmitter.name },
+          update: {
+            ...transmitter,
+            slug,
+          },
+          create: {
+            ...transmitter,
+            slug,
+          },
+        });
+        results.push(result);
+      } catch (e) {
+        failed.push({
+          item: transmitter,
+          reason: (e as Error).message || "upsert failed",
+        });
+      }
     }
+
+    try {
+      revalidatePath("/");
+      revalidatePath("/transmitters");
+    } catch {}
 
     return NextResponse.json({
       message: `Imported ${results.length} transmitters`,
       imported: results.length,
+      failed,
     });
   } catch (error) {
     console.error("Error importing transmitters:", error);

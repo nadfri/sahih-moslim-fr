@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 
@@ -28,26 +29,39 @@ export async function POST(request: NextRequest) {
         .replace(/^-+|-+$/g, "");
     }
 
+    type Sahaba = z.infer<typeof SahabaSchema>;
     const results = [];
+    const failed: { item: Partial<Sahaba>; reason: string }[] = [];
     for (const sahaba of sahabas) {
-      const slug = slugify(sahaba.name);
-      const result = await prisma.sahaba.upsert({
-        where: { name: sahaba.name },
-        update: {
-          ...sahaba,
-          slug,
-        },
-        create: {
-          ...sahaba,
-          slug,
-        },
-      });
-      results.push(result);
+      try {
+        const slug = slugify(sahaba.name);
+        const result = await prisma.sahaba.upsert({
+          where: { name: sahaba.name },
+          update: {
+            ...sahaba,
+            slug,
+          },
+          create: {
+            ...sahaba,
+            slug,
+          },
+        });
+        results.push(result);
+      } catch (e) {
+        failed.push({
+          item: sahaba,
+          reason: (e as Error).message || "upsert failed",
+        });
+      }
     }
+
+    revalidatePath("/");
+    revalidatePath("/sahabas");
 
     return NextResponse.json({
       message: `Imported ${results.length} sahabas`,
       imported: results.length,
+      failed,
     });
   } catch (error) {
     console.error("Error importing sahabas:", error);

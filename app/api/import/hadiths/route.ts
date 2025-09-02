@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { PrismaClient } from "@prisma/client";
 import type { Chapter, Sahaba, Transmitter, Hadith } from "@prisma/client";
 import { z } from "zod";
@@ -178,6 +179,9 @@ export async function POST(request: NextRequest) {
       }
       results.push(...createdResults);
     }
+
+    revalidatePath("/");
+    revalidatePath("/hadiths");
 
     return NextResponse.json({
       message: `Imported ${results.length} hadiths`,
