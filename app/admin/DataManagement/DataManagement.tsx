@@ -87,12 +87,16 @@ export function DataManagement() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedEndpoint, setSelectedEndpoint] = useState<string>("");
   const [isImporting, setIsImporting] = useState(false);
+  const [failedHadiths, setFailedHadiths] = useState<
+    { numero?: number; reason: string }[]
+  >([]);
   const [isGeneratingBackup, setIsGeneratingBackup] = useState(false);
   const [previewItems, setPreviewItems] = useState<
     Array<ExportedHadithType | ItemType>
   >([]);
   const ref = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const restoreInputRef = useRef<HTMLInputElement | null>(null);
   const titleId = useId();
 
   // Return a compact preview string for an item or hadith
@@ -315,12 +319,26 @@ export function DataManagement() {
         body: formData,
       });
 
+      const data = await response.json().catch(() => ({}));
       if (response.ok) {
-        toast.success("✅ Import réussi !", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-        setTimeout(() => window.location.reload(), 1000);
+        // If API returned failed items, show them in a modal instead of full reload
+        if (
+          data.failed &&
+          Array.isArray(data.failed) &&
+          data.failed.length > 0
+        ) {
+          setFailedHadiths(data.failed);
+          toast.warn(
+            `⚠️ ${data.failed.length} hadith(s) n'ont pas pu être importés. Voir détails.`,
+            { position: "top-right", autoClose: 5000 }
+          );
+        } else {
+          toast.success("✅ Import réussi !", {
+            position: "top-right",
+            autoClose: 3000,
+          });
+          setTimeout(() => window.location.reload(), 1000);
+        }
       } else {
         toast.error("❌ Erreur lors de l'import", {
           position: "top-right",
@@ -397,6 +415,8 @@ export function DataManagement() {
                     return (
                       <button
                         key={`${option.key}-export`}
+                        type="button"
+                        aria-label={`Exporter ${option.label}`}
                         onClick={() =>
                           handleExport(
                             option.export.endpoint,
@@ -489,6 +509,8 @@ export function DataManagement() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <button
                 onClick={handleDownloadBackup}
+                type="button"
+                aria-label="Télécharger le backup SQL"
                 disabled={isGeneratingBackup}
                 className="flex items-center justify-center gap-3 p-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 text-white rounded-lg shadow-md hover:shadow-lg disabled:hover:shadow-md transition-all duration-200 font-medium"
               >
@@ -504,23 +526,29 @@ export function DataManagement() {
                   </>
                 )}
               </button>
-              <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-stone-500 to-stone-600 rounded-lg shadow-md">
+              <label
+                htmlFor="restore-file-input"
+                aria-label="Restaurer depuis backup"
+                className="flex items-center gap-3 p-3 bg-gradient-to-r from-stone-500 to-stone-600 rounded-lg shadow-md cursor-pointer"
+              >
                 <HardDrive className="w-5 h-5 text-stone-200" />
                 <div className="flex-1">
                   <div className="font-medium text-stone-100 mb-1">
                     Restaurer depuis Backup
                   </div>
                   <input
+                    id="restore-file-input"
+                    ref={restoreInputRef}
                     type="file"
-                    accept=".backup,.sql"
+                    accept=".sql"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) handleRestore(file);
                     }}
-                    className="w-full text-sm text-stone-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-stone-700 file:text-stone-200 hover:file:bg-stone-600 file:transition-colors"
+                    className="hidden"
                   />
                 </div>
-              </div>
+              </label>
             </div>
           </div>
         </div>
@@ -544,6 +572,7 @@ export function DataManagement() {
                 Confirmer l'import
               </h2>
               <button
+                type="button"
                 onClick={() => {
                   if (ref.current) {
                     ref.current.classList.replace("fadeIn", "fadeOut");
@@ -596,6 +625,7 @@ export function DataManagement() {
             )}
             <div className="flex justify-end gap-2">
               <button
+                type="button"
                 onClick={() => {
                   if (ref.current) {
                     ref.current.classList.replace("fadeIn", "fadeOut");
@@ -609,10 +639,59 @@ export function DataManagement() {
               </button>
               <button
                 onClick={handleImportConfirm}
+                type="button"
                 disabled={isImporting}
+                aria-live="polite"
                 className="px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white dark:bg-emerald-700 dark:hover:bg-emerald-800 dark:text-white"
               >
-                {isImporting ? "Importation..." : "Importer"}
+                {isImporting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent inline-block mr-2"></div>
+                    Importation...
+                  </>
+                ) : (
+                  "Importer"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Failed hadiths modal */}
+      {failedHadiths.length > 0 && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/40 dark:bg-black/70 px-2">
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-md w-full">
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-lg font-semibold dark:text-white">
+                Échecs d'import
+              </h2>
+              <button
+                onClick={() => setFailedHadiths([])}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="mb-4 text-sm dark:text-gray-300">
+              Certains hadiths n'ont pas pu être importés. Voir la liste
+              ci‑dessous :
+            </div>
+            <ul className="mb-4 text-sm list-disc pl-4 space-y-1">
+              {failedHadiths.map((f) => (
+                <li
+                  key={f.numero ?? Math.random()}
+                  className="text-red-700 dark:text-red-400"
+                >
+                  Hadith #{f.numero ?? "?"} — {f.reason}
+                </li>
+              ))}
+            </ul>
+            <div className="flex justify-end">
+              <button
+                onClick={() => setFailedHadiths([])}
+                className="px-3 py-2 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white"
+              >
+                Fermer
               </button>
             </div>
           </div>

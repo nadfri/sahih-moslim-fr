@@ -7,7 +7,7 @@
     "chapterIndex": 0,
     "chapterName": "Introduction",
     "mentionedSahabas": [],
-    "transmitters": [
+    "isnad": [
       "Abou Bakr ibn Abou Shaiba",
       "Ghundar",
       "Shu'ba ibn al-Hajjaj",
@@ -24,7 +24,7 @@
     "chapterIndex": 0,
     "chapterName": "Introduction",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 3,
@@ -34,7 +34,7 @@
     "chapterIndex": 0,
     "chapterName": "Introduction",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 4,
@@ -46,7 +46,7 @@
     "mentionedSahabas": [
       "Al Mughirah ibn Shu'bah"
     ],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 5,
@@ -56,7 +56,7 @@
     "chapterIndex": 0,
     "chapterName": "Introduction",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 6,
@@ -66,7 +66,7 @@
     "chapterIndex": 0,
     "chapterName": "Introduction",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 7,
@@ -76,7 +76,7 @@
     "chapterIndex": 0,
     "chapterName": "Introduction",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 8,
@@ -86,7 +86,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 9,
@@ -96,7 +96,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 10,
@@ -106,7 +106,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 11,
@@ -116,7 +116,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 12,
@@ -126,7 +126,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 13,
@@ -136,7 +136,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 14,
@@ -146,7 +146,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 15,
@@ -156,7 +156,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 16,
@@ -166,7 +166,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 17,
@@ -176,7 +176,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 18,
@@ -186,7 +186,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 19,
@@ -196,7 +196,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 20,
@@ -206,7 +206,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 21,
@@ -216,7 +216,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 22,
@@ -226,7 +226,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 23,
@@ -236,7 +236,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 24,
@@ -246,7 +246,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 25,
@@ -256,7 +256,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 26,
@@ -266,7 +266,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 27,
@@ -276,7 +276,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 28,
@@ -286,7 +286,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 29,
@@ -296,7 +296,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 30,
@@ -306,7 +306,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 31,
@@ -316,7 +316,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 32,
@@ -326,7 +326,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 33,
@@ -336,7 +336,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 34,
@@ -346,7 +346,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 35,
@@ -356,7 +356,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 36,
@@ -366,7 +366,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 37,
@@ -376,7 +376,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 38,
@@ -386,7 +386,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 39,
@@ -396,7 +396,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 40,
@@ -406,7 +406,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 41,
@@ -416,7 +416,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 42,
@@ -426,7 +426,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 43,
@@ -436,7 +436,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 44,
@@ -446,7 +446,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 45,
@@ -456,7 +456,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 46,
@@ -466,7 +466,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 47,
@@ -476,7 +476,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 48,
@@ -486,7 +486,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 49,
@@ -496,7 +496,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 50,
@@ -506,7 +506,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 51,
@@ -516,7 +516,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 52,
@@ -526,7 +526,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 53,
@@ -536,7 +536,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 54,
@@ -546,7 +546,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 55,
@@ -556,7 +556,7 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   },
   {
     "numero": 56,
@@ -566,6 +566,6 @@
     "chapterIndex": 1,
     "chapterName": "La Foi",
     "mentionedSahabas": [],
-    "transmitters": []
+    "isnad": []
   }
 ]

@@ -1,32 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import type { Chapter, Sahaba, Transmitter, Hadith } from "@prisma/client";
 import { z } from "zod";
+import { ImportedHadithSchema } from "@/src/types/types";
 
 const prisma = new PrismaClient();
 
-const HadithSchema = z.object({
-  numero: z.number(),
-  matn_fr: z.string(),
-  matn_ar: z.string(),
-  matn_en: z.string().optional(),
-  chapter: z.object({
-    slug: z.string(),
-  }),
-  mentionedSahabas: z
-    .array(
-      z.object({
-        slug: z.string(),
-      })
-    )
-    .optional(),
-  isnadTransmitters: z
-    .array(
-      z.object({
-        slug: z.string(),
-      })
-    )
-    .optional(),
-});
+const HadithSchema = ImportedHadithSchema;
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,78 +19,170 @@ export async function POST(request: NextRequest) {
     const hadiths = z.array(HadithSchema).parse(body);
 
     const results = [];
+
+    // Preload referenced entities to avoid repeated DB queries per hadith.
+    // Build lookup maps: by index, slug and lowercased name for fast O(1) resolution.
+    const [allChapters, allSahabas, allTransmitters] = await Promise.all([
+      prisma.chapter.findMany(),
+      prisma.sahaba.findMany(),
+      prisma.transmitter.findMany(),
+    ]);
+
+    const chapterByIndex = new Map<number, Chapter>();
+    const chapterBySlug = new Map<string, Chapter>();
+    const chapterByNameLower = new Map<string, Chapter>();
+    for (const c of allChapters) {
+      if (typeof c.index === "number") chapterByIndex.set(c.index, c);
+      if (c.slug) chapterBySlug.set(c.slug, c);
+      if (c.name) chapterByNameLower.set(c.name.toLowerCase(), c);
+    }
+
+    const sahabaBySlug = new Map<string, Sahaba>();
+    const sahabaByNameLower = new Map<string, Sahaba>();
+    for (const s of allSahabas) {
+      if (s.slug) sahabaBySlug.set(s.slug, s);
+      if (s.name) sahabaByNameLower.set(s.name.toLowerCase(), s);
+    }
+
+    const transmitterByNameLower = new Map<string, Transmitter>();
+    for (const t of allTransmitters) {
+      if (t.name) transmitterByNameLower.set(t.name.toLowerCase(), t);
+    }
+    // Determine which hadith numeros already exist to avoid re-creating them
+    const numeros = hadiths.map((h) => h.numero).filter((n) => n !== undefined);
+    const existing = await prisma.hadith.findMany({
+      where: { numero: { in: numeros } },
+      select: { numero: true },
+    });
+    const existingSet = new Set(existing.map((e) => e.numero));
+
+    const createOperations: Array<ReturnType<typeof prisma.hadith.create>> = [];
+    const failedHadiths: { numero?: number; reason: string }[] = [];
+
     for (const hadith of hadiths) {
-      // Find chapter
-      const chapter = await prisma.chapter.findUnique({
-        where: { slug: hadith.chapter.slug },
-      });
-      if (!chapter) {
-        throw new Error(`Chapter with slug ${hadith.chapter.slug} not found`);
+      // Resolve chapter using preloaded maps: prefer explicit chapter.index -> chapterIndex -> slug -> chapterName
+      const chapterIndex = hadith.chapter?.index ?? hadith.chapterIndex;
+      const chapterSlug = hadith.chapter?.slug ?? undefined;
+      const chapterName =
+        (hadith.chapter?.name ?? hadith.chapterName) || undefined;
+
+      let chapter = null as { id: string } | null;
+      if (chapterIndex !== undefined && chapterIndex !== null) {
+        chapter = chapterByIndex.get(Number(chapterIndex)) ?? null;
+      }
+      if (!chapter && chapterSlug) {
+        chapter = chapterBySlug.get(chapterSlug) ?? null;
+      }
+      if (!chapter && chapterName) {
+        chapter = chapterByNameLower.get(chapterName.toLowerCase()) ?? null;
       }
 
-      // Find sahabas
-      const mentionedSahabas = [];
+      if (!chapter) {
+        failedHadiths.push({
+          numero: hadith.numero,
+          reason: "Chapitre non trouvé",
+        });
+        continue;
+      }
+
+      // Resolve mentioned sahabas using preloaded maps. Accept strings (name/slug) or object {slug?, name?}
+      const mentionedSahabas = [] as { id: string }[];
       if (hadith.mentionedSahabas) {
         for (const s of hadith.mentionedSahabas) {
-          const sahaba = await prisma.sahaba.findUnique({
-            where: { slug: s.slug },
-          });
-          if (sahaba) mentionedSahabas.push(sahaba);
+          if (typeof s === "string") {
+            const lower = s.toLowerCase();
+            const byName = sahabaByNameLower.get(lower) ?? null;
+            const bySlug = sahabaBySlug.get(s) ?? null;
+            const sahaba = byName ?? bySlug;
+            if (sahaba) mentionedSahabas.push({ id: sahaba.id });
+          } else {
+            const slugField: string | undefined = (
+              s as { slug?: string; name?: string }
+            ).slug;
+            const nameField: string | undefined = (
+              s as { slug?: string; name?: string }
+            ).name;
+            let sahaba = null as { id: string } | null;
+            if (slugField) sahaba = sahabaBySlug.get(slugField) ?? null;
+            if (!sahaba && nameField)
+              sahaba = sahabaByNameLower.get(nameField.toLowerCase()) ?? null;
+            if (sahaba) mentionedSahabas.push({ id: sahaba.id });
+          }
         }
       }
 
-      // Find transmitters
-      const isnadTransmitters = [];
-      if (hadith.isnadTransmitters) {
-        for (const t of hadith.isnadTransmitters) {
-          const transmitter = await prisma.transmitter.findUnique({
-            where: { slug: t.slug },
-          });
-          if (transmitter) isnadTransmitters.push(transmitter);
-        }
-      }
-
-      const result = await prisma.hadith.upsert({
-        where: { numero: hadith.numero },
-        update: {
-          matn_fr: hadith.matn_fr,
-          matn_ar: hadith.matn_ar,
-          ...(hadith.matn_en && { matn_en: hadith.matn_en }),
-          chapterId: chapter.id,
-          mentionedSahabas: {
-            set: mentionedSahabas.map((s) => ({ id: s.id })),
-          },
-          hadithTransmitters: {
-            deleteMany: {},
-            create: isnadTransmitters.map((t, index) => ({
-              transmitterId: t.id,
-              order: index,
-            })),
-          },
-        },
-        create: {
+      // If some mentioned sahabas were expected but none resolved, mark as failed
+      if (
+        (hadith.mentionedSahabas?.length ?? 0) > 0 &&
+        mentionedSahabas.length === 0
+      ) {
+        failedHadiths.push({
           numero: hadith.numero,
-          matn_fr: hadith.matn_fr,
-          matn_ar: hadith.matn_ar,
-          matn_en: hadith.matn_en || "",
-          chapterId: chapter.id,
-          mentionedSahabas: {
-            connect: mentionedSahabas.map((s) => ({ id: s.id })),
+          reason: "Compagnon non trouvé",
+        });
+        continue;
+      }
+
+      // Resolve transmitters from isnad names using preloaded map (case-insensitive)
+      const isnadTransmitters = [] as { id: string }[];
+      if (hadith.isnad) {
+        for (const name of hadith.isnad) {
+          const t = transmitterByNameLower.get(name.toLowerCase());
+          if (t) isnadTransmitters.push({ id: t.id });
+        }
+        // If wasnad provided but none resolved, mark as failed
+        if (hadith.isnad.length > 0 && isnadTransmitters.length === 0) {
+          failedHadiths.push({
+            numero: hadith.numero,
+            reason: "Transmitteurs non trouvés",
+          });
+          continue;
+        }
+      }
+      // If hadith already exists, skip creating it (user requested to keep only non-present)
+      if (existingSet.has(hadith.numero)) {
+        continue;
+      }
+
+      // Prepare create operation and push into operations list
+      createOperations.push(
+        prisma.hadith.create({
+          data: {
+            numero: hadith.numero,
+            matn_fr: hadith.matn_fr,
+            matn_ar: hadith.matn_ar,
+            matn_en: hadith.matn_en || "",
+            chapterId: chapter.id,
+            mentionedSahabas: {
+              connect: mentionedSahabas.map((s) => ({ id: s.id })),
+            },
+            hadithTransmitters: {
+              create: isnadTransmitters.map((t, index) => ({
+                transmitterId: t.id,
+                order: index,
+              })),
+            },
           },
-          hadithTransmitters: {
-            create: isnadTransmitters.map((t, index) => ({
-              transmitterId: t.id,
-              order: index,
-            })),
-          },
-        },
-      });
-      results.push(result);
+        })
+      );
+    }
+
+    // Execute create operations in chunks to avoid very large single transactions
+    const createdResults: Hadith[] = [];
+    if (createOperations.length > 0) {
+      const chunkSize = 100; // safe default for batch imports, tuneable
+      for (let i = 0; i < createOperations.length; i += chunkSize) {
+        const batch = createOperations.slice(i, i + chunkSize);
+        const created = await prisma.$transaction(batch);
+        createdResults.push(...(created as Hadith[]));
+      }
+      results.push(...createdResults);
     }
 
     return NextResponse.json({
       message: `Imported ${results.length} hadiths`,
       imported: results.length,
+      failed: failedHadiths,
     });
   } catch (error) {
     console.error("Error importing hadiths:", error);
