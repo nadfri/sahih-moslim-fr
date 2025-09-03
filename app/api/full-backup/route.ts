@@ -41,43 +41,40 @@ export async function GET() {
     const minutes = String(now.getMinutes()).padStart(2, "0");
     const seconds = String(now.getSeconds()).padStart(2, "0");
 
-    const backupFileName = `sahih-muslim-fr-backup-${year}-${month}-${day}-${hours}-${minutes}-${seconds}.sql`;
+    // Force custom format dump (-Fc) and return binary .dump
+    const backupFileName = `sahih-muslim-fr-backup-${year}-${month}-${day}-${hours}-${minutes}-${seconds}.dump`;
 
-    console.log("📤 Exécution de pg_dump...");
+    console.log("📤 Exécution de pg_dump -Fc (custom)...");
 
-    // Commande pg_dump avec l'URL complète
-    const dumpCommand = `pg_dump "${dbUrl}" --no-owner --no-privileges --clean --if-exists --verbose`;
+    // Commande pg_dump custom format
+    const dumpCommand = `pg_dump "${dbUrl}" -Fc --no-owner --no-privileges --clean --if-exists --verbose`;
 
-    console.log(
-      `Commande: pg_dump "***" --no-owner --no-privileges --clean --if-exists --verbose`
-    );
+    console.log(`Commande: pg_dump "***" -Fc`);
 
     // Exécuter pg_dump avec PGPASSWORD
     const env = {
       ...process.env,
       PGPASSWORD: password,
-      // S'assurer que pg_dump n'essaie pas de se connecter localement
       PGHOST: "",
       PGPORT: "",
       PGUSER: "",
       PGDATABASE: "",
     };
-    const sqlContent = execSync(dumpCommand, {
-      encoding: "utf8",
+    const dumpBuffer = execSync(dumpCommand, {
+      encoding: undefined,
       cwd: process.cwd(),
-      maxBuffer: 1024 * 1024 * 50, // 50MB buffer
+      maxBuffer: 1024 * 1024 * 200, // 200MB buffer for binary
       env: env,
-    });
+    }) as Buffer;
 
-    console.log("✅ Backup généré avec succès en mémoire");
-    console.log(
-      `📊 Taille: ${(Buffer.byteLength(sqlContent, "utf8") / (1024 * 1024)).toFixed(2)} MB`
-    );
+    const fileSizeMB = (dumpBuffer.length / (1024 * 1024)).toFixed(2);
+    console.log("✅ Backup .dump généré avec succès!");
+    console.log(`📊 Taille: ${fileSizeMB} MB`);
 
-    // Retourner le contenu SQL directement
-    return new NextResponse(sqlContent, {
+    const body = new Uint8Array(dumpBuffer);
+    return new NextResponse(body, {
       headers: {
-        "Content-Type": "application/sql",
+        "Content-Type": "application/octet-stream",
         "Content-Disposition": `attachment; filename="${backupFileName}"`,
       },
     });
@@ -116,39 +113,43 @@ export async function POST() {
       .toISOString()
       .replace(/[:.]/g, "-")
       .slice(0, -5);
-    const backupFileName = `sahih-muslim-fr-backup-${timestamp}.sql`;
 
-    console.log("📤 Test de pg_dump...");
+    // Force custom format for POST backups as well
+    const ext = "dump";
+    const backupFileName = `sahih-muslim-fr-backup-${timestamp}.${ext}`;
 
-    // Commande pg_dump qui écrit dans stdout pour vérifier que ça fonctionne
-    const dumpCommand = `pg_dump "${dbUrl}" --no-owner --no-privileges --clean --if-exists --verbose`;
+    console.log("📤 Exécution de pg_dump -Fc (custom)...");
 
-    console.log(
-      `Commande: pg_dump "***" --no-owner --no-privileges --clean --if-exists --verbose`
-    );
+    const dumpCommand = `pg_dump "${dbUrl}" -Fc --no-owner --no-privileges --clean --if-exists --verbose`;
 
-    // Exécuter pg_dump et capturer la sortie
-    const sqlContent = execSync(dumpCommand, {
-      encoding: "utf8",
+    console.log(`Commande: pg_dump "***" -Fc`);
+
+    const env2 = { ...process.env };
+    try {
+      const parsed = new URL(dbUrl);
+      if (parsed.password) env2.PGPASSWORD = parsed.password;
+    } catch {
+      const match = dbUrl.match(/:\/\/([^:]+):([^@]+)@/);
+      if (match) env2.PGPASSWORD = match[2];
+    }
+
+    const dumpBuffer = execSync(dumpCommand, {
+      encoding: undefined,
       cwd: process.cwd(),
-    });
+      maxBuffer: 1024 * 1024 * 200,
+      env: env2,
+    }) as Buffer;
 
-    const fileSizeMB = (
-      Buffer.byteLength(sqlContent, "utf8") /
-      (1024 * 1024)
-    ).toFixed(2);
+    const fileSizeMB2 = (dumpBuffer.length / (1024 * 1024)).toFixed(2);
+    console.log("✅ Backup .dump généré avec succès!");
+    console.log(`📊 Taille: ${fileSizeMB2} MB`);
 
-    console.log("✅ Backup PostgreSQL testé avec succès!");
-    console.log(`📊 Taille estimée: ${fileSizeMB} MB`);
-    console.log(`📅 Généré le: ${new Date().toLocaleString()}`);
-
-    return NextResponse.json({
-      success: true,
-      filename: backupFileName,
-      size: `${fileSizeMB} MB`,
-      createdAt: new Date().toISOString(),
-      message: "Backup PostgreSQL généré avec succès (en mémoire)",
-      note: "Utilisez 'Télécharger Backup' pour obtenir le fichier SQL",
+    const body2 = new Uint8Array(dumpBuffer);
+    return new NextResponse(body2, {
+      headers: {
+        "Content-Type": "application/octet-stream",
+        "Content-Disposition": `attachment; filename="${backupFileName}"`,
+      },
     });
   } catch (error) {
     console.error("❌ Erreur lors de la création du backup PostgreSQL:", error);

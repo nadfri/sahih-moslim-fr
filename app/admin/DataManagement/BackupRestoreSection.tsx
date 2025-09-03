@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download, HardDrive } from "lucide-react";
+import { Download } from "lucide-react";
 import { toast } from "react-toastify";
 
 // Self-contained backup + restore UI.
@@ -61,13 +61,6 @@ export function BackupRestoreSection() {
     }
   };
 
-  const handleFileSelected = (file: File | null) => {
-    // Emit a custom event for parent to pick up and show confirm modal
-    const evt = new CustomEvent("admin:restore-file", { detail: { file } });
-    window.dispatchEvent(evt);
-    toast.info("Fichier prêt pour restauration");
-  };
-
   return (
     <div className="mt-8 p-6">
       <div className="flex items-center gap-2 mb-4">
@@ -75,7 +68,7 @@ export function BackupRestoreSection() {
           Sauvegarde Base de Données
         </h3>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         <button
           onClick={handleDownloadBackup}
           type="button"
@@ -94,30 +87,18 @@ export function BackupRestoreSection() {
             </>
           )}
         </button>
-        <label
-          htmlFor="restore-file-input"
-          aria-label="Restaurer depuis backup"
-          className="flex justify-center items-center gap-3 p-3 bg-gradient-to-r from-stone-500 to-stone-600 rounded-lg shadow-md cursor-pointer"
-        >
-          <div className="flex-1">
-            <div className="font-medium text-stone-100 flex justify-center items-center gap-2">
-              <HardDrive className="w-5 h-5 text-stone-200" />
-              <span>Restaurer depuis Backup</span>
-            </div>
-            <input
-              id="restore-file-input"
-              type="file"
-              accept=".backup,.sql"
-              onChange={(e) => {
-                const input = e.currentTarget as HTMLInputElement;
-                const file = input.files?.[0] || null;
-                handleFileSelected(file);
-                input.value = "";
-              }}
-              className="hidden"
-            />
-          </div>
-        </label>
+      </div>
+
+      <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/50 rounded-lg">
+        <p className="text-sm text-amber-800 dark:text-amber-200">
+          <strong>ℹ️ Restauration sécurisée :</strong> Pour restaurer un backup,
+          utilisez la commande{" "}
+          <code className="bg-amber-100 dark:bg-amber-900/50 px-2 py-1 rounded text-xs font-mono">
+            pnpm restore:emergency
+          </code>{" "}
+          dans le terminal. Cette méthode assure une restauration complète et
+          sécurisée de la base de données.
+        </p>
       </div>
     </div>
   );

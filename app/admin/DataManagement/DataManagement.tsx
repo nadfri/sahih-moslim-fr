@@ -16,22 +16,17 @@ import { ImportSection } from "./ImportSection";
 import { BackupRestoreSection } from "./BackupRestoreSection";
 import { ImportConfirmModal } from "./ImportConfirmModal";
 import { FailedItemsModal } from "./FailedItemsModal";
-import { RestoreConfirmModal } from "./RestoreConfirmModal";
 import { useDataManagementEvents } from "./useDataManagementEvents";
 
 export function DataManagement() {
   const [isDataManagementOpen, setIsDataManagementOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedEndpoint, setSelectedEndpoint] = useState<string>("");
   // backup generation state moved inside BackupRestoreSection
   const [failedItems, setFailedItems] = useState<
     Array<{ item?: unknown; reason: string }>
   >([]);
-  const [pendingRestoreFile, setPendingRestoreFile] = useState<File | null>(
-    null
-  );
 
   const [previewItems, setPreviewItems] = useState<
     Array<ExportedHadithType | ItemType>
@@ -145,13 +140,6 @@ export function DataManagement() {
       handleFileChange(file, endpoint);
     },
 
-    onRestoreFile: (file: File | null) => {
-      if (file) {
-        setPendingRestoreFile(file);
-        setIsRestoreModalOpen(true);
-      }
-    },
-
     onImportDone: () => {
       setIsImportModalOpen(false);
       setSelectedFile(null);
@@ -168,22 +156,6 @@ export function DataManagement() {
       setIsImportModalOpen(false);
       setSelectedFile(null);
       setSelectedEndpoint("");
-    },
-
-    onRestoreDone: () => {
-      setPendingRestoreFile(null);
-      setIsRestoreModalOpen(false);
-      router.push("/");
-    },
-
-    onRestoreFailed: () => {
-      setPendingRestoreFile(null);
-      setIsRestoreModalOpen(false);
-    },
-
-    onCloseRestoreModal: () => {
-      setPendingRestoreFile(null);
-      setIsRestoreModalOpen(false);
     },
   };
 
@@ -248,10 +220,6 @@ export function DataManagement() {
           items={failedItems}
           onClose={() => setFailedItems([])}
         />
-      )}
-
-      {isRestoreModalOpen && pendingRestoreFile && (
-        <RestoreConfirmModal file={pendingRestoreFile} />
       )}
     </>
   );

@@ -186,89 +186,6 @@ L'application sera disponible sur `http://localhost:3000`
 3. **Recherche hybride** : Index rapides + fallback accent-insensitive
 4. **Limite optimisée** : 25 résultats par défaut
 
-### Test des Performances
-
-```bash
-# Lancer les tests de performance
-pnpx tsx scripts/test-search-performance.ts
-
-# Valider toutes les optimisations
-pnpx tsx scripts/validate-search-optimizations.ts
-```
-
-export const authConfig: NextAuthConfig = {
-adapter: PrismaAdapter(prisma),
-providers: [GitHub],
-callbacks: {
-async jwt({ token }) {
-if (!token.sub) return token;
-
-      const dbUser = await prisma.user.findUnique({
-        where: { id: token.sub },
-        select: { role: true },
-      });
-
-      if (dbUser) {
-        token.role = dbUser.role;
-      }
-
-      return token;
-    },
-    async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.sub!;
-        session.user.role = token.role;
-      }
-      return session;
-    },
-
-},
-pages: {
-signIn: "/auth/signin",
-error: "/auth/error",
-},
-session: {
-strategy: "jwt",
-},
-debug: process.env.NODE_ENV === "development",
-};
-
-export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
-
-````
-
-### Créer un wrapper de session pour le client
-
-Créer le fichier `authentification/SessionWrapper.tsx` :
-
-```typescript
-"use client";
-## 🔐 Configuration de l'Authentification
-
-### 1. Configuration GitHub OAuth
-
-1. Aller sur [GitHub Settings > Developer Settings > OAuth Apps](https://github.com/settings/developers)
-2. Créer une nouvelle OAuth App :
-   - **Application name** : `Sahih Moslim FR`
-   - **Homepage URL** : `http://localhost:3000` (dev) / `https://votre-domaine.com` (prod)
-   - **Authorization callback URL** : `http://localhost:3000/api/auth/callback/github`
-3. Noter le `Client ID` et `Client Secret`
-
-### 2. Générer AUTH_SECRET
-
-```bash
-# Générer une clé secrète sécurisée
-pnpx auth secret
-````
-
-### 3. Configuration NextAuth.js
-
-L'authentification est configurée avec :
-
-- **Adaptateur Prisma** pour la persistance en base
-- **GitHub OAuth** pour la connexion
-- **Gestion des rôles** (user/admin)
-- **Middleware de protection** des routes admin
 
 ### 4. Routes Protégées
 
@@ -300,7 +217,51 @@ pnpm build                  # Build de production
 pnpm start                  # Démarrer en production
 ```
 
-## 🚀 Déploiement
+## � Récupération d'Urgence (Backup/Restore)
+
+### ⚠️ Important
+
+La fonctionnalité de restauration depuis l'interface admin a été **retirée** pour des raisons de sécurité et de fiabilité. La restauration se fait maintenant uniquement via un script dédié.
+
+### 📥 Téléchargement de Backup
+
+- Depuis l'admin (`/admin`), cliquez sur **"Télécharger Backup"**
+- Le fichier `.dump` sera automatiquement téléchargé
+
+### 🔧 Restauration d'Urgence
+
+En cas de problème majeur avec la base de données, utilisez le script de restauration d'urgence :
+
+```bash
+# Méthode recommandée (via package.json)
+pnpm restore:emergency
+
+# Ou directement
+node backups/restore-emergency.js
+```
+
+### ⚡ Que fait le script ?
+
+1. **Détecte automatiquement** le fichier dump le plus récent
+2. **Nettoie complètement** la base de données
+3. **Restaure** toutes les tables, données et politiques RLS
+4. **Corrige automatiquement** les politiques de sécurité Supabase
+
+### 🛡️ Sécurité
+
+- ✅ **Nettoyage automatique** de tous les objets existants
+- ✅ **Politiques RLS** recréées selon les standards Supabase
+- ✅ **Compatible** avec les contraintes Supabase
+- ✅ **Sécurisé** : pas d'accès depuis le frontend
+
+### 🚨 Quand utiliser ?
+
+- Corruption de la base de données
+- Perte de données accidentelle
+- Migration vers un nouvel environnement
+- Problèmes avec les politiques RLS
+
+## �🚀 Déploiement
 
 ### 1. Préparation
 

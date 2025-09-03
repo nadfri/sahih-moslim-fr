@@ -22,6 +22,12 @@ vi.mock("@/src/ui/forms/AddItemForm/AddItemForm", () => ({
   )),
 }));
 
+vi.mock("@/app/admin/DataManagement/DataManagement", () => ({
+  DataManagement: vi.fn(() => (
+    <div data-testid="data-management">DataManagement Component</div>
+  )),
+}));
+
 const mockChapters: ItemType[] = [
   { id: "1", name: "Chapter 1", slug: "chapter-1", hadithCount: 5 },
   { id: "2", name: "Chapter 2", slug: "chapter-2", hadithCount: 3 },
@@ -47,6 +53,12 @@ describe("AdminDashboard Component", () => {
     sahabas: mockSahabas,
     transmitters: mockTransmitters,
   };
+
+  it("should render DataManagement component", () => {
+    render(<AdminDashboard {...defaultProps} />);
+
+    expect(screen.getByTestId("data-management")).toBeInTheDocument();
+  });
 
   it("should render all variant selector buttons", () => {
     render(<AdminDashboard {...defaultProps} />);
@@ -120,11 +132,14 @@ describe("AdminDashboard Component", () => {
       .getByRole("radio", { name: /Chapitres/ })
       .closest("label");
 
-    // Selected (chapters) should have emerald styling
+    // Selected (chapters) should have emerald styling with dark mode support
     expect(chaptersLabel).toHaveClass(
       "bg-emerald-100",
+      "dark:bg-emerald-900/50",
       "border-emerald-300",
-      "text-emerald-600"
+      "dark:border-emerald-700",
+      "text-emerald-600",
+      "dark:text-emerald-400"
     );
   });
 

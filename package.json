@@ -15,6 +15,7 @@
     "prisma:studio": "pnpx prisma studio",
     "prisma:format": "pnpx prisma format",
     "prisma:seed": "node prisma/seed.js",
+    "restore:emergency": "node backups/restore-emergency.js",
     "test": "vitest",
     "test:coverage": "vitest run --coverage"
   },

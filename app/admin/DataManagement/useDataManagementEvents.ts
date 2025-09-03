@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 
 type EventHandlers = {
   onImportFile: (file: File, endpoint: string) => void;
-  onRestoreFile: (file: File | null) => void;
+  onRestoreFile?: (file: File | null) => void;
   onImportDone: () => void;
   onImportFailed: (failed: Array<{ item?: unknown; reason: string }>) => void;
   onCloseImportModal: () => void;
-  onRestoreDone: () => void;
-  onRestoreFailed: () => void;
-  onCloseRestoreModal: () => void;
+  onRestoreDone?: () => void;
+  onRestoreFailed?: () => void;
+  onCloseRestoreModal?: () => void;
 };
 
 export function useDataManagementEvents(handlers: EventHandlers) {
@@ -29,7 +29,9 @@ export function useDataManagementEvents(handlers: EventHandlers) {
     const handleRestoreFile = (e: Event) => {
       const custom = e as CustomEvent<{ file: File | null }>;
       const { file } = custom.detail || {};
-      handlers.onRestoreFile(file);
+      if (handlers.onRestoreFile) {
+        handlers.onRestoreFile(file);
+      }
     };
 
     const handleImportDone = () => {
@@ -52,16 +54,22 @@ export function useDataManagementEvents(handlers: EventHandlers) {
     };
 
     const handleRestoreDone = () => {
-      handlers.onRestoreDone();
-      router.push("/");
+      if (handlers.onRestoreDone) {
+        handlers.onRestoreDone();
+        router.push("/");
+      }
     };
 
     const handleRestoreFailed = () => {
-      handlers.onRestoreFailed();
+      if (handlers.onRestoreFailed) {
+        handlers.onRestoreFailed();
+      }
     };
 
     const handleCloseRestoreModal = () => {
-      handlers.onCloseRestoreModal();
+      if (handlers.onCloseRestoreModal) {
+        handlers.onCloseRestoreModal();
+      }
     };
 
     // Add all event listeners
