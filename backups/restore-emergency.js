@@ -1,18 +1,40 @@
+#!/usr/bin/env node
+
 const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
+const readline = require("readline");
 
 console.log("🚀 Script de restauration d'urgence pour Supabase");
 console.log("================================================\n");
 
-// Chemin du fichier de sauvegarde - utiliser le plus récent
+// Fonction pour créer une interface interactive
+function createInterface() {
+  return readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+}
+
+// Fonction pour poser une question à l'utilisateur
+function askQuestion(rl, question) {
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => {
+      resolve(answer.trim());
+    });
+  });
+}
+
+// Chemin du fichier de sauvegarde
 const backupDir = path.join(__dirname);
 const dumpFiles = fs
   .readdirSync(backupDir)
-  .filter((file) => file.endsWith(".dump"));
+  .filter((file) => file.endsWith(".dump") || file.endsWith(".sql"));
 
 if (dumpFiles.length === 0) {
-  console.error("❌ Aucun fichier .dump trouvé dans le dossier backups");
+  console.error(
+    "❌ Aucun fichier .dump ou .sql trouvé dans le dossier backups"
+  );
   process.exit(1);
 }
 
@@ -23,8 +45,49 @@ dumpFiles.sort((a, b) => {
   return statB.mtime - statA.mtime;
 });
 
-const backupFile = path.join(backupDir, dumpFiles[0]);
-console.log(`📁 Fichier de sauvegarde le plus récent: ${dumpFiles[0]}`);
+console.log(`📁 Fichiers de sauvegarde disponibles (${dumpFiles.length}):`);
+dumpFiles.forEach((file, index) => {
+  const filePath = path.join(backupDir, file);
+  const stats = fs.statSync(filePath);
+  const size = (stats.size / 1024 / 1024).toFixed(2);
+  const date = stats.mtime.toLocaleString("fr-FR");
+  console.log(`  ${index + 1}. ${file} (${size} MB) - ${date}`);
+});
+
+let backupFile;
+
+if (dumpFiles.length === 1) {
+  console.log("\n📁 Un seul fichier trouvé, utilisation automatique");
+  backupFile = path.join(backupDir, dumpFiles[0]);
+} else {
+  const rl = createInterface();
+
+  try {
+    const choice = await askQuestion(
+      rl,
+      `\n🔍 Choisissez un fichier (1-${dumpFiles.length}) ou appuyez Entrée pour le plus récent: `
+    );
+
+    if (choice === "" || choice === "1") {
+      backupFile = path.join(backupDir, dumpFiles[0]);
+      console.log(`📁 Utilisation du fichier le plus récent: ${dumpFiles[0]}`);
+    } else {
+      const index = parseInt(choice) - 1;
+      if (index >= 0 && index < dumpFiles.length) {
+        backupFile = path.join(backupDir, dumpFiles[index]);
+        console.log(
+          `📁 Utilisation du fichier sélectionné: ${dumpFiles[index]}`
+        );
+      } else {
+        console.error(`❌ Choix invalide: ${choice}`);
+        rl.close();
+        process.exit(1);
+      }
+    }
+  } finally {
+    rl.close();
+  }
+}
 
 // Vérifier que le fichier existe
 if (!fs.existsSync(backupFile)) {
