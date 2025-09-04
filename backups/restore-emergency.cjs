@@ -305,6 +305,143 @@ function checkBackupFile() {
 
     console.log("✅ Politiques RLS corrigées");
 
+    console.log("\n🔗 Ajout des relations et indexes...");
+
+    // Script SQL pour relations et indexes
+    const relationsAndIndexesSQL = `
+    -- Suppression des indexes en doublon
+    DROP INDEX IF EXISTS "Chapter_name_idx";
+    DROP INDEX IF EXISTS "idx_chapter_name";
+    DROP INDEX IF EXISTS "Chapter_slug_idx";
+    DROP INDEX IF EXISTS "idx_chapter_slug";
+    DROP INDEX IF EXISTS "Chapter_index_idx";
+    DROP INDEX IF EXISTS "idx_chapter_index";
+    DROP INDEX IF EXISTS "Hadith_chapterId_idx";
+    DROP INDEX IF EXISTS "idx_hadith_chapterid";
+    DROP INDEX IF EXISTS "Hadith_chapterId_numero_idx";
+    DROP INDEX IF EXISTS "idx_hadith_chapterid_numero";
+    DROP INDEX IF EXISTS "Hadith_matn_fr_idx";
+    DROP INDEX IF EXISTS "idx_hadith_matn_fr";
+    DROP INDEX IF EXISTS "Hadith_matn_ar_idx";
+    DROP INDEX IF EXISTS "idx_hadith_matn_ar";
+    DROP INDEX IF EXISTS "Hadith_matn_en_idx";
+    DROP INDEX IF EXISTS "idx_hadith_matn_en";
+    DROP INDEX IF EXISTS "Hadith_numero_idx";
+    DROP INDEX IF EXISTS "idx_hadith_numero";
+    DROP INDEX IF EXISTS "HadithTransmitter_hadithId_idx";
+    DROP INDEX IF EXISTS "idx_ht_hadithid";
+    DROP INDEX IF EXISTS "HadithTransmitter_transmitterId_idx";
+    DROP INDEX IF EXISTS "idx_ht_transmitterid";
+    DROP INDEX IF EXISTS "Sahaba_name_idx";
+    DROP INDEX IF EXISTS "idx_sahaba_name";
+    DROP INDEX IF EXISTS "Sahaba_slug_idx";
+    DROP INDEX IF EXISTS "idx_sahaba_slug";
+    DROP INDEX IF EXISTS "Transmitter_name_idx";
+    DROP INDEX IF EXISTS "idx_transmitter_name";
+    DROP INDEX IF EXISTS "Transmitter_slug_idx";
+    DROP INDEX IF EXISTS "idx_transmitter_slug";
+
+      -- Foreign keys pour _HadithToSahaba
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.table_constraints
+          WHERE constraint_name = 'fk_hadith' AND table_name = '_HadithToSahaba'
+        ) THEN
+          ALTER TABLE public."_HadithToSahaba"
+            ADD CONSTRAINT fk_hadith FOREIGN KEY ("A") REFERENCES public."Hadith"(id) ON DELETE CASCADE;
+        END IF;
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.table_constraints
+          WHERE constraint_name = 'fk_sahaba' AND table_name = '_HadithToSahaba'
+        ) THEN
+          ALTER TABLE public."_HadithToSahaba"
+            ADD CONSTRAINT fk_sahaba FOREIGN KEY ("B") REFERENCES public."Sahaba"(id) ON DELETE CASCADE;
+        END IF;
+      END $$;
+
+      -- Foreign key Hadith.chapterId -> Chapter.id
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.table_constraints
+          WHERE constraint_name = 'fk_hadith_chapter' AND table_name = 'Hadith'
+        ) THEN
+          ALTER TABLE public."Hadith"
+            ADD CONSTRAINT fk_hadith_chapter FOREIGN KEY ("chapterId") REFERENCES public."Chapter"(id);
+        END IF;
+      END $$;
+
+      -- Foreign key HadithTransmitter.hadithId -> Hadith.id
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.table_constraints
+          WHERE constraint_name = 'fk_ht_hadith' AND table_name = 'HadithTransmitter'
+        ) THEN
+          ALTER TABLE public."HadithTransmitter"
+            ADD CONSTRAINT fk_ht_hadith FOREIGN KEY ("hadithId") REFERENCES public."Hadith"(id) ON DELETE CASCADE;
+        END IF;
+      END $$;
+
+      -- Foreign key HadithTransmitter.transmitterId -> Transmitter.id
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.table_constraints
+          WHERE constraint_name = 'fk_ht_transmitter' AND table_name = 'HadithTransmitter'
+        ) THEN
+          ALTER TABLE public."HadithTransmitter"
+            ADD CONSTRAINT fk_ht_transmitter FOREIGN KEY ("transmitterId") REFERENCES public."Transmitter"(id) ON DELETE CASCADE;
+        END IF;
+      END $$;
+
+      -- Création de l'enum Role si absent
+      DO $$
+      BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'Role') THEN
+          CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
+        END IF;
+      END $$;
+
+      -- Indexes principaux
+      CREATE INDEX IF NOT EXISTS idx_hadith_chapterId ON public."Hadith"("chapterId");
+      CREATE INDEX IF NOT EXISTS idx_hadith_numero ON public."Hadith"("numero");
+      CREATE INDEX IF NOT EXISTS idx_hadith_chapterId_numero ON public."Hadith"("chapterId", "numero");
+      CREATE INDEX IF NOT EXISTS idx_hadith_matn_fr ON public."Hadith"("matn_fr");
+      CREATE INDEX IF NOT EXISTS idx_hadith_matn_ar ON public."Hadith"("matn_ar");
+      CREATE INDEX IF NOT EXISTS idx_hadith_matn_en ON public."Hadith"("matn_en");
+      CREATE INDEX IF NOT EXISTS idx_chapter_name ON public."Chapter"("name");
+      CREATE INDEX IF NOT EXISTS idx_chapter_slug ON public."Chapter"("slug");
+      CREATE INDEX IF NOT EXISTS idx_chapter_index ON public."Chapter"("index");
+      CREATE INDEX IF NOT EXISTS idx_sahaba_name ON public."Sahaba"("name");
+      CREATE INDEX IF NOT EXISTS idx_sahaba_slug ON public."Sahaba"("slug");
+      CREATE INDEX IF NOT EXISTS idx_transmitter_name ON public."Transmitter"("name");
+      CREATE INDEX IF NOT EXISTS idx_transmitter_slug ON public."Transmitter"("slug");
+      CREATE INDEX IF NOT EXISTS idx_ht_hadithId ON public."HadithTransmitter"("hadithId");
+      CREATE INDEX IF NOT EXISTS idx_ht_transmitterId ON public."HadithTransmitter"("transmitterId");
+    `;
+
+    // Exécution du script SQL via psql
+    try {
+      // Écrire le SQL dans un fichier temporaire
+      const sqlFilePath = path.join(__dirname, "relations_and_indexes.sql");
+      fs.writeFileSync(sqlFilePath, relationsAndIndexesSQL, {
+        encoding: "utf8",
+      });
+      // Exécuter le fichier avec psql
+      const execIndexCmd = `psql "${cleanDbUrl}" -v ON_ERROR_STOP=1 -f "${sqlFilePath}"`;
+      execSync(execIndexCmd, { stdio: "inherit" });
+      // Supprimer le fichier temporaire
+      fs.unlinkSync(sqlFilePath);
+      console.log("✅ Relations et indexes ajoutés");
+    } catch (error) {
+      console.warn(
+        "⚠️ Erreur lors de l'ajout des relations/indexes:",
+        error.message
+      );
+    }
+
     console.log("\n🎉 Restauration terminée!");
     console.log(
       "🔄 Vous pouvez maintenant accéder à l'admin de votre application."
