@@ -17,8 +17,9 @@ import { BackupRestoreSection } from "./BackupRestoreSection";
 import { ImportConfirmModal } from "./ImportConfirmModal";
 import { FailedItemsModal } from "./FailedItemsModal";
 import { useDataManagementEvents } from "./useDataManagementEvents";
+import { DatasType } from "../page";
 
-export function DataManagement() {
+export function DataManagement({ datas }: { datas: DatasType }) {
   const [isDataManagementOpen, setIsDataManagementOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -198,7 +199,7 @@ export function DataManagement() {
         >
           <div className="p-6 pt-0">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <ExportSection />
+              <ExportSection datas={datas} />
               <ImportSection />
             </div>
           </div>

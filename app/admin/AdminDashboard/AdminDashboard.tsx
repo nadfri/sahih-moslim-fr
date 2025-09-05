@@ -6,12 +6,7 @@ import type { ItemType, VariantType } from "@/src/types/types";
 import { FilteredCardsEdit } from "@/app/admin/FilteredCardsEdit/FilteredCardsEdit";
 import { AddItemForm } from "@/src/ui/forms/AddItemForm/AddItemForm";
 import { DataManagement } from "@/app/admin/DataManagement/DataManagement";
-
-type Props = {
-  chapters: ItemType[];
-  sahabas: ItemType[];
-  transmitters: ItemType[];
-};
+import { DatasType } from "../page";
 
 const variantOptions: { label: string; value: VariantType }[] = [
   { label: "Chapitres", value: "chapters" },
@@ -19,9 +14,11 @@ const variantOptions: { label: string; value: VariantType }[] = [
   { label: "Transmetteurs", value: "transmitters" },
 ];
 
-export function AdminDashboard({ chapters, sahabas, transmitters }: Props) {
+export function AdminDashboard({ datas }: { datas: DatasType }) {
   const [selectedVariant, setSelectedVariant] =
     useState<VariantType>("chapters");
+
+  const { chapters, sahabas, transmitters } = datas;
 
   let currentItems: ItemType[];
 
@@ -45,7 +42,7 @@ export function AdminDashboard({ chapters, sahabas, transmitters }: Props) {
 
   return (
     <div className="space-y-8">
-      <DataManagement />
+      <DataManagement datas={datas} />
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
         {variantOptions.map((option) => (

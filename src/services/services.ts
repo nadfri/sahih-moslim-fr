@@ -76,6 +76,12 @@ export async function getHadithByNumero(
   return HadithSchema.parse(transformedHadith);
 }
 
+// Get only the count of hadiths
+export async function getHadithsCount(): Promise<number> {
+  const count = await prisma.hadith.count();
+  return count;
+}
+
 // Get all chapters with hadith count and index
 export async function getAllChapters(): Promise<ItemType[]> {
   const chapters = await prisma.chapter.findMany({

@@ -2,8 +2,14 @@
 
 import { toast } from "react-toastify";
 import { dataOptions } from "./dataOptions";
+import { DatasType } from "../page";
 
-export function ExportSection() {
+export function ExportSection({ datas }: { datas: DatasType }) {
+  const { chapters, sahabas, transmitters, hadithsCount } = datas;
+
+  // Adjusting the hadith count by subtracting Intro and Unknown
+  const chaptersCount = chapters.length - 2;
+
   const handleExport = async (endpoint: string, filename: string) => {
     try {
       const response = await fetch(endpoint);
@@ -18,9 +24,6 @@ export function ExportSection() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      // Use toast directly in this component to avoid prop drilling
-      // Note: toast import kept minimal to avoid large changes here
-      // If unavailable, the click still triggers download.
     } catch (error) {
       console.error("Export error:", error);
     }
@@ -51,7 +54,13 @@ export function ExportSection() {
                 <div className="p-2 rounded-md bg-emerald-50 dark:bg-emerald-900/30">
                   <Icon className={`w-5 h-5 ${option.export?.color || ""}`} />
                 </div>
-                <div className="font-medium text-gray-900 dark:text-gray-100">
+                <div className="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                  <span className="inline-flex items-center justify-center bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 text-sm font-medium h-6 min-w-6 px-1.5 rounded-md">
+                    {option.key === "chapters" && chaptersCount}
+                    {option.key === "sahabas" && sahabas.length}
+                    {option.key === "transmitters" && transmitters.length}
+                    {option.key === "hadiths" && hadithsCount}
+                  </span>
                   {option.label}
                 </div>
               </div>

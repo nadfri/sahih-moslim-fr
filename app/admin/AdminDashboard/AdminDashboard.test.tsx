@@ -33,10 +33,6 @@ const mockChapters: ItemType[] = [
   { id: "2", name_fr: "Chapter 2", slug: "chapter-2", hadithCount: 3 },
 ];
 
-const mockNarrators: ItemType[] = [
-  { id: "1", name_fr: "Narrator 1", slug: "narrator-1", hadithCount: 10 },
-];
-
 const mockSahabas: ItemType[] = [
   { id: "1", name_fr: "Sahaba 1", slug: "sahaba-1", hadithCount: 7 },
   { id: "2", name_fr: "Sahaba 2", slug: "sahaba-2", hadithCount: 2 },
@@ -46,22 +42,24 @@ const mockTransmitters: ItemType[] = [
   { id: "1", name_fr: "Transmitter 1", slug: "transmitter-1", hadithCount: 4 },
 ];
 
+const mockHadithsCount = 42;
+
 describe("AdminDashboard Component", () => {
-  const defaultProps = {
+  const defaultDatas = {
     chapters: mockChapters,
-    narrators: mockNarrators,
     sahabas: mockSahabas,
     transmitters: mockTransmitters,
+    hadithsCount: mockHadithsCount,
   };
 
   it("should render DataManagement component", () => {
-    render(<AdminDashboard {...defaultProps} />);
+    render(<AdminDashboard datas={defaultDatas} />);
 
     expect(screen.getByTestId("data-management")).toBeInTheDocument();
   });
 
   it("should render all variant selector buttons", () => {
-    render(<AdminDashboard {...defaultProps} />);
+    render(<AdminDashboard datas={defaultDatas} />);
 
     expect(
       screen.getByRole("radio", { name: /Chapitres/ })
@@ -77,7 +75,7 @@ describe("AdminDashboard Component", () => {
   });
 
   it("should have chapters selected by default", () => {
-    render(<AdminDashboard {...defaultProps} />);
+    render(<AdminDashboard datas={defaultDatas} />);
 
     const chaptersRadio = screen.getByRole("radio", { name: /Chapitres/ });
     expect(chaptersRadio).toBeChecked();
@@ -93,7 +91,7 @@ describe("AdminDashboard Component", () => {
 
   it("should switch to sahabas when selected", async () => {
     const user = userEvent.setup();
-    render(<AdminDashboard {...defaultProps} />);
+    render(<AdminDashboard datas={defaultDatas} />);
 
     const sahabasRadio = screen.getByRole("radio", { name: /Compagnons/ });
     await user.click(sahabasRadio);
@@ -109,7 +107,7 @@ describe("AdminDashboard Component", () => {
 
   it("should switch to transmitters when selected", async () => {
     const user = userEvent.setup();
-    render(<AdminDashboard {...defaultProps} />);
+    render(<AdminDashboard datas={defaultDatas} />);
 
     const transmittersRadio = screen.getByRole("radio", {
       name: /Transmetteurs/,
@@ -126,7 +124,7 @@ describe("AdminDashboard Component", () => {
   });
 
   it("should apply correct styling to selected variant", () => {
-    render(<AdminDashboard {...defaultProps} />);
+    render(<AdminDashboard datas={defaultDatas} />);
 
     const chaptersLabel = screen
       .getByRole("radio", { name: /Chapitres/ })
@@ -144,20 +142,20 @@ describe("AdminDashboard Component", () => {
   });
 
   it("should render AddItemForm and FilteredCardsEdit components", () => {
-    render(<AdminDashboard {...defaultProps} />);
+    render(<AdminDashboard datas={defaultDatas} />);
 
     expect(screen.getByTestId("add-item-form")).toBeInTheDocument();
     expect(screen.getByTestId("filtered-cards-edit")).toBeInTheDocument();
   });
 
   it("should handle empty arrays gracefully", () => {
-    const emptyProps = {
+    const emptyDatas = {
       chapters: [],
       sahabas: [],
       transmitters: [],
+      hadithsCount: 0,
     };
-
-    render(<AdminDashboard {...emptyProps} />);
+    render(<AdminDashboard datas={emptyDatas} />);
 
     expect(screen.getByTestId("add-item-form")).toHaveTextContent(
       "chapters - 0 items"
@@ -169,7 +167,7 @@ describe("AdminDashboard Component", () => {
 
   it("should update child components when variant changes", async () => {
     const user = userEvent.setup();
-    render(<AdminDashboard {...defaultProps} />);
+    render(<AdminDashboard datas={defaultDatas} />);
 
     // Initially chapters
     expect(screen.getByTestId("add-item-form")).toHaveTextContent(
