@@ -265,29 +265,47 @@ function checkBackupFile() {
     // Commandes SQL pour corriger les rôles et politiques RLS
     const rlsFixCommands = [
       `psql "${cleanDbUrl}" -c "BEGIN;"`,
-      `psql "${cleanDbUrl}" -c "ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;"`,
-      `psql "${cleanDbUrl}" -c "ALTER TABLE public.profiles NO FORCE ROW LEVEL SECURITY;"`,
+
+      // Configuration RLS pour toutes les tables
+      `psql "${cleanDbUrl}" -c "ALTER TABLE public.\\"Chapter\\" ENABLE ROW LEVEL SECURITY;"`,
+      `psql "${cleanDbUrl}" -c "ALTER TABLE public.\\"Hadith\\" ENABLE ROW LEVEL SECURITY;"`,
+      `psql "${cleanDbUrl}" -c "ALTER TABLE public.\\"HadithTransmitter\\" ENABLE ROW LEVEL SECURITY;"`,
+      `psql "${cleanDbUrl}" -c "ALTER TABLE public.\\"Transmitter\\" ENABLE ROW LEVEL SECURITY;"`,
+      `psql "${cleanDbUrl}" -c "ALTER TABLE public.\\"Sahaba\\" ENABLE ROW LEVEL SECURITY;"`,
+      `psql "${cleanDbUrl}" -c "ALTER TABLE public.\\"_HadithToSahaba\\" ENABLE ROW LEVEL SECURITY;"`,
+      `psql "${cleanDbUrl}" -c "ALTER TABLE public.\\"profiles\\" ENABLE ROW LEVEL SECURITY;"`,
+
+      // Nettoyage des anciennes politiques
       `psql "${cleanDbUrl}" -c "
       DO \$\$
       DECLARE
         r RECORD;
       BEGIN
-        FOR r IN SELECT policyname FROM pg_policies WHERE schemaname='public' AND tablename='profiles' LOOP
-          EXECUTE format('DROP POLICY IF EXISTS %I ON public.profiles', r.policyname);
+        FOR r IN SELECT policyname, tablename FROM pg_policies WHERE schemaname='public' LOOP
+          EXECUTE format('DROP POLICY IF EXISTS %I ON public.%I', r.policyname, r.tablename);
         END LOOP;
       END
       \$\$;
     "`,
-      `psql "${cleanDbUrl}" -c "
-      CREATE POLICY \\"Allow users select own profile\\"
-        ON public.profiles
-        FOR SELECT
-        TO authenticated
-        USING (id::text = auth.uid()::text);
-    "`,
-      `psql "${cleanDbUrl}" -c "GRANT SELECT ON public.profiles TO authenticated;"`,
-      `psql "${cleanDbUrl}" -c "REVOKE SELECT ON public.profiles FROM anon;"`,
-      `psql "${cleanDbUrl}" -c "GRANT SELECT, INSERT, UPDATE, DELETE ON public.profiles TO service_role;"`,
+
+      // Politiques de lecture publique pour les données principales
+      `psql "${cleanDbUrl}" -c "CREATE POLICY \\"Public read access\\" ON public.\\"Chapter\\" FOR SELECT USING (true);"`,
+      `psql "${cleanDbUrl}" -c "CREATE POLICY \\"Public read access\\" ON public.\\"Hadith\\" FOR SELECT USING (true);"`,
+      `psql "${cleanDbUrl}" -c "CREATE POLICY \\"Public read access\\" ON public.\\"HadithTransmitter\\" FOR SELECT USING (true);"`,
+      `psql "${cleanDbUrl}" -c "CREATE POLICY \\"Public read access\\" ON public.\\"Transmitter\\" FOR SELECT USING (true);"`,
+      `psql "${cleanDbUrl}" -c "CREATE POLICY \\"Public read access\\" ON public.\\"Sahaba\\" FOR SELECT USING (true);"`,
+      `psql "${cleanDbUrl}" -c "CREATE POLICY \\"Public read access\\" ON public.\\"_HadithToSahaba\\" FOR SELECT USING (true);"`,
+
+      // Politiques pour profiles (sans récursion)
+      `psql "${cleanDbUrl}" -c "CREATE POLICY \\"Allow authenticated users to read own profile\\" ON public.\\"profiles\\" FOR SELECT TO authenticated USING (auth.uid()::text = id);"`,
+      `psql "${cleanDbUrl}" -c "CREATE POLICY \\"Allow authenticated users to update own profile\\" ON public.\\"profiles\\" FOR UPDATE TO authenticated USING (auth.uid()::text = id);"`,
+      `psql "${cleanDbUrl}" -c "CREATE POLICY \\"Service role has full access\\" ON public.\\"profiles\\" FOR ALL TO service_role USING (true);"`,
+
+      // Permissions
+      `psql "${cleanDbUrl}" -c "GRANT SELECT, UPDATE ON public.\\"profiles\\" TO authenticated;"`,
+      `psql "${cleanDbUrl}" -c "GRANT ALL ON public.\\"profiles\\" TO service_role;"`,
+      `psql "${cleanDbUrl}" -c "REVOKE SELECT ON public.\\"profiles\\" FROM anon;"`,
+
       `psql "${cleanDbUrl}" -c "COMMIT;"`,
     ];
 
