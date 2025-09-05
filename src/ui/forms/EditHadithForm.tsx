@@ -270,7 +270,7 @@ export function EditHadithForm({
             id="matn_ar"
             label="Texte arabe*"
             type="textarea"
-            rows={5}
+            rows={3}
             dir="rtl"
             className="font-matn_ar text-lg"
             error={!!errors.matn_ar}

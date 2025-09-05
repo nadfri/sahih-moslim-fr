@@ -696,6 +696,8 @@ export async function deleteHadith(hadithId: string): Promise<ActionResponse> {
     });
 
     revalidatePath("/");
+    revalidatePath(`/sahabas`);
+    revalidatePath("/transmitters");
 
     return {
       success: true,

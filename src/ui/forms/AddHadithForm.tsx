@@ -282,23 +282,13 @@ export function AddHadithForm({
             placeholder="Saisir le texte du hadith..."
             height={200}
           />
-          {/* matn_fr EN */}
-          <Input
-            id="matn_en"
-            label="Texte anglais (optionnel)"
-            type="textarea"
-            rows={5}
-            className="font-matn_en text-lg"
-            error={!!errors.matn_en}
-            errorMessage={errors.matn_en?.message}
-            register={register("matn_en")}
-          />
+
           {/* matn_fr AR */}
           <Input
             id="matn_ar"
             label="Texte arabe*"
             type="textarea"
-            rows={5}
+            rows={3}
             dir="rtl"
             className="font-matn_ar text-lg"
             error={!!errors.matn_ar}
@@ -309,6 +299,18 @@ export function AddHadithForm({
               setValue("matn_ar", cleanedText);
             }}
             helperText="Le texte sera automatiquement nettoyé"
+          />
+
+          {/* matn_fr EN */}
+          <Input
+            id="matn_en"
+            label="Texte anglais (optionnel)"
+            type="textarea"
+            rows={2}
+            className="font-matn_en text-lg"
+            error={!!errors.matn_en}
+            errorMessage={errors.matn_en?.message}
+            register={register("matn_en")}
           />
           {/* Submit Button */}
           <button
