@@ -1,7 +1,15 @@
 import { NextResponse } from "next/server";
 import { execSync } from "child_process";
+import { requireAdmin } from "@/src/lib/auth/auth";
 
 export async function GET() {
+  const adminCheck = await requireAdmin();
+  if (adminCheck !== true) {
+    return NextResponse.json(adminCheck, {
+      status: adminCheck.success ? 200 : 401,
+    });
+  }
+
   try {
     console.log("📥 Génération et téléchargement du backup PostgreSQL...");
 

@@ -1,9 +1,18 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { requireAdmin } from "@/src/lib/auth/auth";
 
 const prisma = new PrismaClient();
 
 export async function GET() {
+  // Check admin permission
+  const adminCheck = await requireAdmin();
+  if (adminCheck !== true) {
+    return NextResponse.json(adminCheck, {
+      status: adminCheck.success ? 200 : 401,
+    });
+  }
+
   try {
     const sahabas = await prisma.sahaba.findMany({
       select: {

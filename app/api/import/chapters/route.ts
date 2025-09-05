@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
+import { requireAdmin } from "@/src/lib/auth/auth";
 
 const prisma = new PrismaClient();
 
@@ -13,6 +14,14 @@ const ChapterSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  // Check admin permission
+  const adminCheck = await requireAdmin();
+  if (adminCheck !== true) {
+    return NextResponse.json(adminCheck, {
+      status: adminCheck.success ? 200 : 401,
+    });
+  }
+
   try {
     const formData = await request.formData();
     const file = formData.get("file");
