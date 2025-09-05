@@ -119,46 +119,35 @@ button {
 }
 
 /* Scrollbar styling */
-body::-webkit-scrollbar {
+*::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 
-body::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
   background: #a7fed2; /* emerald-600 */
   border-radius: 6px;
 }
 
-body::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track {
   background: #edfdf5;
 }
 
 /* Dark theme scrollbar */
-body[data-theme="dark"]::-webkit-scrollbar-track {
+[data-theme="dark"]::-webkit-scrollbar,
+[data-theme="dark"] *::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+[data-theme="dark"]::-webkit-scrollbar-track,
+[data-theme="dark"] *::-webkit-scrollbar-track {
   background: #111827; /* gray-900 */
   border: 1px solid #1f2937; /* gray-800 */
 }
 
-body[data-theme="dark"]::-webkit-scrollbar-thumb {
+[data-theme="dark"]::-webkit-scrollbar-thumb,
+[data-theme="dark"] *::-webkit-scrollbar-thumb {
   background: #017855; /* emerald-500 */
   border: 1px solid #111827;
-}
-
-/* Scrollbar styling for .scrollbar-thin elements */
-.scrollbar-thin::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #10b981; /* emerald-500 */
-  border-radius: 6px;
-}
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: #f0fdf4;
-}
-[data-theme="dark"] .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #065f46; /* emerald-700 */
-}
-[data-theme="dark"] .scrollbar-thin::-webkit-scrollbar-track {
-  background: #111827;
 }

@@ -125,7 +125,7 @@ export function ImportConfirmModal({
           </div>
         )}
         {previewItems.length > 0 && (
-          <div className="mb-4 max-h-48 overflow-auto rounded bg-gray-50 dark:bg-gray-800 p-2 text-xs scrollbar-thin scrollbar-thumb-emerald-400 dark:scrollbar-thumb-emerald-700 scrollbar-track-gray-200 dark:scrollbar-track-gray-900 text-gray-800 dark:text-emerald-200">
+          <div className="mb-4 max-h-48 overflow-auto rounded bg-gray-50 dark:bg-gray-800 p-2 text-xs text-gray-800 dark:text-emerald-200">
             <div className="font-medium mb-1 text-emerald-700 dark:text-emerald-300">
               Aperçu des items à importer :
             </div>

@@ -20,7 +20,7 @@ export function FailedItemsModal({ items, onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/40 dark:bg-black/70 px-2 scrollbar-thin scrollbar-thumb-emerald-400 dark:scrollbar-thumb-emerald-700 scrollbar-track-gray-200 dark:scrollbar-track-gray-900">
+    <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/40 dark:bg-black/70 px-2">
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-md w-full max-h-[80vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-lg font-semibold dark:text-white">
