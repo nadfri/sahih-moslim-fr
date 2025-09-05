@@ -1,138 +1,206 @@
 [
   {
-    "name": "Abdallah ibn Abbas",
-    "nameArabic": null
+    "name_fr": "Abdallah ibn Abbas",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "abdallah-ibn-abbas"
   },
   {
-    "name": "Abdallah ibn Abi Umayya",
-    "nameArabic": null
+    "name_fr": "Abdallah ibn Abi Umayya",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "abdallah-ibn-abi-umayya"
   },
   {
-    "name": "Abdallah ibn Mas'ud",
-    "nameArabic": null
+    "name_fr": "Abdallah ibn Mas'ud",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "abdallah-ibn-masud"
   },
   {
-    "name": "Abdallah ibn Omar",
-    "nameArabic": null
+    "name_fr": "Abdallah ibn Omar",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "abdallah-ibn-omar"
   },
   {
-    "name": "Abou Ayyub Al-Ansari",
-    "nameArabic": null
+    "name_fr": "Abou Ayyub Al-Ansari",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "abou-ayyub-al-ansari"
   },
   {
-    "name": "Abou Bakr As-Siddiq",
-    "nameArabic": null
+    "name_fr": "Abou Bakr As-Siddiq",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "abou-bakr-as-siddiq"
   },
   {
-    "name": "Abou Darda",
-    "nameArabic": null
+    "name_fr": "Abou Darda",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "abou-darda"
   },
   {
-    "name": "Abou Dharr Al-Ghifari",
-    "nameArabic": null
+    "name_fr": "Abou Dharr Al-Ghifari",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "abou-dharr-al-ghifari"
   },
   {
-    "name": "Abou Huraira",
-    "nameArabic": null
+    "name_fr": "Abou Huraira",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "abou-huraira"
   },
   {
-    "name": "Abou Muslim Al-Khawlani",
-    "nameArabic": null
+    "name_fr": "Abou Muslim Al-Khawlani",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "abou-muslim-al-khawlani"
   },
   {
-    "name": "Abou Rafi'",
-    "nameArabic": null
+    "name_fr": "Abou Rafi'",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "abou-rafi"
   },
   {
-    "name": "Abou Sa'id al-Khudri",
-    "nameArabic": null
+    "name_fr": "Abou Sa'id al-Khudri",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "abou-said-al-khudri"
   },
   {
-    "name": "Abou Talib",
-    "nameArabic": null
+    "name_fr": "Abou Talib",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "abou-talib"
   },
   {
-    "name": "Al Mughirah ibn Shu'bah",
-    "nameArabic": null
+    "name_fr": "Al Mughirah ibn Shu'bah",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "al-mughirah-ibn-shubah"
   },
   {
-    "name": "Al-Ashajj Abd al-Qays",
-    "nameArabic": null
+    "name_fr": "Al-Ashajj Abd al-Qays",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "al-ashajj-abd-al-qays"
   },
   {
-    "name": "Ali ibn Abi Talib",
-    "nameArabic": null
+    "name_fr": "Ali ibn Abi Talib",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "ali-ibn-abi-talib"
   },
   {
-    "name": "Anas ibn Malik",
-    "nameArabic": null
+    "name_fr": "Anas ibn Malik",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "anas-ibn-malik"
   },
   {
-    "name": "Bilal ibn Rabah",
-    "nameArabic": null
+    "name_fr": "Bilal ibn Rabah",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "bilal-ibn-rabah"
   },
   {
-    "name": "Bushair ibn Kaab",
-    "nameArabic": null
+    "name_fr": "Bushair ibn Kaab",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "bushair-ibn-kaab"
   },
   {
-    "name": "Fatimah bint Muhammad",
-    "nameArabic": null
+    "name_fr": "Fatimah bint Muhammad",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "fatimah-bint-muhammad"
   },
   {
-    "name": "Hassan ibn Ali",
-    "nameArabic": null
+    "name_fr": "Hassan ibn Ali",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "hassan-ibn-ali"
   },
   {
-    "name": "Houmayd ibn Abder Rahman Al Houmayri",
-    "nameArabic": null
+    "name_fr": "Houmayd ibn Abder Rahman Al Houmayri",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "houmayd-ibn-abder-rahman-al-houmayri"
   },
   {
-    "name": "Imran ibn Husain",
-    "nameArabic": null
+    "name_fr": "Imran ibn Husain",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "imran-ibn-husain"
   },
   {
-    "name": "Itban ibn Malik",
-    "nameArabic": null
+    "name_fr": "Itban ibn Malik",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "itban-ibn-malik"
   },
   {
-    "name": "Ma'bad Al Jouhani",
-    "nameArabic": null
+    "name_fr": "Ma'bad Al Jouhani",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "mabad-al-jouhani"
   },
   {
-    "name": "Muadh ibn Jabal",
-    "nameArabic": null
+    "name_fr": "Muadh ibn Jabal",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "muadh-ibn-jabal"
   },
   {
-    "name": "Mujahid ibn Jabr",
-    "nameArabic": null
+    "name_fr": "Mujahid ibn Jabr",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "mujahid-ibn-jabr"
   },
   {
-    "name": "Nou'man ibn Qawqal",
-    "nameArabic": null
+    "name_fr": "Nou'man ibn Qawqal",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "nouman-ibn-qawqal"
   },
   {
-    "name": "Omar ibn al-Khattab",
-    "nameArabic": null
+    "name_fr": "Omar ibn al-Khattab",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "omar-ibn-al-khattab"
   },
   {
-    "name": "Othman ibn Affan",
-    "nameArabic": null
+    "name_fr": "Othman ibn Affan",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "othman-ibn-affan"
   },
   {
-    "name": "Oubada ibn as-Samit",
-    "nameArabic": null
+    "name_fr": "Oubada ibn as-Samit",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "oubada-ibn-as-samit"
   },
   {
-    "name": "Salim ibn Abdallah",
-    "nameArabic": null
+    "name_fr": "Salim ibn Abdallah",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "salim-ibn-abdallah"
   },
   {
-    "name": "Salman Al-Farsi",
-    "nameArabic": null
+    "name_fr": "Salman Al-Farsi",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "salman-al-farsi"
   },
   {
-    "name": "Zayd ibn Harithah",
-    "nameArabic": null
+    "name_fr": "Zayd ibn Harithah",
+    "name_ar": "",
+    "name_en": null,
+    "slug": "zayd-ibn-harithah"
   }
 ]

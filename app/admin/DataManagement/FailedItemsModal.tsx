@@ -14,13 +14,14 @@ export function FailedItemsModal({ items, onClose }: Props) {
     if (!obj || typeof obj !== "object") return "Item";
     const record = obj as Record<string, unknown>;
     if (typeof record.numero === "number") return `Hadith #${record.numero}`;
+    if (typeof record.name_fr === "string") return record.name_fr;
     if (typeof record.name === "string") return record.name;
     return "Item";
   };
 
   return (
-    <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/40 dark:bg-black/70 px-2">
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-md w-full">
+    <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/40 dark:bg-black/70 px-2 scrollbar-thin scrollbar-thumb-emerald-400 dark:scrollbar-thumb-emerald-700 scrollbar-track-gray-200 dark:scrollbar-track-gray-900">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-md w-full max-h-[80vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-lg font-semibold dark:text-white">
             Échecs d'import
@@ -33,7 +34,7 @@ export function FailedItemsModal({ items, onClose }: Props) {
           </button>
         </div>
         <div className="mb-4 text-sm dark:text-gray-300">
-          Certains éléments n'ont pas pu être importés. Voir la liste ci‑dessous
+          Certains éléments n'ont pas pu être importés. Voir la liste ci-dessous
           :
         </div>
         <ul className="mb-4 text-sm list-disc pl-4 space-y-1">

@@ -8,8 +8,9 @@ export async function GET() {
     const chapters = await prisma.chapter.findMany({
       select: {
         index: true,
-        name: true,
-        nameArabic: true,
+        name_fr: true,
+        name_ar: true,
+        name_en: true,
       },
       orderBy: { index: "asc" },
     });

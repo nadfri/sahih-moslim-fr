@@ -45,9 +45,9 @@ describe("Actions (hadith) - robust", () => {
       numero,
       matn_fr: "Payload French",
       matn_ar: "Payload Arabic",
-      chapter: chapter.name,
-      mentionedSahabas: [sahaba.name],
-      isnadTransmitters: [transmitter.name],
+      chapter: chapter.name_fr,
+      mentionedSahabas: [sahaba.name_fr],
+      isnadTransmitters: [transmitter.name_fr],
     };
 
     const addResult = await addHadith(hadithPayload);

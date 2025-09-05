@@ -14,12 +14,15 @@ export async function GET() {
         chapter: {
           select: {
             index: true,
-            name: true,
+            name_fr: true,
+            name_ar: true,
+            name_en: true,
+            slug: true,
           },
         },
         mentionedSahabas: {
           select: {
-            name: true,
+            name_fr: true,
           },
         },
         hadithTransmitters: {
@@ -27,8 +30,7 @@ export async function GET() {
             order: true,
             transmitter: {
               select: {
-                name: true,
-                slug: true,
+                name_fr: true,
               },
             },
           },
@@ -47,9 +49,8 @@ export async function GET() {
       matn_ar: h.matn_ar,
       matn_en: h.matn_en,
       chapterIndex: h.chapter.index,
-      chapterName: h.chapter.name,
-      mentionedSahabas: h.mentionedSahabas.map((s) => s.name),
-      isnad: h.hadithTransmitters.map((ht) => ht.transmitter.name),
+      mentionedSahabas: h.mentionedSahabas.map((s) => s.name_fr),
+      isnad: h.hadithTransmitters.map((ht) => ht.transmitter.name_fr),
     }));
 
     return new NextResponse(JSON.stringify(transformedHadiths, null, 2), {

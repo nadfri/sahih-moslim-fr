@@ -122,7 +122,11 @@ const { __setMockSearch, __resetMockSearch } = await import(
 // Import the component after mocks are defined
 import { SearchBar } from "./SearchBar";
 
-const makeItem = (name: string): ItemType => ({ id: name, name, slug: name });
+const makeItem = (name: string): ItemType => ({
+  id: name,
+  name_fr: name,
+  slug: name,
+});
 
 describe("SearchBar", () => {
   const hadiths: HadithType[] = [

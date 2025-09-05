@@ -24,36 +24,42 @@ vi.mock("@/src/ui/inputs/Input/Input", () => ({
 vi.mock("../CardEdit/CardEdit", () => ({
   CardEdit: vi.fn(({ item, variant }) => (
     <div data-testid={`card-edit-${item.id}`}>
-      Card for {item.name} - {variant}
+      Card for {item.name_fr} - {variant}
     </div>
   )),
 }));
 
 const mockChapters: ItemType[] = [
-  { id: "1", name: "La Foi", slug: "la-foi", index: 1, hadithCount: 15 },
+  { id: "1", name_fr: "La Foi", slug: "la-foi", index: 1, hadithCount: 15 },
   {
     id: "2",
-    name: "La Purification",
+    name_fr: "La Purification",
     slug: "la-purification",
     index: 2,
     hadithCount: 25,
   },
-  { id: "3", name: "La Prière", slug: "la-priere", index: 3, hadithCount: 30 },
+  {
+    id: "3",
+    name_fr: "La Prière",
+    slug: "la-priere",
+    index: 3,
+    hadithCount: 30,
+  },
 ];
 
 const mockSahabas: ItemType[] = [
   {
     id: "1",
-    name: "Ali ibn Abi Talib",
+    name_fr: "Ali ibn Abi Talib",
     slug: "ali-ibn-abi-talib",
     hadithCount: 18,
   },
-  { id: "2", name: "Aisha", slug: "aisha", hadithCount: 12 },
+  { id: "2", name_fr: "Aisha", slug: "aisha", hadithCount: 12 },
 ];
 
 const mockTransmitters: ItemType[] = [
-  { id: "1", name: "Malik", slug: "malik", hadithCount: 8 },
-  { id: "2", name: "Nafi", slug: "nafi", hadithCount: 5 },
+  { id: "1", name_fr: "Malik", slug: "malik", hadithCount: 8 },
+  { id: "2", name_fr: "Nafi", slug: "nafi", hadithCount: 5 },
 ];
 
 describe("FilteredCardsEdit Component", () => {

@@ -28,8 +28,9 @@ async function getItems(variant: VariantType): Promise<ItemType[]> {
       return prisma.sahaba.findMany({
         select: {
           id: true,
-          name: true,
-          nameArabic: true,
+          name_fr: true,
+          name_ar: true,
+          name_en: true,
           slug: true,
         },
       });
@@ -37,8 +38,9 @@ async function getItems(variant: VariantType): Promise<ItemType[]> {
       return prisma.transmitter.findMany({
         select: {
           id: true,
-          name: true,
-          nameArabic: true,
+          name_fr: true,
+          name_ar: true,
+          name_en: true,
           slug: true,
         },
       });
@@ -73,7 +75,7 @@ export async function addItem(
   }
 
   const validatedData = parseResult.data;
-  const slug = slugify(validatedData.name);
+  const slug = slugify(validatedData.name_fr);
 
   try {
     let created;
@@ -82,8 +84,9 @@ export async function addItem(
       case "chapters":
         created = await prisma.chapter.create({
           data: {
-            name: validatedData.name,
-            nameArabic: validatedData.nameArabic,
+            name_fr: validatedData.name_fr,
+            name_ar: validatedData.name_ar,
+            name_en: validatedData.name_en,
             slug,
             index: Number(validatedData.index),
           },
@@ -93,8 +96,9 @@ export async function addItem(
       case "sahabas":
         created = await prisma.sahaba.create({
           data: {
-            name: validatedData.name,
-            nameArabic: validatedData.nameArabic,
+            name_fr: validatedData.name_fr,
+            name_ar: validatedData.name_ar,
+            name_en: validatedData.name_en,
             slug,
           },
         });
@@ -103,8 +107,9 @@ export async function addItem(
       case "transmitters":
         created = await prisma.transmitter.create({
           data: {
-            name: validatedData.name,
-            nameArabic: validatedData.nameArabic,
+            name_fr: validatedData.name_fr,
+            name_ar: validatedData.name_ar,
+            name_en: validatedData.name_en,
             slug,
           },
         });
@@ -177,7 +182,7 @@ export async function editItem(
 
   const validatedData = parseResult.data as ItemFormValues & { id: string };
 
-  const slug = slugify(validatedData.name);
+  const slug = slugify(validatedData.name_fr);
 
   // Prevent modification of the 'Unknown' item (slug 'inconnu' or index 999)
   if (
@@ -206,8 +211,9 @@ export async function editItem(
         updated = await prisma.chapter.update({
           where: { id: validatedData.id },
           data: {
-            name: validatedData.name,
-            nameArabic: validatedData.nameArabic,
+            name_fr: validatedData.name_fr,
+            name_ar: validatedData.name_ar,
+            name_en: validatedData.name_en,
             slug,
             index: Number(validatedData.index),
           },
@@ -218,8 +224,9 @@ export async function editItem(
         updated = await prisma.sahaba.update({
           where: { id: validatedData.id },
           data: {
-            name: validatedData.name,
-            nameArabic: validatedData.nameArabic,
+            name_fr: validatedData.name_fr,
+            name_ar: validatedData.name_ar,
+            name_en: validatedData.name_en,
             slug,
           },
         });
@@ -228,8 +235,9 @@ export async function editItem(
         updated = await prisma.transmitter.update({
           where: { id: validatedData.id },
           data: {
-            name: validatedData.name,
-            nameArabic: validatedData.nameArabic,
+            name_fr: validatedData.name_fr,
+            name_ar: validatedData.name_ar,
+            name_en: validatedData.name_en,
             slug,
           },
         });
@@ -311,7 +319,9 @@ export async function deleteItem(
           where: { slug: "inconnu" },
           update: {},
           create: {
-            name: "Inconnu",
+            name_fr: "Inconnu",
+            name_ar: "",
+            name_en: "",
             slug: "inconnu",
             index: 999,
           },
@@ -411,7 +421,7 @@ export async function addHadith(
     });
     if (!chapter) {
       chapter = await prisma.chapter.findFirst({
-        where: { name: validData.chapter },
+        where: { name_fr: validData.chapter },
       });
     }
 
@@ -424,11 +434,11 @@ export async function addHadith(
 
     // Find sahabas
     const sahabas = await prisma.sahaba.findMany({
-      where: { name: { in: validData.mentionedSahabas } },
+      where: { name_fr: { in: validData.mentionedSahabas } },
     });
 
     if (sahabas.length !== validData.mentionedSahabas.length) {
-      const foundNames = sahabas.map((s) => s.name);
+      const foundNames = sahabas.map((s) => s.name_fr);
       const notFound = validData.mentionedSahabas.filter(
         (name) => !foundNames.includes(name)
       );
@@ -440,11 +450,11 @@ export async function addHadith(
 
     // Find transmitters
     const transmitters = await prisma.transmitter.findMany({
-      where: { name: { in: validData.isnadTransmitters } },
+      where: { name_fr: { in: validData.isnadTransmitters } },
     });
 
     if (transmitters.length !== validData.isnadTransmitters.length) {
-      const foundNames = transmitters.map((t) => t.name);
+      const foundNames = transmitters.map((t) => t.name_fr);
       const notFound = validData.isnadTransmitters.filter(
         (name) => !foundNames.includes(name)
       );
@@ -472,7 +482,7 @@ export async function addHadith(
     if (validData.isnadTransmitters.length > 0) {
       const transmitterConnections = validData.isnadTransmitters.map(
         (name, index) => {
-          const transmitter = transmitters.find((t) => t.name === name)!;
+          const transmitter = transmitters.find((t) => t.name_fr === name)!;
           return {
             hadithId: newHadith.id,
             transmitterId: transmitter.id,
@@ -559,7 +569,7 @@ export async function editHadith(
     });
     if (!chapter) {
       chapter = await prisma.chapter.findFirst({
-        where: { name: validData.chapter },
+        where: { name_fr: validData.chapter },
       });
     }
 
@@ -572,11 +582,11 @@ export async function editHadith(
 
     // Find sahabas and transmitters (same validation as add)
     const sahabas = await prisma.sahaba.findMany({
-      where: { name: { in: validData.mentionedSahabas } },
+      where: { name_fr: { in: validData.mentionedSahabas } },
     });
 
     const transmitters = await prisma.transmitter.findMany({
-      where: { name: { in: validData.isnadTransmitters } },
+      where: { name_fr: { in: validData.isnadTransmitters } },
     });
 
     // Update hadith
@@ -621,7 +631,7 @@ export async function editHadith(
     if (validData.isnadTransmitters.length > 0) {
       const transmitterConnections = validData.isnadTransmitters.map(
         (name, index) => {
-          const transmitter = transmitters.find((t) => t.name === name)!;
+          const transmitter = transmitters.find((t) => t.name_fr === name)!;
           return {
             hadithId,
             transmitterId: transmitter.id,

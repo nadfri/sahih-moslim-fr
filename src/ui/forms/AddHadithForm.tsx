@@ -73,9 +73,9 @@ export function AddHadithForm({
 
   const formValues = watch();
 
-  const chapterOptions = chaptersData.map((chapter) => chapter.name);
-  const sahabaOptions = sahabasData.map((s) => s.name);
-  const transmitterOptions = transmittersData.map((t) => t.name);
+  const chapterOptions = chaptersData.map((chapter) => chapter.name_fr);
+  const sahabaOptions = sahabasData.map((s) => s.name_fr);
+  const transmitterOptions = transmittersData.map((t) => t.name_fr);
 
   // Function to open the dialog with the correct variant
   const handleOpenDialog = (variant: VariantType) => {
@@ -93,15 +93,15 @@ export function AddHadithForm({
 
     // Find IDs corresponding to selected names using props
     const selectedChapter = chaptersData.find(
-      (chapter) => chapter.name === data.chapter
+      (chapter) => chapter.name_fr === data.chapter
     );
     const selectedSahabas = sahabasData.filter((sahaba) =>
-      data.mentionedSahabas.includes(sahaba.name)
+      data.mentionedSahabas.includes(sahaba.name_fr)
     );
 
     // Preserve order from form for transmitters (map to maintain form order)
     const selectedTransmitters = data.isnadTransmitters
-      .map((name) => transmittersData.find((t) => t.name === name))
+      .map((name) => transmittersData.find((t) => t.name_fr === name))
       .filter((t): t is NonNullable<typeof t> => t !== undefined);
 
     if (!selectedChapter) {
@@ -115,9 +115,9 @@ export function AddHadithForm({
       matn_fr: data.matn_fr,
       matn_ar: data.matn_ar,
       matn_en: data.matn_en || "", // Placeholder for English text
-      chapter: selectedChapter.name,
-      mentionedSahabas: selectedSahabas.map((s) => s.name),
-      isnadTransmitters: selectedTransmitters.map((t) => t.name),
+      chapter: selectedChapter.name_fr,
+      mentionedSahabas: selectedSahabas.map((s) => s.name_fr),
+      isnadTransmitters: selectedTransmitters.map((t) => t.name_fr),
     };
 
     try {
@@ -164,18 +164,18 @@ export function AddHadithForm({
     numero: (formValues.numero as number) || 0,
     chapter: {
       id: "preview-chapter-id",
-      name: formValues.chapter || "Sélectionnez un chapitre...",
+      name_fr: formValues.chapter || "Sélectionnez un chapitre...",
       slug: "preview-chapter-slug",
     },
     mentionedSahabas: (formValues.mentionedSahabas || []).map((name, i) => ({
       id: `preview-sahaba-id-${i}`,
-      name: name,
+      name_fr: name,
       slug: `preview-sahaba-slug-${i}`,
     })),
     isnadTransmitters: (formValues.isnadTransmitters || []).map(
       (name: string, i: number) => ({
         id: `preview-transmitter-id-${i}`,
-        name: name,
+        name_fr: name,
         slug: `preview-transmitter-slug-${i}`,
       })
     ),
@@ -281,6 +281,17 @@ export function AddHadithForm({
             }}
             placeholder="Saisir le texte du hadith..."
             height={200}
+          />
+          {/* matn_fr EN */}
+          <Input
+            id="matn_en"
+            label="Texte anglais (optionnel)"
+            type="textarea"
+            rows={5}
+            className="font-matn_en text-lg"
+            error={!!errors.matn_en}
+            errorMessage={errors.matn_en?.message}
+            register={register("matn_en")}
           />
           {/* matn_fr AR */}
           <Input

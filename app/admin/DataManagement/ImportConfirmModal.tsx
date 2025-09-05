@@ -139,8 +139,8 @@ export function ImportConfirmModal({
                   }
                   className="mb-1 text-sm text-emerald-700 dark:text-emerald-300"
                 >
-                  {"name" in item
-                    ? item.name
+                  {"name_fr" in item && typeof item.name_fr === "string"
+                    ? item.name_fr
                     : `Hadith #${(item as ExportedHadithType).numero}`}
                 </li>
               ))}

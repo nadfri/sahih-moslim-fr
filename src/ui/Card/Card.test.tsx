@@ -17,7 +17,9 @@ vi.mock("@/src/ui/Card/ChapterIndex/ChapterIndex", () => ({
 describe("Card", () => {
   const item: ItemType = {
     id: "id",
-    name: "Test Chapter",
+    name_fr: "Test Chapter",
+    name_ar: null,
+    name_en: null,
     slug: "test-chapter",
     hadithCount: 42,
     index: 3,

@@ -13,7 +13,7 @@ export function Card({ item, variant }: Props) {
   return (
     <Link
       href={`/${variant}/${item.slug}`}
-      key={item.name}
+      key={item.name_fr}
       className="group block h-full"
     >
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden h-full flex flex-col p-3 transition-all duration-300 ease-in-out border border-transparent group-hover:shadow-xl group-hover:border-emerald-300 dark:group-hover:border-emerald-700 group-hover:-translate-y-1">
@@ -24,7 +24,7 @@ export function Card({ item, variant }: Props) {
 
           {/* Chapter Name */}
           <h2 className="text-xl font-semibold font-serif text-emerald-700 dark:text-emerald-500 mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-            {item.name}
+            {item.name_fr}
           </h2>
 
           <p className="text-xs inline-flex items-center font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md px-2 py-0.5">

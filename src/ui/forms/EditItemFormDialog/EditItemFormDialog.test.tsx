@@ -33,10 +33,11 @@ const INDEX_ERROR_REGEX =
 
 const mockChapterItem: ItemType = {
   id: "chap1",
-  name: "Chapitre Un",
+  name_fr: "Chapitre Un",
+  name_ar: "الفصل الأول",
+  name_en: "Chapter One",
   slug: "chapitre-un",
   index: 1,
-  nameArabic: "الفصل الأول",
   hadithCount: 10,
 };
 
@@ -44,27 +45,30 @@ const mockExistingChapters: ItemType[] = [
   mockChapterItem,
   {
     id: "chap2",
-    name: "Chapitre Deux",
+    name_fr: "Chapitre Deux",
+    name_ar: "الفصل الثاني",
+    name_en: "Chapter Two",
     slug: "chapitre-deux",
     index: 2,
-    nameArabic: "الفصل الثاني",
     hadithCount: 5,
   },
   {
     id: "chap3",
-    name: "Chapitre Trois",
+    name_fr: "Chapitre Trois",
+    name_ar: "الفصل الثالث",
+    name_en: "Chapter Three",
     slug: "chapitre-trois",
     index: 3,
-    nameArabic: "الفصل الثالث",
     hadithCount: 8,
   },
 ];
 
 const mockTransmitterItem: ItemType = {
   id: "trans1",
-  name: "Transmetteur Un",
+  name_fr: "Transmetteur Un",
+  name_ar: "الناقل الأول",
+  name_en: "Transmitter One",
   slug: "transmetteur-un",
-  nameArabic: "الناقل الأول",
   hadithCount: 12,
 };
 
@@ -72,9 +76,10 @@ const mockExistingTransmitters: ItemType[] = [
   mockTransmitterItem,
   {
     id: "trans2",
-    name: "Transmetteur Deux",
+    name_fr: "Transmetteur Deux",
+    name_ar: "الناقل الثاني",
+    name_en: "Transmitter Two",
     slug: "transmetteur-deux",
-    nameArabic: "الناقل الثاني",
     hadithCount: 8,
   },
 ];
@@ -118,10 +123,13 @@ describe("EditItemFormDialog", () => {
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Index*")).toHaveValue(mockChapterItem.index);
     expect(screen.getByLabelText("Nom du chapitre*")).toHaveValue(
-      mockChapterItem.name
+      mockChapterItem.name_fr
     );
     expect(screen.getByLabelText("Nom en arabe (optionnel)")).toHaveValue(
-      mockChapterItem.nameArabic
+      mockChapterItem.name_ar
+    );
+    expect(screen.getByLabelText("Nom en anglais (optionnel)")).toHaveValue(
+      mockChapterItem.name_en
     );
     expect(
       screen.getByRole("button", { name: "Enregistrer" })
@@ -255,8 +263,9 @@ describe("EditItemFormDialog", () => {
     await waitFor(() => {
       expect(mockEditItem).toHaveBeenCalledWith(props.variant, {
         id: mockChapterItem.id,
-        name: newName,
-        nameArabic: mockChapterItem.nameArabic,
+        name_fr: newName,
+        name_ar: mockChapterItem.name_ar,
+        name_en: mockChapterItem.name_en,
         index: mockChapterItem.index,
       });
     });
@@ -363,10 +372,13 @@ describe("EditItemFormDialog", () => {
       ).toBeInTheDocument();
       expect(screen.queryByLabelText("Index*")).not.toBeInTheDocument(); // Index field should not be present for transmitters
       expect(screen.getByLabelText("Nom du transmetteur*")).toHaveValue(
-        mockTransmitterItem.name
+        mockTransmitterItem.name_fr
       );
       expect(screen.getByLabelText("Nom en arabe (optionnel)")).toHaveValue(
-        mockTransmitterItem.nameArabic
+        mockTransmitterItem.name_ar
+      );
+      expect(screen.getByLabelText("Nom en anglais (optionnel)")).toHaveValue(
+        mockTransmitterItem.name_en
       );
     });
 
@@ -387,8 +399,9 @@ describe("EditItemFormDialog", () => {
       await waitFor(() => {
         expect(mockEditItem).toHaveBeenCalledWith(transmitterProps.variant, {
           id: mockTransmitterItem.id,
-          name: newName,
-          nameArabic: mockTransmitterItem.nameArabic,
+          name_fr: newName,
+          name_ar: mockTransmitterItem.name_ar,
+          name_en: mockTransmitterItem.name_en,
         });
       });
       expect(mockToastSuccess).toHaveBeenCalledWith("Transmetteur modifié!");
@@ -419,10 +432,13 @@ describe("EditItemFormDialog", () => {
       ).toBeInTheDocument();
       expect(screen.queryByLabelText("Index*")).not.toBeInTheDocument(); // Index field should not be present for transmitters
       expect(screen.getByLabelText("Nom du transmetteur*")).toHaveValue(
-        mockTransmitterItem.name
+        mockTransmitterItem.name_fr
       );
       expect(screen.getByLabelText("Nom en arabe (optionnel)")).toHaveValue(
-        mockTransmitterItem.nameArabic
+        mockTransmitterItem.name_ar
+      );
+      expect(screen.getByLabelText("Nom en anglais (optionnel)")).toHaveValue(
+        mockTransmitterItem.name_en
       );
     });
 
@@ -441,8 +457,9 @@ describe("EditItemFormDialog", () => {
       await waitFor(() => {
         expect(mockEditItem).toHaveBeenCalledWith(transmitterProps.variant, {
           id: mockTransmitterItem.id,
-          name: newName,
-          nameArabic: mockTransmitterItem.nameArabic,
+          name_fr: newName,
+          name_ar: mockTransmitterItem.name_ar,
+          name_en: mockTransmitterItem.name_en,
         });
       });
       expect(mockToastSuccess).toHaveBeenCalledWith("Transmetteur modifié!");

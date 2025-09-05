@@ -7,8 +7,9 @@ const prisma = new PrismaClient();
 
 const ChapterSchema = z.object({
   index: z.number(),
-  name: z.string(),
-  nameArabic: z.string().nullable().optional(),
+  name_fr: z.string(),
+  name_ar: z.string().nullable().optional(),
+  name_en: z.string().nullable().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -36,15 +37,20 @@ export async function POST(request: NextRequest) {
     const failed: { item: Partial<Chapter>; reason: string }[] = [];
     for (const chapter of chapters) {
       try {
-        const slug = slugify(chapter.name);
+        const slug = slugify(chapter.name_fr);
         const result = await prisma.chapter.upsert({
-          where: { name: chapter.name },
+          where: { slug },
           update: {
-            ...chapter,
-            slug,
+            index: chapter.index,
+            name_fr: chapter.name_fr,
+            name_ar: chapter.name_ar,
+            name_en: chapter.name_en,
           },
           create: {
-            ...chapter,
+            index: chapter.index,
+            name_fr: chapter.name_fr,
+            name_ar: chapter.name_ar,
+            name_en: chapter.name_en,
             slug,
           },
         });

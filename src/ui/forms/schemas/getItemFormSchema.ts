@@ -9,20 +9,26 @@ export function getItemFormSchema(
 ) {
   return z.object({
     id: z.string().optional(),
-    name: z
+    name_fr: z
       .string()
       .min(3, "Au moins 3 lettres")
       .trim()
       .refine(
-        (name) =>
+        (name_fr) =>
           !items.some(
             (item) =>
               (id ? item.id !== id : true) &&
-              item.name.trim().toLowerCase() === name.trim().toLowerCase()
+              item.name_fr.trim().toLowerCase() === name_fr.trim().toLowerCase()
           ),
-        "Ce nom est déjà utilisé. Veuillez en choisir un autre."
+        "Ce nom français est déjà utilisé. Veuillez en choisir un autre."
       ),
-    nameArabic: z
+    name_ar: z
+      .string()
+      .trim()
+      .transform((val) => (val === "" ? null : val))
+      .nullable()
+      .optional(),
+    name_en: z
       .string()
       .trim()
       .transform((val) => (val === "" ? null : val))

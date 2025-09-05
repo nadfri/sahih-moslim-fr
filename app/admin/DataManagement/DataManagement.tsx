@@ -79,11 +79,11 @@ export function DataManagement() {
                 (it.id as string) ||
                 `preview-${Math.random().toString(36).slice(2, 8)}`,
               index: it.index as number | undefined,
-              name: it.name,
+              name_fr: it.name_fr,
               slug:
                 (it.slug as string) ||
-                (it.name || "").toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-              nameArabic: it.nameArabic,
+                (it.name_fr || "").toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+              name_ar: it.name_ar,
               hadithCount: it.hadithCount,
             }));
             setPreviewItems(normalized as ItemType[]);
@@ -106,11 +106,11 @@ export function DataManagement() {
                 (it.id as string) ||
                 `preview-${Math.random().toString(36).slice(2, 8)}`,
               index: it.index as number | undefined,
-              name: it.name,
+              name_fr: it.name_fr,
               slug:
                 (it.slug as string) ||
-                (it.name || "").toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-              nameArabic: it.nameArabic,
+                (it.name_fr || "").toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+              name_ar: it.name_ar,
               hadithCount: it.hadithCount,
             }));
             setPreviewItems(normalized as ItemType[]);

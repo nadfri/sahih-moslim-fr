@@ -5,8 +5,10 @@ const fs = require("fs");
 const path = require("path");
 const readline = require("readline");
 
-console.log("🚀 Script de restauration d'urgence pour Supabase");
-console.log("================================================\n");
+console.log("🚀 Script de restauration d'urgence pour Supabase - v2.0");
+console.log("🔄 Compatible avec le nouveau schéma Prisma simplifié");
+console.log("📊 Support des relations Many-to-Many Hadith <-> Sahaba");
+console.log("=======================================================\n");
 
 // Fonction pour créer une interface interactive
 function createInterface() {
@@ -185,16 +187,13 @@ function checkBackupFile() {
 
     // Supprimer les tables (dans l'ordre inverse des dépendances)
     `psql "${cleanDbUrl}" -c "DROP TABLE IF EXISTS public.\\"HadithTransmitter\\" CASCADE;"`,
+    `psql "${cleanDbUrl}" -c "DROP TABLE IF EXISTS public.\\"_HadithToSahaba\\" CASCADE;"`,
     `psql "${cleanDbUrl}" -c "DROP TABLE IF EXISTS public.\\"Hadith\\" CASCADE;"`,
     `psql "${cleanDbUrl}" -c "DROP TABLE IF EXISTS public.\\"Chapter\\" CASCADE;"`,
     `psql "${cleanDbUrl}" -c "DROP TABLE IF EXISTS public.\\"Transmitter\\" CASCADE;"`,
     `psql "${cleanDbUrl}" -c "DROP TABLE IF EXISTS public.\\"Sahaba\\" CASCADE;"`,
     `psql "${cleanDbUrl}" -c "DROP TABLE IF EXISTS public.\\"profiles\\" CASCADE;"`,
-    `psql "${cleanDbUrl}" -c "DROP TABLE IF EXISTS public.\\"prisma_migrations\\" CASCADE;"`,
-
-    // Supprimer explicitement les tables problématiques
-    `psql "${cleanDbUrl}" -c "DROP TABLE IF EXISTS public.\\\"_HadithToSahaba\\\" CASCADE;"`,
-    `psql "${cleanDbUrl}" -c "DROP TABLE IF EXISTS public.\\\"_prisma_migrations\\\" CASCADE;"`,
+    `psql "${cleanDbUrl}" -c "DROP TABLE IF EXISTS public.\\"_prisma_migrations\\" CASCADE;"`,
 
     // Supprimer les types enum
     `psql "${cleanDbUrl}" -c "DROP TYPE IF EXISTS public.\\"Role\\" CASCADE;"`,
@@ -341,85 +340,136 @@ function checkBackupFile() {
     DROP INDEX IF EXISTS "Transmitter_slug_idx";
     DROP INDEX IF EXISTS "idx_transmitter_slug";
 
-      -- Foreign keys pour _HadithToSahaba
-      DO $$
-      BEGIN
+    -- Création de l'enum Role si absent
+    DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'Role') THEN
+        CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
+      END IF;
+    END $$;
+
+    -- Foreign key Hadith.chapterId -> Chapter.id
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints
+        WHERE constraint_name = 'fk_hadith_chapter' AND table_name = 'Hadith'
+      ) THEN
+        ALTER TABLE public."Hadith"
+          ADD CONSTRAINT fk_hadith_chapter FOREIGN KEY ("chapterId") REFERENCES public."Chapter"(id) ON DELETE NO ACTION ON UPDATE NO ACTION;
+      END IF;
+    END $$;
+
+    -- Foreign key HadithTransmitter.hadithId -> Hadith.id
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints
+        WHERE constraint_name = 'fk_ht_hadith' AND table_name = 'HadithTransmitter'
+      ) THEN
+        ALTER TABLE public."HadithTransmitter"
+          ADD CONSTRAINT fk_ht_hadith FOREIGN KEY ("hadithId") REFERENCES public."Hadith"(id) ON DELETE CASCADE ON UPDATE NO ACTION;
+      END IF;
+    END $$;
+
+    -- Foreign key HadithTransmitter.transmitterId -> Transmitter.id
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints
+        WHERE constraint_name = 'fk_ht_transmitter' AND table_name = 'HadithTransmitter'
+      ) THEN
+        ALTER TABLE public."HadithTransmitter"
+          ADD CONSTRAINT fk_ht_transmitter FOREIGN KEY ("transmitterId") REFERENCES public."Transmitter"(id) ON DELETE CASCADE ON UPDATE NO ACTION;
+      END IF;
+    END $$;
+
+    -- Foreign keys pour _HadithToSahaba (relation many-to-many simplifiée)
+    DO $$
+    BEGIN
+      -- Vérifier que la table _HadithToSahaba existe
+      IF EXISTS (
+        SELECT 1 FROM information_schema.tables 
+        WHERE table_schema = 'public' AND table_name = '_HadithToSahaba'
+      ) THEN
+        -- Foreign key A -> Hadith.id
         IF NOT EXISTS (
           SELECT 1 FROM information_schema.table_constraints
-          WHERE constraint_name = 'fk_hadith' AND table_name = '_HadithToSahaba'
+          WHERE constraint_name = '_HadithToSahaba_A_fkey' AND table_name = '_HadithToSahaba'
         ) THEN
           ALTER TABLE public."_HadithToSahaba"
-            ADD CONSTRAINT fk_hadith FOREIGN KEY ("A") REFERENCES public."Hadith"(id) ON DELETE CASCADE;
+            ADD CONSTRAINT "_HadithToSahaba_A_fkey" FOREIGN KEY ("A") REFERENCES public."Hadith"(id) ON DELETE CASCADE ON UPDATE CASCADE;
         END IF;
+        
+        -- Foreign key B -> Sahaba.id
         IF NOT EXISTS (
           SELECT 1 FROM information_schema.table_constraints
-          WHERE constraint_name = 'fk_sahaba' AND table_name = '_HadithToSahaba'
+          WHERE constraint_name = '_HadithToSahaba_B_fkey' AND table_name = '_HadithToSahaba'
         ) THEN
           ALTER TABLE public."_HadithToSahaba"
-            ADD CONSTRAINT fk_sahaba FOREIGN KEY ("B") REFERENCES public."Sahaba"(id) ON DELETE CASCADE;
+            ADD CONSTRAINT "_HadithToSahaba_B_fkey" FOREIGN KEY ("B") REFERENCES public."Sahaba"(id) ON DELETE CASCADE ON UPDATE CASCADE;
         END IF;
-      END $$;
+      END IF;
+    END $$;
 
-      -- Foreign key Hadith.chapterId -> Chapter.id
-      DO $$
-      BEGIN
-        IF NOT EXISTS (
-          SELECT 1 FROM information_schema.table_constraints
-          WHERE constraint_name = 'fk_hadith_chapter' AND table_name = 'Hadith'
-        ) THEN
-          ALTER TABLE public."Hadith"
-            ADD CONSTRAINT fk_hadith_chapter FOREIGN KEY ("chapterId") REFERENCES public."Chapter"(id);
-        END IF;
-      END $$;
+    -- Indexes optimisés selon le nouveau schéma Prisma
+    CREATE INDEX IF NOT EXISTS "idx_hadith_chapterid" ON public."Hadith"("chapterId");
+    CREATE INDEX IF NOT EXISTS "idx_hadith_numero" ON public."Hadith"("numero");
+    CREATE INDEX IF NOT EXISTS "idx_hadith_chapterid_numero" ON public."Hadith"("chapterId", "numero");
+    CREATE INDEX IF NOT EXISTS "idx_hadith_matn_fr" ON public."Hadith"("matn_fr");
+    CREATE INDEX IF NOT EXISTS "idx_hadith_matn_ar" ON public."Hadith"("matn_ar");
+    CREATE INDEX IF NOT EXISTS "idx_hadith_matn_en" ON public."Hadith"("matn_en");
+    
+    CREATE INDEX IF NOT EXISTS "idx_chapter_index" ON public."Chapter"("index");
+    CREATE INDEX IF NOT EXISTS "idx_chapter_slug" ON public."Chapter"("slug");
+    CREATE INDEX IF NOT EXISTS "idx_chapter_name_fr" ON public."Chapter"("name_fr");
+    CREATE INDEX IF NOT EXISTS "idx_chapter_name_ar" ON public."Chapter"("name_ar");
+    CREATE INDEX IF NOT EXISTS "idx_chapter_name_en" ON public."Chapter"("name_en");
+    
+    CREATE INDEX IF NOT EXISTS "idx_sahaba_slug" ON public."Sahaba"("slug");
+    CREATE INDEX IF NOT EXISTS "idx_sahaba_name_fr" ON public."Sahaba"("name_fr");
+    CREATE INDEX IF NOT EXISTS "idx_sahaba_name_ar" ON public."Sahaba"("name_ar");
+    CREATE INDEX IF NOT EXISTS "idx_sahaba_name_en" ON public."Sahaba"("name_en");
+    
+    CREATE INDEX IF NOT EXISTS "idx_transmitter_slug" ON public."Transmitter"("slug");
+    CREATE INDEX IF NOT EXISTS "idx_transmitter_name_fr" ON public."Transmitter"("name_fr");
+    CREATE INDEX IF NOT EXISTS "idx_transmitter_name_ar" ON public."Transmitter"("name_ar");
+    CREATE INDEX IF NOT EXISTS "idx_transmitter_name_en" ON public."Transmitter"("name_en");
+    
+    CREATE INDEX IF NOT EXISTS "idx_ht_hadithid" ON public."HadithTransmitter"("hadithId");
+    CREATE INDEX IF NOT EXISTS "idx_ht_transmitterid" ON public."HadithTransmitter"("transmitterId");
+    
+    -- Index spécial pour la table de jointure _HadithToSahaba
+    DO $$
+    BEGIN
+      IF EXISTS (
+        SELECT 1 FROM information_schema.tables 
+        WHERE table_schema = 'public' AND table_name = '_HadithToSahaba'
+      ) THEN
+        CREATE INDEX IF NOT EXISTS "_HadithToSahaba_B_index" ON public."_HadithToSahaba"("B");
+      END IF;
+    END $$;
 
-      -- Foreign key HadithTransmitter.hadithId -> Hadith.id
-      DO $$
-      BEGIN
-        IF NOT EXISTS (
-          SELECT 1 FROM information_schema.table_constraints
-          WHERE constraint_name = 'fk_ht_hadith' AND table_name = 'HadithTransmitter'
-        ) THEN
-          ALTER TABLE public."HadithTransmitter"
-            ADD CONSTRAINT fk_ht_hadith FOREIGN KEY ("hadithId") REFERENCES public."Hadith"(id) ON DELETE CASCADE;
-        END IF;
-      END $$;
-
-      -- Foreign key HadithTransmitter.transmitterId -> Transmitter.id
-      DO $$
-      BEGIN
-        IF NOT EXISTS (
-          SELECT 1 FROM information_schema.table_constraints
-          WHERE constraint_name = 'fk_ht_transmitter' AND table_name = 'HadithTransmitter'
-        ) THEN
-          ALTER TABLE public."HadithTransmitter"
-            ADD CONSTRAINT fk_ht_transmitter FOREIGN KEY ("transmitterId") REFERENCES public."Transmitter"(id) ON DELETE CASCADE;
-        END IF;
-      END $$;
-
-      -- Création de l'enum Role si absent
-      DO $$
-      BEGIN
-        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'Role') THEN
-          CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
-        END IF;
-      END $$;
-
-      -- Indexes principaux
-      CREATE INDEX IF NOT EXISTS idx_hadith_chapterId ON public."Hadith"("chapterId");
-      CREATE INDEX IF NOT EXISTS idx_hadith_numero ON public."Hadith"("numero");
-      CREATE INDEX IF NOT EXISTS idx_hadith_chapterId_numero ON public."Hadith"("chapterId", "numero");
-      CREATE INDEX IF NOT EXISTS idx_hadith_matn_fr ON public."Hadith"("matn_fr");
-      CREATE INDEX IF NOT EXISTS idx_hadith_matn_ar ON public."Hadith"("matn_ar");
-      CREATE INDEX IF NOT EXISTS idx_hadith_matn_en ON public."Hadith"("matn_en");
-      CREATE INDEX IF NOT EXISTS idx_chapter_name ON public."Chapter"("name");
-      CREATE INDEX IF NOT EXISTS idx_chapter_slug ON public."Chapter"("slug");
-      CREATE INDEX IF NOT EXISTS idx_chapter_index ON public."Chapter"("index");
-      CREATE INDEX IF NOT EXISTS idx_sahaba_name ON public."Sahaba"("name");
-      CREATE INDEX IF NOT EXISTS idx_sahaba_slug ON public."Sahaba"("slug");
-      CREATE INDEX IF NOT EXISTS idx_transmitter_name ON public."Transmitter"("name");
-      CREATE INDEX IF NOT EXISTS idx_transmitter_slug ON public."Transmitter"("slug");
-      CREATE INDEX IF NOT EXISTS idx_ht_hadithId ON public."HadithTransmitter"("hadithId");
-      CREATE INDEX IF NOT EXISTS idx_ht_transmitterId ON public."HadithTransmitter"("transmitterId");
+    -- Contraintes uniques nécessaires
+    DO $$
+    BEGIN
+      -- Contrainte unique pour HadithTransmitter
+      IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints
+        WHERE constraint_name = 'HadithTransmitter_hadithId_transmitterId_key' AND table_name = 'HadithTransmitter'
+      ) THEN
+        ALTER TABLE public."HadithTransmitter"
+          ADD CONSTRAINT "HadithTransmitter_hadithId_transmitterId_key" UNIQUE ("hadithId", "transmitterId");
+      END IF;
+      
+      IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints
+        WHERE constraint_name = 'HadithTransmitter_hadithId_order_key' AND table_name = 'HadithTransmitter'
+      ) THEN
+        ALTER TABLE public."HadithTransmitter"
+          ADD CONSTRAINT "HadithTransmitter_hadithId_order_key" UNIQUE ("hadithId", "order");
+      END IF;
+    END $$;
     `;
 
     // Exécution du script SQL via psql
@@ -444,7 +494,68 @@ function checkBackupFile() {
 
     console.log("\n🎉 Restauration terminée!");
     console.log(
-      "🔄 Vous pouvez maintenant accéder à l'admin de votre application."
+      "🔄 Exécution de `prisma generate` pour synchroniser le client..."
+    );
+
+    // Exécuter prisma generate pour s'assurer que le client est à jour
+    try {
+      const generateCommand = "cd .. && npx prisma generate";
+      execSync(generateCommand, { stdio: "inherit" });
+      console.log("✅ Prisma Client généré avec succès");
+    } catch (error) {
+      console.warn(
+        "⚠️ Erreur lors de la génération du client Prisma:",
+        error.message
+      );
+      console.log("💡 Vous pouvez exécuter manuellement: npx prisma generate");
+    }
+
+    console.log("\n📊 Vérification finale...");
+
+    // Vérification finale des données
+    try {
+      const verifyCommands = [
+        `psql "${cleanDbUrl}" -c "SELECT COUNT(*) as hadith_count FROM public.\\"Hadith\\";"`,
+        `psql "${cleanDbUrl}" -c "SELECT COUNT(*) as sahaba_count FROM public.\\"Sahaba\\";"`,
+        `psql "${cleanDbUrl}" -c "SELECT COUNT(*) as chapter_count FROM public.\\"Chapter\\";"`,
+        `psql "${cleanDbUrl}" -c "SELECT COUNT(*) as transmitter_count FROM public.\\"Transmitter\\";"`,
+      ];
+
+      console.log("📈 Statistiques de la base restaurée:");
+      verifyCommands.forEach((cmd) => {
+        try {
+          const result = execSync(cmd, { encoding: "utf8" });
+          const lines = result.split("\n");
+          const countLine = lines.find(
+            (line) =>
+              line.trim() && !line.includes("-") && !line.includes("count")
+          );
+          if (countLine) {
+            const tableName = cmd.includes("hadith")
+              ? "Hadiths"
+              : cmd.includes("sahaba")
+                ? "Sahabas"
+                : cmd.includes("chapter")
+                  ? "Chapitres"
+                  : "Transmetteurs";
+            console.log(`   - ${tableName}: ${countLine.trim()}`);
+          }
+        } catch (error) {
+          console.log(`   - Erreur lors de la vérification`);
+        }
+      });
+    } catch (error) {
+      console.warn("⚠️ Impossible de vérifier les statistiques");
+    }
+
+    console.log("\n🎉 Restauration complète terminée!");
+    console.log("🔄 Vous pouvez maintenant :");
+    console.log("   1. Accéder à l'admin de votre application");
+    console.log(
+      "   2. Vérifier que les relations Hadith <-> Sahaba fonctionnent"
+    );
+    console.log(
+      "   3. Tester les fonctionnalités multilingues (name_fr, name_en, name_ar)"
     );
   } catch (error) {
     console.error("\n❌ Erreur lors de la restauration:");

@@ -119,25 +119,33 @@ export function EditItemFormDialog({
 
         {/* Name Field */}
         <Input
-          id="edit-name"
+          id="edit-name_fr"
           label={placeholderText.name[variant] + "*"}
           type="text"
           placeholder={placeholderText.name[variant]}
-          error={!!errors.name}
-          errorMessage={errors.name?.message}
-          register={register("name")}
+          error={!!errors.name_fr}
+          errorMessage={errors.name_fr?.message}
+          register={register("name_fr")}
         />
-
-        {/* Arabic Name Field */}
         <Input
-          id="edit-nameArabic"
+          id="edit-name_ar"
           label="Nom en arabe (optionnel)"
           type="text"
           placeholder="Nom en arabe"
-          error={!!errors.nameArabic}
-          errorMessage={errors.nameArabic?.message}
-          register={register("nameArabic")}
+          error={!!errors.name_ar}
+          errorMessage={errors.name_ar?.message}
+          register={register("name_ar")}
           dir="rtl"
+        />
+
+        <Input
+          id="edit-name_en"
+          label="Nom en anglais (optionnel)"
+          type="text"
+          placeholder="Nom en anglais"
+          error={!!errors.name_en}
+          errorMessage={errors.name_en?.message}
+          register={register("name_en")}
         />
 
         <div className="flex justify-end gap-2 pt-2">

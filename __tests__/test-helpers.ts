@@ -65,8 +65,11 @@ export async function cleanupTestData() {
 export const testDataHelpers = {
   createTestChapter: (index: number) => {
     const uid = randomUUID();
+    const name_fr = `Test Chapitre ${index}-${uid}`;
     return {
-      name: `Test Chapter ${index}-${uid}`,
+      name_fr,
+      name_ar: `اختبار الفصل ${index}`,
+      name_en: `Test Chapter ${index}`,
       slug: `test-chapter-${index}-${uid}`,
       // Use a large random index to avoid collisions
       index: 900000 + Math.floor(Math.random() * 900000),
@@ -76,7 +79,9 @@ export const testDataHelpers = {
   createTestSahaba: (index: number) => {
     const uid = randomUUID();
     return {
-      name: `Test Sahaba ${index}-${uid}`,
+      name_fr: `Test Sahaba ${index}-${uid}`,
+      name_ar: `اختبار الصحابي ${index}`,
+      name_en: `Test Sahaba ${index}`,
       slug: `test-sahaba-${index}-${uid}`,
     };
   },
@@ -84,7 +89,9 @@ export const testDataHelpers = {
   createTestTransmitter: (index: number) => {
     const uid = randomUUID();
     return {
-      name: `Test Transmitter ${index}-${uid}`,
+      name_fr: `Test Transmitter ${index}-${uid}`,
+      name_ar: `اختبار الراوي ${index}`,
+      name_en: `Test Transmitter ${index}`,
       slug: `test-transmitter-${index}-${uid}`,
     };
   },

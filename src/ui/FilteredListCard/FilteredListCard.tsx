@@ -25,11 +25,11 @@ export function FilteredListCard({ items, variant }: Props) {
   const filteredItems = !inputValue
     ? items
     : items.filter((item) =>
-        item.name.toLowerCase().includes(inputValue.toLowerCase())
+        item.name_fr.toLowerCase().includes(inputValue.toLowerCase())
       );
 
   // Extract names for SearchSelect options
-  const options = items.map((item) => item.name);
+  const options = items.map((item) => item.name_fr);
 
   return (
     <div className="container mx-auto max-w-5xl">

@@ -6,9 +6,9 @@ import { FilteredListCard } from "./FilteredListCard";
 
 // Mock data for testing
 const items = [
-  { id: "1", name: "Item 1", slug: "item-1" },
-  { id: "2", name: "Item 2", slug: "item-2" },
-  { id: "3", name: "Item 3", slug: "item-3" },
+  { id: "1", name_fr: "Item 1", name_ar: null, name_en: null, slug: "item-1" },
+  { id: "2", name_fr: "Item 2", name_ar: null, name_en: null, slug: "item-2" },
+  { id: "3", name_fr: "Item 3", name_ar: null, name_en: null, slug: "item-3" },
 ];
 
 describe("FilteredListCard", () => {

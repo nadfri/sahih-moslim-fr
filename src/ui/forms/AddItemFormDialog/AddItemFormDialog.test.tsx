@@ -38,28 +38,31 @@ const UNIQUE_INDEX_REGEX =
 // Données de test
 const mockChapterItem: ItemType = {
   id: "chap1",
-  name: "Chapitre Un",
+  name_fr: "Chapitre Un",
+  name_ar: "الفصل الأول",
+  name_en: "Chapter One",
   slug: "chapitre-un",
   index: 1,
-  nameArabic: "الفصل الأول",
   hadithCount: 10,
 };
 const mockExistingChapters: ItemType[] = [mockChapterItem];
 
 const mockTransmitterItem: ItemType = {
   id: "trans1",
-  name: "Transmetteur Un",
+  name_fr: "Transmetteur Un",
+  name_ar: "الناقل الأول",
+  name_en: "Transmitter One",
   slug: "transmetteur-un",
-  nameArabic: "الناقل الأول",
   hadithCount: 8,
 };
 const mockExistingTransmitters: ItemType[] = [mockTransmitterItem];
 
 const mockSahabaItem: ItemType = {
   id: "sah1",
-  name: "Sahaba Un",
+  name_fr: "Sahaba Un",
+  name_ar: "الصحابي الأول",
+  name_en: "Companion One",
   slug: "sahaba-un",
-  nameArabic: "الصحابي الأول",
   hadithCount: 5,
 };
 const mockExistingSahabas: ItemType[] = [mockSahabaItem];
@@ -222,10 +225,11 @@ describe("AddItemFormDialog", () => {
     const itemsWithExistingIndex = [
       {
         id: "test",
-        name: "Test",
+        name_fr: "Test",
+        name_ar: "تست",
+        name_en: "Test",
         slug: "test",
         index: 1,
-        nameArabic: "testar",
         hadithCount: 0,
       },
     ];
@@ -246,8 +250,9 @@ describe("AddItemFormDialog", () => {
   });
 
   it("submits the form with valid chapter data, calls addItem, toasts success, resets, and calls onCancel", async () => {
-    const newChapterName = "Nouveau Chapitre Test";
-    const newChapterArabicName = "اسم الفصل الجديد";
+    const newChapterNameFr = "Nouveau Chapitre Test";
+    const newChapterNameAr = "اسم الفصل الجديد";
+    const newChapterNameEn = "New Chapter Test";
     const chapterIndex = 3;
     mockNextAvailableIndex.mockReturnValue(chapterIndex);
 
@@ -258,21 +263,21 @@ describe("AddItemFormDialog", () => {
       />
     );
 
-    const nameInput = screen.getByLabelText("Nom du chapitre*");
-    const arabicNameInput = screen.getByLabelText("Nom en arabe (optionnel)");
-    // indexInput intentionally unused here to avoid typing into number field
+    const nameInputFr = screen.getByLabelText("Nom du chapitre*");
+    const nameInputAr = screen.getByLabelText("Nom en arabe (optionnel)");
+    const nameInputEn = screen.getByLabelText("Nom en anglais (optionnel)");
     const submitButton = screen.getByRole("button", { name: "Ajouter" });
 
-    await userEvent.type(nameInput, newChapterName);
-    await userEvent.type(arabicNameInput, newChapterArabicName);
-    // Do not type into the numeric index input to avoid Zod treating it as string.
-    // The component initializes the index with nextAvailableIndex, so submit without changing it.
+    await userEvent.type(nameInputFr, newChapterNameFr);
+    await userEvent.type(nameInputAr, newChapterNameAr);
+    await userEvent.type(nameInputEn, newChapterNameEn);
     await userEvent.click(submitButton);
 
     await waitFor(() => {
       expect(mockAddItem).toHaveBeenCalledWith("chapters", {
-        name: newChapterName,
-        nameArabic: newChapterArabicName,
+        name_fr: newChapterNameFr,
+        name_ar: newChapterNameAr,
+        name_en: newChapterNameEn,
         index: chapterIndex,
       });
     });
@@ -287,8 +292,9 @@ describe("AddItemFormDialog", () => {
   });
 
   it("submits the form with valid transmitter data", async () => {
-    const newTransmitterName = "Nouveau Transmetteur Test";
-    const newTransmitterArabicName = "الناقل الجديد";
+    const newTransmitterNameFr = "Nouveau Transmetteur Test";
+    const newTransmitterNameAr = "الناقل الجديد";
+    const newTransmitterNameEn = "New Transmitter Test";
     mockAddItem.mockResolvedValueOnce({
       success: true,
       message: "Transmetteur ajouté!",
@@ -302,22 +308,21 @@ describe("AddItemFormDialog", () => {
         items={mockExistingTransmitters}
       />
     );
-    const nameInput = screen.getByLabelText("Nom du transmetteur*");
-    const arabicNameInput = screen.getByLabelText("Nom en arabe (optionnel)");
+    const nameInputFr = screen.getByLabelText("Nom du transmetteur*");
+    const nameInputAr = screen.getByLabelText("Nom en arabe (optionnel)");
+    const nameInputEn = screen.getByLabelText("Nom en anglais (optionnel)");
     const submitButton = screen.getByRole("button", { name: "Ajouter" });
 
-    await userEvent.type(nameInput, newTransmitterName);
-    await userEvent.type(arabicNameInput, newTransmitterArabicName);
+    await userEvent.type(nameInputFr, newTransmitterNameFr);
+    await userEvent.type(nameInputAr, newTransmitterNameAr);
+    await userEvent.type(nameInputEn, newTransmitterNameEn);
     await userEvent.click(submitButton);
 
     await waitFor(() => {
-      const expectedPayload: {
-        name: string;
-        nameArabic: string;
-        index?: number | null;
-      } = {
-        name: newTransmitterName,
-        nameArabic: newTransmitterArabicName,
+      const expectedPayload = {
+        name_fr: newTransmitterNameFr,
+        name_ar: newTransmitterNameAr,
+        name_en: newTransmitterNameEn,
       };
       expect(mockAddItem).toHaveBeenCalledWith("transmitters", expectedPayload);
       const submittedData = mockAddItem.mock.calls[0][1] as ItemFormValues;

@@ -58,10 +58,9 @@ export function EditHadithForm({
     mode: "onChange",
     defaultValues: {
       numero: hadith.numero,
-      chapter: hadith.chapter.name,
-      // narrator: hadith.narrator.name,
-      mentionedSahabas: hadith.mentionedSahabas.map((s) => s.name),
-      isnadTransmitters: hadith.isnadTransmitters.map((t) => t.name),
+      chapter: hadith.chapter.name_fr,
+      mentionedSahabas: hadith.mentionedSahabas.map((s) => s.name_fr),
+      isnadTransmitters: hadith.isnadTransmitters.map((t) => t.name_fr),
       matn_fr: hadith.matn_fr,
       matn_ar: hadith.matn_ar,
       matn_en: hadith.matn_en ?? "",
@@ -70,10 +69,9 @@ export function EditHadithForm({
 
   const formValues = watch();
 
-  const chapterOptions = chaptersData.map((chapter) => chapter.name);
-  // const narratorOptions = narratorsData.map((n) => n.name);
-  const sahabaOptions = sahabasData.map((s) => s.name);
-  const transmitterOptions = transmittersData.map((t) => t.name);
+  const chapterOptions = chaptersData.map((chapter) => chapter.name_fr);
+  const sahabaOptions = sahabasData.map((s) => s.name_fr);
+  const transmitterOptions = transmittersData.map((t) => t.name_fr);
 
   // Handle form submission for editing
   const onSubmit = async (data: EditHadithFormValues) => {
@@ -81,19 +79,19 @@ export function EditHadithForm({
 
     // Find IDs corresponding to selected names/titles using props
     const selectedChapter = chaptersData.find(
-      (chapter) => chapter.name === data.chapter
+      (chapter) => chapter.name_fr === data.chapter
     );
     // const selectedNarrator = narratorsData.find(
     //   (n) => n.name === data.narrator
     // );
     const selectedSahabas = sahabasData.filter((s) =>
-      data.mentionedSahabas.includes(s.name)
+      data.mentionedSahabas.includes(s.name_fr)
     );
 
     // Preserve order from form for transmitters (map to maintain form order)
     const selectedTransmitters = data.isnadTransmitters
       .map((name) =>
-        transmittersData.find((transmitter) => transmitter.name === name)
+        transmittersData.find((transmitter) => transmitter.name_fr === name)
       )
       .filter(
         (transmitter): transmitter is NonNullable<typeof transmitter> =>
@@ -111,10 +109,9 @@ export function EditHadithForm({
       matn_fr: data.matn_fr,
       matn_ar: data.matn_ar,
       matn_en: data.matn_en ?? "",
-      chapter: selectedChapter.name,
-      // narrator: selectedNarrator.name,
-      mentionedSahabas: selectedSahabas.map((s) => s.name),
-      isnadTransmitters: selectedTransmitters.map((t) => t.name),
+      chapter: selectedChapter.name_fr,
+      mentionedSahabas: selectedSahabas.map((s) => s.name_fr),
+      isnadTransmitters: selectedTransmitters.map((t) => t.name_fr),
     };
 
     try {
@@ -159,26 +156,19 @@ export function EditHadithForm({
     numero: (formValues.numero as number) || hadith.numero,
     chapter: {
       ...hadith.chapter,
-      name: formValues.chapter || hadith.chapter.name,
+      name_fr: formValues.chapter || hadith.chapter.name_fr,
       slug: hadith.chapter.slug || "preview-chapter-slug",
     },
-    // narrator: {
-    //   ...hadith.narrator,
-    //   name: formValues.narrator || hadith.narrator.name,
-    //   slug: hadith.narrator.slug || "preview-narrator-slug",
-    // },
-    mentionedSahabas: (formValues.mentionedSahabas || []).map((name, i) => ({
+    mentionedSahabas: (formValues.mentionedSahabas || []).map((name_fr, i) => ({
       id: `preview-sahaba-id-${i}`,
-      name: name,
+      name_fr,
       slug: `preview-sahaba-slug-${i}`,
-      nameArabic: null,
     })),
     isnadTransmitters: (formValues.isnadTransmitters || []).map(
-      (name: string, i: number) => ({
+      (name_fr: string, i: number) => ({
         id: `preview-transmitter-id-${i}`,
-        name: name,
+        name_fr,
         slug: `preview-transmitter-slug-${i}`,
-        nameArabic: null,
       })
     ),
     matn_fr: formValues.matn_fr || "...",
@@ -274,6 +264,7 @@ export function EditHadithForm({
             placeholder="Saisir le texte du hadith..."
             height={200}
           />
+
           {/* matn_ar (Arabic text) */}
           <Input
             id="matn_ar"
@@ -291,6 +282,19 @@ export function EditHadithForm({
             }}
             helperText="Le texte sera automatiquement nettoyé"
           />
+
+          {/* matn_en (English text) */}
+          <Input
+            id="matn_en"
+            label="Texte anglais (optionnel)"
+            type="textarea"
+            rows={2}
+            className="font-matn_en text-lg"
+            error={!!errors.matn_en}
+            errorMessage={errors.matn_en?.message}
+            register={register("matn_en")}
+          />
+
           {/* Submit Button */}
           <button
             type="submit"

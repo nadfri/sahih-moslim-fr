@@ -24,7 +24,7 @@ export default async function PageByChapters(props: { params: ParamsType }) {
 
   return (
     <>
-      <h1 className="title">{chapter.name}</h1>
+      <h1 className="title">{chapter.name_fr}</h1>
 
       <BadgeNumberOfHadith
         count={hadiths.length}
@@ -61,8 +61,8 @@ export async function generateMetadata(props: {
   }
 
   return {
-    title: `Chapitre: ${chapter.name}`,
-    description: `Collection de hadiths du chapitre ${chapter.name} - Sahih Moslim`,
+    title: `Chapitre: ${chapter.name_fr}`,
+    description: `Collection de hadiths du chapitre ${chapter.name_fr} - Sahih Moslim`,
   };
 }
 

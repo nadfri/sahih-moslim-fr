@@ -72,22 +72,22 @@ export function Isnad({ isnadTransmitters, edit }: Props) {
             <span>Masquer Isnad</span>
           </button>
           <div className="basis-full md:hidden" />
-          {isnadTransmitters.map((trans, index) => {
+          {isnadTransmitters.map((transmitter, index) => {
             const isLast = index === isnadTransmitters.length - 1;
             const linkClassName = `${baseLinkClasses} ${isLast ? lastTransmitterClasses : regularTransmitterClasses}`;
 
             return (
               <div
-                key={trans.id}
+                key={transmitter.id}
                 className="flex items-center fadeIn"
               >
                 <ChevronRightCircle className="size-4 text-gray-500 dark:text-gray-300 mr-1" />
 
                 <Link
-                  href={`/transmitters/${trans.slug}`}
+                  href={`/transmitters/${transmitter.slug}`}
                   className={linkClassName}
                 >
-                  {trans.name}{" "}
+                  {transmitter.name_fr}{" "}
                   <SquareArrowOutUpRight className="inline size-2.5 align-middle" />
                 </Link>
               </div>

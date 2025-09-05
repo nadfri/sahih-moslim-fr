@@ -6,8 +6,9 @@ import { z } from "zod";
 const prisma = new PrismaClient();
 
 const SahabaSchema = z.object({
-  name: z.string(),
-  nameArabic: z.string().nullable().optional(),
+  name_fr: z.string(),
+  name_ar: z.string().nullable().optional(),
+  name_en: z.string().nullable().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -34,15 +35,18 @@ export async function POST(request: NextRequest) {
     const failed: { item: Partial<Sahaba>; reason: string }[] = [];
     for (const sahaba of sahabas) {
       try {
-        const slug = slugify(sahaba.name);
+        const slug = slugify(sahaba.name_fr);
         const result = await prisma.sahaba.upsert({
-          where: { name: sahaba.name },
+          where: { slug },
           update: {
-            ...sahaba,
-            slug,
+            name_fr: sahaba.name_fr,
+            name_ar: sahaba.name_ar,
+            name_en: sahaba.name_en,
           },
           create: {
-            ...sahaba,
+            name_fr: sahaba.name_fr,
+            name_ar: sahaba.name_ar,
+            name_en: sahaba.name_en,
             slug,
           },
         });

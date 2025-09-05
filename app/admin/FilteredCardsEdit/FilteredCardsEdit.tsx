@@ -37,9 +37,10 @@ export function FilteredCardsEdit({ items, variant }: Props) {
     if (!inputValue) return items;
     const searchLower = inputValue.toLowerCase();
 
-    return items.filter((item) =>
-      item.name.toLowerCase().includes(searchLower)
-    );
+    return items.filter((item) => {
+      const label = (item.name_fr ?? "").toLowerCase();
+      return label.includes(searchLower);
+    });
   })();
 
   return (

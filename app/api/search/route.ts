@@ -36,10 +36,18 @@ export async function GET(request: NextRequest) {
           // Use optimized PostgreSQL Full-Text Search with GIN indexes
           const searchResults = await searchHadithsCombined(query, limit);
 
-          // Minimal transformation from SearchResult to HadithType format
+          // Multilingual mapping for chapter
           results = searchResults.map((result) => ({
             ...result,
             chapterId: result.chapter.id,
+            chapter: {
+              id: result.chapter.id,
+              name_fr: result.chapter.name_fr,
+              name_ar: result.chapter.name_ar,
+              name_en: result.chapter.name_en,
+              slug: result.chapter.slug,
+              index: result.chapter.index,
+            },
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             mentionedSahabas: [],

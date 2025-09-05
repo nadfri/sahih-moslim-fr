@@ -1,26 +1,17 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
-generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
-}
-
-/**
- * Authentication models - Supabase Auth
- */
-enum Role {
-  USER
-  ADMIN
-}
-
-// Table profiles liée à auth.users de Supabase
 model Profile {
-  id        String   @id // UUID from auth.users
-  email     String?  @unique
+  id        String   @id
+  email     String?
   name      String?
   image     String?
   role      Role     @default(USER)
@@ -30,75 +21,77 @@ model Profile {
   @@map("profiles")
 }
 
-/**
- * Hadith models
- */
+/// *
+/// * Hadith models
 model Hadith {
   id                 String              @id @default(cuid())
   numero             Int                 @unique
   matn_fr            String
   matn_ar            String
-  matn_en            String
   chapterId          String
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
-  chapter            Chapter             @relation(fields: [chapterId], references: [id])
+  matn_en            String
+  chapter            Chapter             @relation(fields: [chapterId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_hadith_chapter")
   hadithTransmitters HadithTransmitter[]
-  mentionedSahabas   Sahaba[]            @relation("HadithToSahaba")
+  mentionedSahabas   Sahaba[]
 
-  // Optimized indexes for PostgreSQL
-  @@index([chapterId])
-  @@index([numero])
-  // Composite indexes for complex queries
-  @@index([chapterId, numero])
-  // Text search indexes - will be created manually in migration
-  @@index([matn_fr])
-  @@index([matn_ar])
-  @@index([matn_en])
+  @@index([chapterId], map: "idx_hadith_chapterid")
+  @@index([chapterId, numero], map: "idx_hadith_chapterid_numero")
+  @@index([matn_ar], map: "idx_hadith_matn_ar")
+  @@index([matn_en], map: "idx_hadith_matn_en")
+  @@index([matn_fr], map: "idx_hadith_matn_fr")
+  @@index([numero], map: "idx_hadith_numero")
 }
 
 model Chapter {
-  id         String   @id @default(cuid())
-  index      Int      @unique
-  name       String   @unique
-  slug       String   @unique
-  nameArabic String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  hadiths    Hadith[]
+  id        String   @id @default(cuid())
+  index     Int      @unique
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name_fr   String
+  name_ar   String?
+  name_en   String?
+  hadiths   Hadith[]
 
-  // Optimized indexes for search
-  @@index([name])
-  @@index([slug])
-  @@index([index])
+  @@index([index], map: "idx_chapter_index")
+  @@index([name_ar], map: "idx_chapter_name_ar")
+  @@index([name_en], map: "idx_chapter_name_en")
+  @@index([name_fr], map: "idx_chapter_name_fr")
+  @@index([slug], map: "idx_chapter_slug")
 }
 
 model Sahaba {
   id                 String   @id @default(cuid())
-  name               String   @unique
   slug               String   @unique
-  nameArabic         String?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
-  mentionedInHadiths Hadith[] @relation("HadithToSahaba")
+  name_fr            String
+  name_ar            String?
+  name_en            String?
+  mentionedInHadiths Hadith[]
 
-  // Optimized indexes for search
-  @@index([name])
-  @@index([slug])
+  @@index([name_ar], map: "idx_sahaba_name_ar")
+  @@index([name_en], map: "idx_sahaba_name_en")
+  @@index([name_fr], map: "idx_sahaba_name_fr")
+  @@index([slug], map: "idx_sahaba_slug")
 }
 
 model Transmitter {
   id                 String              @id @default(cuid())
-  name               String              @unique
   slug               String              @unique
-  nameArabic         String?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
+  name_fr            String
+  name_ar            String?
+  name_en            String?
   hadithTransmitters HadithTransmitter[]
 
-  // Optimized indexes for search
-  @@index([name])
-  @@index([slug])
+  @@index([name_ar], map: "idx_transmitter_name_ar")
+  @@index([name_en], map: "idx_transmitter_name_en")
+  @@index([name_fr], map: "idx_transmitter_name_fr")
+  @@index([slug], map: "idx_transmitter_slug")
 }
 
 model HadithTransmitter {
@@ -106,11 +99,18 @@ model HadithTransmitter {
   hadithId      String
   transmitterId String
   order         Int
-  transmitter   Transmitter @relation(fields: [transmitterId], references: [id], onDelete: Cascade)
-  hadith        Hadith      @relation(fields: [hadithId], references: [id], onDelete: Cascade)
+  hadith        Hadith      @relation(fields: [hadithId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ht_hadith")
+  transmitter   Transmitter @relation(fields: [transmitterId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ht_transmitter")
 
   @@unique([hadithId, transmitterId])
   @@unique([hadithId, order])
-  @@index([hadithId])
-  @@index([transmitterId])
+  @@index([hadithId], map: "idx_ht_hadithid")
+  @@index([transmitterId], map: "idx_ht_transmitterid")
+}
+
+/// *
+/// * Authentication models - Supabase Auth
+enum Role {
+  USER
+  ADMIN
 }

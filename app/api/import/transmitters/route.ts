@@ -6,8 +6,9 @@ import { z } from "zod";
 const prisma = new PrismaClient();
 
 const TransmitterSchema = z.object({
-  name: z.string(),
-  nameArabic: z.string().nullable().optional(),
+  name_fr: z.string(),
+  name_ar: z.string().nullable().optional(),
+  name_en: z.string().nullable().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -34,15 +35,18 @@ export async function POST(request: NextRequest) {
     const failed: { item: Partial<Transmitter>; reason: string }[] = [];
     for (const transmitter of transmitters) {
       try {
-        const slug = slugify(transmitter.name);
+        const slug = slugify(transmitter.name_fr);
         const result = await prisma.transmitter.upsert({
-          where: { name: transmitter.name },
+          where: { slug },
           update: {
-            ...transmitter,
-            slug,
+            name_fr: transmitter.name_fr,
+            name_ar: transmitter.name_ar,
+            name_en: transmitter.name_en,
           },
           create: {
-            ...transmitter,
+            name_fr: transmitter.name_fr,
+            name_ar: transmitter.name_ar,
+            name_en: transmitter.name_en,
             slug,
           },
         });

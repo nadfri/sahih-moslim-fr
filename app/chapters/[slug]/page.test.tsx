@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from "vitest";
 // Mock getChapterWithHadiths service
 vi.mock("@/src/services/services", () => ({
   getChapterWithHadiths: vi.fn().mockResolvedValue({
-    chapter: { slug: "intro", name: "Introduction" },
+    chapter: { slug: "intro", name_fr: "Introduction" },
     hadiths: [],
   }),
 }));

@@ -37,7 +37,7 @@ vi.mock("../../../src/ui/forms/EditItemFormDialog/EditItemFormDialog", () => ({
     open ? (
       <div data-testid="edit-item-dialog">
         <h2>Edit {variant}</h2>
-        <p>Item: {item.name}</p>
+        <p>Item: {item.name_fr}</p>
         <button onClick={onCancel}>Cancel</button>
       </div>
     ) : null
@@ -55,7 +55,7 @@ vi.mock(
 
 const mockChapterItem: ItemType = {
   id: "1",
-  name: "La Foi",
+  name_fr: "La Foi",
   slug: "la-foi",
   index: 1,
   hadithCount: 15,
@@ -63,18 +63,18 @@ const mockChapterItem: ItemType = {
 
 const mockSahabaItem: ItemType = {
   id: "2",
-  name: "Omar ibn al-Khattab",
+  name_fr: "Omar ibn al-Khattab",
   slug: "omar-ibn-al-khattab",
   hadithCount: 25,
-  nameArabic: "عمر بن الخطاب",
+  name_ar: "عمر بن الخطاب",
 };
 
 const mockTransmitterItem: ItemType = {
   id: "3",
-  name: "Abu Huraira",
+  name_fr: "Abu Huraira",
   slug: "abu-huraira",
   hadithCount: 30,
-  nameArabic: "أبو هريرة",
+  name_ar: "أبو هريرة",
 };
 
 const mockItems: ItemType[] = [

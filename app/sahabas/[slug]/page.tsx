@@ -24,7 +24,7 @@ export default async function PageBySahabas(props: { params: ParamsType }) {
   return (
     <ListLayoutHadith
       title="Hadiths mentionnant"
-      name={sahaba.name}
+      name={sahaba.name_fr}
       hadiths={hadiths}
     />
   );
@@ -38,7 +38,7 @@ export async function generateMetadata(props: {
 
   const slug = params.slug;
 
-  const sahaba = getSahabaBySlug(slug);
+  const sahaba = await getSahabaBySlug(slug);
 
   if (!sahaba) {
     return {
@@ -47,8 +47,8 @@ export async function generateMetadata(props: {
   }
 
   return {
-    title: `Compagnon: ${sahaba}`,
-    description: `Collection de hadiths du compagnon ${sahaba} - Sahih Moslim`,
+    title: `Compagnon: ${sahaba.name_fr}`,
+    description: `Collection de hadiths du compagnon ${sahaba.name_fr} - Sahih Moslim`,
   };
 }
 

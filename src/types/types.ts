@@ -8,9 +8,10 @@ export type ThemeType = "light" | "dark";
 export const SchemaItemStructure = z.object({
   id: z.string(),
   index: z.number().nullable().optional(),
-  name: z.string(),
+  name_fr: z.string(), // Obligatoire - base de l'app française
+  name_ar: z.string().nullable().optional(),
+  name_en: z.string().nullable().optional(),
   slug: z.string(),
-  nameArabic: z.string().nullable().optional(),
   hadithCount: z.number().optional(),
 });
 export type ItemType = z.infer<typeof SchemaItemStructure>;
@@ -19,9 +20,10 @@ export type ItemType = z.infer<typeof SchemaItemStructure>;
 export const ImportItemSchema = z.object({
   id: z.string().optional(),
   index: z.number().optional(),
-  name: z.string(),
+  name_fr: z.string(),
+  name_ar: z.string().nullable().optional(),
+  name_en: z.string().nullable().optional(),
   slug: z.string().optional(),
-  nameArabic: z.string().nullable().optional(),
   hadithCount: z.number().optional(),
 });
 export type ImportItemType = z.infer<typeof ImportItemSchema>;

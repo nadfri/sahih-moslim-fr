@@ -31,12 +31,12 @@ describe("Service functions integration", () => {
       if (chapters.length > 0) {
         const chapter = chapters[0];
         expect(chapter).toHaveProperty("id");
-        expect(chapter).toHaveProperty("name");
+        expect(chapter).toHaveProperty("name_fr");
         expect(chapter).toHaveProperty("slug");
         expect(chapter).toHaveProperty("hadithCount");
         expect(chapter).toHaveProperty("index");
         expect(typeof chapter.id).toBe("string");
-        expect(typeof chapter.name).toBe("string");
+        expect(typeof chapter.name_fr).toBe("string");
         expect(typeof chapter.slug).toBe("string");
         expect(typeof chapter.hadithCount).toBe("number");
         expect(typeof chapter.index).toBe("number");
@@ -86,7 +86,7 @@ describe("Service functions integration", () => {
         expect(hadith).toHaveProperty("matn_fr");
         expect(hadith).toHaveProperty("matn_ar");
         expect(hadith).toHaveProperty("chapter");
-        expect(hadith).toHaveProperty("narrator");
+        // narrator_fr is optional, do not assert its presence
         expect(hadith).toHaveProperty("mentionedSahabas");
         expect(hadith).toHaveProperty("isnadTransmitters");
         expect(typeof hadith.numero).toBe("number");
@@ -108,10 +108,10 @@ describe("Service functions integration", () => {
           // Check if isnadTransmitters have correct structure and ordering
           hadith.isnadTransmitters.forEach((transmitter) => {
             expect(transmitter).toHaveProperty("id");
-            expect(transmitter).toHaveProperty("name");
+            expect(transmitter).toHaveProperty("name_fr");
             expect(transmitter).toHaveProperty("slug");
             expect(typeof transmitter.id).toBe("string");
-            expect(typeof transmitter.name).toBe("string");
+            expect(typeof transmitter.name_fr).toBe("string");
             expect(typeof transmitter.slug).toBe("string");
           });
         }
@@ -141,11 +141,11 @@ describe("Service functions integration", () => {
       if (sahabas.length > 0) {
         const sahaba = sahabas[0];
         expect(sahaba).toHaveProperty("id");
-        expect(sahaba).toHaveProperty("name");
+        expect(sahaba).toHaveProperty("name_fr");
         expect(sahaba).toHaveProperty("slug");
         expect(sahaba).toHaveProperty("hadithCount");
         expect(typeof sahaba.id).toBe("string");
-        expect(typeof sahaba.name).toBe("string");
+        expect(typeof sahaba.name_fr).toBe("string");
         expect(typeof sahaba.slug).toBe("string");
         expect(typeof sahaba.hadithCount).toBe("number");
         expect(sahaba.hadithCount).toBeGreaterThanOrEqual(0);
@@ -179,8 +179,8 @@ describe("Service functions integration", () => {
           expect(Array.isArray(hadiths)).toBe(true);
           // Verify all hadiths mention this sahaba
           hadiths.forEach((hadith) => {
-            const sahabaNames = hadith.mentionedSahabas.map((s) => s.name);
-            expect(sahabaNames).toContain(sahaba.name);
+            const sahabaNames = hadith.mentionedSahabas.map((s) => s.name_fr);
+            expect(sahabaNames).toContain(sahaba.name_fr);
           });
         } else {
           expect(hadiths).toEqual([]);
@@ -214,11 +214,11 @@ describe("Service functions integration", () => {
       if (transmitters.length > 0) {
         const transmitter = transmitters[0];
         expect(transmitter).toHaveProperty("id");
-        expect(transmitter).toHaveProperty("name");
+        expect(transmitter).toHaveProperty("name_fr");
         expect(transmitter).toHaveProperty("slug");
         expect(transmitter).toHaveProperty("hadithCount");
         expect(typeof transmitter.id).toBe("string");
-        expect(typeof transmitter.name).toBe("string");
+        expect(typeof transmitter.name_fr).toBe("string");
         expect(typeof transmitter.slug).toBe("string");
         expect(typeof transmitter.hadithCount).toBe("number");
         expect(transmitter.hadithCount).toBeGreaterThanOrEqual(0);
@@ -257,15 +257,15 @@ describe("Service functions integration", () => {
           // Check that all hadiths contain the transmitter
           hadiths.forEach((hadith) => {
             const transmitterNames = hadith.isnadTransmitters.map(
-              (t) => t.name
+              (t) => t.name_fr
             );
-            expect(transmitterNames).toContain(transmitter.name);
+            expect(transmitterNames).toContain(transmitter.name_fr);
 
             // Verify transmitter ordering is maintained in isnad
             expect(Array.isArray(hadith.isnadTransmitters)).toBe(true);
             hadith.isnadTransmitters.forEach((t) => {
               expect(t).toHaveProperty("id");
-              expect(t).toHaveProperty("name");
+              expect(t).toHaveProperty("name_fr");
               expect(t).toHaveProperty("slug");
             });
           });
@@ -313,10 +313,10 @@ describe("Service functions integration", () => {
           expect(transmitters.length).toBeGreaterThan(1); // Verify each transmitter has required properties
           transmitters.forEach((transmitter) => {
             expect(transmitter).toHaveProperty("id");
-            expect(transmitter).toHaveProperty("name");
+            expect(transmitter).toHaveProperty("name_fr");
             expect(transmitter).toHaveProperty("slug");
             expect(typeof transmitter.id).toBe("string");
-            expect(typeof transmitter.name).toBe("string");
+            expect(typeof transmitter.name_fr).toBe("string");
             expect(typeof transmitter.slug).toBe("string");
           });
         }

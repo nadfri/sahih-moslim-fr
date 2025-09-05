@@ -5,8 +5,8 @@ import { ItemType } from "@/src/types/types";
 import { ListOfSahabas } from "./ListOfSahabas";
 
 const mockSahabas: ItemType[] = [
-  { id: "1", name: "Abu Bakr", slug: "abu-bakr" },
-  { id: "2", name: "Omar ibn al-Khattab", slug: "omar-ibn-al-khattab" },
+  { id: "1", name_fr: "Abu Bakr", slug: "abu-bakr" },
+  { id: "2", name_fr: "Omar ibn al-Khattab", slug: "omar-ibn-al-khattab" },
 ];
 
 const mockEmptySahabas: ItemType[] = [];
@@ -17,11 +17,11 @@ describe("ListOfSahabas", () => {
 
     expect(screen.getByText("Sahaba(s) mentionné(s)")).toBeInTheDocument();
 
-    const abuBakrLink = screen.getByRole("link", { name: "Abu Bakr" });
-    expect(abuBakrLink).toHaveAttribute("href", "/sahabas/abu-bakr");
-
-    const omarLink = screen.getByRole("link", { name: "Omar ibn al-Khattab" });
-    expect(omarLink).toHaveAttribute("href", "/sahabas/omar-ibn-al-khattab");
+    const links = screen.getAllByRole("link");
+    expect(links[0]).toHaveAttribute("href", "/sahabas/abu-bakr");
+    expect(links[0]).toHaveTextContent("Abu Bakr");
+    expect(links[1]).toHaveAttribute("href", "/sahabas/omar-ibn-al-khattab");
+    expect(links[1]).toHaveTextContent("Omar ibn al-Khattab");
   });
 
   it("does not render when no sahabas are mentioned", () => {

@@ -24,8 +24,22 @@ vi.mock("react-toastify", () => ({
 }));
 
 const mockItemsChapter: ItemType[] = [
-  { id: "1", name: "Chapitre 1", slug: "chapitre-1", index: 1 },
-  { id: "2", name: "Chapitre 2", slug: "chapitre-2", index: 2 },
+  {
+    id: "1",
+    name_fr: "Chapitre 1",
+    name_ar: null,
+    name_en: null,
+    slug: "chapitre-1",
+    index: 1,
+  },
+  {
+    id: "2",
+    name_fr: "Chapitre 2",
+    name_ar: null,
+    name_en: null,
+    slug: "chapitre-2",
+    index: 2,
+  },
 ];
 
 describe("AddItemForm", () => {
@@ -151,7 +165,7 @@ describe("AddItemForm", () => {
     expect(mockAddItem).not.toHaveBeenCalled();
     expect(
       await screen.findByText(
-        "Ce nom est déjà utilisé. Veuillez en choisir un autre."
+        "Ce nom français est déjà utilisé. Veuillez en choisir un autre."
       )
     ).toBeInTheDocument();
   });
@@ -196,8 +210,9 @@ describe("AddItemForm", () => {
     await userEvent.click(submitButton);
 
     expect(mockAddItem).toHaveBeenCalledWith("chapters", {
-      name: "Nouveau Chapitre Unique",
-      nameArabic: null,
+      name_fr: "Nouveau Chapitre Unique",
+      name_ar: null,
+      name_en: null,
       index: 3,
     });
 
@@ -240,8 +255,9 @@ describe("AddItemForm", () => {
     await userEvent.click(submitButton);
 
     expect(mockAddItem).toHaveBeenCalledWith("chapters", {
-      name: "Nouveau Chapitre Test",
-      nameArabic: null,
+      name_fr: "Nouveau Chapitre Test",
+      name_ar: null,
+      name_en: null,
       index: 3, // Use the suggested index (3) instead of 5
     });
     expect(mockToastSuccess).toHaveBeenCalledWith("Élément ajouté avec succès");
@@ -278,8 +294,9 @@ describe("AddItemForm", () => {
     await userEvent.click(submitButton);
 
     expect(mockAddItem).toHaveBeenCalledWith("transmitters", {
-      name: "Nouveau Transmetteur Test",
-      nameArabic: null,
+      name_fr: "Nouveau Transmetteur Test",
+      name_ar: null,
+      name_en: null,
       index: undefined,
     });
     expect(mockToastSuccess).toHaveBeenCalledWith("Transmetteur ajouté");
@@ -388,8 +405,9 @@ describe("AddItemForm", () => {
     await userEvent.click(submitButton);
 
     expect(mockAddItem).toHaveBeenCalledWith("chapters", {
-      name: newItemData.name,
-      nameArabic: null,
+      name_fr: newItemData.name,
+      name_ar: null,
+      name_en: null,
       index: newItemData.index,
     });
     expect(mockToastSuccess).toHaveBeenCalledWith("Ajouté !");

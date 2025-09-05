@@ -7,10 +7,11 @@ export async function GET() {
   try {
     const transmitters = await prisma.transmitter.findMany({
       select: {
-        name: true,
-        nameArabic: true,
+        name_fr: true,
+        name_ar: true,
+        name_en: true,
       },
-      orderBy: { name: "asc" },
+      orderBy: { name_fr: "asc" },
     });
 
     return new NextResponse(JSON.stringify(transmitters, null, 2), {

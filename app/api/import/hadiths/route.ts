@@ -1,3 +1,18 @@
+type ImportedEntity = {
+  slug?: string;
+  name_fr?: string;
+  name_ar?: string;
+  name_en?: string;
+  index?: number;
+};
+
+function resolveNameField(s: ImportedEntity): string | undefined {
+  if (s.name_fr) return s.name_fr;
+  if (s.name_ar) return s.name_ar;
+  if (s.name_en) return s.name_en;
+  return undefined;
+}
+// Utility to resolve multilingual name field from sahaba object
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { PrismaClient } from "@prisma/client";
@@ -35,19 +50,25 @@ export async function POST(request: NextRequest) {
     for (const c of allChapters) {
       if (typeof c.index === "number") chapterByIndex.set(c.index, c);
       if (c.slug) chapterBySlug.set(c.slug, c);
-      if (c.name) chapterByNameLower.set(c.name.toLowerCase(), c);
+      if (c.name_fr) chapterByNameLower.set(c.name_fr.toLowerCase(), c);
+      if (c.name_ar) chapterByNameLower.set(c.name_ar.toLowerCase(), c);
+      if (c.name_en) chapterByNameLower.set(c.name_en.toLowerCase(), c);
     }
 
     const sahabaBySlug = new Map<string, Sahaba>();
     const sahabaByNameLower = new Map<string, Sahaba>();
     for (const s of allSahabas) {
       if (s.slug) sahabaBySlug.set(s.slug, s);
-      if (s.name) sahabaByNameLower.set(s.name.toLowerCase(), s);
+      if (s.name_fr) sahabaByNameLower.set(s.name_fr.toLowerCase(), s);
+      if (s.name_ar) sahabaByNameLower.set(s.name_ar.toLowerCase(), s);
+      if (s.name_en) sahabaByNameLower.set(s.name_en.toLowerCase(), s);
     }
 
     const transmitterByNameLower = new Map<string, Transmitter>();
     for (const t of allTransmitters) {
-      if (t.name) transmitterByNameLower.set(t.name.toLowerCase(), t);
+      if (t.name_fr) transmitterByNameLower.set(t.name_fr.toLowerCase(), t);
+      if (t.name_ar) transmitterByNameLower.set(t.name_ar.toLowerCase(), t);
+      if (t.name_en) transmitterByNameLower.set(t.name_en.toLowerCase(), t);
     }
     // Determine which hadith numeros already exist to avoid re-creating them
     const numeros = hadiths.map((h) => h.numero).filter((n) => n !== undefined);
@@ -65,7 +86,11 @@ export async function POST(request: NextRequest) {
       const chapterIndex = hadith.chapter?.index ?? hadith.chapterIndex;
       const chapterSlug = hadith.chapter?.slug ?? undefined;
       const chapterName =
-        (hadith.chapter?.name ?? hadith.chapterName) || undefined;
+        (hadith.chapter as ImportedEntity)?.name_fr ??
+        (hadith.chapter as ImportedEntity)?.name_ar ??
+        (hadith.chapter as ImportedEntity)?.name_en ??
+        hadith.chapterName ??
+        undefined;
 
       let chapter = null as { id: string } | null;
       if (chapterIndex !== undefined && chapterIndex !== null) {
@@ -97,12 +122,9 @@ export async function POST(request: NextRequest) {
             const sahaba = byName ?? bySlug;
             if (sahaba) mentionedSahabas.push({ id: sahaba.id });
           } else {
-            const slugField: string | undefined = (
-              s as { slug?: string; name?: string }
-            ).slug;
-            const nameField: string | undefined = (
-              s as { slug?: string; name?: string }
-            ).name;
+            const sahabaObj = s as ImportedEntity;
+            const slugField: string | undefined = sahabaObj.slug;
+            const nameField: string | undefined = resolveNameField(sahabaObj);
             let sahaba = null as { id: string } | null;
             if (slugField) sahaba = sahabaBySlug.get(slugField) ?? null;
             if (!sahaba && nameField)

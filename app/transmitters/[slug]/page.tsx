@@ -24,7 +24,7 @@ export default async function PageByTransmitter(props: { params: ParamsType }) {
   return (
     <ListLayoutHadith
       title="Hadiths mentionnant"
-      name={transmitter.name}
+      name={transmitter.name_fr}
       hadiths={hadiths}
     />
   );
@@ -48,8 +48,8 @@ export async function generateMetadata(props: {
   }
 
   return {
-    title: `Transmetteur: ${transmitter.name}`,
-    description: `Collection de hadiths du transmetteur ${transmitter.name} - Sahih Moslim`,
+    title: `Transmetteur: ${transmitter.name_fr}`,
+    description: `Collection de hadiths du transmetteur ${transmitter.name_fr} - Sahih Moslim`,
   };
 }
 

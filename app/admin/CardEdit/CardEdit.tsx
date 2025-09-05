@@ -58,7 +58,7 @@ export function CardEdit({ item, items, variant }: Props) {
     <p>
       {variantOptions[variant].description}
       <span className="inline-block mx-1 px-2 py-0.5 rounded bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 font-semibold">
-        {item.name}
+        {item.name_fr}
       </span>
       {" ?"}
     </p>
@@ -78,15 +78,23 @@ export function CardEdit({ item, items, variant }: Props) {
 
           {/* Name */}
           <h3 className="font-medium text-gray-900 dark:text-gray-100 space-x-2">
-            <span>{item.name}</span>{" "}
+            <span>{item.name_fr}</span>{" "}
             <BadgeNumberOfHadith count={item.hadithCount} />
           </h3>
         </div>
 
-        {item.nameArabic && (
+        {item.name_ar && (
           <div className="mt-1">
             <span className="block text-emerald-600 dark:text-emerald-400 text-lg font-arabic">
-              {item.nameArabic}
+              {item.name_ar}
+            </span>
+          </div>
+        )}
+
+        {item.name_en && (
+          <div className="mt-1">
+            <span className="block text-blue-600 dark:text-blue-400 text-base font-normal">
+              {item.name_en}
             </span>
           </div>
         )}

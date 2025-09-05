@@ -29,21 +29,21 @@ vi.mock("@/app/admin/DataManagement/DataManagement", () => ({
 }));
 
 const mockChapters: ItemType[] = [
-  { id: "1", name: "Chapter 1", slug: "chapter-1", hadithCount: 5 },
-  { id: "2", name: "Chapter 2", slug: "chapter-2", hadithCount: 3 },
+  { id: "1", name_fr: "Chapter 1", slug: "chapter-1", hadithCount: 5 },
+  { id: "2", name_fr: "Chapter 2", slug: "chapter-2", hadithCount: 3 },
 ];
 
 const mockNarrators: ItemType[] = [
-  { id: "1", name: "Narrator 1", slug: "narrator-1", hadithCount: 10 },
+  { id: "1", name_fr: "Narrator 1", slug: "narrator-1", hadithCount: 10 },
 ];
 
 const mockSahabas: ItemType[] = [
-  { id: "1", name: "Sahaba 1", slug: "sahaba-1", hadithCount: 7 },
-  { id: "2", name: "Sahaba 2", slug: "sahaba-2", hadithCount: 2 },
+  { id: "1", name_fr: "Sahaba 1", slug: "sahaba-1", hadithCount: 7 },
+  { id: "2", name_fr: "Sahaba 2", slug: "sahaba-2", hadithCount: 2 },
 ];
 
 const mockTransmitters: ItemType[] = [
-  { id: "1", name: "Transmitter 1", slug: "transmitter-1", hadithCount: 4 },
+  { id: "1", name_fr: "Transmitter 1", slug: "transmitter-1", hadithCount: 4 },
 ];
 
 describe("AdminDashboard Component", () => {

@@ -15,9 +15,12 @@ export type SearchResult = {
   numero: number;
   matn_fr: string;
   matn_ar: string;
+  name_en: string | null;
   chapter: {
     id: string;
-    name: string;
+    name_fr: string;
+    name_ar: string | null;
+    name_en: string | null;
     slug: string;
     index: number;
   };
@@ -48,9 +51,12 @@ export async function searchHadithsCombined(
         h.numero,
         h.matn_fr,
         h.matn_ar,
+        h.name_en,
         json_build_object(
           'id', c.id,
-          'name', c.name,
+          'name_fr', c.name_fr,
+          'name_ar', c.name_ar,
+          'name_en', c.name_en,
           'slug', c.slug,
           'index', c.index
         ) as chapter,
@@ -89,18 +95,49 @@ export async function searchHadithsBySahabas(
       where: {
         mentionedSahabas: {
           some: {
-            name: {
+            name_fr: {
               in: sahabaNames,
             },
           },
         },
       },
       include: {
-        chapter: true,
-        mentionedSahabas: true,
+        chapter: {
+          select: {
+            id: true,
+            index: true,
+            slug: true,
+            name_fr: true,
+            name_ar: true,
+            name_en: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+        mentionedSahabas: {
+          select: {
+            id: true,
+            slug: true,
+            name_fr: true,
+            name_ar: true,
+            name_en: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
         hadithTransmitters: {
           include: {
-            transmitter: true,
+            transmitter: {
+              select: {
+                id: true,
+                slug: true,
+                name_fr: true,
+                name_ar: true,
+                name_en: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
           },
           orderBy: {
             order: "asc",
@@ -114,14 +151,48 @@ export async function searchHadithsBySahabas(
 
     // Filter to ensure ALL sahabas are mentioned (if required)
     const filteredHadiths = hadiths.filter((hadith) => {
-      const hadithSahabaNames = hadith.mentionedSahabas.map((s) => s.name);
+      const hadithSahabaNames = hadith.mentionedSahabas.map(
+        (s: { name_fr: string }) => s.name_fr
+      );
       return sahabaNames.every((sahaba) => hadithSahabaNames.includes(sahaba));
     });
 
     // Transform to match HadithType
     return filteredHadiths.map((hadith) => ({
-      ...hadith,
-      isnadTransmitters: hadith.hadithTransmitters.map((ht) => ht.transmitter),
+      id: hadith.id ?? "",
+      numero: hadith.numero ?? 0,
+      matn_fr: hadith.matn_fr ?? "",
+      matn_ar: hadith.matn_ar ?? "",
+      chapter: {
+        id: hadith.chapter?.id ?? "",
+        name_fr: hadith.chapter?.name_fr ?? "",
+        name_ar: hadith.chapter?.name_ar ?? "",
+        name_en: hadith.chapter?.name_en ?? "",
+        slug: hadith.chapter?.slug ?? "",
+        index: hadith.chapter?.index ?? 0,
+      },
+      mentionedSahabas:
+        hadith.mentionedSahabas?.map((s) => ({
+          id: s.id ?? "",
+          slug: s.slug ?? "",
+          name_fr: s.name_fr ?? "",
+          name_ar: s.name_ar ?? "",
+          name_en: s.name_en ?? "",
+          createdAt: s.createdAt ?? new Date(),
+          updatedAt: s.updatedAt ?? new Date(),
+        })) ?? [],
+      isnadTransmitters:
+        hadith.hadithTransmitters?.map((ht) => ({
+          id: ht.transmitter?.id ?? "",
+          slug: ht.transmitter?.slug ?? "",
+          name_fr: ht.transmitter?.name_fr ?? "",
+          name_ar: ht.transmitter?.name_ar ?? "",
+          name_en: ht.transmitter?.name_en ?? "",
+          createdAt: ht.transmitter?.createdAt ?? new Date(),
+          updatedAt: ht.transmitter?.updatedAt ?? new Date(),
+        })) ?? [],
+      createdAt: hadith.createdAt ?? new Date(),
+      updatedAt: hadith.updatedAt ?? new Date(),
     }));
   } catch (error) {
     console.error("Error in searchHadithsBySahabas:", error);
@@ -143,7 +214,7 @@ export async function searchHadithsByTransmitters(
         hadithTransmitters: {
           some: {
             transmitter: {
-              name: {
+              name_fr: {
                 in: transmitterNames,
               },
             },
@@ -151,11 +222,42 @@ export async function searchHadithsByTransmitters(
         },
       },
       include: {
-        chapter: true,
-        mentionedSahabas: true,
+        chapter: {
+          select: {
+            id: true,
+            index: true,
+            slug: true,
+            name_fr: true,
+            name_ar: true,
+            name_en: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+        mentionedSahabas: {
+          select: {
+            id: true,
+            slug: true,
+            name_fr: true,
+            name_ar: true,
+            name_en: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
         hadithTransmitters: {
           include: {
-            transmitter: true,
+            transmitter: {
+              select: {
+                id: true,
+                slug: true,
+                name_fr: true,
+                name_ar: true,
+                name_en: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
           },
           orderBy: {
             order: "asc",
@@ -170,7 +272,7 @@ export async function searchHadithsByTransmitters(
     // Filter to ensure ALL transmitters are in the chain (if required)
     const filteredHadiths = hadiths.filter((hadith) => {
       const hadithTransmitterNames = hadith.hadithTransmitters.map(
-        (ht) => ht.transmitter.name
+        (ht: { transmitter: { name_fr: string } }) => ht.transmitter.name_fr
       );
       return transmitterNames.every((transmitter) =>
         hadithTransmitterNames.includes(transmitter)
@@ -179,8 +281,40 @@ export async function searchHadithsByTransmitters(
 
     // Transform to match HadithType
     return filteredHadiths.map((hadith) => ({
-      ...hadith,
-      isnadTransmitters: hadith.hadithTransmitters.map((ht) => ht.transmitter),
+      id: hadith.id ?? "",
+      numero: hadith.numero ?? 0,
+      matn_fr: hadith.matn_fr ?? "",
+      matn_ar: hadith.matn_ar ?? "",
+      chapter: {
+        id: hadith.chapter?.id ?? "",
+        name_fr: hadith.chapter?.name_fr ?? "",
+        name_ar: hadith.chapter?.name_ar ?? "",
+        name_en: hadith.chapter?.name_en ?? "",
+        slug: hadith.chapter?.slug ?? "",
+        index: hadith.chapter?.index ?? 0,
+      },
+      mentionedSahabas:
+        hadith.mentionedSahabas?.map((s) => ({
+          id: s.id ?? "",
+          slug: s.slug ?? "",
+          name_fr: s.name_fr ?? "",
+          name_ar: s.name_ar ?? "",
+          name_en: s.name_en ?? "",
+          createdAt: s.createdAt ?? new Date(),
+          updatedAt: s.updatedAt ?? new Date(),
+        })) ?? [],
+      isnadTransmitters:
+        hadith.hadithTransmitters?.map((ht) => ({
+          id: ht.transmitter?.id ?? "",
+          slug: ht.transmitter?.slug ?? "",
+          name_fr: ht.transmitter?.name_fr ?? "",
+          name_ar: ht.transmitter?.name_ar ?? "",
+          name_en: ht.transmitter?.name_en ?? "",
+          createdAt: ht.transmitter?.createdAt ?? new Date(),
+          updatedAt: ht.transmitter?.updatedAt ?? new Date(),
+        })) ?? [],
+      createdAt: hadith.createdAt ?? new Date(),
+      updatedAt: hadith.updatedAt ?? new Date(),
     }));
   } catch (error) {
     console.error("Error in searchHadithsByTransmitters:", error);

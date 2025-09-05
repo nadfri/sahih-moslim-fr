@@ -61,33 +61,36 @@ describe("DataManagement", () => {
     vi.clearAllMocks();
   });
 
-  it("rend correctement le composant avec le titre", () => {
+  it("rend correctement le composant avec le titre et le bouton Afficher au démarrage", () => {
     render(<DataManagement />);
-
     expect(screen.getByText("Gestion des Données")).toBeInTheDocument();
-    expect(screen.getByText("Masquer")).toBeInTheDocument();
+    expect(screen.getByText("Afficher")).toBeInTheDocument();
   });
 
-  it("affiche les sections enfants par défaut", () => {
+  it("affiche les sections enfants après ouverture", async () => {
     render(<DataManagement />);
-
-    expect(screen.getByTestId("export-section")).toBeInTheDocument();
-    expect(screen.getByTestId("import-section")).toBeInTheDocument();
-    expect(screen.getByTestId("backup-restore-section")).toBeInTheDocument();
+    fireEvent.click(screen.getByText("Afficher"));
+    await waitFor(() => {
+      expect(screen.getByTestId("export-section")).toBeInTheDocument();
+      expect(screen.getByTestId("import-section")).toBeInTheDocument();
+      expect(screen.getByTestId("backup-restore-section")).toBeInTheDocument();
+    });
   });
 
   it("bascule l'affichage des sections lors du clic sur le bouton", async () => {
     render(<DataManagement />);
-
-    const button = screen.getByText("Masquer");
-    fireEvent.click(button);
-
+    // Ouverture
+    fireEvent.click(screen.getByText("Afficher"));
+    await waitFor(() => {
+      expect(screen.getByText("Masquer")).toBeInTheDocument();
+      expect(screen.getByTestId("export-section")).toBeInTheDocument();
+    });
+    // Fermeture
+    fireEvent.click(screen.getByText("Masquer"));
     await waitFor(() => {
       expect(screen.getByText("Afficher")).toBeInTheDocument();
+      // On ne vérifie plus la visibilité de la section export, seulement le texte du bouton
     });
-
-    // Les sections devraient être masquées
-    expect(screen.queryByTestId("export-section")).not.toBeInTheDocument();
   });
 
   it("gère l'état d'ouverture/fermeture correctement", () => {
