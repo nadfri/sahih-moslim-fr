@@ -1,21 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { LogIn } from "lucide-react";
+import { LogIn, LoaderCircle } from "lucide-react";
+import { useAuth } from "@/src/hooks/useAuth";
 
-type ButtonSignInProps = {
-  className?: string;
-  closeMobileMenu?: () => void;
-};
+export function ButtonSignIn() {
+  const { loading } = useAuth();
 
-export function ButtonSignIn({
-  className = "",
-  closeMobileMenu,
-}: ButtonSignInProps) {
   return (
     <Link
       href="/auth/signin"
-      onClick={closeMobileMenu}
       title="Se connecter"
       className={`
         w-full sm:w-auto inline-flex items-center justify-center
@@ -25,13 +19,19 @@ export function ButtonSignIn({
         hover:bg-emerald-100 dark:hover:bg-emerald-800/60 
         hover:text-emerald-700 dark:hover:text-emerald-300
         transition-all duration-200
-        ${className}
       `}
     >
-      <LogIn
-        className="size-5"
-        aria-hidden="true"
-      />
+      {loading ? (
+        <LoaderCircle
+          className="size-5 animate-spin"
+          aria-hidden="true"
+        />
+      ) : (
+        <LogIn
+          className="size-5"
+          aria-hidden="true"
+        />
+      )}
     </Link>
   );
 }

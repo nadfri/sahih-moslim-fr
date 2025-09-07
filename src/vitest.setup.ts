@@ -18,6 +18,29 @@ vi.mock("next/cache", () => ({
   },
 }));
 
+// Provide a lightweight mock for `next/navigation` used by app-router hooks
+// This prevents errors like "invariant expected app router to be mounted" in tests.
+vi.mock("next/navigation", () => {
+  return {
+    useRouter: () => ({
+      push: vi.fn(),
+      replace: vi.fn(),
+      refresh: vi.fn(),
+      back: vi.fn(),
+    }),
+    usePathname: () => "/",
+    useSearchParams: () => new URLSearchParams(),
+    useParams: () => ({}),
+    notFound: () => {
+      // throw to mimic next/navigation behavior when needed in tests
+      throw new Error("notFound called");
+    },
+    redirect: () => {
+      throw new Error("redirect called");
+    },
+  };
+});
+
 // Clean up React Testing Library after each test
 afterEach(() => cleanup());
 

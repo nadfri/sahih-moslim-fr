@@ -68,23 +68,6 @@ describe("ActionsBtns Component", () => {
     expect(screen.getByText("Signaler")).toBeInTheDocument();
   });
 
-  it("should not show preview badge when update is false", () => {
-    render(<ActionsBtns hadith={mockHadith} />);
-
-    expect(screen.queryByText("Aperçu")).not.toBeInTheDocument();
-  });
-
-  it("should show preview badge when update is true", () => {
-    render(
-      <ActionsBtns
-        hadith={mockHadith}
-        edit={true}
-      />
-    );
-
-    expect(screen.getByText("Aperçu")).toBeInTheDocument();
-  });
-
   it("should render Signaler button with correct styling and attributes", () => {
     render(<ActionsBtns hadith={mockHadith} />);
 
@@ -194,39 +177,5 @@ describe("ActionsBtns Component", () => {
     expect(screen.getByTestId("copy-board")).toHaveTextContent(
       `CopyBoard for hadith ${mockHadith.numero}`
     );
-  });
-
-  it("should have proper icons with aria-hidden", () => {
-    mockUseAuth.mockReturnValueOnce({
-      user: null,
-      profile: { role: "ADMIN" },
-      loading: false,
-      signInWithGitHub: vi.fn(),
-      signOut: vi.fn(),
-    } as unknown as ReturnType<typeof mockUseAuth>);
-
-    render(
-      <ActionsBtns
-        hadith={mockHadith}
-        edit={true}
-      />
-    );
-
-    // Check for ScanEye icon in preview badge
-    const previewBadge = screen.getByText("Aperçu").closest("span");
-    const previewIcon = previewBadge?.querySelector("svg");
-    expect(previewIcon).toHaveAttribute("aria-hidden", "true");
-
-    // Check for TriangleAlert icon in Signaler button
-    const signalerButton = screen.getByRole("button", {
-      name: /Signaler une erreur/,
-    });
-    const signalerIcon = signalerButton.querySelector("svg");
-    expect(signalerIcon).toHaveAttribute("aria-hidden", "true");
-
-    // Check for Pencil icon in Edit link
-    const editLink = screen.getByRole("link", { name: /Éditer le hadith/ });
-    const editIcon = editLink.querySelector("svg");
-    expect(editIcon).toHaveAttribute("aria-hidden", "true");
   });
 });

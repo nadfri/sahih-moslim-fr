@@ -3,8 +3,8 @@
 import { useState } from "react";
 
 import { useAuth } from "@/src/hooks/useAuth";
-import { ButtonSignIn } from "../../../app/auth/signin/ButtonSignIn";
-import { ButtonSignOut } from "../../../app/auth/signin/ButtonSignOut";
+import { ButtonSignIn } from "@/app/auth/signin/ButtonSignIn";
+import { ButtonSignOut } from "@/app/auth/signin/ButtonSignOut";
 import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
 import { Hamburger } from "./Hamburger";
 import { LinkAddHadith } from "./LinkAddHadith";
@@ -13,7 +13,7 @@ import { NavBar } from "./NavBar";
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user, profile, loading } = useAuth();
+  const { user, profile } = useAuth();
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
@@ -39,7 +39,7 @@ export function Header() {
             {isAdmin && <LinkAddHadith />}
 
             {/* Auth buttons */}
-            {!loading && (isLoggedIn ? <ButtonSignOut /> : <ButtonSignIn />)}
+            {isLoggedIn ? <ButtonSignOut /> : <ButtonSignIn />}
           </div>
 
           <ThemeToggle />
@@ -57,24 +57,20 @@ export function Header() {
           overflow-hidden md:hidden transition-[max-height] duration-300 ease-in-out bg-white dark:bg-gray-900
           ${isMobileMenuOpen ? "max-h-96" : "max-h-0"}
         `}
+        onClick={closeMobileMenu}
       >
         <div className="container mx-auto px-4 pt-2 pb-4 border-t border-gray-100 dark:border-gray-800">
           <NavBar
-            isMobile={true}
-            closeMobileMenu={closeMobileMenu}
+            isMobile
+            // closeMobileMenu={closeMobileMenu}
           />
 
           <div className="flex flex-col gap-2 mt-2">
             {/* Admin buttons */}
-            {isAdmin && <LinkAddHadith closeMobileMenu={closeMobileMenu} />}
+            {isAdmin && <LinkAddHadith />}
 
             {/* Auth buttons */}
-            {!loading &&
-              (isLoggedIn ? (
-                <ButtonSignOut />
-              ) : (
-                <ButtonSignIn closeMobileMenu={closeMobileMenu} />
-              ))}
+            {isLoggedIn ? <ButtonSignOut /> : <ButtonSignIn />}
           </div>
         </div>
       </div>
