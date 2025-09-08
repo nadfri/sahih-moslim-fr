@@ -28,7 +28,7 @@ export function MarkdownHighlighter({ children, highlight }: Props) {
     // Override the default <em> tag rendering
     em: ({ ...props }) => (
       <em
-        className="border-l-4 rounded-md border-amber-500 dark:border-amber-600 bg-amber-50 dark:bg-amber-900/30 p-3 my-4 text-amber-800 dark:text-amber-400 italic block"
+        className="border-l-4 rounded-md border-amber-500 dark:border-amber-600 bg-amber-100 dark:bg-amber-900/30 p-3 my-4 text-amber-800 dark:text-amber-400 italic block"
         {...props}
       />
     ),

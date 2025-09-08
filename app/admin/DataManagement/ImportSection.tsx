@@ -46,7 +46,7 @@ export function ImportSection() {
               className="group flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg border border-amber-200 dark:border-amber-800 hover:border-amber-300 dark:hover:border-amber-700 hover:shadow-md transition-all duration-200 cursor-pointer"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-md bg-amber-50 dark:bg-amber-900/30">
+                <div className="p-2 rounded-md bg-amber-100 dark:bg-amber-900/30">
                   <Icon className={`w-5 h-5 ${option.import?.color || ""}`} />
                 </div>
                 <div className="font-medium text-gray-900 dark:text-gray-100">

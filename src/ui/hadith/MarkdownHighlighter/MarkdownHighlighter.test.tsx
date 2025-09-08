@@ -79,7 +79,7 @@ describe("MarkdownHighlighter Component", () => {
         "rounded-md",
         "border-amber-500",
         "dark:border-amber-600",
-        "bg-amber-50",
+        "bg-amber-100",
         "dark:bg-amber-900/30",
         "p-3",
         "my-4",

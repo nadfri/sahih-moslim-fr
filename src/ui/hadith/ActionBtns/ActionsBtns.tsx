@@ -44,7 +44,7 @@ export function ActionsBtns({ hadith }: { hadith: HadithType }) {
         <CopyBoard hadith={hadith} />
 
         <button
-          className="inline-flex items-center gap-1.5 text-sm font-medium bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-500 px-3 py-1.5 rounded-md hover:bg-amber-100 dark:hover:bg-amber-900/70 hover:text-amber-700 dark:hover:text-amber-400 transition-all duration-200"
+          className="inline-flex items-center gap-1.5 text-sm font-medium bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-500 px-3 py-1.5 rounded-md hover:bg-amber-100 dark:hover:bg-amber-900/70 hover:text-amber-700 dark:hover:text-amber-400 transition-all duration-200"
           title="Signaler une erreur"
           aria-label="Signaler une erreur dans ce hadith"
         >

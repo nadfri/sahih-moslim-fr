@@ -89,7 +89,7 @@ export function BackupRestoreSection() {
         </button>
       </div>
 
-      <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/50 rounded-lg">
+      <div className="mt-4 p-4 bg-amber-100 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/50 rounded-lg">
         <p className="text-sm text-amber-800 dark:text-amber-200">
           <strong>ℹ️ Restauration sécurisée :</strong> Pour restaurer un backup,
           utilisez la commande{" "}
