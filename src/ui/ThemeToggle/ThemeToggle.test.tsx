@@ -1,75 +1,68 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { ThemeType } from "@/src/types/types";
 import { ThemeToggle } from "./ThemeToggle";
 
-// Helper to set/reset document.body attribute and cookie
-function setBodyTheme(theme: ThemeType) {
-  document.body.setAttribute("data-theme", theme);
+function setHtmlTheme(theme: "light" | "dark") {
+  document.documentElement.setAttribute("data-theme", theme);
 }
 
-function getBodyTheme(): ThemeType | null {
-  const attr = document.body.getAttribute("data-theme");
-  if (attr === "light" || attr === "dark") return attr;
-  return null;
+function getHtmlTheme(): string | null {
+  return document.documentElement.getAttribute("data-theme");
 }
 
-describe("ThemeToggle", () => {
+describe("ThemeToggle (standalone)", () => {
   beforeEach(() => {
-    document.body.setAttribute("data-theme", "light");
-    document.cookie = "";
+    // default to light for tests
+    setHtmlTheme("light");
+    localStorage.clear();
   });
 
-  it("renders the button and icon according to current theme", () => {
-    setBodyTheme("light");
+  it("renders and shows correct aria-label for current theme", () => {
     render(<ThemeToggle />);
-    // Button should be enabled
-    const button = screen.getByRole("button");
-    expect(button).toBeEnabled();
-    // Sun icon should be present for light theme
-    expect(button.querySelector("svg")).toBeInTheDocument();
-    // Aria-label should indicate switching to dark
-    expect(button).toHaveAttribute(
-      "aria-label",
-      expect.stringContaining("dark")
-    );
+
+    const btn = screen.getByRole("button");
+    expect(btn).toBeEnabled();
+    expect(btn).toHaveAttribute("aria-label", expect.stringContaining("dark"));
   });
 
-  it("toggles theme from light to dark and updates body attribute and cookie", async () => {
-    setBodyTheme("light");
+  it("toggles theme from light to dark and updates documentElement and localStorage", async () => {
     render(<ThemeToggle />);
-    const button = screen.getByRole("button");
-    await userEvent.click(button);
-    // Theme should now be dark
-    expect(getBodyTheme()).toBe("dark");
-    // Aria-label should indicate switching to light
-    expect(button).toHaveAttribute(
-      "aria-label",
-      expect.stringContaining("light")
-    );
-    // Cookie should be set
-    expect(document.cookie).toContain("theme=dark");
+
+    const btn = screen.getByRole("button");
+    await userEvent.click(btn);
+
+    expect(getHtmlTheme()).toBe("dark");
+    expect(localStorage.getItem("theme")).toBe("dark");
+    expect(btn).toHaveAttribute("aria-label", expect.stringContaining("light"));
   });
 
-  it("toggles theme from dark to light and updates body attribute and cookie", async () => {
-    setBodyTheme("dark");
+  it("toggles theme from dark to light and updates documentElement and localStorage", async () => {
+    setHtmlTheme("dark");
+
     render(<ThemeToggle />);
-    const button = screen.getByRole("button");
-    await userEvent.click(button);
-    expect(getBodyTheme()).toBe("light");
-    expect(button).toHaveAttribute(
-      "aria-label",
-      expect.stringContaining("dark")
-    );
-    expect(document.cookie).toContain("theme=light");
+
+    const btn = screen.getByRole("button");
+    await userEvent.click(btn);
+
+    expect(getHtmlTheme()).toBe("light");
+    expect(localStorage.getItem("theme")).toBe("light");
+    expect(btn).toHaveAttribute("aria-label", expect.stringContaining("dark"));
   });
 
-  it("button is disabled if theme is not detected", () => {
-    document.body.removeAttribute("data-theme");
+  it("provider initialise le thème par défaut à 'dark' si data-theme absent", async () => {
+    document.documentElement.removeAttribute("data-theme");
+
     render(<ThemeToggle />);
-    const button = screen.getByRole("button");
-    expect(button).toBeDisabled();
+
+    // Attendre que le bouton ait l'aria-label pour passer au thème clair (donc thème courant = dark)
+    await waitFor(() => {
+      const btn = screen.getByRole("button");
+      expect(btn).toHaveAttribute(
+        "aria-label",
+        expect.stringContaining("light")
+      );
+    });
   });
 });

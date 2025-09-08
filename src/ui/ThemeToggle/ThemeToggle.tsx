@@ -1,50 +1,41 @@
 "use client";
 
-import { useLayoutEffect, useState } from "react";
-import { MoonIcon, SunIcon, SunMoonIcon } from "lucide-react";
-
 import { ThemeType } from "@/src/types/types";
+import { MoonIcon, SunIcon, SunMoonIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<ThemeType | null>(null);
+  const [theme, setTheme] = useState<ThemeType>(null);
 
-  /*Pre Rendering*/
-  useLayoutEffect(() => {
-    const attributeValue = document.body.getAttribute("data-theme");
-
-    if (attributeValue === "light" || attributeValue === "dark") {
-      setTheme(attributeValue);
-    }
+  useEffect(() => {
+    const dataTheme = document.documentElement.getAttribute(
+      "data-theme"
+    ) as ThemeType;
+    setTheme(dataTheme || "dark");
   }, []);
 
-  /*Handle Theme Change*/
   function toggleTheme() {
     const newTheme = theme === "light" ? "dark" : "light";
+
+    document.documentElement.setAttribute("data-theme", newTheme);
+
+    localStorage.setItem("theme", newTheme);
+
     setTheme(newTheme);
-
-    document.body.setAttribute("data-theme", newTheme);
-    document.cookie = `theme=${newTheme}; path=/; max-age=31536000`; // 1 year
   }
 
-  let IconTheme: React.ElementType | null = SunMoonIcon;
-
-  switch (theme) {
-    case "light":
-      IconTheme = SunIcon;
-      break;
-    case "dark":
-      IconTheme = MoonIcon;
-      break;
-  }
+  let IconTheme: React.ElementType = SunMoonIcon;
+  if (theme === "dark") IconTheme = MoonIcon;
+  if (theme === "light") IconTheme = SunIcon;
 
   return (
     <button
       className="flex items-center justify-center rounded-full transition-colors duration-300 hover:bg-gray-300 dark:hover:bg-gray-600 p-1 size-8"
       onClick={toggleTheme}
-      aria-label={`Toggle theme to ${theme === "light" ? "dark" : "light"}`}
-      disabled={theme === null}
+      aria-label={`Toggle theme to ${theme === "dark" ? "light" : "dark"}`}
+      disabled={!theme}
     >
-      {IconTheme && <IconTheme className="w-full text-yellow-400 moveLeft" />}
+      <IconTheme className="w-full text-yellow-400 moveLeft" />
     </button>
   );
 }
