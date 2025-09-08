@@ -1,530 +1,384 @@
-# Sahih Moslim FR - Application Next.js avec Supabase
+# Sahih Moslim (French/English/Arabic) — Local Setup
 
-Une application web moderne pour consulter les hadiths de Sahih Moslim en français, construite avec Next.js 15, React 19, et Supabase PostgreSQL.
+## Overview
 
-## 🚀 Technologies Utilisées
+Sahih Moslim is a comprehensive collection of Imam Muslim's hadiths featuring French, English, and Arabic texts. The application supports advanced search functionality (by companion/sahaba, transmitter, hadith number) and preserves the complete isnad (transmission chain).
 
-- **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS
-- **Backend**: Supabase PostgreSQL, Prisma ORM
-- **Authentification**: NextAuth.js avec GitHub OAuth
-- **Recherche**: PostgreSQL Full-Text Search optimisé
-- **UI**: Composants React personnalisés avec support du mode sombre
+Key features include:
 
-## 📋 Table des Matières
+- Full-text search across multiple languages
+- Structured data with ordered transmitters
+- Admin interface for content management
+- Role-based access control
+- API endpoints for adding and editing hadiths
 
-1. [Configuration Supabase](#configuration-supabase)
-2. [Installation et Configuration du Projet](#installation-et-configuration-du-projet)
-3. [Optimisations de Recherche](#optimisations-de-recherche)
-4. [Configuration de l'Authentification](#configuration-de-lauthentification)
-5. [Scripts Utiles](#scripts-utiles)
-6. [Déploiement](#déploiement)
+## Tech Stack & Prerequisites
 
-## 🔧 Configuration Supabase
+### Technologies
 
-### 1. Créer un Projet Supabase
+- **Next.js 15** (App Router)
+- **React 19** + React Compiler
+- **TypeScript**
+- **Prisma** (ORM)
+- **Supabase** (Authentication + PostgreSQL Database)
+- **Tailwind CSS 4**
+- **Vitest** for testing
+- **pnpm** as package manager
 
-1. Aller sur [supabase.com](https://supabase.com) et créer un compte
-2. Créer un nouveau projet
-3. Noter les informations de connexion :
-   - Project URL
-   - API Keys (anon/public)
-   - Database URL
+### Requirements
 
-### 2. Configuration de la Base de Données
+- Node.js (see `.nvmrc` for version)
+- pnpm or npm
+- Supabase project (for authentication and database)
 
-#### Variables d'Environnement
+## Configuration
 
-Créer un fichier `.env.local` avec vos informations Supabase :
+### 1. Environment Variables
 
-```bash
-# Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL="https://[PROJECT-REF].supabase.co"
-NEXT_PUBLIC_SUPABASE_ANON_KEY="[ANON-KEY]"
+Copy the example environment file and configure the required variables:
 
-# Base de données PostgreSQL (Supabase)
-DATABASE_URL="postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?pgbouncer=true"
-DIRECT_URL="postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:5432/postgres"
-
-# Authentication
-AUTH_SECRET="votre-secret-très-long-et-aléatoire"
-GITHUB_ID="votre-client-id-github"
-GITHUB_SECRET="votre-client-secret-github"
-
-# En production uniquement
-# AUTH_URL="https://votre-domaine.com"
+```powershell
+copy-item .env.example .env
 ```
 
-#### 3. Extensions PostgreSQL Requises
+**Required variables in `.env`:**
 
-Dans l'éditeur SQL de Supabase, exécuter ces commandes **une seule fois** :
+- `DATABASE_URL` — Direct Supabase PostgreSQL connection string (from Supabase Dashboard → Settings → Database → Connection string)
+- `NEXT_PUBLIC_SUPABASE_URL` — Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Supabase public/anonymous key
+- `SUPABASE_SERVICE_ROLE_KEY` — Server-side service role key (optional, for admin operations)
 
-```sql
--- 🔧 Extensions pour la recherche optimisée
-CREATE EXTENSION IF NOT EXISTS unaccent;
-CREATE EXTENSION IF NOT EXISTS pg_trgm;
-```
+**Test environment:**
 
-#### 4. Index de Performance (OBLIGATOIRES)
+- Copy `.env.test.example` to `.env.test` for test-specific configuration
 
-**⚠️ Important** : Ces index sont essentiels pour des performances <300ms avec 6000+ hadiths.
+### 2. Supabase Setup
 
-Dans l'éditeur SQL de Supabase :
+#### Create Project
 
-```sql
--- 🚀 Index trigram pour recherche ultra-rapide
-CREATE INDEX IF NOT EXISTS hadith_matn_fr_trgm_idx
-ON "Hadith" USING GIN (lower(matn_fr) gin_trgm_ops);
+1. Create a new Supabase project at [supabase.com](https://supabase.com)
+2. Note your project URL and API keys from Settings → API
 
-CREATE INDEX IF NOT EXISTS hadith_matn_ar_trgm_idx
-ON "Hadith" USING GIN (lower(matn_ar) gin_trgm_ops);
-```
+#### Configure Authentication
 
-#### 5. Vérification des Index
+1. Go to Authentication → Settings
+2. Add `http://localhost:3000` as an authorized redirect URL for local development
+3. Configure GitHub OAuth (optional but recommended):
+   - Go to Authentication → Providers
+   - Enable GitHub provider
+   - Add your GitHub OAuth App credentials
 
-Pour vérifier que les index sont bien créés :
+#### Database Configuration
 
-```sql
--- Vérifier les extensions
-SELECT extname, extversion
-FROM pg_extension
-WHERE extname IN ('pg_trgm', 'unaccent');
+1. The database connection is handled through the `DATABASE_URL`
+2. Tables will be created via Prisma migrations (see Setup section)
 
--- Vérifier les index
-SELECT indexname, indexdef
-FROM pg_indexes
-WHERE tablename = 'Hadith'
-ORDER BY indexname;
-```
+## Installation & Setup
 
-## 🧪 Configuration des Tests
+### 1. Install Dependencies
 
-### Base de Données de Test Locale
-
-Pour éviter d'utiliser Supabase en production pour les tests, nous utilisons une base de données PostgreSQL locale via Docker.
-
-#### 1. Lancer la Base de Données de Test
-
-```bash
-# Lancer PostgreSQL en arrière-plan
-docker-compose up -d
-
-# Vérifier que le conteneur fonctionne
-docker ps
-```
-
-#### 2. Appliquer les Migrations à la DB de Test
-
-```bash
-# Charger l'environnement de test et appliquer les migrations
-DATABASE_URL="postgresql://test_user:test_password@localhost:5432/test_db?schema=public" npx prisma migrate deploy
-```
-
-#### 3. Variables d'Environnement pour les Tests
-
-Copier `.env.test.example` vers `.env.test` et ajuster si nécessaire :
-
-```bash
-cp .env.test.example .env.test
-```
-
-#### 4. Exécuter les Tests
-
-```bash
-# Exécuter tous les tests
-npm test
-
-# Avec couverture
-npm run test:coverage
-```
-
-**Note** : Les tests nettoient automatiquement la DB avant chaque exécution pour éviter les interférences.
-
-## 📦 Installation et Configuration du Projet
-
-### 1. Cloner et Installer
-
-```bash
-git clone [votre-repo]
-cd sahih-moslim-fr
+```powershell
 pnpm install
 ```
 
-### 2. Initialiser la Base de Données
+### 2. Prisma Setup
+
+#### Generate Prisma Client
+
+```powershell
+pnpm exec prisma generate
+```
+
+#### Apply Database Schema
+
+Choose one of the following options:
+
+**Option A — Migrations (Recommended for version control):**
+
+```powershell
+pnpm exec prisma migrate deploy
+```
+
+**Option B — Direct Push (Faster, no migration history):**
+
+```powershell
+pnpm exec prisma db push
+```
+
+#### Seed Initial Data (Optional)
+
+The repository includes seed scripts for populating initial data:
+
+```powershell
+# Run migration and transmitter relation scripts
+node prisma/seeds/migrate.js
+node prisma/seeds/migrate-transmitters.js
+node prisma/seeds/fillSlug.js
+```
+
+**Available seed files:**
+
+- `prisma/seeds/chapters.js` — Book chapters
+- `prisma/seeds/narrators.js` — Narrators data
+- `prisma/seeds/sahabas.js` — Companions data
+
+## Running the Application
+
+### Development
+
+```powershell
+pnpm run dev
+```
+
+### Production Build
+
+```powershell
+pnpm run build
+pnpm run start
+```
+
+The application will be available at `http://localhost:3000`.
+
+## Testing
+
+The project uses Vitest for testing with mocked Supabase authentication.
+
+### Run Tests
+
+```powershell
+pnpm run test
+# or directly
+pnpm exec vitest
+```
+
+### Test Configuration
+
+- Main test config: `vitest.config.mts`
+- Example test: `app/api/hadiths/add/route.add.test.ts`
+- Mock data utilities: `src/utils/mocks/mockHadiths.ts`
+
+### Docker Environment
+
+For isolated testing and development, you can use Docker to run a PostgreSQL database for testing.
+
+#### Prerequisites
+
+- Docker installed on your system
+- Docker Compose (usually included with Docker Desktop)
+
+#### Quick Start with Docker
+
+1. **Start the PostgreSQL database:**
+
+   ```powershell
+   docker-compose up -d
+   ```
+
+2. **Stop the database:**
+   ```powershell
+   docker-compose down
+   ```
+
+#### Docker Services
+
+The `docker-compose.yml` file defines the following service:
+
+- **postgres**: PostgreSQL 15 database for testing
+  - Database name: `test_db`
+  - Username: `test_user`
+  - Password: `test_password`
+  - Accessible on port 5432
+  - Data persists in a Docker volume
+
+#### Environment Configuration for Docker
+
+Use your existing `.env.test` file and modify the `DATABASE_URL` to point to the Docker database:
 
 ```bash
-# Appliquer les migrations Prisma
-pnpx prisma migrate deploy
+# For Docker PostgreSQL
+DATABASE_URL="postgresql://test_user:test_password@localhost:5432/test_db"
 
-# Générer le client Prisma
-pnpx prisma generate
-
-# (Optionnel) Peupler la base avec des données de test
-pnpx prisma db seed
+# Keep your Supabase variables for auth
+NEXT_PUBLIC_SUPABASE_URL="your-supabase-url"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
+SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
 ```
 
-### 3. Lancer en Développement
+#### Docker Testing Workflow
 
-```bash
-pnpm dev
+1. **Start the database:**
+
+   ```powershell
+   docker-compose up -d
+   ```
+
+2. **Run tests with Docker database:**
+
+   ```powershell
+   # Tests will use the Docker PostgreSQL
+   pnpm run test
+   ```
+
+3. **View database logs:**
+
+   ```powershell
+   docker-compose logs -f postgres
+   ```
+
+4. **Reset database (remove volume):**
+   ```powershell
+   docker-compose down -v
+   docker-compose up -d
+   ```
+
+#### Docker Commands Reference
+
+```powershell
+# Start database in background
+docker-compose up -d
+
+# View logs
+docker-compose logs -f postgres
+
+# Stop database
+docker-compose down
+
+# Reset database (removes all data)
+docker-compose down -v
+
+# View running containers
+docker-compose ps
 ```
 
-L'application sera disponible sur `http://localhost:3000`
+**Note:** The Docker setup provides an isolated PostgreSQL database for testing. Your application runs locally while connecting to the Docker database.
 
-## 🔍 Optimisations de Recherche
+## Admin Features
 
-### Performance Attendue
+The admin interface (`/admin`) provides comprehensive data management capabilities, accessible only to users with `ADMIN` role.
 
-- **Recherches avec cache** : <50ms ⚡
-- **Nouvelles recherches courtes** : 300-600ms ✅
-- **Recherche accent-insensitive** : "priere" → trouve "prière" ✅
-- **Recherche multilingue** : Français + Arabe ✅
+### Key Features
 
-### Architecture de Recherche
+- **Data Overview**: Statistics dashboard showing counts of hadiths, chapters, sahabas, and transmitters
+- **Entity Management**: Add, edit, and manage chapters, companions (sahabas), and transmitters
+- **Filtered Editing**: Advanced filtering for editing specific items
+- **Role-Based Access**: Restricted to `ADMIN` users only
 
-1. **Cache intelligent** : 5 minutes TTL, 100 entrées max
-2. **Index trigram** : PostgreSQL GIN pour ILIKE ultra-rapide
-3. **Recherche hybride** : Index rapides + fallback accent-insensitive
-4. **Limite optimisée** : 25 résultats par défaut
+### Main Components
 
+- `AdminDashboard` — Main dashboard orchestrator
+- `DataManagement` — Statistics and data overview
+- `AddItemForm` — Form for adding new entities
+- `FilteredCardsEdit` — Filtered editing interface
 
-### 4. Routes Protégées
+### API Endpoints
 
-- `/admin/*` - Accès admin uniquement
-- `/auth/*` - Pages d'authentification
-- Redirection automatique selon l'état de connexion
+- `POST /api/hadiths/add` — Add new hadith
+- `PATCH /api/hadiths/edit/[id]` — Edit existing hadith
 
-## 📝 Scripts Utiles
+## Authentication & Security
 
-```bash
-# Développement
-pnpm dev                    # Lancer en mode développement
+### Authentication Flow
 
-# Base de données
-pnpx prisma migrate dev     # Créer une nouvelle migration
-pnpx prisma generate        # Générer le client Prisma
-pnpx prisma studio          # Interface graphique de la DB
-pnpx prisma db seed         # Peupler la base avec des données
+The application uses Supabase Authentication with GitHub OAuth:
 
-# Tests et Validation
-pnpx tsx scripts/test-search-performance.ts    # Tests de performance
-pnpx tsx scripts/validate-search-optimizations.ts  # Validation complète
+1. **Sign In**: Users authenticate via `/auth/signin` page
+2. **OAuth Callback**: `/auth/callback` handles the OAuth response
+3. **Session Management**: Automatic session handling via Supabase
+4. **Role Verification**: Admin role checked from user metadata or database
 
-# Vérifier l'état de la DB
-pnpx prisma db execute --file scripts/check-db-state.sql --schema prisma/schema.prisma
+### Middleware Protection
 
-# Production
-pnpm build                  # Build de production
-pnpm start                  # Démarrer en production
+The middleware (`middleware.ts`) secures sensitive routes:
+
+- **Protected Routes**: `/admin`, `/*/add`, `/*/edit`
+- **Authentication**: Redirects to sign-in for unauthenticated users
+- **Authorization**: Verifies `ADMIN` role access
+- **Fallback**: Checks both Supabase metadata and database profiles
+
+### Key Authentication Files
+
+- `middleware.ts` — Route protection middleware
+- `src/lib/auth/auth.ts` — Server-side auth helpers
+- `src/lib/auth/supabase/server.ts` — Supabase server client
+- `app/auth/signin/page.tsx` — Sign-in page
+- `app/auth/callback/route.ts` — OAuth callback handler
+
+## Troubleshooting & Emergency Restore
+
+### Common Issues
+
+#### Database Connection
+
+- Verify `DATABASE_URL` is correct (Supabase direct connection string)
+- Ensure Supabase allows external connections
+- Check network connectivity
+
+#### Authentication Problems
+
+- Confirm redirect URLs in Supabase Auth settings match your local setup
+- Verify API keys are correctly set in environment variables
+- Check GitHub OAuth configuration if using OAuth
+
+#### Migration Issues
+
+- Use seed helpers for transmitter relation migrations:
+  ```powershell
+  node prisma/seeds/migrate-transmitters.js
+  node prisma/seeds/migrate.js
+  ```
+
+### Emergency Database Restore
+
+In case of critical database issues, use the emergency restore script:
+
+```powershell
+node backups/restore-emergency.cjs
 ```
 
-## � Récupération d'Urgence (Backup/Restore)
+**Features:**
 
-### ⚠️ Important
+- Interactive restoration from `.dump` or `.sql` backup files
+- Compatible with simplified Prisma schema
+- Supports many-to-many relations (Hadith ↔ Sahaba)
+- Automatic backup file detection and sorting by date
 
-La fonctionnalité de restauration depuis l'interface admin a été **retirée** pour des raisons de sécurité et de fiabilité. La restauration se fait maintenant uniquement via un script dédié.
+**Available backups:**
 
-### 📥 Téléchargement de Backup
+- Located in `backups/` directory
+- Files: `*.dump` or `*.sql` format
+- Latest backup: `sahih-muslim-fr-backup-2025-09-05-16-29-43.dump`
 
-- Depuis l'admin (`/admin`), cliquez sur **"Télécharger Backup"**
-- Le fichier `.dump` sera automatiquement téléchargé
+**Note:** Always backup current data before running restore operations.
 
-### 🔧 Restauration d'Urgence
+## Key Files & References
 
-En cas de problème majeur avec la base de données, utilisez le script de restauration d'urgence :
+### Core API Routes
 
-```bash
-# Méthode recommandée (via package.json)
-pnpm restore:emergency
+- `app/api/hadiths/add/route.ts` — Add hadith endpoint
+- `app/api/hadiths/edit/[id]/route.ts` — Edit hadith endpoint
 
-# Ou directement
-node backups/restore-emergency.js
-```
+### Configuration Files
 
-### ⚡ Que fait le script ?
+- `package.json` — Project dependencies and scripts
+- `next.config.ts` — Next.js configuration
+- `vitest.config.mts` — Test configuration
+- `prisma/schema.prisma` — Database schema
 
-1. **Détecte automatiquement** le fichier dump le plus récent
-2. **Nettoie complètement** la base de données
-3. **Restaure** toutes les tables, données et politiques RLS
-4. **Corrige automatiquement** les politiques de sécurité Supabase
+### Utilities & Helpers
 
-### 🛡️ Sécurité
+- `src/utils/mocks/mockHadiths.ts` — Mock data for testing
+- `src/utils/wrapProphetNames.ts` — Text processing utilities
+- `prisma/seeds/` — Database seeding scripts
 
-- ✅ **Nettoyage automatique** de tous les objets existants
-- ✅ **Politiques RLS** recréées selon les standards Supabase
-- ✅ **Compatible** avec les contraintes Supabase
-- ✅ **Sécurisé** : pas d'accès depuis le frontend
+### UI Components
 
-### 🚨 Quand utiliser ?
+- `src/ui/Descriptive/Descriptive.tsx` — Example component
+- `app/narrators/[slug]/page.tsx` — Example page route
 
-- Corruption de la base de données
-- Perte de données accidentelle
-- Migration vers un nouvel environnement
-- Problèmes avec les politiques RLS
+### Supabase Integration
 
-## �🚀 Déploiement
+- `supabase/` — Supabase configuration directory
+- `.env.example` — Environment variables template
+- `.env.test.example` — Test environment template
 
-### 1. Préparation
-
-- Configurer les variables d'environnement de production
-- Mettre à jour `AUTH_URL` avec votre domaine
-- Configurer GitHub OAuth avec l'URL de production
-
-### 2. Migration de la Base de Données
-
-```bash
-# En production
-pnpx prisma migrate deploy
-```
-
-### 3. Vérification Post-Déploiement
-
-- Tester la recherche avec différents termes
-- Vérifier les performances (objectif <300ms)
-- Valider l'authentification GitHub
-- Confirmer que les index PostgreSQL sont actifs
-
-## 📊 Monitoring des Performances
-
-### Métriques Importantes
-
-- **Temps de recherche** : <300ms pour nouveaux termes
-- **Cache hit rate** : >80% pour les termes populaires
-- **Recherches/seconde** : Optimisé pour 6000+ hadiths
-- **Utilisation des index** : Vérifier via `EXPLAIN ANALYZE`
-
-### Optimisations Actives
-
-✅ **Cache en mémoire** (5min TTL, 100 entrées)  
-✅ **Index trigram GIN** pour ILIKE ultra-rapide  
-✅ **Recherche hybride** (index + fallback accent-insensitive)  
-✅ **Limite optimisée** (25 résultats par défaut)  
-✅ **Requêtes PostgreSQL optimisées**
-
-## 🛠️ Dépannage
-
-### Problèmes de Performance de Recherche
-
-1. **Vérifier les index** :
-
-```sql
-SELECT indexname FROM pg_indexes WHERE tablename = 'Hadith';
-```
-
-2. **Recréer les index si nécessaire** :
-
-```sql
--- Dans l'éditeur SQL Supabase
-DROP INDEX IF EXISTS hadith_matn_fr_trgm_idx;
-DROP INDEX IF EXISTS hadith_matn_ar_trgm_idx;
-
-CREATE INDEX hadith_matn_fr_trgm_idx ON "Hadith" USING GIN (lower(matn_fr) gin_trgm_ops);
-CREATE INDEX hadith_matn_ar_trgm_idx ON "Hadith" USING GIN (lower(matn_ar) gin_trgm_ops);
-```
-
-### Problèmes d'Authentification
-
-1. **Vérifier les variables d'environnement**
-2. **Confirmer la configuration GitHub OAuth**
-3. **Vérifier les migrations Prisma** : `pnpx prisma migrate status`
-
-### Problèmes de Base de Données
-
-1. **Vérifier la connexion** : `pnpx prisma db pull`
-2. **Recréer le client** : `pnpx prisma generate`
-3. **Réinitialiser si nécessaire** : `pnpx prisma migrate reset`
-
-## 📖 Documentation
-
-- [Performance Report](./PERFORMANCE_REPORT.md) - Détails des optimisations
-- [Prisma Schema](./prisma/schema.prisma) - Structure de la base
-- [Types TypeScript](./src/types/types.ts) - Définitions des types
-
-## 🤝 Contribution
-
-Pour contribuer au projet :
-
-1. Fork le repository
-2. Créer une branche feature (`git checkout -b feature/nouvelle-fonctionnalite`)
-3. Commit les changements (`git commit -m 'Ajout nouvelle fonctionnalité'`)
-4. Push vers la branche (`git push origin feature/nouvelle-fonctionnalite`)
-5. Ouvrir une Pull Request
-
-## 📄 Licence
-
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
-
-</div>
-</div>
-</div>
-);
-}
-
-````
-
-### Page d'erreur d'authentification
-
-Créer le fichier `app/auth/error/page.tsx` :
-
-```typescript
-"use client";
-
-import { useSearchParams } from "next/navigation";
-import Link from "next/link";
-
-// Messages d'erreur personnalisés
-const errorMessages: Record<string, string> = {
-  Configuration: "Une erreur de configuration du serveur s'est produite. Contactez l'administrateur.",
-  AccessDenied: "Vous n'avez pas l'autorisation d'accéder à cette ressource.",
-  Default: "Une erreur s'est produite lors de l'authentification.",
-};
-
-export default function AuthErrorPage() {
-  const searchParams = useSearchParams();
-  const error = searchParams.get("error") || "Default";
-
-  // Récupérer le message d'erreur personnalisé ou utiliser le message par défaut
-  const errorMessage = errorMessages[error] || errorMessages.Default;
-
-  return (
-    <div className="flex min-h-[70vh] flex-col items-center justify-center px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-2xl font-bold text-red-600 mb-4">
-          Erreur d'authentification
-        </h1>
-        <p className="mb-6 text-gray-600">{errorMessage}</p>
-        <Link
-          href="/"
-          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-        >
-          Retour à l'accueil
-        </Link>
-      </div>
-    </div>
-  );
-}
-````
-
-### Page non autorisée
-
-Créer le fichier `app/unauthorized/page.tsx` :
-
-```typescript
-import Link from "next/link";
-
-export default function UnauthorizedPage() {
-  return (
-    <div className="flex min-h-[70vh] flex-col items-center justify-center px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-2xl font-bold text-red-600 mb-4">
-          Accès non autorisé
-        </h1>
-        <p className="mb-6 text-gray-600">
-          Vous n'avez pas les permissions nécessaires pour accéder à cette page.
-          Seuls les administrateurs peuvent y accéder.
-        </p>
-        <Link
-          href="/"
-          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-        >
-          Retour à l'accueil
-        </Link>
-      </div>
-    </div>
-  );
-}
-```
-
-## Gestion des sessions et des rôles utilisateur
-
-### Composant de vérification d'administrateur
-
-Créer le fichier `components/AdminCheck.tsx` :
-
-```typescript
-"use client";
-
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
-
-export function AdminCheck({ children }: { children: React.ReactNode }) {
-  const { data: session, status } = useSession();
-
-  // Si chargement en cours, afficher un indicateur
-  if (status === "loading") {
-    return <div className="p-8 flex justify-center">Chargement...</div>;
-  }
-
-  // Si non connecté, rediriger vers la page de connexion
-  if (status === "unauthenticated") {
-    redirect("/auth/signin");
-  }
-
-  // Si connecté mais pas admin, rediriger vers page non autorisée
-  if (session && session.user.role !== "admin") {
-    redirect("/unauthorized");
-  }
-
-  // Si admin, rendre le contenu enfant
-  return <>{children}</>;
-}
-```
-
-### Utilisation du composant AdminCheck
-
-Dans les pages protégées, comme `app/hadiths/add/page.tsx` :
-
-```typescript
-import { AdminCheck } from "@/components/AdminCheck";
-import { AddHadithForm } from "@/ui/hadith/AddHadithForm";
-
-export default function AddHadithPage() {
-  return (
-    <AdminCheck>
-      <div className="max-w-4xl mx-auto py-8 px-4">
-        <h1 className="text-2xl font-bold mb-6">Ajouter un hadith</h1>
-        <AddHadithForm />
-      </div>
-    </AdminCheck>
-  );
-}
-```
-
-## Dépannage courant
-
-### Problème de schéma Prisma
-
-Si vous rencontrez une erreur comme `Unknown argument 'provider_providerAccountId'`, vérifiez que votre schéma Prisma correspond exactement à ce qui est attendu par l'adaptateur Prisma d'AuthJS. Assurez-vous que les noms de champs et les relations sont corrects.
-
-### Erreur de session
-
-Si les sessions ne fonctionnent pas correctement, vérifiez :
-
-1. Que la variable d'environnement `AUTH_SECRET` est correctement définie
-2. Que le client Prisma est correctement configuré
-3. Que le callback `session` renvoie bien l'ID et le rôle utilisateur
-
-### Erreur d'authentification GitHub
-
-En cas de problème avec GitHub :
-
-1. Vérifiez que les variables `GITHUB_ID` et `GITHUB_SECRET` sont correctes
-2. Vérifiez que l'URL de callback dans les paramètres GitHub correspond exactement à votre URL d'application + `/api/auth/callback/github`
-
-### Middleware ne s'exécute pas
-
-Si le middleware ne semble pas fonctionner :
-
-1. Vérifiez la configuration du matcher dans `middleware.ts`
-2. Ajoutez des logs pour déboguer le flux d'exécution
-3. Assurez-vous que le middleware est bien à la racine du projet
-
----
-
-Avec cette configuration, vous disposez d'un système d'authentification complet avec :
-
-- Connexion via GitHub
-- Protection des routes basée sur les rôles
-- Sessions utilisateurs persistantes
-- Interface utilisateur adaptée à l'état d'authentification
-
-Pour ajouter d'autres fournisseurs d'authentification, consultez la documentation d'AuthJS.
+This README provides comprehensive setup and usage instructions. For detailed implementation specifics, refer to the linked files above.
