@@ -1,13 +1,14 @@
+import { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 // Navigation links
 export const navLinks = [
-  { href: "/", label: "Accueil" },
-  { href: "/chapters", label: "Chapitres" },
-  { href: "/sahabas", label: "Compagnons" },
-  { href: "/transmitters", label: "Transmetteurs" },
-  { href: "/search", label: "Recherche" },
+  { href: "/" as Route, label: "Accueil" },
+  { href: "/chapters" as Route, label: "Chapitres" },
+  { href: "/sahabas" as Route, label: "Compagnons" },
+  { href: "/transmitters" as Route, label: "Transmetteurs" },
+  { href: "/search" as Route, label: "Recherche" },
 ];
 
 type NavBarProps = {
@@ -17,7 +18,7 @@ type NavBarProps = {
 
 export function NavBar({ isMobile = false, closeMobileMenu }: NavBarProps) {
   const pathname = usePathname();
-  const isActive = (href: string) =>
+  const isActive = (href: Route) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   // Determine list and nav wrapper classes based on device

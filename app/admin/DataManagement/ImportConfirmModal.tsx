@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
@@ -25,13 +25,28 @@ export function ImportConfirmModal({
   const close = () => {
     if (ref.current) {
       ref.current.classList.replace("fadeIn", "fadeOut");
+      // Schedule close event with defensive guards for test environments
       timeoutRef.current = window.setTimeout(() => {
-        window.dispatchEvent(new CustomEvent("admin:close-import-modal"));
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("admin:close-import-modal"));
+        }
       }, 200);
     } else {
-      window.dispatchEvent(new CustomEvent("admin:close-import-modal"));
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("admin:close-import-modal"));
+      }
     }
   };
+
+  // Ensure pending timeouts are cleared on unmount to avoid callbacks after teardown
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current !== null) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
+  }, []);
 
   const handleConfirm = async () => {
     if (!selectedFile || !selectedEndpoint) return;

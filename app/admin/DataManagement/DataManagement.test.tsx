@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { DataManagement } from "./DataManagement";
+import { DatasType } from "../page";
 
 // Mock des dépendances externes
 vi.mock("react-toastify", () => ({
@@ -57,18 +58,25 @@ vi.mock("./RestoreConfirmModal", () => ({
 }));
 
 describe("DataManagement", () => {
+  const mockDatas: DatasType = {
+    chapters: [],
+    sahabas: [],
+    transmitters: [],
+    hadithsCount: 0,
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it("rend correctement le composant avec le titre et le bouton Afficher au démarrage", () => {
-    render(<DataManagement />);
+    render(<DataManagement datas={mockDatas} />);
     expect(screen.getByText("Gestion des Données")).toBeInTheDocument();
     expect(screen.getByText("Afficher")).toBeInTheDocument();
   });
 
   it("affiche les sections enfants après ouverture", async () => {
-    render(<DataManagement />);
+    render(<DataManagement datas={mockDatas} />);
     fireEvent.click(screen.getByText("Afficher"));
     await waitFor(() => {
       expect(screen.getByTestId("export-section")).toBeInTheDocument();
@@ -78,7 +86,7 @@ describe("DataManagement", () => {
   });
 
   it("bascule l'affichage des sections lors du clic sur le bouton", async () => {
-    render(<DataManagement />);
+    render(<DataManagement datas={mockDatas} />);
     // Ouverture
     fireEvent.click(screen.getByText("Afficher"));
     await waitFor(() => {
@@ -94,7 +102,7 @@ describe("DataManagement", () => {
   });
 
   it("gère l'état d'ouverture/fermeture correctement", () => {
-    render(<DataManagement />);
+    render(<DataManagement datas={mockDatas} />);
 
     // Initialement fermé
     expect(screen.getByText("Afficher")).toBeInTheDocument();
@@ -114,7 +122,7 @@ describe("DataManagement", () => {
   });
 
   it("n'affiche pas les modales par défaut", () => {
-    render(<DataManagement />);
+    render(<DataManagement datas={mockDatas} />);
 
     expect(
       screen.queryByTestId("import-confirm-modal")
@@ -131,7 +139,7 @@ describe("DataManagement", () => {
     };
     mockWindow.dispatchEvent = vi.fn();
 
-    render(<DataManagement />);
+    render(<DataManagement datas={mockDatas} />);
 
     // Déclencher l'événement d'import
     const importEvent = new CustomEvent("admin:import-file", {
@@ -153,7 +161,7 @@ describe("DataManagement", () => {
     mockWindow.addEventListener = vi.fn();
     mockWindow.removeEventListener = vi.fn();
 
-    render(<DataManagement />);
+    render(<DataManagement datas={mockDatas} />);
 
     // Vérifier que les event listeners sont configurés
     expect(mockWindow.addEventListener).toHaveBeenCalledWith(

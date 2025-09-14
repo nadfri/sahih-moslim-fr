@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 import {
   getAllChapters,
@@ -15,11 +15,12 @@ export const metadata: Metadata = {
   description: "Modifiez un hadith existant dans la base de données.",
 };
 
-type Params = Promise<{ numero: string }>;
+type ParamsPromise = Promise<{ numero: string }>;
 
-export default async function EditPage(props: { params: Params }) {
-  const params = await props.params;
-  const numero = params.numero;
+export default async function EditPage({ params }: { params: ParamsPromise }) {
+  const resolvedParams = await params;
+  const numero = resolvedParams.numero;
+
   const [hadith, existingNumeros, chaptersData, sahabasData, transmittersData] =
     await Promise.all([
       getHadithByNumero(numero),
@@ -30,7 +31,7 @@ export default async function EditPage(props: { params: Params }) {
     ]);
 
   if (!hadith) {
-    redirect("/hadiths");
+    notFound();
   }
 
   const otherNumeros = existingNumeros.filter((n) => n !== hadith.numero);

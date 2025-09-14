@@ -1,6 +1,6 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 
-import { type Metadata } from "next";
+import { Route, type Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { getServerUser } from "@/src/lib/auth/auth";
@@ -24,7 +24,7 @@ export default async function SignInPage({
     // User is already authenticated, redirect to callbackUrl or home
     const params = await searchParams;
     const callbackUrl = params.callbackUrl || "/";
-    redirect(callbackUrl);
+    redirect(callbackUrl as Route);
   }
 
   return (

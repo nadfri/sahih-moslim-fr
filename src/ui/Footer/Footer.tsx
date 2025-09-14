@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
@@ -20,7 +18,7 @@ export function Footer() {
             l'Imam Muslim.
           </p>
 
-          <nav className="mt-4">
+          {/* <nav className="mt-4">
             <ul className="flex justify-center items-center space-x-4 text-xs">
               <li>
                 <Link
@@ -53,7 +51,7 @@ export function Footer() {
                 </Link>
               </li>
             </ul>
-          </nav>
+          </nav> */}
         </div>
       </div>
     </footer>

@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { ImportConfirmModal } from "./ImportConfirmModal";
 import { ItemType } from "@/src/types/types";
 
 // Prepare holders for toast mocks (we'll populate them in beforeEach)
@@ -40,6 +39,9 @@ vi.mock("next/navigation", () => ({
   __esModule: true,
   useRouter: () => mockRouter,
 }));
+
+// Import the component after mocks so it picks up the mocked modules
+import { ImportConfirmModal } from "./ImportConfirmModal";
 
 describe("ImportConfirmModal", () => {
   const mockProps = {

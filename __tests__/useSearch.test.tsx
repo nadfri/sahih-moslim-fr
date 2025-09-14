@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
-// using real timers in tests to avoid act(...) environment issues
+import { act } from "react";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 
 import { useSearch, type UseSearchProps } from "@/src/hooks/useSearch";
@@ -35,6 +35,7 @@ describe("useSearch (smoke)", () => {
   });
 
   it("does not call fetch when criteria are missing", async () => {
+    vi.useFakeTimers();
     const fetchSpy = vi.fn();
     // test env stub
     vi.stubGlobal("fetch", fetchSpy);
@@ -49,8 +50,10 @@ describe("useSearch (smoke)", () => {
       />
     );
 
-    // wait beyond debounce to allow the hook to run
-    await new Promise((r) => setTimeout(r, 500));
+    // advance time beyond debounce inside act to let effects run deterministically
+    await act(async () => {
+      vi.advanceTimersByTime(500);
+    });
 
     expect(fetchSpy).not.toHaveBeenCalled();
   });
@@ -79,9 +82,6 @@ describe("useSearch (smoke)", () => {
         numero=""
       />
     );
-
-    // wait beyond debounce to allow the hook to call fetch
-    await new Promise((r) => setTimeout(r, 400));
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalled();
