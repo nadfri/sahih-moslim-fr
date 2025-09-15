@@ -23,7 +23,7 @@ export function Header() {
   const isLoggedIn = !!user;
 
   return (
-    <header className="bg-white dark:bg-gray-900 text-emerald-800 dark:text-emerald-400 shadow-sm dark:shadow-gray-800 sticky top-0 z-50">
+    <header className="bg-white dark:bg-gray-900 md:bg-white/70 md:dark:bg-gray-900/70 md:backdrop-blur-sm text-emerald-800 dark:text-emerald-400 shadow-sm dark:shadow-gray-800 sticky top-0 z-50">
       <div className="flex justify-between items-center relative px-1 p-2">
         {/* Logo */}
         <Logo closeMobileMenu={closeMobileMenu} />
@@ -54,7 +54,8 @@ export function Header() {
       {/* Mobile Menu */}
       <div
         className={`
-          overflow-hidden md:hidden transition-[max-height] duration-300 ease-in-out bg-white dark:bg-gray-900
+          bg-white dark:bg-gray-900
+          overflow-hidden md:hidden transition-[max-height] duration-300 ease-in-out
           ${isMobileMenuOpen ? "max-h-96" : "max-h-0"}
         `}
         onClick={closeMobileMenu}

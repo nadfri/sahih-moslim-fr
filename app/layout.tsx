@@ -49,13 +49,11 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased flex flex-col min-h-screen text-gray-800 dark:text-gray-200 dark:bg-gray-950 transition-colors duration-200">
+      <body className="antialiased flex flex-col min-h-screen bg-gradient-to-br from-emerald-100 via-stone-100 to-amber-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 transition-colors duration-200">
         <AuthProvider>
           <Header />
 
-          <main className="bg-gradient-to-br from-emerald-100 via-stone-100 to-amber-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 py-4 px-2 md:px-8 flex-1">
-            {children}
-          </main>
+          <main className=" py-4 px-2 md:px-8 flex-1">{children}</main>
 
           <Footer />
         </AuthProvider>
