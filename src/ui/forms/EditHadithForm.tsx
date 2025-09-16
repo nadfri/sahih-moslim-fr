@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
 import { deleteHadith, editHadith } from "@/src/services/actions";
-import { HadithType, ItemType } from "@/src/types/types";
+import { HadithType, ItemType, VariantType } from "@/src/types/types";
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { Input } from "@/src/ui/inputs/Input/Input";
 import { MdTextArea } from "@/src/ui/inputs/MdTextArea/MdTextArea";
@@ -17,6 +18,8 @@ import { cleanArabicText } from "@/src/utils/cleanArabicText";
 import { wrapProphetNames } from "@/src/utils/wrapProphetNames";
 import { ConfirmDeleteModal } from "../ConfirmDeleteModal/ConfirmDeleteModal";
 import { MultiSelect } from "../inputs/MultiSelect/MultiSelect";
+import { BtnAddItem } from "../hadith/BtnAddItem/BtnAddItem";
+import { AddItemFormDialog } from "./AddItemFormDialog/AddItemFormDialog";
 import {
   createEditHadithSchema,
   type EditHadithFormValues,
@@ -26,7 +29,6 @@ type EditHadithFormProps = {
   hadith: HadithType;
   existingNumeros: number[];
   chaptersData: ItemType[];
-  // narratorsData: ItemType[];
   sahabasData: ItemType[];
   transmittersData: ItemType[];
 };
@@ -39,9 +41,12 @@ export function EditHadithForm({
   sahabasData,
   transmittersData,
 }: EditHadithFormProps) {
+  type EditVariant = Exclude<VariantType, "chapters">;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isOpenDialog, setIsOpenDialog] = useState(false);
+  const [variant, setVariant] = useState<EditVariant | null>(null);
   const router = useRouter();
 
   const hadithSchema = createEditHadithSchema(existingNumeros, hadith.numero);
@@ -73,6 +78,23 @@ export function EditHadithForm({
   const sahabaOptions = sahabasData.map((s) => s.name_fr);
   const transmitterOptions = transmittersData.map((t) => t.name_fr);
 
+  // Prepare items for AddItemFormDialog
+  const items: Record<EditVariant, ItemType[]> = {
+    sahabas: sahabasData,
+    transmitters: transmittersData,
+  };
+
+  // Handlers to open/close add-item dialog
+  const handleOpenDialog = (v: EditVariant) => {
+    setVariant(v);
+    setIsOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsOpenDialog(false);
+    setVariant(null);
+  };
+
   // Handle form submission for editing
   const onSubmit = async (data: EditHadithFormValues) => {
     setIsSubmitting(true);
@@ -81,9 +103,7 @@ export function EditHadithForm({
     const selectedChapter = chaptersData.find(
       (chapter) => chapter.name_fr === data.chapter
     );
-    // const selectedNarrator = narratorsData.find(
-    //   (n) => n.name === data.narrator
-    // );
+
     const selectedSahabas = sahabasData.filter((s) =>
       data.mentionedSahabas.includes(s.name_fr)
     );
@@ -211,42 +231,48 @@ export function EditHadithForm({
           {/* Narrator supprimé */}
 
           {/* IsnadTransmitters */}
-          <Controller
-            name="isnadTransmitters"
-            control={control}
-            render={({ field }) => (
-              <MultiSelectDragNDrop
-                id="isnadTransmitters"
-                label="Transmetteurs de l'isnad"
-                options={transmitterOptions}
-                selected={field.value || []}
-                onChange={field.onChange}
-                placeholder="Rechercher des transmetteurs..."
-                name={field.name}
-                error={!!errors.isnadTransmitters}
-                errorMessage={errors.isnadTransmitters?.message}
-              />
-            )}
-          />
+          <div className="flex justify-between items-end gap-1">
+            <Controller
+              name="isnadTransmitters"
+              control={control}
+              render={({ field }) => (
+                <MultiSelectDragNDrop
+                  id="isnadTransmitters"
+                  label="Transmetteurs de l'isnad"
+                  options={transmitterOptions}
+                  selected={field.value || []}
+                  onChange={field.onChange}
+                  placeholder="Rechercher des transmetteurs..."
+                  name={field.name}
+                  error={!!errors.isnadTransmitters}
+                  errorMessage={errors.isnadTransmitters?.message}
+                />
+              )}
+            />
+            <BtnAddItem onOpen={() => handleOpenDialog("transmitters")} />
+          </div>
 
           {/* Sahabas */}
-          <Controller
-            name="mentionedSahabas"
-            control={control}
-            render={({ field }) => (
-              <MultiSelect
-                id="mentionedSahabas"
-                label="Sahabas mentionnés"
-                options={sahabaOptions}
-                selected={field.value}
-                onChange={field.onChange}
-                placeholder="Rechercher des sahabas..."
-                name={field.name}
-                error={!!errors.mentionedSahabas}
-                errorMessage={errors.mentionedSahabas?.message}
-              />
-            )}
-          />
+          <div className="flex justify-between items-end gap-1">
+            <Controller
+              name="mentionedSahabas"
+              control={control}
+              render={({ field }) => (
+                <MultiSelect
+                  id="mentionedSahabas"
+                  label="Sahabas mentionnés"
+                  options={sahabaOptions}
+                  selected={field.value}
+                  onChange={field.onChange}
+                  placeholder="Rechercher des sahabas..."
+                  name={field.name}
+                  error={!!errors.mentionedSahabas}
+                  errorMessage={errors.mentionedSahabas?.message}
+                />
+              )}
+            />
+            <BtnAddItem onOpen={() => handleOpenDialog("sahabas")} />
+          </div>
 
           {/* matn_fr (French text) */}
           <MdTextArea
@@ -335,6 +361,18 @@ export function EditHadithForm({
           />
         </div>
       </div>
+      {/* AddItemFormDialog Portal */}
+      {isOpenDialog &&
+        variant &&
+        createPortal(
+          <AddItemFormDialog
+            open={isOpenDialog}
+            onCancel={handleCloseDialog}
+            items={items[variant]}
+            variant={variant}
+          />,
+          document.body
+        )}
     </div>
   );
 }
