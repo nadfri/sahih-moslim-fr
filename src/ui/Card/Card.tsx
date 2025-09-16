@@ -16,7 +16,7 @@ export function Card({ item, variant }: Props) {
       key={item.name_fr}
       className="group block h-full"
     >
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden h-full flex flex-col p-3 transition-all duration-300 ease-in-out border border-transparent group-hover:shadow-xl group-hover:border-emerald-300 dark:group-hover:border-emerald-700 group-hover:-translate-y-1">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden h-full flex flex-col p-3 transition-all duration-200 ease-in-out border border-transparent group-hover:shadow-xl group-hover:border-emerald-300 dark:group-hover:border-emerald-700 group-hover:-translate-y-1">
         {/* Main card content */}
         <div className="flex-grow">
           {/* Styled chapter number */}

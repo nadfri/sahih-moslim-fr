@@ -55,7 +55,7 @@ export function Header() {
       <div
         className={`
           bg-white dark:bg-gray-900
-          overflow-hidden md:hidden transition-[max-height] duration-300 ease-in-out
+          overflow-hidden md:hidden transition-[max-height] duration-200 ease-in-out
           ${isMobileMenuOpen ? "max-h-96" : "max-h-0"}
         `}
         onClick={closeMobileMenu}

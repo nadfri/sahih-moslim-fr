@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f1f5f9;
+  --foreground: #0f172a;
   --toastify-color-success: oklch(69.6% 0.17 162.48);
 }
 
@@ -22,7 +22,6 @@
 }
 
 body {
-  background: var(--background);
   color: var(--foreground);
 
   scrollbar-gutter: stable both-edges;
@@ -108,6 +107,10 @@ button {
 
 .fadeIn {
   animation: fadeIn 0.3s;
+}
+
+.fadeIn500ms {
+  animation: fadeIn 500ms;
 }
 
 @keyframes fadeOut {

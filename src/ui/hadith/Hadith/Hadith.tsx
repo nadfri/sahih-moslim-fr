@@ -19,7 +19,7 @@ export function Hadith({
   return (
     <div
       key={hadith.id}
-      className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl border-l-4 md:border-l-8 border-emerald-600 dark:border-emerald-700"
+      className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-shadow duration-200 hover:shadow-xl border-l-4 md:border-l-8 border-emerald-600 dark:border-emerald-700"
     >
       <div className="p-3 md:p-6">
         {/* Metadata Section (Chapter, Numero) */}

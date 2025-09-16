@@ -69,14 +69,15 @@ export function ActionsBtns({ hadith }: { hadith: HadithType }) {
               />
               <span>Éditer</span>
             </Link>
+
             <button
-              className="inline-flex items-center gap-1.5 text-sm font-medium bg-red-50 dark:bg-red-950/60 text-red-600 dark:text-red-400 px-3 py-1.5 rounded-md hover:bg-red-100 dark:hover:bg-red-900/70 hover:text-red-700 dark:hover:text-red-300 transition-all duration-200"
+              className="inline-flex items-center justify-center aspect-square size-8 bg-red-50 dark:bg-red-950/60 text-red-600 dark:text-red-400 rounded-md hover:bg-red-100 dark:hover:bg-red-900/70 hover:text-red-700 dark:hover:text-red-300"
               title="Supprimer ce hadith"
               aria-label="Supprimer le hadith"
               onClick={() => setShowDeleteModal(true)}
               disabled={isDeleting}
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="size-4" />
             </button>
 
             <ConfirmDeleteModal

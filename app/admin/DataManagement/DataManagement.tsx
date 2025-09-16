@@ -191,7 +191,7 @@ export function DataManagement({ datas }: { datas: DatasType }) {
         </button>
 
         <div
-          className={`transition-all duration-300 ease-in-out ${
+          className={`transition-all duration-200 ease-in-out ${
             isDataManagementOpen
               ? "max-h-[2000px] opacity-100"
               : "max-h-0 opacity-0 overflow-hidden"

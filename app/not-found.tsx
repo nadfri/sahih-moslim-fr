@@ -16,7 +16,7 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/"
-            className="px-6 py-3 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors duration-300 ease-in-out text-base sm:text-lg font-medium"
+            className="px-6 py-3 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors duration-200 ease-in-out text-base sm:text-lg font-medium"
           >
             Retour à l'accueil
           </Link>
@@ -24,7 +24,7 @@ export default function NotFound() {
           {/*
           <Link
             href="/contact"
-            className="px-6 py-3 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors duration-300 ease-in-out text-base sm:text-lg font-medium"
+            className="px-6 py-3 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 ease-in-out text-base sm:text-lg font-medium"
           >
             Nous Contacter
           </Link>

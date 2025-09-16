@@ -14,6 +14,16 @@ export function ThemeToggle() {
     setTheme(dataTheme || "dark");
   }, []);
 
+  useEffect(() => {
+    document.body.classList.add("fadeIn500ms");
+
+    const timeoutId = setTimeout(() => {
+      document.body.classList.remove("fadeIn500ms");
+    }, 600);
+
+    return () => clearTimeout(timeoutId);
+  }, [theme]);
+
   function toggleTheme() {
     const newTheme = theme === "light" ? "dark" : "light";
 
@@ -30,7 +40,7 @@ export function ThemeToggle() {
 
   return (
     <button
-      className="w-full sm:w-auto inline-flex items-center justify-center rounded-full transition-colors duration-300 hover:bg-gray-300 dark:hover:bg-gray-600 p-1"
+      className="w-full sm:w-auto inline-flex items-center justify-center rounded-full transition-colors duration-200 hover:bg-gray-200 dark:hover:bg-gray-600 p-1"
       onClick={toggleTheme}
       aria-label={`Toggle theme to ${theme === "dark" ? "light" : "dark"}`}
       disabled={!theme}
