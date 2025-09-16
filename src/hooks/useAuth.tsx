@@ -45,8 +45,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .maybeSingle();
 
         if (error) {
-          // Log full error for debugging
-
           console.error("Error fetching profile (supabase error):", error, {
             status,
           });
@@ -55,8 +53,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (!data) {
           // Profile doesn't exist, create it
-
-          console.log("Creating new profile for user:", userId);
           const {
             data: newProfile,
             error: createError,
@@ -90,17 +86,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Get initial session
     const getInitialSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      try {
+        // Use getUser() instead of getSession() to avoid hanging
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
 
-      setUser(session?.user ?? null);
+        if (userError) {
+          console.error("Error getting user:", userError);
+          setUser(null);
+          setLoading(false);
+          return;
+        }
 
-      if (session?.user) {
-        await fetchOrCreateProfile(session.user.id);
+        setUser(user ?? null);
+
+        if (user) {
+          await fetchOrCreateProfile(user.id);
+        }
+
+        setLoading(false);
+      } catch (err) {
+        console.error("Error getting initial session:", err);
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     getInitialSession();
