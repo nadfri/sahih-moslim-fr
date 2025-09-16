@@ -128,10 +128,12 @@ export async function addItem(
     let userMessage = "Erreur inconnue lors de l'ajout.";
     const errorDetails = error instanceof Error ? error.message : String(error);
 
+    console.error("AddItem server error:", error);
+
+    // Prisma error type (classique)
     if (error instanceof PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
         const target = error.meta?.target as string[] | undefined;
-
         switch (true) {
           case !!target?.includes("name"):
             userMessage = "Ce nom est déjà utilisé.";
@@ -147,6 +149,26 @@ export async function addItem(
         }
       }
     }
+
+    // Fallback : détection par message d'erreur technique (cas Next.js 15 ou edge)
+    if (userMessage === "Erreur inconnue lors de l'ajout." && errorDetails) {
+      if (
+        /Unique constraint failed on the fields: \(`name`\)/.test(errorDetails)
+      ) {
+        userMessage = "Ce nom est déjà utilisé.";
+      } else if (
+        /Unique constraint failed on the fields: \(`slug`\)/.test(errorDetails)
+      ) {
+        userMessage = "Ce slug est déjà utilisé.";
+      } else if (
+        /Unique constraint failed on the fields: \(`index`\)/.test(errorDetails)
+      ) {
+        userMessage = "Cet index est déjà utilisé.";
+      } else if (/Unique constraint failed/.test(errorDetails)) {
+        userMessage = "Une valeur unique est déjà utilisée.";
+      }
+    }
+
     return {
       success: false,
       message: userMessage,

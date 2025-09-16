@@ -70,9 +70,14 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
         if (response.success && response.data) {
           toast.success(response.message);
         } else {
+          // Log error details in the browser console for debugging
+          if (response.error) {
+            console.error("AddItem error details:", response.error);
+          }
           toast.error(response.message || "Une erreur est survenue.");
         }
       } catch (err: unknown) {
+        console.error("AddItem exception:", err);
         const errorMessage =
           err instanceof Error
             ? err.message
