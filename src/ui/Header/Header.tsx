@@ -34,7 +34,7 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-2 ml-2">
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
             {/* Admin buttons */}
             {isAdmin && <LinkAddHadith />}
 

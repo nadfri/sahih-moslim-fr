@@ -4,29 +4,23 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Header } from "./Header";
 
+// Define types for testing
+type MockUser = {
+  id: string;
+  name: string;
+};
+
+type MockProfile = {
+  role: "USER" | "ADMIN";
+};
+
 // Create mock functions
 const mockPathname = vi.fn(() => "/");
-const mockUseSession = vi.fn(() => ({
-  status: "unauthenticated",
-  data: null as null | { user: { name: string } },
-}));
-
-const mockUseAuth = vi.fn(() => ({
-  user: null,
-  profile: null,
-  loading: false,
-  signInWithGitHub: vi.fn(),
-  signOut: vi.fn(),
-}));
+const mockUseAuth = vi.fn();
 
 // Mock modules
 vi.mock("next/navigation", () => ({
   usePathname: () => mockPathname(),
-}));
-
-vi.mock("next-auth/react", () => ({
-  useSession: () => mockUseSession(),
-  signOut: vi.fn(),
 }));
 
 vi.mock("@/src/hooks/useAuth", () => ({
@@ -37,9 +31,12 @@ describe("Header", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockPathname.mockReturnValue("/");
-    mockUseSession.mockReturnValue({
-      status: "unauthenticated",
-      data: null,
+    mockUseAuth.mockReturnValue({
+      user: null,
+      profile: null,
+      loading: false,
+      signInWithGitHub: vi.fn(),
+      signOut: vi.fn(),
     });
   });
 
@@ -57,6 +54,11 @@ describe("Header", () => {
       name: /compagnons/i,
     });
     expect(companionsLinks.length).toBeGreaterThan(0);
+
+    const transmetteursLinks = screen.getAllByRole("link", {
+      name: /transmetteurs/i,
+    });
+    expect(transmetteursLinks.length).toBeGreaterThan(0);
 
     const searchLinks = screen.getAllByRole("link", { name: /recherche/i });
     expect(searchLinks.length).toBeGreaterThan(0);
@@ -81,30 +83,24 @@ describe("Header", () => {
     expect(hasActiveChapterLink).toBeTruthy();
   });
 
-  it("shows 'Ajouter' link in development mode", () => {
-    // When user is admin, the 'Ajouter' link should be visible
-    mockUseAuth.mockReturnValueOnce({
-      user: { name: "Admin" },
-      profile: { role: "ADMIN" },
-      loading: false,
-      signInWithGitHub: vi.fn(),
-      signOut: vi.fn(),
-    } as unknown as ReturnType<typeof mockUseAuth>);
-
+  it("shows sign in link when user is not authenticated", () => {
     render(<Header />);
 
-    const addLinks = screen.getAllByRole("link", { name: /ajouter/i });
-    expect(addLinks.length).toBeGreaterThan(0);
-    expect(
-      addLinks.some((link) => link.getAttribute("href") === "/hadiths/add")
-    ).toBeTruthy();
+    // Should show sign in link when not authenticated (check both desktop and mobile versions)
+    const signInLinks = screen.getAllByRole("link", { name: /se connecter/i });
+    expect(signInLinks.length).toBeGreaterThan(0);
+
+    // Verify the href attribute
+    signInLinks.forEach((link) => {
+      expect(link).toHaveAttribute("href", "/auth/signin");
+    });
   });
 
-  it("hides 'Ajouter' link in production mode", () => {
-    // When user is not admin, the 'Ajouter' link should not be visible
-    mockUseAuth.mockReturnValueOnce({
-      user: null,
-      profile: null,
+  it("shows sign out button and admin link when user is authenticated as admin", () => {
+    // Update mock to return authenticated admin user
+    mockUseAuth.mockReturnValue({
+      user: { id: "1", name: "Test Admin" } as MockUser,
+      profile: { role: "ADMIN" } as MockProfile,
       loading: false,
       signInWithGitHub: vi.fn(),
       signOut: vi.fn(),
@@ -112,23 +108,50 @@ describe("Header", () => {
 
     render(<Header />);
 
-    const addLinks = screen.queryAllByRole("link", { name: /ajouter/i });
-    expect(addLinks.length).toBe(0);
+    // Should show sign out buttons (desktop and mobile) when authenticated
+    const signOutButtons = screen
+      .getAllByRole("button")
+      .filter(
+        (button) =>
+          button.className.includes("bg-orange-50") ||
+          button.className.includes("dark:bg-orange-700")
+      );
+    expect(signOutButtons.length).toBeGreaterThan(0);
+
+    // Should show add hadith link for admin
+    const addHadithLinks = screen
+      .getAllByRole("link")
+      .filter((link) => link.getAttribute("href") === "/hadiths/add");
+    expect(addHadithLinks.length).toBeGreaterThan(0);
   });
 
-  it("shows sign out button when user is authenticated", () => {
-    // Update mock to return authenticated session
-    mockUseSession.mockReturnValue({
-      status: "authenticated",
-      data: { user: { name: "Test User" } },
+  it("shows sign out button but no admin link when user is authenticated as regular user", () => {
+    // Update mock to return authenticated regular user
+    mockUseAuth.mockReturnValue({
+      user: { id: "1", name: "Test User" } as MockUser,
+      profile: { role: "USER" } as MockProfile,
+      loading: false,
+      signInWithGitHub: vi.fn(),
+      signOut: vi.fn(),
     });
 
     render(<Header />);
 
-    // Since the button might contain a PowerOff SVG icon from lucide-react
-    // we'll check if there's any button element present when user is authenticated
-    const buttons = screen.getAllByRole("button");
-    expect(buttons.length).toBeGreaterThan(0);
+    // Should show sign out buttons (desktop and mobile) when authenticated
+    const signOutButtons = screen
+      .getAllByRole("button")
+      .filter(
+        (button) =>
+          button.className.includes("bg-orange-50") ||
+          button.className.includes("dark:bg-orange-700")
+      );
+    expect(signOutButtons.length).toBeGreaterThan(0);
+
+    // Should not show add hadith link for regular user
+    const addHadithLinks = screen
+      .queryAllByRole("link")
+      .filter((link) => link.getAttribute("href") === "/hadiths/add");
+    expect(addHadithLinks).toHaveLength(0);
   });
 
   it("toggles mobile menu when hamburger button is clicked", async () => {
