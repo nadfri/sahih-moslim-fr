@@ -1,11 +1,13 @@
+"use client";
 import Link from "next/link";
 import { PlusIcon } from "lucide-react";
+import { useAuth } from "@/src/hooks/useAuth";
 
-type LinkAddHadithProps = {
-  closeMobileMenu?: () => void;
-};
+export function LinkAddHadith() {
+  const { isAdmin } = useAuth();
 
-export function LinkAddHadith({ closeMobileMenu }: LinkAddHadithProps) {
+  if (!isAdmin) return null;
+
   return (
     <Link
       href="/hadiths/add"
@@ -18,7 +20,6 @@ export function LinkAddHadith({ closeMobileMenu }: LinkAddHadithProps) {
         hover:text-emerald-700 dark:hover:text-emerald-300
         transition-all duration-200
       `}
-      onClick={closeMobileMenu}
     >
       <PlusIcon className="size-5.5" />
     </Link>

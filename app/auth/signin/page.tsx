@@ -4,7 +4,7 @@ import { Route, type Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { getServerUser } from "@/src/lib/auth/auth";
-import { ButtonGithub } from "@/app/auth/signin/ButtonGithub";
+import { ButtonGithub } from "@/src/ui/SignButtons/ButtonGithub";
 
 export const metadata: Metadata = {
   title: "Se connecter",

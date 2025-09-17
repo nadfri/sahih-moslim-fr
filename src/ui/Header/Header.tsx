@@ -1,80 +1,11 @@
-"use client";
-
-import { useState } from "react";
-
-import { useAuth } from "@/src/hooks/useAuth";
-import { ButtonSignIn } from "@/app/auth/signin/ButtonSignIn";
-import { ButtonSignOut } from "@/app/auth/signin/ButtonSignOut";
-import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
-import { Hamburger } from "./Hamburger";
-import { LinkAddHadith } from "./LinkAddHadith";
-import { Logo } from "./Logo";
-import { NavBar } from "./NavBar";
+import { DesktopMenu } from "./DesktopMenu";
+import { MobileMenu } from "./MobileMenu";
 
 export function Header() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user, profile } = useAuth();
-
-  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
-
-  const closeMobileMenu = () => setIsMobileMenuOpen(false);
-
-  const isAdmin = profile?.role === "ADMIN";
-  const isLoggedIn = !!user;
-
   return (
     <header className="bg-white dark:bg-gray-900 md:bg-white/70 md:dark:bg-gray-900/70 md:backdrop-blur-sm text-emerald-800 dark:text-emerald-400 shadow-sm dark:shadow-gray-800 sticky top-0 z-50">
-      <div className="flex justify-between items-center relative px-1 p-2">
-        {/* Logo */}
-        <Logo closeMobileMenu={closeMobileMenu} />
-
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center justify-end gap-4 flex-1 px-2">
-          <NavBar />
-        </div>
-
-        <div className="flex items-center gap-2 ml-2">
-          <div className="hidden md:flex items-center gap-3">
-            {/* Admin buttons */}
-            {isAdmin && <LinkAddHadith />}
-
-            {/* Auth buttons */}
-            {isLoggedIn ? <ButtonSignOut /> : <ButtonSignIn />}
-          </div>
-
-          <ThemeToggle />
-
-          <Hamburger
-            isMobileMenuOpen={isMobileMenuOpen}
-            toggleMobileMenu={toggleMobileMenu}
-          />
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      <div
-        className={`
-          bg-white dark:bg-gray-900
-          overflow-hidden md:hidden transition-[max-height] duration-200 ease-in-out
-          ${isMobileMenuOpen ? "max-h-96" : "max-h-0"}
-        `}
-        onClick={closeMobileMenu}
-      >
-        <div className="container mx-auto px-4 pt-2 pb-4 border-t border-gray-100 dark:border-gray-800">
-          <NavBar
-            isMobile
-            // closeMobileMenu={closeMobileMenu}
-          />
-
-          <div className="flex flex-col gap-2 mt-2">
-            {/* Admin buttons */}
-            {isAdmin && <LinkAddHadith />}
-
-            {/* Auth buttons */}
-            {isLoggedIn ? <ButtonSignOut /> : <ButtonSignIn />}
-          </div>
-        </div>
-      </div>
+      <MobileMenu />
+      <DesktopMenu />
     </header>
   );
 }

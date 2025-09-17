@@ -46,7 +46,7 @@ describe("Authentication Flow - Redirect After Login", () => {
   });
 
   it("should redirect to protected page after successful login", async () => {
-    const { ButtonGithub } = await import("@/app/auth/signin/ButtonGithub");
+    const { ButtonGithub } = await import("@/src/ui/SignButtons/ButtonGithub");
 
     render(<ButtonGithub />);
 
@@ -66,7 +66,7 @@ describe("Authentication Flow - Redirect After Login", () => {
   });
 
   it("should show loading state during sign-in process", async () => {
-    const { ButtonGithub } = await import("@/app/auth/signin/ButtonGithub");
+    const { ButtonGithub } = await import("@/src/ui/SignButtons/ButtonGithub");
 
     render(<ButtonGithub />);
 

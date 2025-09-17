@@ -1,20 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-
 import { ButtonSignOut } from "./ButtonSignOut";
-
-// Mock the refactored useAuth hook
-const mockSignOut = vi.fn();
-vi.mock("@/src/hooks/useAuth", () => ({
-  useAuth: () => ({ user: { id: 1 }, loading: false, signOut: mockSignOut }),
-}));
 
 describe("ButtonSignOut", () => {
   it("renders with PowerOff icon and triggers signOut when clicked", async () => {
     const user = userEvent.setup();
+    const mockSignOut = vi.fn();
 
-    render(<ButtonSignOut />);
+    render(<ButtonSignOut signOut={mockSignOut} />);
 
     // Check that the button is rendered
     const button = screen.getByRole("button");

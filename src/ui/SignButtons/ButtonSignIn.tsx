@@ -1,12 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { LogIn, LoaderCircle } from "lucide-react";
-import { useAuth } from "@/src/hooks/useAuth";
+import { LogIn } from "lucide-react";
 
 export function ButtonSignIn() {
-  const { loading } = useAuth();
-
   return (
     <Link
       href="/auth/signin"
@@ -21,17 +18,10 @@ export function ButtonSignIn() {
         transition-all duration-200
       `}
     >
-      {loading ? (
-        <LoaderCircle
-          className="size-5 animate-spin"
-          aria-hidden="true"
-        />
-      ) : (
-        <LogIn
-          className="size-5"
-          aria-hidden="true"
-        />
-      )}
+      <LogIn
+        className="size-5"
+        aria-hidden="true"
+      />
     </Link>
   );
 }

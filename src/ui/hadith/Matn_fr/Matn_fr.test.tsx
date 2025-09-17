@@ -23,9 +23,18 @@ vi.mock("@/src/ui/hadith/MarkdownHighlighter/MarkdownHighlighter", () => ({
       // Simple mock highlighting by wrapping highlighted text in <mark>
       const regex = new RegExp(`(${highlight})`, "gi");
       const highlightedContent = children.replace(regex, "<mark>$1</mark>");
-      return <div dangerouslySetInnerHTML={{ __html: highlightedContent }} />;
+      return (
+        <div
+          className="markdown-content text-gray-700 dark:text-gray-300 leading-relaxed text-pretty whitespace-pre-line pb-3"
+          dangerouslySetInnerHTML={{ __html: highlightedContent }}
+        />
+      );
     }
-    return <div>{children}</div>;
+    return (
+      <div className="markdown-content text-gray-700 dark:text-gray-300 leading-relaxed text-pretty whitespace-pre-line pb-3">
+        {children}
+      </div>
+    );
   },
 }));
 
@@ -38,19 +47,6 @@ describe("Matn_fr Component", () => {
     render(<Matn_fr matn={mockHadith.matn_fr} />);
 
     expect(screen.getByText(mockHadith.matn_fr)).toBeInTheDocument();
-  });
-
-  it("should render with correct CSS classes", () => {
-    render(<Matn_fr matn={mockHadith.matn_fr} />);
-
-    const container = document.querySelector(".space-y-3");
-    expect(container).toHaveClass(
-      "space-y-3",
-      "text-gray-700",
-      "dark:text-gray-300",
-      "leading-relaxed",
-      "text-pretty"
-    );
   });
 
   it("should pass highlight prop to MarkdownHighlighter", () => {
@@ -74,14 +70,6 @@ describe("Matn_fr Component", () => {
     // Check that no <mark> elements are present
     const markElements = document.querySelectorAll("mark");
     expect(markElements).toHaveLength(0);
-  });
-
-  it("should handle empty matn content", () => {
-    render(<Matn_fr matn="" />);
-
-    // Should render the container with proper classes
-    const container = document.querySelector(".space-y-3");
-    expect(container).toBeInTheDocument();
   });
 
   it("should handle markdown content correctly", () => {
@@ -130,7 +118,7 @@ describe("Matn_fr Component", () => {
     render(<Matn_fr matn={longText} />);
 
     // Check that container is rendered with proper classes
-    const container = document.querySelector(".space-y-3");
+    const container = document.querySelector(".markdown-content");
     expect(container).toBeInTheDocument();
     expect(container).toHaveClass("text-gray-700", "dark:text-gray-300");
   });

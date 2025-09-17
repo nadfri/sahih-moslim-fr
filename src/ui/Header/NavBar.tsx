@@ -1,3 +1,4 @@
+"use client";
 import { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -13,10 +14,9 @@ export const navLinks = [
 
 type NavBarProps = {
   isMobile?: boolean;
-  closeMobileMenu?: () => void;
 };
 
-export function NavBar({ isMobile = false, closeMobileMenu }: NavBarProps) {
+export function NavBar({ isMobile = false }: NavBarProps) {
   const pathname = usePathname();
   const isActive = (href: Route) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -52,7 +52,6 @@ export function NavBar({ isMobile = false, closeMobileMenu }: NavBarProps) {
               <Link
                 href={link.href}
                 className={getLinkClasses(active)}
-                {...(isMobile && { onClick: closeMobileMenu })}
                 aria-current={active ? "page" : undefined}
               >
                 {link.label}

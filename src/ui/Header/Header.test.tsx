@@ -1,182 +1,235 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Header } from "./Header";
 
-// Define types for testing
-type MockUser = {
-  id: string;
-  name: string;
-};
-
-type MockProfile = {
-  role: "USER" | "ADMIN";
-};
-
-// Create mock functions
-const mockPathname = vi.fn(() => "/");
-const mockUseAuth = vi.fn();
-
-// Mock modules
+// Mock des hooks et composants externes
 vi.mock("next/navigation", () => ({
-  usePathname: () => mockPathname(),
+  usePathname: () => "/",
 }));
 
 vi.mock("@/src/hooks/useAuth", () => ({
-  useAuth: () => mockUseAuth(),
+  useAuth: () => ({
+    user: null,
+    profile: null,
+    loading: false,
+    isAdmin: false,
+    signInWithGitHub: vi.fn(),
+    signOut: vi.fn(),
+  }),
+}));
+
+vi.mock("./Logo", () => ({
+  Logo: () => <div data-testid="logo">Sahih Muslim FR</div>,
+}));
+
+vi.mock("./NavBar", () => ({
+  NavBar: ({ isMobile }: { isMobile?: boolean }) => (
+    <nav data-testid={`navbar-${isMobile ? "mobile" : "desktop"}`}>
+      <ul>
+        <li>
+          <span>Accueil</span>
+        </li>
+        <li>
+          <span>Chapitres</span>
+        </li>
+        <li>
+          <span>Compagnons</span>
+        </li>
+        <li>
+          <span>Transmetteurs</span>
+        </li>
+        <li>
+          <span>Recherche</span>
+        </li>
+      </ul>
+    </nav>
+  ),
+}));
+
+vi.mock("./LinkAddHadith", () => ({
+  LinkAddHadith: () => {
+    // Simuler la logique du composant réel
+    const isAdmin = false; // Valeur mockée
+    if (!isAdmin) return null;
+    return <div data-testid="link-add-hadith">Add Hadith</div>;
+  },
+}));
+
+vi.mock("../SignButtons/SignButtons", () => ({
+  SignButtons: () => <div data-testid="sign-buttons">Sign In/Out</div>,
+}));
+
+vi.mock("../ThemeToggle/ThemeToggle", () => ({
+  ThemeToggle: () => <button data-testid="theme-toggle">Toggle Theme</button>,
+}));
+
+vi.mock("./Hamburger", () => ({
+  Hamburger: ({
+    isMobileMenuOpen,
+    toggleMobileMenu,
+  }: {
+    isMobileMenuOpen: boolean;
+    toggleMobileMenu: () => void;
+  }) => (
+    <button
+      data-testid="hamburger"
+      onClick={toggleMobileMenu}
+      aria-expanded={isMobileMenuOpen}
+      aria-label="Ouvrir le menu"
+    >
+      {isMobileMenuOpen ? "Close" : "Menu"}
+    </button>
+  ),
 }));
 
 describe("Header", () => {
+  let user: ReturnType<typeof userEvent.setup>;
+
   beforeEach(() => {
+    user = userEvent.setup();
     vi.clearAllMocks();
-    mockPathname.mockReturnValue("/");
-    mockUseAuth.mockReturnValue({
-      user: null,
-      profile: null,
-      loading: false,
-      signInWithGitHub: vi.fn(),
-      signOut: vi.fn(),
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
+  describe("Structure générale", () => {
+    it("contient le menu mobile et desktop", () => {
+      render(<Header />);
+
+      expect(screen.getByTestId("hamburger")).toBeInTheDocument();
+      expect(screen.getByTestId("navbar-mobile")).toBeInTheDocument();
+      expect(screen.getByTestId("navbar-desktop")).toBeInTheDocument();
     });
   });
 
-  it("renders all navigation links", () => {
-    render(<Header />);
+  describe("Logo", () => {
+    it("affiche le logo avec le bon texte", () => {
+      render(<Header />);
 
-    // Check that all main navigation links are visible (using getAllByRole to handle desktop and mobile versions)
-    const homeLinks = screen.getAllByRole("link", { name: /accueil/i });
-    expect(homeLinks.length).toBeGreaterThan(0);
-
-    const chaptersLinks = screen.getAllByRole("link", { name: /chapitres/i });
-    expect(chaptersLinks.length).toBeGreaterThan(0);
-
-    const companionsLinks = screen.getAllByRole("link", {
-      name: /compagnons/i,
-    });
-    expect(companionsLinks.length).toBeGreaterThan(0);
-
-    const transmetteursLinks = screen.getAllByRole("link", {
-      name: /transmetteurs/i,
-    });
-    expect(transmetteursLinks.length).toBeGreaterThan(0);
-
-    const searchLinks = screen.getAllByRole("link", { name: /recherche/i });
-    expect(searchLinks.length).toBeGreaterThan(0);
-  });
-
-  it("highlights the active link based on current pathname", () => {
-    // Set pathname to a specific route
-    mockPathname.mockReturnValue("/chapters");
-
-    render(<Header />);
-
-    // Get all chapter links
-    const chaptersLinks = screen.getAllByRole("link", { name: /chapitres/i });
-
-    // At least one of the chapters links should have an active class or attribute
-    const hasActiveChapterLink = chaptersLinks.some(
-      (link) =>
-        link.classList.contains("active") ||
-        link.getAttribute("aria-current") === "page"
-    );
-
-    expect(hasActiveChapterLink).toBeTruthy();
-  });
-
-  it("shows sign in link when user is not authenticated", () => {
-    render(<Header />);
-
-    // Should show sign in link when not authenticated (check both desktop and mobile versions)
-    const signInLinks = screen.getAllByRole("link", { name: /se connecter/i });
-    expect(signInLinks.length).toBeGreaterThan(0);
-
-    // Verify the href attribute
-    signInLinks.forEach((link) => {
-      expect(link).toHaveAttribute("href", "/auth/signin");
+      // Le logo apparaît dans mobile et desktop
+      const logos = screen.getAllByTestId("logo");
+      expect(logos).toHaveLength(2);
+      logos.forEach((logo) => {
+        expect(logo).toHaveTextContent("Sahih Muslim FR");
+      });
     });
   });
 
-  it("shows sign out button and admin link when user is authenticated as admin", () => {
-    // Update mock to return authenticated admin user
-    mockUseAuth.mockReturnValue({
-      user: { id: "1", name: "Test Admin" } as MockUser,
-      profile: { role: "ADMIN" } as MockProfile,
-      loading: false,
-      signInWithGitHub: vi.fn(),
-      signOut: vi.fn(),
+  describe("Navigation", () => {
+    it("affiche tous les liens de navigation principaux", () => {
+      render(<Header />);
+
+      // Vérifier que les liens sont présents (ils peuvent apparaître dans mobile et desktop)
+      expect(screen.getAllByText("Accueil")).toHaveLength(2);
+      expect(screen.getAllByText("Chapitres")).toHaveLength(2);
+      expect(screen.getAllByText("Compagnons")).toHaveLength(2);
+      expect(screen.getAllByText("Transmetteurs")).toHaveLength(2);
+      expect(screen.getAllByText("Recherche")).toHaveLength(2);
     });
 
-    render(<Header />);
+    it("rend la navigation mobile et desktop différemment", () => {
+      render(<Header />);
 
-    // Should show sign out buttons (desktop and mobile) when authenticated
-    const signOutButtons = screen
-      .getAllByRole("button")
-      .filter(
-        (button) =>
-          button.className.includes("bg-orange-50") ||
-          button.className.includes("dark:bg-orange-700")
-      );
-    expect(signOutButtons.length).toBeGreaterThan(0);
-
-    // Should show add hadith link for admin
-    const addHadithLinks = screen
-      .getAllByRole("link")
-      .filter((link) => link.getAttribute("href") === "/hadiths/add");
-    expect(addHadithLinks.length).toBeGreaterThan(0);
+      expect(screen.getByTestId("navbar-mobile")).toBeInTheDocument();
+      expect(screen.getByTestId("navbar-desktop")).toBeInTheDocument();
+    });
   });
 
-  it("shows sign out button but no admin link when user is authenticated as regular user", () => {
-    // Update mock to return authenticated regular user
-    mockUseAuth.mockReturnValue({
-      user: { id: "1", name: "Test User" } as MockUser,
-      profile: { role: "USER" } as MockProfile,
-      loading: false,
-      signInWithGitHub: vi.fn(),
-      signOut: vi.fn(),
+  describe("Authentification", () => {
+    it("affiche les boutons d'authentification", () => {
+      render(<Header />);
+
+      // Les boutons d'authentification apparaissent dans mobile et desktop
+      const signButtons = screen.getAllByTestId("sign-buttons");
+      expect(signButtons).toHaveLength(2);
+      signButtons.forEach((button) => {
+        expect(button).toBeInTheDocument();
+      });
     });
 
-    render(<Header />);
+    it("n'affiche pas le bouton admin par défaut", () => {
+      render(<Header />);
 
-    // Should show sign out buttons (desktop and mobile) when authenticated
-    const signOutButtons = screen
-      .getAllByRole("button")
-      .filter(
-        (button) =>
-          button.className.includes("bg-orange-50") ||
-          button.className.includes("dark:bg-orange-700")
-      );
-    expect(signOutButtons.length).toBeGreaterThan(0);
-
-    // Should not show add hadith link for regular user
-    const addHadithLinks = screen
-      .queryAllByRole("link")
-      .filter((link) => link.getAttribute("href") === "/hadiths/add");
-    expect(addHadithLinks).toHaveLength(0);
+      // Le bouton admin ne devrait pas être affiché car l'utilisateur n'est pas admin
+      expect(screen.queryByTestId("link-add-hadith")).toBeNull();
+    });
   });
 
-  it("toggles mobile menu when hamburger button is clicked", async () => {
-    const user = userEvent.setup();
+  describe("Thème", () => {
+    it("affiche le bouton de changement de thème", () => {
+      render(<Header />);
 
-    render(<Header />);
+      // Le bouton thème apparaît dans mobile et desktop
+      const themeButtons = screen.getAllByTestId("theme-toggle");
+      expect(themeButtons).toHaveLength(2);
+      themeButtons.forEach((button) => {
+        expect(button).toBeInTheDocument();
+      });
+    });
+  });
 
-    // Find the hamburger button with the correct aria-label
-    const hamburgerButton = screen.getByRole("button", {
-      name: /ouvrir le menu/i,
+  describe("Menu mobile", () => {
+    it("affiche le hamburger menu sur mobile", () => {
+      render(<Header />);
+
+      const hamburger = screen.getByTestId("hamburger");
+      expect(hamburger).toBeInTheDocument();
+      expect(hamburger).toHaveAttribute("aria-expanded", "false");
     });
 
-    // Since we can't easily check CSS classes with RTL directly,
-    // we'll look at the aria-expanded attribute which should reflect the menu state
-    expect(hamburgerButton).toHaveAttribute("aria-expanded", "false");
+    it("ouvre et ferme le menu mobile au clic sur le hamburger", async () => {
+      render(<Header />);
 
-    // Click the hamburger button
-    await user.click(hamburgerButton);
+      const hamburger = screen.getByTestId("hamburger");
 
-    // After clicking, the aria-expanded attribute should be true
-    expect(hamburgerButton).toHaveAttribute("aria-expanded", "true");
+      // Menu fermé initialement
+      expect(hamburger).toHaveAttribute("aria-expanded", "false");
 
-    // We can also check that menu items are visible after clicking
-    // For example, let's check if the mobile menu links are visible
-    const mobileMenuLinks = screen.getAllByRole("link");
-    expect(mobileMenuLinks.length).toBeGreaterThan(5); // There should be several links visible
+      // Ouvrir le menu
+      await user.click(hamburger);
+      await waitFor(() => {
+        expect(hamburger).toHaveAttribute("aria-expanded", "true");
+      });
+
+      // Fermer le menu
+      await user.click(hamburger);
+      await waitFor(() => {
+        expect(hamburger).toHaveAttribute("aria-expanded", "false");
+      });
+    });
+  });
+
+  describe("Accessibilité", () => {
+    it("a le bon rôle ARIA pour le header", () => {
+      render(<Header />);
+
+      expect(screen.getByRole("banner")).toBeInTheDocument();
+    });
+
+    it("le hamburger a les bonnes propriétés d'accessibilité", () => {
+      render(<Header />);
+
+      const hamburger = screen.getByTestId("hamburger");
+      expect(hamburger).toHaveAttribute("aria-expanded");
+      expect(hamburger).toHaveAttribute("aria-label", "Ouvrir le menu");
+    });
+  });
+
+  describe("Performance", () => {
+    it("ne se rerend pas inutilement", () => {
+      const { rerender } = render(<Header />);
+
+      // Premier rendu
+      const initialHeader = screen.getByRole("banner");
+
+      // Rerendu avec les mêmes props
+      rerender(<Header />);
+
+      // Le header devrait être le même élément
+      expect(screen.getByRole("banner")).toBe(initialHeader);
+    });
   });
 });

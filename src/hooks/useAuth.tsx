@@ -17,6 +17,7 @@ type Profile = {
 
 type AuthContextType = {
   user: User | null;
+  isAdmin: boolean;
   profile: Profile | null;
   loading: boolean;
   signInWithGitHub: (callbackUrl?: string) => Promise<void>;
@@ -178,8 +179,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const isAdmin = profile?.role === "ADMIN";
+
   const value = {
     user,
+    isAdmin,
     profile,
     loading,
     signInWithGitHub,
