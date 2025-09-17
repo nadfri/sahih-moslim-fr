@@ -7,8 +7,6 @@ type Props = {
 
 export function Matn_fr({ matn, highlight }: Props) {
   return (
-    <div className="space-y-3 text-gray-700 dark:text-gray-300 leading-relaxed text-pretty">
-      <MarkdownHighlighter highlight={highlight}>{matn}</MarkdownHighlighter>
-    </div>
+    <MarkdownHighlighter highlight={highlight}>{matn}</MarkdownHighlighter>
   );
 }

@@ -111,7 +111,10 @@ export function MarkdownHighlighter({ children, highlight }: Props) {
   }, [highlight, children]);
 
   return (
-    <div ref={containerRef}>
+    <div
+      ref={containerRef}
+      className="markdown-content text-gray-700 dark:text-gray-300 leading-relaxed text-pretty whitespace-pre-line pb-3"
+    >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw]}

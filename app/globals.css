@@ -159,3 +159,8 @@ button {
   background: #017855; /* emerald-500 */
   border: 1px solid #111827;
 }
+
+/* Remove vertical margin for markdown paragraphs */
+.markdown-content p {
+  margin-bottom: -12px !important;
+}
