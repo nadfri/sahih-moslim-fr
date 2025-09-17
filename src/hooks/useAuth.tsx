@@ -1,9 +1,8 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
-
 import { createClient } from "@/src/lib/auth/supabase/client";
 
 type Profile = {
@@ -33,122 +32,129 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const supabase = createClient();
 
+  // Sync session on client: mount, wake from sleep, auth event
   useEffect(() => {
+    let isMounted = true; // to avoid state update if unmounted
+
     const fetchOrCreateProfile = async (userId: string) => {
+      if (!isMounted) return;
+
       try {
-        // Try to fetch existing profile. Use maybeSingle() so Supabase doesn't
-        // return an error when the row is missing — it will return null data.
-        const { data, error, status } = await supabase
+        const { data, error } = await supabase
           .from("profiles")
           .select("*")
           .eq("id", userId)
           .maybeSingle();
 
+        if (!isMounted) return;
+
         if (error) {
-          console.error("Error fetching profile (supabase error):", error, {
-            status,
-          });
+          console.error("Error fetching profile:", error);
           return;
         }
 
         if (!data) {
-          // Profile doesn't exist, create it
-          const {
-            data: newProfile,
-            error: createError,
-            status: createStatus,
-          } = await supabase
+          const { data: newProfile, error: createError } = await supabase
             .from("profiles")
-            .insert({
-              id: userId,
-              role: "USER", // Default role
-            })
+            .insert({ id: userId, role: "USER" }) // minimal profile
             .select()
             .maybeSingle();
 
+          if (!isMounted) return;
+
           if (createError) {
-            console.error(
-              "Error creating profile (supabase error):",
-              createError,
-              { createStatus }
-            );
+            console.error("Error creating profile:", createError);
             return;
           }
-
           setProfile(newProfile ?? null);
         } else {
           setProfile(data ?? null);
         }
       } catch (err) {
-        console.error("Unexpected error with profile:", err);
+        if (isMounted) {
+          console.error("Unexpected profile error:", err);
+        }
       }
     };
 
-    // Get initial session
-    const getInitialSession = async () => {
+    const syncSession = async () => {
+      setLoading(true);
       try {
-        // Use getUser() instead of getSession() to avoid hanging
         const {
           data: { user },
-          error: userError,
+          error,
         } = await supabase.auth.getUser();
+        if (!isMounted) return;
 
-        if (userError) {
-          console.error("Error getting user:", userError);
+        if (error) {
+          // Only log unexpected errors, not AuthSessionMissingError (normal when not logged in)
+          if (
+            !error.message ||
+            !error.message.includes("Auth session missing")
+          ) {
+            console.error("Error syncing session:", error);
+          }
           setUser(null);
-          setLoading(false);
-          return;
+          setProfile(null);
+        } else {
+          setUser(user ?? null);
+          if (user) {
+            await fetchOrCreateProfile(user.id);
+          } else {
+            setProfile(null);
+          }
         }
-
-        setUser(user ?? null);
-
-        if (user) {
-          await fetchOrCreateProfile(user.id);
-        }
-
-        setLoading(false);
       } catch (err) {
-        console.error("Error getting initial session:", err);
-        setLoading(false);
+        console.error("Unexpected error syncing session:", err);
+        setUser(null);
+        setProfile(null);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
-    getInitialSession();
+    syncSession(); // au montage
 
-    // Listen for auth changes
+    // Update on Supabase auth state change
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null);
-
       if (session?.user) {
         await fetchOrCreateProfile(session.user.id);
       } else {
         setProfile(null);
       }
-
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    // Manual refresh on wake from sleep or tab focus
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        syncSession();
+      }
+    };
+    window.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener("visibilitychange", handleVisibility);
+      subscription.unsubscribe();
+    };
   }, [supabase]);
 
   const signInWithGitHub = async (callbackUrl?: string) => {
     try {
-      // Convert absolute URL to relative path for the callback
       const nextParam = callbackUrl
         ? new URL(callbackUrl).pathname + new URL(callbackUrl).search
         : "/";
-
       const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextParam)}`;
-
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "github",
-        options: {
-          redirectTo,
-        },
+        options: { redirectTo },
       });
-
       if (error) {
         console.error("Error signing in with GitHub:", error);
       }
@@ -160,12 +166,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
-
       if (error) {
         console.error("Error signing out:", error);
         return;
       }
-
       setUser(null);
       setProfile(null);
       router.push("/");
