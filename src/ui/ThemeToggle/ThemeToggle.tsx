@@ -2,10 +2,11 @@
 
 import { ThemeType } from "@/src/types/types";
 import { MoonIcon, SunIcon, SunMoonIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function ThemeToggle() {
   const [theme, setTheme] = useState<ThemeType>(null);
+  const isInitialMount = useRef(true);
 
   useEffect(() => {
     const dataTheme = document.documentElement.getAttribute(
@@ -15,6 +16,13 @@ export function ThemeToggle() {
   }, []);
 
   useEffect(() => {
+    if (!theme) return;
+
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
     document.body.classList.add("fadeIn500ms");
 
     const timeoutId = setTimeout(() => {
