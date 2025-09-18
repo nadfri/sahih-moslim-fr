@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { execSync } from "child_process";
-import { requireAdmin } from "@/src/lib/auth/auth";
+import { requireAdmin } from "@/src/lib/auth/supabase/helpers";
 
 export async function GET() {
   const adminCheck = await requireAdmin();

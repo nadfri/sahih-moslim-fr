@@ -3,11 +3,9 @@
 import { useState } from "react";
 import { Github, LoaderCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-
-import { useAuth } from "@/src/hooks/useAuth";
+import { createClient } from "@/src/lib/auth/supabase/client";
 
 export function ButtonGithub() {
-  const { signInWithGitHub } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
@@ -15,7 +13,26 @@ export function ButtonGithub() {
   const handleSignIn = async () => {
     setIsLoading(true);
     try {
-      await signInWithGitHub(callbackUrl || undefined);
+      const supabase = createClient();
+
+      // Build the callback URL safely
+      let nextParam = "/";
+      if (callbackUrl) {
+        try {
+          // If callbackUrl is absolute, use as is; if relative, use window.location.origin as base
+          const url = new URL(callbackUrl, window.location.origin);
+          nextParam = url.pathname + url.search;
+        } catch {
+          nextParam = "/";
+        }
+      }
+      const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextParam)}`;
+
+      // Sign in with GitHub
+      await supabase.auth.signInWithOAuth({
+        provider: "github",
+        options: { redirectTo },
+      });
     } catch (error) {
       console.error("Error during sign in:", error);
       setIsLoading(false);

@@ -1,8 +1,7 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 import { getAllHadiths } from "@/src/services/services";
 import { Descriptive } from "@/src/ui/Descriptive/Descriptive";
-import { BadgeNumberOfHadith } from "@/src/ui/hadith/BadgeNumberOfHadith/BadgeNumberOfHadith";
-import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
+import { ListLayoutHadith } from "@/src/ui/hadith/ListLayoutHadith/ListLayoutHadith";
 
 export const dynamic = "force-static";
 export const revalidate = 86400; // 1 day
@@ -15,19 +14,7 @@ export default async function Home() {
 
       <Descriptive />
 
-      <BadgeNumberOfHadith
-        count={hadiths.length}
-        size="large"
-      />
-
-      <div className="space-y-8">
-        {hadiths.map((hadith) => (
-          <Hadith
-            key={hadith.id}
-            hadith={hadith}
-          />
-        ))}
-      </div>
+      <ListLayoutHadith hadiths={hadiths} />
     </>
   );
 }

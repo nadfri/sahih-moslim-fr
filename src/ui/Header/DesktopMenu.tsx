@@ -16,7 +16,6 @@ export function DesktopMenu() {
       <div className="flex items-center gap-2 ml-3">
         {/* Admin buttons */}
         <LinkAddHadith />
-
         {/* Auth buttons */}
         <SignButtons />
 

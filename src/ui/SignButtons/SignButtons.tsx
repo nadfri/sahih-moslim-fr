@@ -5,9 +5,7 @@ import { useAuth } from "@/src/hooks/useAuth";
 import { LoaderCircle } from "lucide-react";
 
 export function SignButtons() {
-  const { user, loading, signOut } = useAuth();
-
-  const isLoggedIn = !!user;
+  const { user, loading } = useAuth();
 
   return (
     <>
@@ -18,8 +16,8 @@ export function SignButtons() {
             aria-hidden="true"
           />
         </div>
-      ) : isLoggedIn ? (
-        <ButtonSignOut signOut={signOut} />
+      ) : user ? (
+        <ButtonSignOut />
       ) : (
         <ButtonSignIn />
       )}

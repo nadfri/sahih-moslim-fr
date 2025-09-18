@@ -11,9 +11,9 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/src/hooks/useAuth", () => ({
   useAuth: () => ({
     user: null,
-    profile: null,
-    loading: false,
+    isLoggedIn: false,
     isAdmin: false,
+    loading: false,
     signInWithGitHub: vi.fn(),
     signOut: vi.fn(),
   }),

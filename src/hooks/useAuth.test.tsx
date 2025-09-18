@@ -1,62 +1,173 @@
-import { describe, expect, it, vi } from "vitest";
-import React from "react";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
+import type { User } from "@supabase/supabase-js";
 
-// Hoist-safe mock for the Supabase client used by AuthProvider
+// Mock Supabase client with inline mocks
+const mockGetUser = vi.fn();
+const mockOnAuthStateChange = vi.fn();
+const mockFrom = vi.fn();
+
 vi.mock("@/src/lib/auth/supabase/client", () => ({
-  createClient: () => ({
+  createClient: vi.fn(() => ({
     auth: {
-      getSession: async () => ({ data: { session: null } }),
-      onAuthStateChange: () => ({
-        data: { subscription: { unsubscribe: () => {} } },
-      }),
-      signInWithOAuth: async () => ({ error: null }),
-      signOut: async () => ({ error: null }),
+      getUser: mockGetUser,
+      onAuthStateChange: mockOnAuthStateChange,
     },
-  }),
+    from: mockFrom,
+  })),
 }));
 
-// Mock the Next.js router used inside AuthProvider
+// Mock Next.js navigation to avoid conflicts with global setup
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: () => {} }),
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    refresh: vi.fn(),
+    back: vi.fn(),
+  }),
+  usePathname: () => "/",
+  useSearchParams: () => ({
+    get: () => null,
+  }),
+  useParams: () => ({}),
 }));
 
-import { AuthProvider, useAuth } from "@/src/hooks/useAuth";
+describe("useAuth / AuthProvider", () => {
+  let AuthProvider: React.ComponentType<{ children: React.ReactNode }>;
+  let useAuth: () => { user: User | null; isAdmin: boolean; loading: boolean };
 
-describe("useAuth / AuthProvider (smoke)", () => {
+  beforeAll(async () => {
+    // Import the hook after mocks are set up
+    const authModule = await import("@/src/hooks/useAuth");
+    AuthProvider = authModule.AuthProvider;
+    useAuth = authModule.useAuth;
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("throws when used outside of AuthProvider", () => {
-    // Component that uses the hook directly
     function Consumer() {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore need to call hook to verify throw
       useAuth();
-      return React.createElement("div", null, "ok");
+      return <div>ok</div>;
     }
 
-    expect(() => render(React.createElement(Consumer))).toThrow(
+    expect(() => render(<Consumer />)).toThrow(
       /useAuth must be used within an AuthProvider/
     );
   });
 
-  it("provides context with basic API when wrapped by AuthProvider", async () => {
+  it("provides context with user, isAdmin, and loading states", async () => {
+    // Mock getUser to return a user
+    const mockUser = { id: "123", email: "test@example.com" };
+    mockGetUser.mockResolvedValue({ data: { user: mockUser } });
+
+    // Mock onAuthStateChange
+    mockOnAuthStateChange.mockReturnValue({
+      data: { subscription: { unsubscribe: vi.fn() } },
+    });
+
+    // Mock profiles query for admin role
+    mockFrom.mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({ data: { role: "ADMIN" } }),
+        }),
+      }),
+    });
+
     function Consumer() {
       const auth = useAuth();
-      // Render something predictable so we can assert later
       return (
         <div>
           <span data-testid="loading">{String(auth.loading)}</span>
-          <button onClick={() => auth.signOut()}>signout</button>
+          <span data-testid="user">
+            {auth.user ? auth.user.email : "no user"}
+          </span>
+          <span data-testid="isAdmin">{String(auth.isAdmin)}</span>
         </div>
       );
     }
 
     render(
-      React.createElement(AuthProvider, null, React.createElement(Consumer))
+      <AuthProvider>
+        <Consumer />
+      </AuthProvider>
     );
 
-    // wait for the provider effect to run and set loading -> false
+    // Initially loading
+    expect(screen.getByTestId("loading").textContent).toBe("true");
+
+    // Wait for loading to finish
     await waitFor(() => {
       expect(screen.getByTestId("loading").textContent).toBe("false");
+    });
+
+    // Check user and admin status
+    expect(screen.getByTestId("user").textContent).toBe("test@example.com");
+    expect(screen.getByTestId("isAdmin").textContent).toBe("true");
+  });
+
+  it("sets isAdmin to false when user has no admin role", async () => {
+    const mockUser = { id: "123", email: "test@example.com" };
+    mockGetUser.mockResolvedValue({ data: { user: mockUser } });
+    mockOnAuthStateChange.mockReturnValue({
+      data: { subscription: { unsubscribe: vi.fn() } },
+    });
+
+    // Mock profiles query for non-admin role
+    mockFrom.mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({ data: { role: "USER" } }),
+        }),
+      }),
+    });
+
+    function Consumer() {
+      const auth = useAuth();
+      return (
+        <div>
+          <span data-testid="isAdmin">{String(auth.isAdmin)}</span>
+        </div>
+      );
+    }
+
+    render(
+      <AuthProvider>
+        <Consumer />
+      </AuthProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("isAdmin").textContent).toBe("false");
+    });
+  });
+
+  it("sets isAdmin to false when no user", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    mockOnAuthStateChange.mockReturnValue({
+      data: { subscription: { unsubscribe: vi.fn() } },
+    });
+
+    function Consumer() {
+      const auth = useAuth();
+      return (
+        <div>
+          <span data-testid="isAdmin">{String(auth.isAdmin)}</span>
+        </div>
+      );
+    }
+
+    render(
+      <AuthProvider>
+        <Consumer />
+      </AuthProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("isAdmin").textContent).toBe("false");
     });
   });
 });

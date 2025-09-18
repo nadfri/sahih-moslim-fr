@@ -7,15 +7,14 @@ import { Matn_ar } from "../Matn_ar/Matn_ar";
 import { Matn_fr } from "../Matn_fr/Matn_fr";
 import { ScanEye } from "lucide-react";
 
-export function Hadith({
-  hadith,
-  edit,
-  highlight,
-}: {
+type HadithProps = {
   hadith: HadithType;
+  isAdmin: boolean;
   edit?: boolean;
   highlight?: string;
-}) {
+};
+
+export function Hadith({ hadith, edit, highlight, isAdmin }: HadithProps) {
   return (
     <div
       key={hadith.id}
@@ -59,7 +58,10 @@ export function Hadith({
             Aperçu
           </span>
         ) : (
-          <ActionsBtns hadith={hadith} />
+          <ActionsBtns
+            hadith={hadith}
+            isAdmin={isAdmin}
+          />
         )}
       </div>
     </div>

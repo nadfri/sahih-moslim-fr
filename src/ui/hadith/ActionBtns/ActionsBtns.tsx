@@ -5,16 +5,19 @@ import { Pencil, TriangleAlert, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { ConfirmDeleteModal } from "@/ui/ConfirmDeleteModal/ConfirmDeleteModal";
 
-import { useAuth } from "@/src/hooks/useAuth";
 import { HadithType } from "@/src/types/types";
 import { CopyBoard } from "../../CopyBoard/CopyBoard";
 import { deleteHadith } from "@/src/services/actions";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
-export function ActionsBtns({ hadith }: { hadith: HadithType }) {
-  const { profile } = useAuth();
-  const isAdmin = profile?.role === "ADMIN";
+export function ActionsBtns({
+  hadith,
+  isAdmin,
+}: {
+  hadith: HadithType;
+  isAdmin: boolean;
+}) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();

@@ -52,9 +52,7 @@ export default async function RootLayout({
       <body className="antialiased flex flex-col min-h-screen bg-gradient-to-br from-stone-100 to-amber-100 dark:from-gray-900 dark:to-gray-900">
         <AuthProvider>
           <Header />
-
           <main className=" py-4 px-2 md:px-8 flex-1">{children}</main>
-
           <Footer />
         </AuthProvider>
 
@@ -67,6 +65,7 @@ export default async function RootLayout({
           draggable
           theme="colored"
         />
+
         <ScrollBtns />
       </body>
     </html>

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock auth to always allow admin before importing actions
-vi.mock("@/src/lib/auth/auth", () => ({
+vi.mock("@/src/lib/auth/supabase/helpers", () => ({
   requireAdmin: async () => true,
 }));
 

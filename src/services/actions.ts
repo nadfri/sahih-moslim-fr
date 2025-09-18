@@ -5,7 +5,7 @@ import { z } from "zod";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 import { prisma } from "@/prisma/prisma";
-import { requireAdmin } from "@/src/lib/auth/auth";
+import { requireAdmin } from "@/src/lib/auth/supabase/helpers";
 import { getItemFormSchema } from "@/src/ui/forms/schemas/getItemFormSchema";
 import { slugify } from "@/src/utils/slugify";
 import { ItemFormValues, ItemType, VariantType } from "../types/types";

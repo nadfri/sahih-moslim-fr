@@ -1,51 +1,48 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 // Mock Next.js router
 const mockPush = vi.fn();
+const mockGet = vi.fn();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
     push: mockPush,
   }),
   useSearchParams: () => ({
-    get: (key: string) => (key === "callbackUrl" ? "/admin" : null),
+    get: mockGet,
   }),
 }));
 
 // Mock Supabase client
+const mockSignInWithOAuth = vi.fn();
 vi.mock("@/src/lib/auth/supabase/client", () => ({
   createClient: () => ({
     auth: {
-      signInWithOAuth: vi.fn(),
+      signInWithOAuth: mockSignInWithOAuth,
     },
   }),
 }));
 
-// Mock useAuth hook
-vi.mock("@/src/hooks/useAuth", () => ({
-  useAuth: () => ({
-    signInWithGitHub: vi.fn().mockImplementation(async (callbackUrl) => {
-      // Simulate successful OAuth redirect with relative path
-      const nextPath = callbackUrl
-        ? new URL(callbackUrl, "http://localhost:3000").pathname
-        : "/";
-      mockPush(
-        `/auth/callback?code=test-code&next=${encodeURIComponent(nextPath)}`
-      );
-    }),
-    user: null,
-    loading: false,
-  }),
-}));
+// Mock window.location
+const mockLocation = {
+  origin: "http://localhost:3000",
+};
+Object.defineProperty(window, "location", {
+  value: mockLocation,
+  writable: true,
+});
 
 describe("Authentication Flow - Redirect After Login", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockPush.mockClear();
+    mockSignInWithOAuth.mockResolvedValue({ error: null });
+    mockGet.mockImplementation((key: string) =>
+      key === "callbackUrl" ? "/admin" : null
+    );
   });
 
-  it("should redirect to protected page after successful login", async () => {
+  it("should call signInWithOAuth with correct redirect URL when callbackUrl is provided", async () => {
     const { ButtonGithub } = await import("@/src/ui/SignButtons/ButtonGithub");
 
     render(<ButtonGithub />);
@@ -57,11 +54,12 @@ describe("Authentication Flow - Redirect After Login", () => {
 
     await userEvent.click(signInButton);
 
-    // Verify that signInWithGitHub was called and redirected to callback with correct path
-    await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith(
-        "/auth/callback?code=test-code&next=%2Fadmin"
-      );
+    // Verify that signInWithOAuth was called with correct options
+    expect(mockSignInWithOAuth).toHaveBeenCalledWith({
+      provider: "github",
+      options: {
+        redirectTo: "http://localhost:3000/auth/callback?next=%2Fadmin",
+      },
     });
   });
 
@@ -80,5 +78,26 @@ describe("Authentication Flow - Redirect After Login", () => {
     // Should show loading text
     expect(screen.getByText("Connexion en cours...")).toBeInTheDocument();
     expect(signInButton).toBeDisabled();
+  });
+
+  it("should use default redirect when no callbackUrl", async () => {
+    mockGet.mockReturnValue(null);
+
+    const { ButtonGithub } = await import("@/src/ui/SignButtons/ButtonGithub");
+
+    render(<ButtonGithub />);
+
+    const signInButton = screen.getByRole("button", {
+      name: /connexion avec github/i,
+    });
+
+    await userEvent.click(signInButton);
+
+    expect(mockSignInWithOAuth).toHaveBeenCalledWith({
+      provider: "github",
+      options: {
+        redirectTo: "http://localhost:3000/auth/callback?next=%2F",
+      },
+    });
   });
 });

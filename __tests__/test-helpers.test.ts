@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 // Mock modules that call `cookies()` before importing them to avoid
 // running Next.js server APIs outside a request scope during tests.
 const mockRequireAdmin = vi.fn();
-vi.mock("@/src/lib/auth/auth", () => ({
+vi.mock("@/src/lib/auth/supabase/helpers", () => ({
   requireAdmin: mockRequireAdmin,
 }));
 
@@ -45,7 +45,7 @@ describe("Test Database Cleanup and Helpers", () => {
     mockRequireAdmin.mockResolvedValueOnce(true);
 
     // Import the mocked function dynamically to assert it returns the mocked value
-    const { requireAdmin } = await import("@/src/lib/auth/auth");
+    const { requireAdmin } = await import("@/src/lib/auth/supabase/helpers");
     const result = await requireAdmin();
     expect(result).toBe(true);
 

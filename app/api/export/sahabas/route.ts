@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { requireAdmin } from "@/src/lib/auth/auth";
+import { requireAdmin } from "@/src/lib/auth/supabase/helpers";
 
 const prisma = new PrismaClient();
 

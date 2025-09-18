@@ -2,11 +2,23 @@
 
 import Link from "next/link";
 import { LogIn } from "lucide-react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Route } from "next";
 
 export function ButtonSignIn() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  // Build current URL with search params if any
+  const currentUrl = searchParams.toString()
+    ? `${pathname}?${searchParams.toString()}`
+    : pathname;
+
+  const href =
+    `/auth/signin?callbackUrl=${encodeURIComponent(currentUrl)} ` as Route;
+
   return (
     <Link
-      href="/auth/signin"
+      href={href}
       title="Se connecter"
       className={`
         w-full sm:w-auto inline-flex items-center justify-center

@@ -17,17 +17,16 @@ type CopyBoardProps = {
   hadith: HadithType;
 };
 
-// Mock useAuth hook
-const mockUseAuth = vi.fn(() => ({
-  user: null,
-  profile: null,
-  loading: false,
-  signInWithGitHub: vi.fn(),
-  signOut: vi.fn(),
-}));
-
-vi.mock("@/src/hooks/useAuth", () => ({
-  useAuth: () => mockUseAuth(),
+// Mock Next.js Link component
+vi.mock("next/link", () => ({
+  default: ({ children, href, ...props }: LinkProps) => (
+    <a
+      href={href}
+      {...props}
+    >
+      {children}
+    </a>
+  ),
 }));
 
 // Mock Next.js Link component
@@ -59,7 +58,12 @@ describe("ActionsBtns Component", () => {
   });
 
   it("should render all basic elements", () => {
-    render(<ActionsBtns hadith={mockHadith} />);
+    render(
+      <ActionsBtns
+        hadith={mockHadith}
+        isAdmin={false}
+      />
+    );
 
     expect(screen.getByTestId("copy-board")).toBeInTheDocument();
     expect(
@@ -69,7 +73,12 @@ describe("ActionsBtns Component", () => {
   });
 
   it("should render Signaler button with correct styling and attributes", () => {
-    render(<ActionsBtns hadith={mockHadith} />);
+    render(
+      <ActionsBtns
+        hadith={mockHadith}
+        isAdmin={false}
+      />
+    );
 
     const signalerButton = screen.getByRole("button", {
       name: /Signaler une erreur/,
@@ -84,15 +93,12 @@ describe("ActionsBtns Component", () => {
 
   describe("Development mode", () => {
     it("should show edit link when user is admin", () => {
-      mockUseAuth.mockReturnValueOnce({
-        user: null,
-        profile: { role: "ADMIN" },
-        loading: false,
-        signInWithGitHub: vi.fn(),
-        signOut: vi.fn(),
-      } as unknown as ReturnType<typeof mockUseAuth>);
-
-      render(<ActionsBtns hadith={mockHadith} />);
+      render(
+        <ActionsBtns
+          hadith={mockHadith}
+          isAdmin={true}
+        />
+      );
 
       const editLink = screen.getByRole("link", { name: /Éditer le hadith/ });
       expect(editLink).toBeInTheDocument();
@@ -105,15 +111,12 @@ describe("ActionsBtns Component", () => {
     });
 
     it("should render edit link with correct styling for admin", () => {
-      mockUseAuth.mockReturnValueOnce({
-        user: null,
-        profile: { role: "ADMIN" },
-        loading: false,
-        signInWithGitHub: vi.fn(),
-        signOut: vi.fn(),
-      } as unknown as ReturnType<typeof mockUseAuth>);
-
-      render(<ActionsBtns hadith={mockHadith} />);
+      render(
+        <ActionsBtns
+          hadith={mockHadith}
+          isAdmin={true}
+        />
+      );
 
       const editLink = screen.getByRole("link", { name: /Éditer le hadith/ });
       // Instead of asserting exact class names, verify the link and label are present
@@ -124,15 +127,12 @@ describe("ActionsBtns Component", () => {
 
   describe("Production mode", () => {
     it("should not show edit link when user is not admin", () => {
-      mockUseAuth.mockReturnValueOnce({
-        user: null,
-        profile: null,
-        loading: false,
-        signInWithGitHub: vi.fn(),
-        signOut: vi.fn(),
-      });
-
-      render(<ActionsBtns hadith={mockHadith} />);
+      render(
+        <ActionsBtns
+          hadith={mockHadith}
+          isAdmin={false}
+        />
+      );
 
       expect(
         screen.queryByRole("link", { name: /Éditer le hadith/ })
@@ -141,15 +141,12 @@ describe("ActionsBtns Component", () => {
     });
 
     it("should not show edit link when user is not admin (test mode)", () => {
-      mockUseAuth.mockReturnValueOnce({
-        user: null,
-        profile: null,
-        loading: false,
-        signInWithGitHub: vi.fn(),
-        signOut: vi.fn(),
-      });
-
-      render(<ActionsBtns hadith={mockHadith} />);
+      render(
+        <ActionsBtns
+          hadith={mockHadith}
+          isAdmin={false}
+        />
+      );
 
       expect(
         screen.queryByRole("link", { name: /Éditer le hadith/ })
@@ -158,7 +155,12 @@ describe("ActionsBtns Component", () => {
   });
 
   it("should have proper container layout", () => {
-    const { container } = render(<ActionsBtns hadith={mockHadith} />);
+    const { container } = render(
+      <ActionsBtns
+        hadith={mockHadith}
+        isAdmin={false}
+      />
+    );
 
     const mainDiv = container.firstChild as HTMLElement;
     expect(mainDiv).toHaveClass(
@@ -172,7 +174,12 @@ describe("ActionsBtns Component", () => {
   });
 
   it("should pass hadith prop to CopyBoard component", () => {
-    render(<ActionsBtns hadith={mockHadith} />);
+    render(
+      <ActionsBtns
+        hadith={mockHadith}
+        isAdmin={false}
+      />
+    );
 
     expect(screen.getByTestId("copy-board")).toHaveTextContent(
       `CopyBoard for hadith ${mockHadith.numero}`

@@ -19,7 +19,7 @@ import { PrismaClient } from "@prisma/client";
 import type { Chapter, Sahaba, Transmitter, Hadith } from "@prisma/client";
 import { z } from "zod";
 import { ImportedHadithSchema } from "@/src/types/types";
-import { requireAdmin } from "@/src/lib/auth/auth";
+import { requireAdmin } from "@/src/lib/auth/supabase/helpers";
 
 const prisma = new PrismaClient();
 
