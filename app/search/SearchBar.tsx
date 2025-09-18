@@ -15,6 +15,7 @@ import {
   detectFilterMode,
   extractSearchParams,
 } from "@/src/utils/searchUtils";
+import { useAuth } from "@/src/hooks/useAuth";
 
 export function SearchBar({
   sahabas,
@@ -23,6 +24,7 @@ export function SearchBar({
   sahabas: string[];
   transmitters: string[];
 }) {
+  const { isAdmin } = useAuth();
   // Safely handle useSearchParams (can be null in test environments)
   const rawSearchParams = useSearchParams();
   const searchParams = rawSearchParams ?? new URLSearchParams();
@@ -319,6 +321,7 @@ export function SearchBar({
               key={hadith.id}
               hadith={hadith}
               highlight={filterMode === "word" ? query : ""}
+              isAdmin={isAdmin}
             />
           ))}
         </div>

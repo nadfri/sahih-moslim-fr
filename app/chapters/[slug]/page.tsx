@@ -7,8 +7,7 @@ import {
   getChapterBySlug,
   getChapterWithHadiths,
 } from "@/src/services/services";
-import { BadgeNumberOfHadith } from "@/src/ui/hadith/BadgeNumberOfHadith/BadgeNumberOfHadith";
-import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
+import { ListLayoutHadith } from "@/src/ui/hadith/ListLayoutHadith/ListLayoutHadith";
 
 export type ParamsType = Promise<{ slug: string }>;
 
@@ -23,23 +22,11 @@ export default async function PageByChapters(props: { params: ParamsType }) {
   }
 
   return (
-    <>
-      <h1 className="title">{chapter.name_fr}</h1>
-
-      <BadgeNumberOfHadith
-        count={hadiths.length}
-        size="large"
-      />
-
-      <div className="space-y-8">
-        {hadiths.map((hadith) => (
-          <Hadith
-            key={hadith.id}
-            hadith={hadith}
-          />
-        ))}
-      </div>
-    </>
+    <ListLayoutHadith
+      title="Hadiths du Chapitre"
+      name={chapter.name_fr}
+      hadiths={hadiths}
+    />
   );
 }
 

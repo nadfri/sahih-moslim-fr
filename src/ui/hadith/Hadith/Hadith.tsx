@@ -9,12 +9,17 @@ import { ScanEye } from "lucide-react";
 
 type HadithProps = {
   hadith: HadithType;
-  isAdmin: boolean;
+  isAdmin?: boolean;
   edit?: boolean;
   highlight?: string;
 };
 
-export function Hadith({ hadith, edit, highlight, isAdmin }: HadithProps) {
+export function Hadith({
+  hadith,
+  edit,
+  highlight,
+  isAdmin = false,
+}: HadithProps) {
   return (
     <div
       key={hadith.id}

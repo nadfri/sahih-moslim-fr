@@ -6,11 +6,15 @@ import { notFound } from "next/navigation";
 import { getHadithByNumero } from "@/src/services/services";
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { getNarratorName } from "@/src/utils/getNarratorName";
+import { requireAdmin } from "@/src/lib/auth/supabase/helpers";
 
 export type ParamsType = Promise<{ numero: string }>;
 
 export default async function PageByNumero({ params }: { params: ParamsType }) {
   const numero = (await params).numero;
+  const adminCheck = await requireAdmin();
+
+  const isAdmin = adminCheck === true;
 
   const hadith = await getHadithByNumero(numero);
 
@@ -23,7 +27,11 @@ export default async function PageByNumero({ params }: { params: ParamsType }) {
       <h1 className="title">
         N°{numero} - {getNarratorName(hadith)}
       </h1>
-      <Hadith hadith={hadith} />
+
+      <Hadith
+        hadith={hadith}
+        isAdmin={isAdmin}
+      />
     </>
   );
 }
