@@ -13,7 +13,7 @@ export function Logo() {
       />
       {/* Original title for mobile */}
       <span className="text-xl font-bold font-serif md:hidden">
-        Sahih Muslim <span className="text-emerald-600">FR</span>
+        Sahih Muslim
       </span>
 
       <div className="hidden md:flex md:flex-col md:leading-tight">

@@ -52,7 +52,6 @@ export function NavBar({ isMobile = false }: NavBarProps) {
               <Link
                 href={link.href}
                 className={getLinkClasses(active)}
-                aria-current={active ? "page" : undefined}
               >
                 {link.label}
               </Link>

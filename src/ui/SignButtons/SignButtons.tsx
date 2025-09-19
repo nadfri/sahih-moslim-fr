@@ -10,7 +10,7 @@ export function SignButtons() {
   return (
     <>
       {loading ? (
-        <div className="w-full sm:w-auto inline-flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-gray-400 p-2 rounded-md">
+        <div className="w-full sm:w-auto inline-flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-gray-400 p-1 md:p-2 rounded-md">
           <LoaderCircle
             className="size-5 animate-spin"
             aria-hidden="true"

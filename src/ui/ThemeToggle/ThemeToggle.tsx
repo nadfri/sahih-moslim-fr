@@ -48,12 +48,12 @@ export function ThemeToggle() {
 
   return (
     <button
-      className="inline-flex items-center justify-center rounded-full transition-colors duration-200 hover:bg-gray-200 dark:hover:bg-gray-600 p-0.5 -ml-1"
+      className="inline-flex items-center justify-center transition-colors duration-200 text-yellow-400 hover:text-yellow-600 dark:hover:text-yellow-200 -mx-1"
       onClick={toggleTheme}
       aria-label={`Toggle theme to ${theme === "dark" ? "light" : "dark"}`}
       disabled={!theme}
     >
-      <IconTheme className="text-yellow-400 moveLeft size-7" />
+      <IconTheme className="moveRight size-6" />
     </button>
   );
 }

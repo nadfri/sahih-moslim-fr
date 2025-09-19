@@ -32,6 +32,19 @@ vi.mock("@/src/hooks/useSearch", () => {
   };
 });
 
+// Mock useAuth to avoid requiring AuthProvider for nested components
+const mockUseAuth = vi.fn(() => ({
+  user: null,
+  profile: null,
+  loading: false,
+  signInWithGitHub: vi.fn(),
+  signOut: vi.fn(),
+}));
+
+vi.mock("@/src/hooks/useAuth", () => ({
+  useAuth: () => mockUseAuth(),
+}));
+
 // Stub the Hadith component to avoid rendering nested components that require
 // context (ActionsBtns -> useAuth). This makes the DOM simple and stable for
 // text-based assertions.

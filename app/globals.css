@@ -66,10 +66,10 @@ button {
 }
 
 /*Animations*/
-@keyframes moveLeft {
+@keyframes moveRight {
   0% {
     opacity: 0;
-    transform: translateX(-10px);
+    transform: translateX(10px);
   }
   100% {
     opacity: 1;
@@ -77,8 +77,8 @@ button {
   }
 }
 
-.moveLeft {
-  animation: moveLeft 0.3s;
+.moveRight {
+  animation: moveRight 0.3s;
 }
 
 @keyframes moveUp {

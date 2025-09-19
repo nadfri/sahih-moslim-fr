@@ -20,10 +20,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  console.log({ isAdmin });
-
   useEffect(() => {
-    // A single function to update user and role, avoiding code duplication.
     const updateUserAndRole = async (user: User | null) => {
       setUser(user);
 
@@ -57,7 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe();
     };
-  }, []); // The effect runs only once on mount.
+  }, []);
 
   return (
     <AuthContext.Provider

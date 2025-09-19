@@ -11,6 +11,19 @@ vi.mock("@/src/services/services", () => ({
   }),
 }));
 
+// Mock useAuth to avoid requiring AuthProvider in components rendered by the page
+const mockUseAuth = vi.fn(() => ({
+  user: null,
+  profile: null,
+  loading: false,
+  signInWithGitHub: vi.fn(),
+  signOut: vi.fn(),
+}));
+
+vi.mock("@/src/hooks/useAuth", () => ({
+  useAuth: () => mockUseAuth(),
+}));
+
 describe("PageByChapters", () => {
   it("renders chapter title", async () => {
     const { default: PageByChapters } = await import("./page");
