@@ -15,7 +15,7 @@ export type SearchResult = {
   numero: number;
   matn_fr: string;
   matn_ar: string;
-  name_en: string | null;
+  matn_en: string;
   chapter: {
     id: string;
     name_fr: string;
@@ -51,7 +51,7 @@ export async function searchHadithsCombined(
         h.numero,
         h.matn_fr,
         h.matn_ar,
-        h.name_en,
+        h.matn_en,
         json_build_object(
           'id', c.id,
           'name_fr', c.name_fr,
@@ -59,15 +59,17 @@ export async function searchHadithsCombined(
           'name_en', c.name_en,
           'slug', c.slug,
           'index', c.index
-        ) as chapter,
+        ) as chapter
       FROM "Hadith" h
       INNER JOIN "Chapter" c ON h."chapterId" = c.id
       WHERE 
-        -- Unified search: trigram + accent-insensitive in single query
+        -- Unified search: case-insensitive + accent-insensitive search
         lower(h.matn_fr) LIKE '%' || lower(${query}) || '%'
         OR lower(h.matn_ar) LIKE '%' || lower(${query}) || '%'
+        OR lower(h.matn_en) LIKE '%' || lower(${query}) || '%'
         OR lower(h.matn_ar) LIKE '%' || lower(${normalizedQuery}) || '%'
         OR unaccent(lower(h.matn_fr)) LIKE '%' || unaccent(lower(${query})) || '%'
+        OR unaccent(lower(h.matn_en)) LIKE '%' || unaccent(lower(${query})) || '%'
       ORDER BY h.numero ASC
       LIMIT ${limit}
     `;

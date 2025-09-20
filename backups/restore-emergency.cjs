@@ -366,6 +366,9 @@ function checkBackupFile() {
       END IF;
     END $$;
 
+    -- Activation de l'extension unaccent pour les recherches insensibles aux accents
+    CREATE EXTENSION IF NOT EXISTS unaccent;
+
     -- Foreign key Hadith.chapterId -> Chapter.id
     DO $$
     BEGIN
