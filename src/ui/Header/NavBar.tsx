@@ -1,15 +1,14 @@
 "use client";
-import { Route } from "next";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 // Navigation links
 export const navLinks = [
-  { href: "/" as Route, label: "Accueil" },
-  { href: "/chapters" as Route, label: "Chapitres" },
-  { href: "/sahabas" as Route, label: "Compagnons" },
-  { href: "/transmitters" as Route, label: "Transmetteurs" },
-  { href: "/search" as Route, label: "Recherche" },
+  { href: "/", key: "home" },
+  { href: "/chapters", key: "chapters" },
+  { href: "/sahabas", key: "sahabas" },
+  { href: "/transmitters", key: "transmitters" },
+  { href: "/search", key: "search" },
 ];
 
 type NavBarProps = {
@@ -18,7 +17,9 @@ type NavBarProps = {
 
 export function NavBar({ isMobile = false }: NavBarProps) {
   const pathname = usePathname();
-  const isActive = (href: Route) =>
+  const t = useTranslations("header");
+
+  const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   // Determine list and nav wrapper classes based on device
@@ -53,7 +54,7 @@ export function NavBar({ isMobile = false }: NavBarProps) {
                 href={link.href}
                 className={getLinkClasses(active)}
               >
-                {link.label}
+                {t(link.key)}
               </Link>
             </li>
           );

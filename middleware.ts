@@ -3,9 +3,21 @@ import type { NextRequest } from "next/server";
 import { updateSession } from "@/src/lib/auth/supabase/middleware";
 import { createServerClient } from "@supabase/ssr";
 import { prisma } from "./prisma/prisma";
+import createIntlMiddleware from "next-intl/middleware";
+import { routing } from "./src/i18n/routing";
+
+// Create the intl middleware
+const handleI18nRouting = createIntlMiddleware(routing);
 
 export async function middleware(req: NextRequest) {
-  // First, update the session (refresh tokens if needed)
+  // First, handle internationalization routing
+  // Await the intl middleware which may return a NextResponse (redirect/rewrite).
+  const intlResponse = handleI18nRouting(req);
+
+  // If intl middleware returns a response, return it immediately.
+  if (intlResponse) return intlResponse;
+
+  // Then, update the session (refresh tokens if needed)
   const supabaseResponse = await updateSession(req);
 
   const pathname = req.nextUrl.pathname;
@@ -77,14 +89,5 @@ export async function middleware(req: NextRequest) {
 export const config = {
   // Run middleware in Node.js runtime so server-side libraries work properly
   runtime: "nodejs",
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - *.svg, *.png, *.jpg, *.jpeg, *.gif, *.webp (image files)
-     */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  matcher: ["/((?!api|trpc|_next|_vercel|.*\\..*).*)"],
 };

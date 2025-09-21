@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { SquareArrowOutUpRight } from "lucide-react";
 
 import { ItemType } from "@/src/types/types";

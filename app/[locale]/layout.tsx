@@ -10,6 +10,11 @@ import { Footer } from "@/src/ui/Footer/Footer";
 import { Header } from "@/src/ui/Header/Header";
 import { ScrollBtns } from "@/src/ui/ScrollBtns/ScrollBtns";
 
+import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/routing";
+import { setRequestLocale } from "next-intl/server";
+
 export const metadata: Metadata = {
   title: "Sahih Moslim en français",
   description: "Une collection de hadiths authentiques.",
@@ -17,13 +22,24 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
+
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+
+  setRequestLocale(locale);
+
   return (
     <html
-      lang="fr"
+      lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} ${amiriFont.variable}`}
+      data-theme="dark"
       suppressHydrationWarning
     >
       <head>
@@ -50,11 +66,13 @@ export default async function RootLayout({
         />
       </head>
       <body className="antialiased flex flex-col min-h-screen bg-gradient-to-br from-stone-100 to-amber-100 dark:from-gray-900 dark:to-gray-900">
-        <AuthProvider>
-          <Header />
-          <main className=" py-4 px-2 md:px-8 flex-1">{children}</main>
-          <Footer />
-        </AuthProvider>
+        <NextIntlClientProvider>
+          <AuthProvider>
+            <Header />
+            <main className=" py-4 px-2 md:px-8 flex-1">{children}</main>
+            <Footer />
+          </AuthProvider>
+        </NextIntlClientProvider>
 
         <ToastContainer
           position="top-right"
@@ -70,4 +88,8 @@ export default async function RootLayout({
       </body>
     </html>
   );
+}
+
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
 }

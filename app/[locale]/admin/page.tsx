@@ -6,7 +6,7 @@ import {
   getAllTransmitters,
   getHadithsCount,
 } from "@/src/services/services";
-import { AdminDashboard } from "@/app/admin/AdminDashboard/AdminDashboard";
+import { AdminDashboard } from "@/app/[locale]/admin/AdminDashboard/AdminDashboard";
 import { ItemType } from "@/src/types/types";
 
 export type DatasType = {

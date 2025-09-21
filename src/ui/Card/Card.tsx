@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { BookOpenText, MoveRight } from "lucide-react";
 
 import { ItemType, VariantType } from "@/src/types/types";

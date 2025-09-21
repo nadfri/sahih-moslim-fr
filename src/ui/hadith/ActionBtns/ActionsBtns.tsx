@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Pencil, TriangleAlert, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { ConfirmDeleteModal } from "@/ui/ConfirmDeleteModal/ConfirmDeleteModal";

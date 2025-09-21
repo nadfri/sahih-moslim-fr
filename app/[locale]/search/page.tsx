@@ -2,7 +2,7 @@
 
 import { Metadata } from "next";
 
-import { SearchBar } from "@/app/search/SearchBar";
+import { SearchBar } from "@/app/[locale]/search/SearchBar";
 import { getSahabaNames, getTransmitterNames } from "@/src/services/services";
 
 export const dynamic = "force-static";

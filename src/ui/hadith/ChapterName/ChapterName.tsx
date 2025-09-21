@@ -1,5 +1,4 @@
-import Link from "next/link";
-
+import { Link } from "@/i18n/navigation";
 import { HadithType } from "@/src/types/types";
 import { ArabicIcon } from "../../icons/ArabicIcon";
 

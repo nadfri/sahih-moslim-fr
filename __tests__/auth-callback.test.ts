@@ -31,7 +31,7 @@ describe("Auth Callback Route", () => {
     });
 
     // Import the route handler after mocks are set up
-    const { GET } = await import("@/app/auth/callback/route");
+    const { GET } = await import("@/app/[locale]/auth/callback/route");
 
     // Create a mock request with next parameter
     const mockRequest = {

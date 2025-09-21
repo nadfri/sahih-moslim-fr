@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { LogIn } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Route } from "next";

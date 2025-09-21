@@ -22,11 +22,12 @@
     "paths": {
       "@/*": ["./*"],
       "@/app/*": ["./app/*"],
-      "@/src/*": ["./src/*"],
       "@/ui/*": ["./src/ui/*"],
       "@/components/*": ["./src/components/*"],
       "@/hooks/*": ["./src/hooks/*"],
       "@/util/*": ["./src/utils/*"],
+      "@/i18n/*": ["./src/i18n/*"],
+      "@/src/*": ["./src/*"],
     }
   },
   "exclude": ["node_modules"],

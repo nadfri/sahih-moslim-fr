@@ -1,7 +1,7 @@
 "use client";
 
 import { use } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 // Define the type for the searchParams prop (as a Promise)
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;

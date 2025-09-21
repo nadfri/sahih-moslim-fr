@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
-
-import type { ItemType, VariantType } from "@/src/types/types";
-import { FilteredCardsEdit } from "@/app/admin/FilteredCardsEdit/FilteredCardsEdit";
+import { VariantType, ItemType } from "@/src/types/types";
 import { AddItemForm } from "@/src/ui/forms/AddItemForm/AddItemForm";
-import { DataManagement } from "@/app/admin/DataManagement/DataManagement";
+import { useState } from "react";
+import { DataManagement } from "../DataManagement/DataManagement";
+import { FilteredCardsEdit } from "../FilteredCardsEdit/FilteredCardsEdit";
 import { DatasType } from "../page";
 
 const variantOptions: { label: string; value: VariantType }[] = [

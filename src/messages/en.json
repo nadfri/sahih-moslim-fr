@@ -1,0 +1,16 @@
+{
+  "404": {
+    "notFound": "Page not found",
+    "sorry": "Sorry, the page you are looking for does not exist.",
+    "backHome": "Back to home",
+    "ifError": "If you think this is an error, please let us know."
+  },
+
+  "header": {
+    "home": "Home",
+    "chapters": "Chapters",
+    "sahabas": "Companions",
+    "transmitters": "Transmitters",
+    "search": "Search"
+  }
+}
