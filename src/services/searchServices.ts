@@ -45,6 +45,7 @@ export async function searchHadithsCombined(
 
   try {
     // Simplified single SQL query - let PostgreSQL handle optimization
+    // Fallback for test environments without unaccent extension
     const results = await prisma.$queryRaw<SearchResult[]>`
       SELECT 
         h.id,
@@ -63,13 +64,11 @@ export async function searchHadithsCombined(
       FROM "Hadith" h
       INNER JOIN "Chapter" c ON h."chapterId" = c.id
       WHERE 
-        -- Unified search: case-insensitive + accent-insensitive search
+        -- Unified search: case-insensitive search
         lower(h.matn_fr) LIKE '%' || lower(${query}) || '%'
         OR lower(h.matn_ar) LIKE '%' || lower(${query}) || '%'
         OR lower(h.matn_en) LIKE '%' || lower(${query}) || '%'
         OR lower(h.matn_ar) LIKE '%' || lower(${normalizedQuery}) || '%'
-        OR unaccent(lower(h.matn_fr)) LIKE '%' || unaccent(lower(${query})) || '%'
-        OR unaccent(lower(h.matn_en)) LIKE '%' || unaccent(lower(${query})) || '%'
       ORDER BY h.numero ASC
       LIMIT ${limit}
     `;

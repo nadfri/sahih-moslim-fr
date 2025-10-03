@@ -13,10 +13,10 @@ vi.mock("@/src/lib/auth/supabase/client", () => ({
   }),
 }));
 
-// Mock Next.js router
+// Mock i18n navigation router
 const mockPush = vi.fn();
 const mockRefresh = vi.fn();
-vi.mock("next/navigation", () => ({
+vi.mock("@/i18n/navigation", () => ({
   useRouter: () => ({
     push: mockPush,
     refresh: mockRefresh,

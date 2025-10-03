@@ -17,7 +17,7 @@ vi.mock("@/src/services/actions", () => ({
   deleteItem: vi.fn(),
 }));
 
-vi.mock("../../../src/ui/ConfirmDeleteModal/ConfirmDeleteModal", () => ({
+vi.mock("@/src/ui/ConfirmDeleteModal/ConfirmDeleteModal", () => ({
   ConfirmDeleteModal: vi.fn(
     ({ open, onCancel, onConfirm, title, description, hadithCount }) =>
       open ? (
@@ -25,33 +25,30 @@ vi.mock("../../../src/ui/ConfirmDeleteModal/ConfirmDeleteModal", () => ({
           <h2>{title}</h2>
           <div>{description}</div>
           <p>Hadith count: {hadithCount}</p>
-          <button onClick={onCancel}>Cancel</button>
-          <button onClick={onConfirm}>Confirm</button>
+          <button onClick={onCancel}>Annuler</button>
+          <button onClick={onConfirm}>Confirmer</button>
         </div>
       ) : null
   ),
 }));
 
-vi.mock("../../../src/ui/forms/EditItemFormDialog/EditItemFormDialog", () => ({
+vi.mock("@/src/ui/forms/EditItemFormDialog/EditItemFormDialog", () => ({
   EditItemFormDialog: vi.fn(({ open, onCancel, item, variant }) =>
     open ? (
       <div data-testid="edit-item-dialog">
         <h2>Edit {variant}</h2>
         <p>Item: {item.name_fr}</p>
-        <button onClick={onCancel}>Cancel</button>
+        <button onClick={onCancel}>Annuler</button>
       </div>
     ) : null
   ),
 }));
 
-vi.mock(
-  "../../../src/ui/hadith/BadgeNumberOfHadith/BadgeNumberOfHadith",
-  () => ({
-    BadgeNumberOfHadith: vi.fn(({ count }) => (
-      <span data-testid="hadith-badge">{count} hadiths</span>
-    )),
-  })
-);
+vi.mock("@/src/ui/hadith/BadgeNumberOfHadith/BadgeNumberOfHadith", () => ({
+  BadgeNumberOfHadith: vi.fn(({ count }) => (
+    <span data-testid="hadith-badge">{count} hadiths</span>
+  )),
+}));
 
 const mockChapterItem: ItemType = {
   id: "1",
@@ -174,7 +171,7 @@ describe("CardEdit Component", () => {
     expect(screen.getByTestId("edit-item-dialog")).toBeInTheDocument();
 
     // Close dialog
-    await user.click(screen.getByText("Cancel"));
+    await user.click(screen.getByText("Annuler"));
     await waitFor(() => {
       expect(screen.queryByTestId("edit-item-dialog")).not.toBeInTheDocument();
     });
@@ -213,7 +210,7 @@ describe("CardEdit Component", () => {
     expect(screen.getByTestId("confirm-delete-modal")).toBeInTheDocument();
 
     // Close modal
-    await user.click(screen.getByText("Cancel"));
+    await user.click(screen.getByText("Annuler"));
     await waitFor(() => {
       expect(
         screen.queryByTestId("confirm-delete-modal")
@@ -236,7 +233,7 @@ describe("CardEdit Component", () => {
     expect(screen.getByText("Supprimer ce chapitre ?")).toBeInTheDocument();
 
     // Close modal and rerender with different variant
-    await user.click(screen.getByText("Cancel"));
+    await user.click(screen.getByText("Annuler"));
 
     rerender(
       <CardEdit

@@ -3,6 +3,7 @@ import "@testing-library/jest-dom/vitest";
 
 import { cleanup } from "@testing-library/react";
 import { afterEach, beforeAll, beforeEach, vi } from "vitest";
+import React from "react";
 
 import { cleanupTestData } from "@/__tests__/test-helpers";
 
@@ -16,6 +17,49 @@ vi.mock("next/cache", () => ({
   revalidatePath: () => {
     /* no-op in tests */
   },
+}));
+
+// Mock next-intl server functions
+vi.mock("next-intl/server", () => ({
+  getTranslations: vi.fn(() => (key: string) => key),
+  getLocale: vi.fn(() => "fr"),
+  getMessages: vi.fn(() => ({})),
+  getNow: vi.fn(() => new Date()),
+  getTimeZone: vi.fn(() => "Europe/Paris"),
+}));
+
+// Mock next/link component
+vi.mock("next/link", () => ({
+  default: ({
+    children,
+    ...props
+  }: React.PropsWithChildren<Record<string, unknown>>) =>
+    React.createElement(
+      "a",
+      { ...props, "data-testid": "mock-link" },
+      children
+    ),
+}));
+
+// Mock next-intl navigation helpers
+vi.mock("@/src/i18n/navigation", () => ({
+  Link: ({
+    children,
+    ...props
+  }: React.PropsWithChildren<Record<string, unknown>>) =>
+    React.createElement(
+      "a",
+      { ...props, "data-testid": "mock-link" },
+      children
+    ),
+  redirect: vi.fn(),
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    refresh: vi.fn(),
+    back: vi.fn(),
+  }),
+  usePathname: () => "/",
 }));
 
 // Provide a lightweight mock for `next/navigation` used by app-router hooks
@@ -35,9 +79,12 @@ vi.mock("next/navigation", () => {
       // throw to mimic next/navigation behavior when needed in tests
       throw new Error("notFound called");
     },
-    redirect: () => {
+    redirect: vi.fn(() => {
       throw new Error("redirect called");
-    },
+    }),
+    permanentRedirect: vi.fn(() => {
+      throw new Error("permanentRedirect called");
+    }),
   };
 });
 

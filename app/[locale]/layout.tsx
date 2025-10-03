@@ -13,12 +13,15 @@ import { ScrollBtns } from "@/src/ui/ScrollBtns/ScrollBtns";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
-export const metadata: Metadata = {
-  title: "Sahih Moslim en français",
-  description: "Une collection de hadiths authentiques.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("layout");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
 export default async function RootLayout({
   children,
@@ -38,6 +41,7 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
+      dir={locale === "ar" ? "rtl" : "ltr"}
       className={`${geistSans.variable} ${geistMono.variable} ${amiriFont.variable}`}
       data-theme="dark"
       suppressHydrationWarning

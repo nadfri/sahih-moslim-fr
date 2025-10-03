@@ -12,5 +12,20 @@
     "sahabas": "Compagnons",
     "transmitters": "Transmetteurs",
     "search": "Recherche"
+  },
+
+  "home": {
+    "title": "Sahih Moslim en français"
+  },
+
+  "layout": {
+    "title": "Sahih Moslim en français",
+    "description": "Une collection de hadiths authentiques."
+  },
+  "unauthorized": {
+    "title": "Accès non autorisé",
+    "noPermission": "Vous n'avez pas les autorisations nécessaires pour accéder à cette page.",
+    "adminOnly": "Seuls les administrateurs peuvent accéder à cette section.",
+    "backHome": "Retour à l'accueil"
   }
 }

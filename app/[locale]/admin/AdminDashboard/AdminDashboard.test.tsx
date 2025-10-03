@@ -6,7 +6,7 @@ import type { ItemType } from "@/src/types/types";
 import { AdminDashboard } from "./AdminDashboard";
 
 // Mock the child components
-vi.mock("@/app/admin/FilteredCardsEdit/FilteredCardsEdit", () => ({
+vi.mock("../FilteredCardsEdit/FilteredCardsEdit", () => ({
   FilteredCardsEdit: vi.fn(({ items, variant }) => (
     <div data-testid="filtered-cards-edit">
       FilteredCardsEdit - {variant} - {items.length} items
@@ -22,7 +22,7 @@ vi.mock("@/src/ui/forms/AddItemForm/AddItemForm", () => ({
   )),
 }));
 
-vi.mock("@/app/admin/DataManagement/DataManagement", () => ({
+vi.mock("../DataManagement/DataManagement", () => ({
   DataManagement: vi.fn(() => (
     <div data-testid="data-management">DataManagement Component</div>
   )),
