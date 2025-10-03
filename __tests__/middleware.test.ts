@@ -1,12 +1,17 @@
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { middleware } from "../middleware";
+// Create mocks using vi.hoisted to ensure they're available before imports
+const { mockNextResponseRedirect, mockNextResponseNext, mockIntlMiddleware } =
+  vi.hoisted(() => {
+    return {
+      mockNextResponseRedirect: vi.fn(),
+      mockNextResponseNext: vi.fn(),
+      mockIntlMiddleware: vi.fn(),
+    };
+  });
 
-// Mock NextResponse static methods so we can observe redirect/next calls
-const mockNextResponseRedirect = vi.fn();
-const mockNextResponseNext = vi.fn();
-
+// Mock NextResponse static methods
 vi.mock("next/server", async (importOriginal) => {
   const originalModule = await importOriginal<typeof import("next/server")>();
   return {
@@ -27,8 +32,17 @@ vi.mock("next/server", async (importOriginal) => {
   };
 });
 
-// Hoist-safe mock factory for Supabase createServerClient.
-// Exposes setters to control auth.getUser() and profiles query results.
+// Mock next-intl/middleware
+vi.mock("next-intl/middleware", () => {
+  return {
+    default: () => mockIntlMiddleware,
+  };
+});
+
+// Import middleware after mocks are set up
+import { middleware } from "../middleware";
+
+// Mock Supabase client
 type GetUserResult = {
   data: {
     user: null | {
@@ -38,59 +52,38 @@ type GetUserResult = {
     };
   };
 };
+
 type ProfileResult = { data: { role?: string } | null; error: unknown };
 
-// Typed accessor for our vi.mock('@supabase/ssr') hoist-safe helpers.
 type SupabaseMockModule = {
-  __reset: () => void | Promise<void>;
-  __setGetUserResult: (v: GetUserResult) => void | Promise<void>;
-  __setProfileResult: (v: ProfileResult) => void | Promise<void>;
+  __reset: () => void;
+  __setGetUserResult: (v: GetUserResult) => void;
+  __setProfileResult: (v: ProfileResult) => void;
 };
 
 async function getSupabaseMock(): Promise<SupabaseMockModule> {
   return (await import("@supabase/ssr")) as unknown as SupabaseMockModule;
 }
 
-// Hoist-safe mock factory for Prisma client used in middleware fallback
-type PrismaMockModule = {
-  prisma: {
-    profile: {
-      findUnique: (args: {
-        where: { id: string };
-        select: { role: boolean };
-      }) => Promise<{ role?: string } | null>;
-    };
-  };
-  __reset: () => void | Promise<void>;
-  __setProfileResult: (v: { role?: string } | null) => void | Promise<void>;
-};
-
-async function getPrismaMock(): Promise<PrismaMockModule> {
-  return (await import("../prisma/prisma")) as unknown as PrismaMockModule;
-}
-
 vi.mock("@supabase/ssr", () => {
   let getUserResult: GetUserResult = { data: { user: null } };
   let profileResult: ProfileResult = { data: null, error: null };
 
-  const createServerClient = () => {
-    return {
-      auth: {
-        getUser: async () => getUserResult,
-      },
-      from: () => ({
-        select: () => ({
-          eq: () => ({
-            maybeSingle: async () => profileResult,
-          }),
+  const createServerClient = () => ({
+    auth: {
+      getUser: async () => getUserResult,
+    },
+    from: () => ({
+      select: () => ({
+        eq: () => ({
+          maybeSingle: async () => profileResult,
         }),
       }),
-    };
-  };
+    }),
+  });
 
   return {
     createServerClient,
-    // test helpers exported from the mock
     __setGetUserResult: (v: GetUserResult) => {
       getUserResult = v;
     },
@@ -104,16 +97,30 @@ vi.mock("@supabase/ssr", () => {
   };
 });
 
-// Mock the local Prisma client used by middleware (prisma.profile.findUnique)
+// Mock Prisma client
+type PrismaMockModule = {
+  prisma: {
+    profile: {
+      findUnique: (args: {
+        where: { id: string };
+        select: { role: boolean };
+      }) => Promise<{ role?: string } | null>;
+    };
+  };
+  __reset: () => void;
+  __setProfileResult: (v: { role?: string } | null) => void;
+};
+
+async function getPrismaMock(): Promise<PrismaMockModule> {
+  return (await import("../prisma/prisma")) as unknown as PrismaMockModule;
+}
+
 vi.mock("../prisma/prisma", () => {
   let profileResult: { role?: string } | null = null;
 
   const prisma = {
     profile: {
-      findUnique: async () => {
-        // return the configured profileResult (simulates Prisma result)
-        return profileResult;
-      },
+      findUnique: async () => profileResult,
     },
   };
 
@@ -128,97 +135,188 @@ vi.mock("../prisma/prisma", () => {
   };
 });
 
-const PROTECTED_PATHS = ["/admin", "/chapters/add"];
-const NON_PROTECTED_PATH = "/public/some-page";
+// Mock updateSession
+vi.mock("@/src/lib/auth/supabase/middleware", () => ({
+  updateSession: vi.fn().mockImplementation(() => {
+    return new Response(null, { status: 200 });
+  }),
+}));
 
-describe("Middleware (Supabase-based)", () => {
+describe("Middleware with next-intl", () => {
   beforeEach(async () => {
-    vi.resetAllMocks();
-    vi.spyOn(console, "log").mockImplementation(() => {});
-    // Reset mock factory state
+    vi.clearAllMocks();
+    mockIntlMiddleware.mockReturnValue(null); // By default, intl doesn't intercept
+
     const supa = await getSupabaseMock();
     await supa.__reset();
-    const prismaMock = await getPrismaMock();
-    await prismaMock.__reset();
+
+    const prisma = await getPrismaMock();
+    await prisma.__reset();
   });
 
   afterEach(() => {
-    vi.unstubAllEnvs();
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
-  it("allows non-protected routes", async () => {
+  it("allows intl middleware to handle locale redirects", async () => {
+    // Mock intl middleware returning a redirect response
+    const intlResponse = new Response(null, {
+      status: 302,
+      headers: { Location: "/fr/chapters" },
+    });
+    mockIntlMiddleware.mockReturnValue(intlResponse);
+
+    const req = new NextRequest(new URL("/chapters", "http://localhost:3000"));
+    const result = await middleware(req);
+
+    expect(result).toBe(intlResponse);
+    expect(mockIntlMiddleware).toHaveBeenCalledWith(req);
+  });
+
+  it("allows non-protected routes after intl processing", async () => {
+    mockIntlMiddleware.mockReturnValue(null); // No intl redirect needed
+
     const req = new NextRequest(
-      new URL(NON_PROTECTED_PATH, "http://localhost:3000")
+      new URL("/fr/chapters", "http://localhost:3000")
     );
     await middleware(req);
-    expect(mockNextResponseNext).toHaveBeenCalled();
-    expect(mockNextResponseRedirect).not.toHaveBeenCalled();
+
+    expect(mockNextResponseNext).not.toHaveBeenCalled();
+    // The updateSession response is returned directly for non-protected routes
   });
 
-  PROTECTED_PATHS.forEach((path) => {
-    it(`redirects to signin when no user for protected route ${path}`, async () => {
-      // Ensure no user
-      // test-only import
-      const supa0 = await getSupabaseMock();
-      await supa0.__setGetUserResult({ data: { user: null } });
+  it("checks authentication BEFORE intl processing for protected routes", async () => {
+    // Mock intl middleware to return a redirect (to simulate locale handling)
+    const intlResponse = new Response(null, {
+      status: 302,
+      headers: { Location: "/fr/admin" },
+    });
+    mockIntlMiddleware.mockReturnValue(intlResponse);
 
-      const req = new NextRequest(new URL(path, "http://localhost:3000"));
-      await middleware(req);
+    // No user authenticated
+    const supa = await getSupabaseMock();
+    await supa.__setGetUserResult({ data: { user: null } });
 
-      expect(mockNextResponseRedirect).toHaveBeenCalled();
-      const redirectUrl = new URL(mockNextResponseRedirect.mock.calls[0][0]);
-      expect(redirectUrl.pathname).toBe("/auth/signin");
-      expect(redirectUrl.searchParams.get("callbackUrl")).toBe(
-        req.nextUrl.href
-      );
+    const req = new NextRequest(new URL("/admin", "http://localhost:3000"));
+    const result = await middleware(req);
+
+    // Should redirect to signin, NOT to intl redirect
+    expect(mockNextResponseRedirect).toHaveBeenCalled();
+    const redirectUrl = new URL(mockNextResponseRedirect.mock.calls[0][0]);
+    expect(redirectUrl.pathname).toBe("/auth/signin");
+
+    // Should NOT return intl response since auth failed first
+    expect(result).not.toBe(intlResponse);
+  });
+
+  it("allows intl processing after successful authentication for protected routes", async () => {
+    // Mock intl middleware to return a redirect (to simulate locale handling)
+    const intlResponse = new Response(null, {
+      status: 302,
+      headers: { Location: "/fr/admin" },
+    });
+    mockIntlMiddleware.mockReturnValue(intlResponse);
+
+    // User is authenticated and is admin
+    const supa = await getSupabaseMock();
+    await supa.__setGetUserResult({
+      data: {
+        user: {
+          id: "admin1",
+          user_metadata: { role: "admin" },
+        },
+      },
     });
 
-    it(`redirects to unauthorized when user is not ADMIN (no metadata and no profile) for ${path}`, async () => {
-      // user present but no metadata and profile query returns null
-      // test-only import
-      const supa1 = await getSupabaseMock();
-      await supa1.__setGetUserResult({ data: { user: { id: "u1" } } });
-      // profile returns null (no role) via prisma mock
-      const prismaMock = await getPrismaMock();
-      await prismaMock.__setProfileResult(null);
+    const req = new NextRequest(new URL("/admin", "http://localhost:3000"));
+    const result = await middleware(req);
 
-      const req = new NextRequest(new URL(path, "http://localhost:3000"));
-      await middleware(req);
+    // Should NOT redirect to signin or unauthorized
+    expect(mockNextResponseRedirect).not.toHaveBeenCalled();
 
-      expect(mockNextResponseRedirect).toHaveBeenCalled();
-      const redirectUrl = new URL(mockNextResponseRedirect.mock.calls[0][0]);
-      expect(redirectUrl.pathname).toBe("/unauthorized");
-    });
+    // Should return intl response since auth passed
+    expect(result).toBe(intlResponse);
+    expect(mockIntlMiddleware).toHaveBeenCalledWith(req);
+  });
 
-    it(`allows access when user metadata contains ADMIN for ${path}`, async () => {
-      // user with metadata role
-      // test-only import
-      const supa2 = await getSupabaseMock();
-      await supa2.__setGetUserResult({
-        data: { user: { id: "u2", user_metadata: { role: "admin" } } },
+  describe("Protected routes", () => {
+    const protectedPaths = ["/fr/admin", "/fr/chapters/add", "/fr/sahabas/add"];
+
+    protectedPaths.forEach((path) => {
+      it(`redirects to signin when no user for ${path}`, async () => {
+        mockIntlMiddleware.mockReturnValue(null);
+
+        const supa = await getSupabaseMock();
+        await supa.__setGetUserResult({ data: { user: null } });
+
+        const req = new NextRequest(new URL(path, "http://localhost:3000"));
+        await middleware(req);
+
+        expect(mockNextResponseRedirect).toHaveBeenCalled();
+        const redirectUrl = new URL(mockNextResponseRedirect.mock.calls[0][0]);
+        expect(redirectUrl.pathname).toBe("/auth/signin");
+        expect(redirectUrl.searchParams.get("callbackUrl")).toBe(
+          req.nextUrl.href
+        );
       });
 
-      const req = new NextRequest(new URL(path, "http://localhost:3000"));
-      await middleware(req);
+      it(`redirects to unauthorized when user has no admin role for ${path}`, async () => {
+        mockIntlMiddleware.mockReturnValue(null);
 
-      expect(mockNextResponseNext).toHaveBeenCalled();
-      expect(mockNextResponseRedirect).not.toHaveBeenCalled();
-    });
+        const supa = await getSupabaseMock();
+        await supa.__setGetUserResult({
+          data: { user: { id: "user1" } },
+        });
 
-    it(`allows access when profile row has ADMIN role for ${path}`, async () => {
-      // user without metadata, but profile query returns role ADMIN
-      // test-only import
-      const supa3 = await getSupabaseMock();
-      await supa3.__setGetUserResult({ data: { user: { id: "u3" } } });
-      const prismaMock = await getPrismaMock();
-      await prismaMock.__setProfileResult({ role: "ADMIN" });
+        const prisma = await getPrismaMock();
+        await prisma.__setProfileResult(null); // No role in profile
 
-      const req = new NextRequest(new URL(path, "http://localhost:3000"));
-      await middleware(req);
+        const req = new NextRequest(new URL(path, "http://localhost:3000"));
+        await middleware(req);
 
-      expect(mockNextResponseNext).toHaveBeenCalled();
-      expect(mockNextResponseRedirect).not.toHaveBeenCalled();
+        expect(mockNextResponseRedirect).toHaveBeenCalled();
+        const redirectUrl = new URL(mockNextResponseRedirect.mock.calls[0][0]);
+        expect(redirectUrl.pathname).toBe("/unauthorized");
+      });
+
+      it(`allows access when user has admin role in metadata for ${path}`, async () => {
+        mockIntlMiddleware.mockReturnValue(null);
+
+        const supa = await getSupabaseMock();
+        await supa.__setGetUserResult({
+          data: {
+            user: {
+              id: "admin1",
+              user_metadata: { role: "admin" },
+            },
+          },
+        });
+
+        const req = new NextRequest(new URL(path, "http://localhost:3000"));
+        const result = await middleware(req);
+
+        expect(mockNextResponseRedirect).not.toHaveBeenCalled();
+        // Should return the supabase response (updateSession result)
+        expect(result).toBeDefined();
+      });
+
+      it(`allows access when user has ADMIN role in profile for ${path}`, async () => {
+        mockIntlMiddleware.mockReturnValue(null);
+
+        const supa = await getSupabaseMock();
+        await supa.__setGetUserResult({
+          data: { user: { id: "admin2" } },
+        });
+
+        const prisma = await getPrismaMock();
+        await prisma.__setProfileResult({ role: "ADMIN" });
+
+        const req = new NextRequest(new URL(path, "http://localhost:3000"));
+        const result = await middleware(req);
+
+        expect(mockNextResponseRedirect).not.toHaveBeenCalled();
+        expect(result).toBeDefined();
+      });
     });
   });
 });

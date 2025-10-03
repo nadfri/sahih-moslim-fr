@@ -1,8 +1,10 @@
+import { Locale } from "next-intl";
 import { z } from "zod";
 
 export type FilterType = "word" | "sahaba" | "transmitter" | "numero";
 export type VariantType = "chapters" | "sahabas" | "transmitters";
 export type ThemeType = "light" | "dark" | null;
+export type ParamsPromise = Promise<{ locale: Locale }>;
 
 // --- Structural Schema (for ItemType, data representation) ---
 export const SchemaItemStructure = z.object({
