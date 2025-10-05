@@ -94,7 +94,7 @@ export function MultiSelect({
                     e.stopPropagation();
                     handleRemove(item);
                   }}
-                  className="ml-1 text-emerald-600 dark:text-emerald-500 hover:text-emerald-800 dark:hover:text-emerald-300 focus:outline-none"
+                  className="ms-1 text-emerald-600 dark:text-emerald-500 hover:text-emerald-800 dark:hover:text-emerald-300 focus:outline-none"
                 >
                   <X className="h-4 w-4" />
                 </button>

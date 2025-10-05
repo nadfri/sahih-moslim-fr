@@ -43,7 +43,7 @@ export function ActionsBtns({
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
-      <div className="flex flex-wrap items-center gap-3 ml-auto">
+      <div className="flex flex-wrap items-center gap-3 ms-auto">
         <CopyBoard hadith={hadith} />
 
         <button

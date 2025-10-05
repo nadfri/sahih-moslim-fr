@@ -41,7 +41,7 @@ export function Select({
           value={value}
           onChange={onChange ? (e) => onChange(e.target.value) : undefined}
           required={required}
-          className={`w-full p-2 border rounded-md appearance-none pr-10 cursor-pointer ${
+          className={`w-full p-2 border rounded-md appearance-none pe-10 cursor-pointer ${
             error
               ? "border-red-500 bg-red-50 dark:bg-red-950/30 focus:border-red-500"
               : "border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus-within:border-emerald-600"

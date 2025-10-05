@@ -77,7 +77,7 @@ export function BackupRestoreSection() {
         >
           {isGenerating ? (
             <>
-              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent inline-block mr-2" />
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent inline-block me-2" />
               <span>Génération...</span>
             </>
           ) : (

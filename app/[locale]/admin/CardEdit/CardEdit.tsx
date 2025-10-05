@@ -103,7 +103,7 @@ export function CardEdit({ item, items, variant }: Props) {
         </div>
       </div>
 
-      <div className="flex items-center ml-3">
+      <div className="flex items-center ms-3">
         <button
           type="button"
           onClick={() => setShowEditDialog(true)}

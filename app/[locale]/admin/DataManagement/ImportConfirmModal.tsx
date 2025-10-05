@@ -144,7 +144,7 @@ export function ImportConfirmModal({
             <div className="font-medium mb-1 text-emerald-700 dark:text-emerald-300">
               Aperçu des items à importer :
             </div>
-            <ul className="list-disc pl-4">
+            <ul className="list-disc ps-4">
               {previewItems.slice(-10).map((item) => (
                 <li
                   key={
@@ -185,7 +185,7 @@ export function ImportConfirmModal({
           >
             {isImporting ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent inline-block mr-2"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent inline-block me-2"></div>
                 Importation...
               </>
             ) : (

@@ -46,7 +46,7 @@ export function Isnad({ isnadTransmitters, edit }: Props) {
           <div className="w-full md:w-auto">
             <button
               onClick={toggleIsnadVisibility}
-              className="flex items-center space-x-1 text-xs font-medium rounded-md bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 px-2 py-1 focus:outline-none shrink-0 md:ml-2 ml-0"
+              className="flex items-center space-x-1 text-xs font-medium rounded-md bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 px-2 py-1 focus:outline-none shrink-0 md:ms-2 ms-0"
               aria-expanded={isIsnadVisible}
               aria-controls={isnadContentId}
             >
@@ -82,7 +82,7 @@ export function Isnad({ isnadTransmitters, edit }: Props) {
                 key={transmitter.id}
                 className="flex items-center fadeIn"
               >
-                <ChevronRightCircle className="size-4 text-gray-500 dark:text-gray-300 mr-1" />
+                <ChevronRightCircle className="size-4 text-gray-500 dark:text-gray-300 me-1" />
 
                 <Link
                   href={`/transmitters/${transmitter.slug}`}

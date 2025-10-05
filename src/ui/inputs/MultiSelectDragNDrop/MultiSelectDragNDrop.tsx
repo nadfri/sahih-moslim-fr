@@ -125,8 +125,8 @@ export function MultiSelectDragNDrop({
                   draggedIndex === index ? "opacity-50" : ""
                 }`}
               >
-                <GripVertical className="h-3 w-3 mr-1 text-emerald-500" />
-                <span className="mr-1">{index + 1}.</span>
+                <GripVertical className="h-3 w-3 me-1 text-emerald-500" />
+                <span className="me-1">{index + 1}.</span>
                 <span>{item}</span>
                 <button
                   type="button"
@@ -134,7 +134,7 @@ export function MultiSelectDragNDrop({
                     e.stopPropagation();
                     handleRemove(item);
                   }}
-                  className="ml-1 text-emerald-600 dark:text-emerald-500 hover:text-emerald-800 dark:hover:text-emerald-300 focus:outline-none"
+                  className="ms-1 text-emerald-600 dark:text-emerald-500 hover:text-emerald-800 dark:hover:text-emerald-300 focus:outline-none"
                 >
                   <X className="h-4 w-4" />
                 </button>

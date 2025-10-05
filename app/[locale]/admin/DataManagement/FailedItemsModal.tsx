@@ -37,7 +37,7 @@ export function FailedItemsModal({ items, onClose }: Props) {
           Certains éléments n'ont pas pu être importés. Voir la liste ci-dessous
           :
         </div>
-        <ul className="mb-4 text-sm list-disc pl-4 space-y-1">
+        <ul className="mb-4 text-sm list-disc ps-4 space-y-1">
           {items.map((f, i) => (
             <li
               key={i}

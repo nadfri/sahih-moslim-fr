@@ -5,7 +5,7 @@ import { LinkAddHadith } from "./LinkAddHadith";
 
 export function HeaderActions() {
   return (
-    <div className="flex items-center gap-2 ml-3 mr-1">
+    <div className="flex items-center gap-2 ms-3 me-1">
       <LinkAddHadith />
       <SignButtons />
       <ThemeToggle />

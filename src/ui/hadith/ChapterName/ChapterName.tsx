@@ -9,7 +9,7 @@ export function ChapterName({ hadith }: { hadith: HadithType }) {
         href={`/chapters/${hadith.chapter.slug}`}
         className="text-sm font-medium text-amber-700 dark:text-amber-500 tracking-wide uppercase inline-flex items-center hover:text-amber-900 dark:hover:text-amber-400 hover:underline transition-colors duration-200"
       >
-        <ArabicIcon className="mr-1 h-5" /> {hadith.chapter.name_fr}
+        <ArabicIcon className="me-1 h-5" /> {hadith.chapter.name_fr}
       </Link>
 
       <div className="flex items-center gap-2">

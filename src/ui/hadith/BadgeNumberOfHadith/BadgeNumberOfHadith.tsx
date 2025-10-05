@@ -17,8 +17,8 @@ export function BadgeNumberOfHadith({
       "text-md bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-400 px-3 py-1 mb-4",
   };
   const iconSizeClasses = {
-    small: "h-3 w-3 mr-1",
-    large: "h-4 w-4 mr-1.5",
+    small: "h-3 w-3 me-1",
+    large: "h-4 w-4 me-1.5",
   };
 
   return (
