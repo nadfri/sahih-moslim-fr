@@ -9,12 +9,12 @@ import {
 } from "@/src/services/services";
 import { ListLayoutHadith } from "@/src/ui/hadith/ListLayoutHadith/ListLayoutHadith";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ParamsType } from "@/src/types/types";
+import { ParamsSlug } from "@/src/types/types";
 
 export default async function PageBySahabas({
   params,
 }: {
-  params: ParamsType;
+  params: ParamsSlug;
 }) {
   const { slug, locale } = await params;
   setRequestLocale(locale);
@@ -38,7 +38,7 @@ export default async function PageBySahabas({
 
 /*Generate metadata for each hadith*/
 export async function generateMetadata(props: {
-  params: ParamsType;
+  params: ParamsSlug;
 }): Promise<Metadata> {
   const params = await props.params;
 

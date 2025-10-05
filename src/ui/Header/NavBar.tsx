@@ -4,12 +4,12 @@ import { useTranslations } from "next-intl";
 
 // Navigation links
 export const navLinks = [
-  { href: "/", key: "home" },
-  { href: "/chapters", key: "chapters" },
-  { href: "/sahabas", key: "sahabas" },
-  { href: "/transmitters", key: "transmitters" },
-  { href: "/search", key: "search" },
-];
+  { href: "/", label: "home" },
+  { href: "/chapters", label: "chapters" },
+  { href: "/sahabas", label: "sahabas" },
+  { href: "/transmitters", label: "transmitters" },
+  { href: "/search", label: "search" },
+] as const;
 
 type NavBarProps = {
   isMobile?: boolean;
@@ -54,7 +54,7 @@ export function NavBar({ isMobile = false }: NavBarProps) {
                 href={link.href}
                 className={getLinkClasses(active)}
               >
-                {t(link.key)}
+                {t(link.label)}
               </Link>
             </li>
           );

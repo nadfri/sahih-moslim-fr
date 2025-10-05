@@ -47,7 +47,7 @@ describe("UnauthorizedPage", () => {
 
     const params = Promise.resolve({ locale: "fr" as Locale });
 
-    renderWithI18n(<Page {...params} />);
+    renderWithI18n(<Page params={params} />);
 
     expect(screen.getByText(/accès non autorisé/i)).toBeInTheDocument();
     expect(

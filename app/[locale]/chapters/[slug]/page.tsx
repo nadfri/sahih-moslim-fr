@@ -8,13 +8,13 @@ import {
   getChapterWithHadiths,
 } from "@/src/services/services";
 import { ListLayoutHadith } from "@/src/ui/hadith/ListLayoutHadith/ListLayoutHadith";
-import { ParamsType } from "@/src/types/types";
+import { ParamsSlug } from "@/src/types/types";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 
 export default async function PageByChapters({
   params,
 }: {
-  params: ParamsType;
+  params: ParamsSlug;
 }) {
   const { slug, locale } = await params;
   setRequestLocale(locale);
@@ -38,7 +38,7 @@ export default async function PageByChapters({
 
 /*Generate metadata for each chapter*/
 export async function generateMetadata(props: {
-  params: ParamsType;
+  params: ParamsSlug;
 }): Promise<Metadata> {
   const params = await props.params;
   const slug = params.slug;

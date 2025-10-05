@@ -17,7 +17,8 @@
     "prisma:seed": "node prisma/seed.js",
     "restore:emergency": "node backups/restore-emergency.cjs",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "tsc": "npx tsc --noEmit"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",

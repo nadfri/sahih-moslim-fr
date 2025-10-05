@@ -65,7 +65,7 @@
   },
   "sahabas": {
     "description-metadata": "Discover the companions of Hadiths in the Sahih Moslim collection.",
-    "description-metadata-slug": "Collection of Hadiths du Compagnon {Name} - Sahih Moslim",
+    "description-metadata-slug": "Collection of Hadiths du Compagnon {name} - Sahih Moslim",
     "notFound": "Companion not found",
     "notFoundDescription": "This companion does not exist.",
     "title": "List of companions",

@@ -7,15 +7,19 @@ import { getHadithByNumero } from "@/src/services/services";
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { getNarratorName } from "@/src/utils/getNarratorName";
 import { requireAdmin } from "@/src/lib/auth/supabase/helpers";
-import { ParamsType } from "@/src/types/types";
+import { ParamsNumero } from "@/src/types/types";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-export default async function PageByNumero({ params }: { params: ParamsType }) {
+export default async function PageByNumero({
+  params,
+}: {
+  params: ParamsNumero;
+}) {
   const { numero, locale } = await params;
 
   setRequestLocale(locale);
 
-  const t = await getTranslations("hadiths");
+  const t = await getTranslations("hadith");
 
   const adminCheck = await requireAdmin();
 
@@ -49,11 +53,11 @@ export default async function PageByNumero({ params }: { params: ParamsType }) {
 export async function generateMetadata({
   params,
 }: {
-  params: ParamsType;
+  params: ParamsNumero;
 }): Promise<Metadata> {
   const { numero } = await params;
 
-  const t = await getTranslations("hadiths");
+  const t = await getTranslations("hadith");
 
   const hadith = await getHadithByNumero(numero);
 
