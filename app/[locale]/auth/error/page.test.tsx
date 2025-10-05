@@ -1,27 +1,18 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
-
+import { describe, it, expect } from "vitest";
+import { renderWithI18n } from "@/__tests__/renderWithI18n";
 import Page from "./page";
 
-// Mock React's use hook
-vi.mock("react", async () => {
-  const actual = await vi.importActual("react");
-  return {
-    ...actual,
-    use: vi.fn((promise) => promise), // Simply return the promise value directly
-  };
-});
+describe("Auth Error Page", () => {
+  it("renders error message", async () => {
+    // Mock params et searchParams comme Promises
+    const params = Promise.resolve({ locale: "fr" as const });
+    const searchParams = Promise.resolve({ error: "Configuration" });
 
-describe("AuthErrorPage", () => {
-  it("renders error message", () => {
-    // Create a mock searchParams with resolved value
-    const mockSearchParams = Promise.resolve({
-      error: "Authentication Error",
-    });
+    // On attend le composant async
+    const jsx = await Page({ params, searchParams });
+    const { findByText } = renderWithI18n(jsx);
 
-    // Render the page with the mock searchParams
-    render(<Page searchParams={mockSearchParams} />);
-
-    expect(screen.getByText(/authentication error/i)).toBeInTheDocument();
+    // Vérifie que le message d'erreur de configuration s'affiche
+    expect(await findByText(/configuration/i)).toBeInTheDocument();
   });
 });

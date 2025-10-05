@@ -1,6 +1,10 @@
 // Tests for ChaptersPage
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { Locale } from "next-intl";
+import { getTranslations } from "next-intl/server";
+import frMessages from "@/src/messages/fr.json";
+import type { Mock } from "vitest";
 
 // Mock getAllChapters
 vi.mock("@/src/services/services", () => ({
@@ -12,16 +16,30 @@ vi.mock("@/src/services/services", () => ({
 
 describe("ChaptersPage", () => {
   it("renders chapters list", async () => {
+    // Ensure i18n: map keys to FR messages for 'chapters'
+    const mockedGetTranslations = getTranslations as unknown as Mock;
+    const chaptersDict = (
+      frMessages as unknown as {
+        chapters: Record<string, string>;
+      }
+    ).chapters;
+    mockedGetTranslations.mockReturnValue((key: string) => {
+      return chaptersDict[key] ?? key;
+    });
+
     // Dynamically import the server component and render it as a promise
     const { default: ChaptersPage } = await import("./page");
+    // Provide params as a Promise with locale (Next.js 15 behavior)
+    const params = Promise.resolve({ locale: "fr" as Locale });
     // Render the async server component using .then
-    await ChaptersPage().then((node) => {
+    await ChaptersPage({
+      params,
+    } as { params: Promise<{ locale: Locale }> }).then((node) => {
       render(<>{node}</>);
     });
     // Check for expected content
-    expect(
-      await screen.findByText("Chapitres de Sahih Muslim")
-    ).toBeInTheDocument();
+    // Title comes from i18n: messages.chapters.title = "Liste des Chapitres"
+    expect(await screen.findByText("Liste des Chapitres")).toBeInTheDocument();
 
     expect(await screen.findByText("Introduction")).toBeInTheDocument();
     expect(await screen.findByText("Faith")).toBeInTheDocument();

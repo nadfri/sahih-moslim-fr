@@ -68,7 +68,7 @@ describe("Header component", () => {
     mockUseAuth.mockReturnValue({ user: null, loading: false, isAdmin: false });
     const { rerender } = renderWithI18n(<Header />);
     // Add hadith link is not present
-    expect(document.querySelector('a[href="/hadiths/add"]')).toBeNull();
+    expect(document.querySelector('a[href="/hadith/add"]')).toBeNull();
 
     // Admin
     mockUseAuth.mockReturnValue({
@@ -78,7 +78,7 @@ describe("Header component", () => {
     });
     rerender(<Header />);
     // When admin, LinkAddHadith renders an anchor (PlusIcon only) - query by href
-    const addLink = document.querySelector('a[href="/hadiths/add"]');
+    const addLink = document.querySelector('a[href="/hadith/add"]');
     expect(addLink).toBeInTheDocument();
   });
 

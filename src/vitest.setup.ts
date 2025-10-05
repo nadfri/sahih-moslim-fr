@@ -21,12 +21,24 @@ vi.mock("next/cache", () => ({
 
 // Mock next-intl server functions
 vi.mock("next-intl/server", () => ({
+  // In tests, return the key as-is for simplicity
   getTranslations: vi.fn(() => (key: string) => key),
+  // Provide minimal locale utilities
   getLocale: vi.fn(() => "fr"),
   getMessages: vi.fn(() => ({})),
   getNow: vi.fn(() => new Date()),
   getTimeZone: vi.fn(() => "Europe/Paris"),
+  // Ensure setRequestLocale exists for server components using next-intl
+  setRequestLocale: vi.fn(),
 }));
+
+// Mock next-intl client functions
+vi.mock("next-intl", async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...(actual as Record<string, unknown>),
+  };
+});
 
 // Mock next/link component
 vi.mock("next/link", () => ({

@@ -16,9 +16,17 @@
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
-[data-theme=dark]{
+[data-theme="dark"] {
   --background: #0f172a;
   --foreground: #f1f5f9;
+}
+
+/* Amiri font for Arabic */
+html[lang="ar"] {
+  font-family:
+    var(--font-amiri), "Amiri", "Noto Naskh Arabic", "Scheherazade", "Arial",
+    sans-serif;
+    line-height: 170%;
 }
 
 body {

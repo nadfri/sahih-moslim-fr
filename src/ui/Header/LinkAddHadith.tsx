@@ -10,7 +10,7 @@ export function LinkAddHadith() {
 
   return (
     <Link
-      href="/hadiths/add"
+      href="/hadith/add"
       className={`
         inline-flex items-center justify-center
         bg-emerald-50 dark:bg-emerald-900/30 

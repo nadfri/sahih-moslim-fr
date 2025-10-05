@@ -61,7 +61,7 @@ export function ActionsBtns({
         {isAdmin && (
           <>
             <Link
-              href={`/hadiths/${hadith.numero}/edit`}
+              href={`/hadith/${hadith.numero}/edit`}
               className="inline-flex items-center gap-1.5 text-sm font-medium bg-orange-50 dark:bg-orange-700 text-orange-600 dark:text-orange-300 px-3 py-1.5 rounded-md hover:bg-orange-100 dark:hover:bg-orange-900/70 hover:text-orange-700 dark:hover:text-orange-400 transition-all duration-200"
               title="Modifier ce hadith"
               aria-label="Éditer le hadith"

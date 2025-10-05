@@ -5,12 +5,114 @@
     "backHome": "Back to home",
     "ifError": "If you think this is an error, please let us know."
   },
-
+  "auth": {
+    "error": {
+      "title": "Authentication Error",
+      "configurationError": "There is a problem with the server configuration. Please contact the administrator.",
+      "unknownError": "An unknown error occurred during authentication.",
+      "goHome": "Return Home",
+      "tryAgain": "Try Again"
+    }
+  },
+  "chapters": {
+    "description-metadata": "Discover the chapters of the Sahih Moslim collection.",
+    "description-metadata-slug": "Hadiths collection of the chapter {name} - sahih moslim",
+    "notFound": "Chapter not found",
+    "notFoundDescription": "This chapter does not exist.",
+    "title": "List of chapters",
+    "title-metadata": "The chapters in Moslim",
+    "title-metadata-slug": "Chapter: {name}",
+    "title-slug": "Chapter Hadiths"
+  },
+  "hadith": {
+    "notFound": "Hadith not found",
+    "title": "N ° {number} - {narrator}"
+  },
   "header": {
     "home": "Home",
     "chapters": "Chapters",
     "sahabas": "Companions",
     "transmitters": "Transmitters",
     "search": "Search"
+  },
+  "home": {
+    "title": "Sahih Moslim in French",
+    "descriptive": {
+      "bookName": "Sahih Moslim",
+      "bukharName": "Sahih al-Bukhari",
+      "hadithCount": "3,033",
+      "imamName": "Imam Moslim Ibn Al-Hajjaj",
+      "paragraph1": {
+        "part1": "is one of the most authentic Hadiths of Hadiths in Islam, recognized for its rigor and reliability. \nIt brings together more than",
+        "part2": "Stories of",
+        "part3": ", carefully verified and classified by themes."
+      },
+      "paragraph2": {
+        "part1": "IX -compiled",
+        "part2": "century, this work occupies a central place in the Muslim tradition, just after the",
+        "part3": ". \nIt is a major reference for the study of Sunnah and Islamic law.",
+        "superscript": "e"
+      },
+      "paragraph3": {
+        "part1": "(821-875), from Nishapur (current Iran), was a scholar renowned for his integrity and strict methodology in the collection of hadiths. \nHis work has deeply marked the science of hadith."
+      },
+      "prophetName": "Prophet Muhammad ﷺ"
+    }
+  },
+  "layout": {
+    "description": "A collection of authentic hadiths.",
+    "title": "Sahih Moslim in French"
+  },
+  "sahabas": {
+    "description-metadata": "Discover the companions of Hadiths in the Sahih Moslim collection.",
+    "description-metadata-slug": "Collection of Hadiths du Compagnon {Name} - Sahih Moslim",
+    "notFound": "Companion not found",
+    "notFoundDescription": "This companion does not exist.",
+    "title": "List of companions",
+    "title-metadata": "Companions in Moslim",
+    "title-metadata-slug": "Companion: {name}",
+    "title-slug": "Hadiths mentioning the companion"
+  },
+  "search": {
+    "description-metadata": "Look for authentic hadiths in the Sahih Moslim collection",
+    "empty": "No hadith found ...",
+    "filters": {
+      "numero": "Per number",
+      "sahaba": "Companion",
+      "transmitter": "By transmitter",
+      "word": "By word"
+    },
+    "loading": "Search in progress ...",
+    "placeholders": {
+      "numeroInput": "Hadith number",
+      "sahabaSelect": "Choose one or more rapporteurs",
+      "transmitterSelect": "Choose one or more transmitters",
+      "wordInput": "Search by word (3 letters min) ..."
+    },
+    "title": "Hadiths search",
+    "title-metadata": "Search in Moslim",
+    "validation": {
+      "min3letters": "Please enter at least 3 letters for word research."
+    }
+  },
+  "signin": {
+    "title": "Sign In",
+    "description": "Sign in with your GitHub account to access administration features."
+  },
+  "transmitters": {
+    "description-metadata": "Discover the Hadith transmitters in the Sahih Moslim collection.",
+    "description-metadata-slug": "Transmitter hadith collection {name} - sahih moslim",
+    "notFound": "Transmitter not found",
+    "notFoundDescription": "This transmitter does not exist.",
+    "title": "List of transmitters",
+    "title-metadata": "Transmitters in Moslim",
+    "title-metadata-slug": "Transmitter: {name}",
+    "title-slug": "Transmitter hadith"
+  },
+  "unauthorized": {
+    "adminOnly": "Only administrators can access this section.",
+    "backHome": "Back to reception",
+    "noPermission": "You do not have the necessary permissions to access this page.",
+    "title": "Unauthorized access"
   }
 }

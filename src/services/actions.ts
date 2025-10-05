@@ -668,7 +668,7 @@ export async function editHadith(
     }
 
     revalidatePath("/");
-    // revalidatePath(`/hadiths/${validData.numero}`);
+    // revalidatePath(`/hadith/${validData.numero}`);
 
     return {
       success: true,

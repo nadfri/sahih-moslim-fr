@@ -1,18 +1,29 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 
 import { getAllSahabas } from "@/src/services/services";
+import { ParamsLocale } from "@/src/types/types";
 import { FilteredListCard } from "@/src/ui/FilteredListCard/FilteredListCard";
 import { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 export const dynamic = "force-static";
 export const revalidate = 86400; // 1 day
 
-export default async function SahabasPage() {
+export default async function SahabasPage({
+  params,
+}: {
+  params: ParamsLocale;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  const t = await getTranslations("sahabas");
+
   const sahabas = await getAllSahabas();
 
   return (
     <div className="container mx-auto max-w-5xl">
-      <h1 className="title">Hadiths mentionnant des compagnons</h1>
+      <h1 className="title">{t("title")}</h1>
 
       <FilteredListCard
         variant="sahabas"
@@ -24,9 +35,10 @@ export default async function SahabasPage() {
 
 // Generate static metadata
 export async function generateMetadata(): Promise<Metadata> {
-  const title = "Les Sahabas dans Moslim";
-  const description =
-    "Découvrez les Sahabas dans les hadiths de la collection Sahih Moslim.";
+  const t = await getTranslations("sahabas");
+
+  const title = t("title-metadata");
+  const description = t("description-metadata");
 
   return {
     title,

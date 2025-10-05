@@ -2,6 +2,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { Locale } from "next-intl";
 
 // Mock getChapterWithHadiths service
 vi.mock("@/src/services/services", () => ({
@@ -27,7 +28,7 @@ vi.mock("@/src/hooks/useAuth", () => ({
 describe("PageByChapters", () => {
   it("renders chapter title", async () => {
     const { default: PageByChapters } = await import("./page");
-    const params = Promise.resolve({ slug: "intro" });
+    const params = Promise.resolve({ slug: "intro", locale: "fr" as Locale });
     await PageByChapters({ params }).then((node: React.ReactNode) => {
       render(<>{node}</>);
     });

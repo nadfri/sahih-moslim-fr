@@ -8,12 +8,18 @@ import {
   getChapterWithHadiths,
 } from "@/src/services/services";
 import { ListLayoutHadith } from "@/src/ui/hadith/ListLayoutHadith/ListLayoutHadith";
+import { ParamsType } from "@/src/types/types";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 
-export type ParamsType = Promise<{ slug: string }>;
+export default async function PageByChapters({
+  params,
+}: {
+  params: ParamsType;
+}) {
+  const { slug, locale } = await params;
+  setRequestLocale(locale);
 
-export default async function PageByChapters(props: { params: ParamsType }) {
-  const params = await props.params;
-  const slug = params.slug;
+  const t = await getTranslations("chapters");
 
   const { chapter, hadiths } = await getChapterWithHadiths(slug);
 
@@ -23,7 +29,7 @@ export default async function PageByChapters(props: { params: ParamsType }) {
 
   return (
     <ListLayoutHadith
-      title="Hadiths du Chapitre"
+      title={t("title-slug")}
       name={chapter.name_fr}
       hadiths={hadiths}
     />
@@ -40,16 +46,18 @@ export async function generateMetadata(props: {
   // For metadata we can keep using the separate function
   const chapter = await getChapterBySlug(slug);
 
+  const t = await getTranslations("chapters");
+
   if (!chapter) {
     return {
-      title: "Chapitre non trouvé",
-      description: "Ce chapitre n'existe pas.",
+      title: t("notFound"),
+      description: t("notFoundDescription"),
     };
   }
 
   return {
-    title: `Chapitre: ${chapter.name_fr}`,
-    description: `Collection de hadiths du chapitre ${chapter.name_fr} - Sahih Moslim`,
+    title: t("title-metadata-slug", { name: chapter.name_fr }),
+    description: t("description-metadata-slug", { name: chapter.name_fr }),
   };
 }
 

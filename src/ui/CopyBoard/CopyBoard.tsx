@@ -43,7 +43,7 @@ export function CopyBoard({ hadith }: { hadith: HadithType }) {
         break;
       case "link":
         // Copy the full absolute URL instead of a relative link
-        textToCopy = `${window.location.origin}/hadiths/${hadithNumber}`;
+        textToCopy = `${window.location.origin}/hadith/${hadithNumber}`;
         break;
     }
 

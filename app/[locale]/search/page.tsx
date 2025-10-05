@@ -1,26 +1,19 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
-
 import { Metadata } from "next";
-
 import { SearchBar } from "@/app/[locale]/search/SearchBar";
 import { getSahabaNames, getTransmitterNames } from "@/src/services/services";
+import { ParamsLocale } from "@/src/types/types";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 export const dynamic = "force-static";
 export const revalidate = 86400; // 1 day
 
-// Generate static metadata
-export async function generateMetadata(): Promise<Metadata> {
-  const title = "Rechercher dans Moslim";
-  const description =
-    "Recherchez des hadiths authentiques dans la collection Sahih Moslim.";
+export default async function SearchPage({ params }: { params: ParamsLocale }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
 
-  return {
-    title,
-    description,
-  };
-}
+  const t = await getTranslations("search");
 
-export default async function SearchPage() {
   const [sahabaNames, transmitterNames] = await Promise.all([
     getSahabaNames(),
     getTransmitterNames(),
@@ -28,7 +21,7 @@ export default async function SearchPage() {
 
   return (
     <div className="container mx-auto max-w-5xl">
-      <h1 className="title">Rechercher un Hadith</h1>
+      <h1 className="title">{t("title")}</h1>
 
       <SearchBar
         sahabas={sahabaNames}
@@ -36,4 +29,17 @@ export default async function SearchPage() {
       />
     </div>
   );
+}
+
+// Generate static metadata
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("search");
+
+  const title = t("title-metadata");
+  const description = t("description-metadata");
+
+  return {
+    title,
+    description,
+  };
 }

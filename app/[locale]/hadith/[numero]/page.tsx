@@ -15,7 +15,7 @@ export default async function PageByNumero({ params }: { params: ParamsType }) {
 
   setRequestLocale(locale);
 
-  const t = await getTranslations("hadiths");
+  const t = await getTranslations("hadith");
 
   const adminCheck = await requireAdmin();
 
@@ -37,7 +37,6 @@ export default async function PageByNumero({ params }: { params: ParamsType }) {
       </h1>
 
       <Hadith
-        key={hadith.numero}
         hadith={hadith}
         isAdmin={isAdmin}
       />
@@ -53,7 +52,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { numero } = await params;
 
-  const t = await getTranslations("hadiths");
+  const t = await getTranslations("hadith");
 
   const hadith = await getHadithByNumero(numero);
 

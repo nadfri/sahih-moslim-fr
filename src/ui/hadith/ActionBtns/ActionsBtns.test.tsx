@@ -104,7 +104,7 @@ describe("ActionsBtns Component", () => {
       expect(editLink).toBeInTheDocument();
       expect(editLink).toHaveAttribute(
         "href",
-        `/hadiths/${mockHadith.numero}/edit`
+        `/hadith/${mockHadith.numero}/edit`
       );
       expect(editLink).toHaveAttribute("title", "Modifier ce hadith");
       expect(screen.getByText("Éditer")).toBeInTheDocument();

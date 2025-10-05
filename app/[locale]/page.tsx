@@ -1,6 +1,6 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 import { getAllHadiths } from "@/src/services/services";
-import { ParamsPromise } from "@/src/types/types";
+import { ParamsLocale } from "@/src/types/types";
 import { Descriptive } from "@/src/ui/Descriptive/Descriptive";
 import { ListLayoutHadith } from "@/src/ui/hadith/ListLayoutHadith/ListLayoutHadith";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -8,7 +8,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 export const dynamic = "force-static";
 export const revalidate = 86400; // 1 day
 
-export default async function Home(params: ParamsPromise) {
+export default async function Home({ params }: { params: ParamsLocale }) {
   const { locale } = await params;
   setRequestLocale(locale);
 

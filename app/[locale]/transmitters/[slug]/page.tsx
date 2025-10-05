@@ -8,12 +8,18 @@ import {
   getTransmitterWithHadiths,
 } from "@/src/services/services";
 import { ListLayoutHadith } from "@/src/ui/hadith/ListLayoutHadith/ListLayoutHadith";
+import { setRequestLocale, getTranslations } from "next-intl/server";
+import { ParamsType } from "@/src/types/types";
 
-export type ParamsType = Promise<{ slug: string }>;
+export default async function PageByTransmitter({
+  params,
+}: {
+  params: ParamsType;
+}) {
+  const { slug, locale } = await params;
+  setRequestLocale(locale);
 
-export default async function PageByTransmitter(props: { params: ParamsType }) {
-  const params = await props.params;
-  const slug = params.slug;
+  const t = await getTranslations("transmitters");
 
   const { transmitter, hadiths } = await getTransmitterWithHadiths(slug);
 
@@ -23,7 +29,7 @@ export default async function PageByTransmitter(props: { params: ParamsType }) {
 
   return (
     <ListLayoutHadith
-      title="Hadiths mentionnant"
+      title={t("title-slug")}
       name={transmitter.name_fr}
       hadiths={hadiths}
     />
@@ -40,16 +46,18 @@ export async function generateMetadata(props: {
 
   const transmitter = await getTransmitterBySlug(slug);
 
+  const t = await getTranslations("transmitters");
+
   if (!transmitter) {
     return {
-      title: "Transmetteur non trouvé",
-      description: "Ce transmetteur n'existe pas.",
+      title: t("notFound"),
+      description: t("notFoundDescription"),
     };
   }
 
   return {
-    title: `Transmetteur: ${transmitter.name_fr}`,
-    description: `Collection de hadiths du transmetteur ${transmitter.name_fr} - Sahih Moslim`,
+    title: t("title-metadata", { name: transmitter.name_fr }),
+    description: t("description-metadata-slug", { name: transmitter.name_fr }),
   };
 }
 

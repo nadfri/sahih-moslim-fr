@@ -1,9 +1,10 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, beforeEach, vi } from "vitest";
 
 import { HadithType, ItemType } from "@/src/types/types";
+import { renderWithI18n } from "@/__tests__/renderWithI18n";
 
 // Hoist-safe mock factory for the useSearch hook. It exports setter functions
 // so tests can control the hook return value reliably.
@@ -172,7 +173,7 @@ describe("SearchBar", () => {
   });
 
   it("affiche le placeholder initial", () => {
-    render(
+    renderWithI18n(
       <SearchBar
         sahabas={sahabas}
         transmitters={transmitters}
@@ -188,7 +189,7 @@ describe("SearchBar", () => {
       hasSearched: true,
     });
 
-    render(
+    renderWithI18n(
       <SearchBar
         sahabas={sahabas}
         transmitters={transmitters}
@@ -216,7 +217,7 @@ describe("SearchBar", () => {
       hasSearched: true,
     });
 
-    render(
+    renderWithI18n(
       <SearchBar
         sahabas={sahabas}
         transmitters={transmitters}
@@ -249,7 +250,7 @@ describe("SearchBar", () => {
       hasSearched: true,
     });
 
-    render(
+    renderWithI18n(
       <SearchBar
         sahabas={sahabas}
         transmitters={transmitters}
@@ -282,7 +283,7 @@ describe("SearchBar", () => {
       hasSearched: true,
     });
 
-    render(
+    renderWithI18n(
       <SearchBar
         sahabas={sahabas}
         transmitters={transmitters}
@@ -308,7 +309,7 @@ describe("SearchBar", () => {
   it("affiche un message si aucun résultat", async () => {
     __setMockSearch({ results: [], isLoading: false, hasSearched: true });
 
-    render(
+    renderWithI18n(
       <SearchBar
         sahabas={sahabas}
         transmitters={transmitters}

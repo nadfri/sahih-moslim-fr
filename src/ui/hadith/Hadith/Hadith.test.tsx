@@ -167,7 +167,7 @@ describe("Hadith", () => {
     // Edit link should be visible (use data-testid to locate links)
     const links = screen.getAllByTestId("mock-link");
     const editLink = links.find(
-      (l) => l.getAttribute("href") === "/hadiths/123/edit"
+      (l) => l.getAttribute("href") === "/hadith/123/edit"
     );
     expect(editLink).toBeDefined();
   });
@@ -183,7 +183,7 @@ describe("Hadith", () => {
     // Edit link should not be visible
     const links = screen.getAllByTestId("mock-link");
     const editLink = links.find(
-      (l) => l.getAttribute("href") === "/hadiths/123/edit"
+      (l) => l.getAttribute("href") === "/hadith/123/edit"
     );
     expect(editLink).toBeUndefined();
   });

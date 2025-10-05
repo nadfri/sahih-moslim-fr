@@ -8,12 +8,18 @@ import {
   getSahabaWithHadiths,
 } from "@/src/services/services";
 import { ListLayoutHadith } from "@/src/ui/hadith/ListLayoutHadith/ListLayoutHadith";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { ParamsType } from "@/src/types/types";
 
-export type ParamsType = Promise<{ slug: string }>;
+export default async function PageBySahabas({
+  params,
+}: {
+  params: ParamsType;
+}) {
+  const { slug, locale } = await params;
+  setRequestLocale(locale);
 
-export default async function PageBySahabas(props: { params: ParamsType }) {
-  const params = await props.params;
-  const slug = params.slug;
+  const t = await getTranslations("sahabas");
 
   const { sahaba, hadiths } = await getSahabaWithHadiths(slug);
 
@@ -23,7 +29,7 @@ export default async function PageBySahabas(props: { params: ParamsType }) {
 
   return (
     <ListLayoutHadith
-      title="Hadiths mentionnant"
+      title={t("title-slug")}
       name={sahaba.name_fr}
       hadiths={hadiths}
     />
@@ -40,15 +46,18 @@ export async function generateMetadata(props: {
 
   const sahaba = await getSahabaBySlug(slug);
 
+  const t = await getTranslations("sahabas");
+
   if (!sahaba) {
     return {
-      title: "Compagon non trouvé",
+      title: t("notFound"),
+      description: t("notFoundDescription"),
     };
   }
 
   return {
-    title: `Compagnon: ${sahaba.name_fr}`,
-    description: `Collection de hadiths du compagnon ${sahaba.name_fr} - Sahih Moslim`,
+    title: t("title-slug", { name: sahaba.name_fr }),
+    description: t("description-metadata-slug", { name: sahaba.name_fr }),
   };
 }
 

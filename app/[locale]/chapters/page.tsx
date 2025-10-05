@@ -1,18 +1,28 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 
 import { getAllChapters } from "@/src/services/services";
+import { ParamsLocale } from "@/src/types/types";
 import { FilteredListCard } from "@/src/ui/FilteredListCard/FilteredListCard";
 import { Metadata } from "next";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 
 export const dynamic = "force-static";
 export const revalidate = 86400; // 1 day
 
-export default async function ChaptersPage() {
+export default async function ChaptersPage({
+  params,
+}: {
+  params: ParamsLocale;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  const t = await getTranslations("chapters");
   const chapters = await getAllChapters();
 
   return (
     <div className="container mx-auto max-w-5xl">
-      <h1 className="title">Chapitres de Sahih Muslim</h1>
+      <h1 className="title">{t("title")}</h1>
 
       <FilteredListCard
         items={chapters}
@@ -24,9 +34,10 @@ export default async function ChaptersPage() {
 
 // Generate static metadata
 export async function generateMetadata(): Promise<Metadata> {
-  const title = "Les Chapitres de Moslim";
-  const description =
-    "Découvrez les chapitres des hadiths dans la collection Sahih Moslim.";
+  const t = await getTranslations("chapters");
+
+  const title = t("title-metadata");
+  const description = t("description-metadata");
 
   return {
     title,

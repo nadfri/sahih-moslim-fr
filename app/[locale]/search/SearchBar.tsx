@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { useSearch } from "@/src/hooks/useSearch";
 import { FilterType } from "@/src/types/types";
@@ -24,6 +25,7 @@ export function SearchBar({
   sahabas: string[];
   transmitters: string[];
 }) {
+  const t = useTranslations("search");
   const { isAdmin } = useAuth();
   // Safely handle useSearchParams (can be null in test environments)
   const rawSearchParams = useSearchParams();
@@ -148,7 +150,7 @@ export function SearchBar({
               onChange={() => handleFilterModeChange("word")}
               className="sr-only"
             />
-            <span>Par mot</span>
+            <span>{t("filters.word")}</span>
           </label>
           {/* Narrator filter removed */}
           <label
@@ -166,7 +168,7 @@ export function SearchBar({
               onChange={() => handleFilterModeChange("sahaba")}
               className="sr-only"
             />
-            <span>Par Compagnon</span>
+            <span>{t("filters.sahaba")}</span>
           </label>
           <label
             className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
@@ -183,7 +185,7 @@ export function SearchBar({
               onChange={() => handleFilterModeChange("transmitter")}
               className="sr-only"
             />
-            <span>Par Transmetteur</span>
+            <span>{t("filters.transmitter")}</span>
           </label>
           <label
             className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
@@ -200,7 +202,7 @@ export function SearchBar({
               onChange={() => handleFilterModeChange("numero")}
               className="sr-only"
             />
-            <span>Par Numéro</span>
+            <span>{t("filters.numero")}</span>
           </label>
         </div>
 
@@ -220,7 +222,7 @@ export function SearchBar({
                       numero
                     )
                   }
-                  placeholder="Rechercher par mot (3 lettres min)..."
+                  placeholder={t("placeholders.wordInput")}
                   className="w-full p-2 pr-10 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-600 bg-white dark:bg-gray-800 dark:text-gray-200"
                   autoFocus
                 />
@@ -241,7 +243,7 @@ export function SearchBar({
                     numero
                   )
                 }
-                placeholder="Choisir un ou plusieurs rapporteurs"
+                placeholder={t("placeholders.sahabaSelect")}
                 name="sahabaInput"
               />
             )}
@@ -254,7 +256,7 @@ export function SearchBar({
                 onChange={(values) =>
                   handleSearchChange(query, selectedSahabas, values, numero)
                 }
-                placeholder="Choisir un ou plusieurs transmetteurs"
+                placeholder={t("placeholders.transmitterSelect")}
                 name="transmitterInput"
               />
             )}
@@ -272,7 +274,7 @@ export function SearchBar({
                       e.target.value
                     )
                   }
-                  placeholder="Numéro du hadith"
+                  placeholder={t("placeholders.numeroInput")}
                   className="w-full p-2 pr-10 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-600 bg-white dark:bg-gray-800 dark:text-gray-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   min="1"
                   autoFocus
@@ -286,14 +288,12 @@ export function SearchBar({
 
       {/* Validation Messages */}
       {filterMode === "word" && query.length > 0 && query.length < 3 && (
-        <p className="text-red-400 italic">
-          Merci de saisir au moins 3 lettres pour la recherche par mot.
-        </p>
+        <p className="text-red-400 italic">{t("validation.min3letters")}</p>
       )}
 
       {isLoading && (
         <div className="text-center text-gray-600 dark:text-gray-400">
-          Recherche en cours...
+          {t("loading")}
         </div>
       )}
 
@@ -306,9 +306,7 @@ export function SearchBar({
               size="large"
             />
           ) : hasSearched && !isLoading ? (
-            <p className="text-gray-600 dark:text-gray-400">
-              Aucun hadith trouvé...
-            </p>
+            <p className="text-gray-600 dark:text-gray-400">{t("empty")}</p>
           ) : null}
         </>
       )}

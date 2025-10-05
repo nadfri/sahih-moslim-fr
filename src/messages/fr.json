@@ -5,6 +5,30 @@
     "backHome": "Retour à l'accueil",
     "ifError": "Si vous pensez qu'il s'agit d'une erreur, n'hésitez pas à nous le signaler."
   },
+  "auth": {
+    "error": {
+      "title": "Erreur d'authentification",
+      "configurationError": "Il y a un problème avec la configuration du serveur. Veuillez contacter l'administrateur.",
+      "unknownError": "Une erreur inconnue s'est produite lors de l'authentification.",
+      "goHome": "Retour à l'accueil",
+      "tryAgain": "Réessayer"
+    }
+  },
+  "chapters": {
+    "title": "Liste des Chapitres",
+    "title-slug": "Hadiths du Chapitre",
+    "title-metadata": "Les Chapitres dans Moslim",
+    "title-metadata-slug": "Chapitre: {name}",
+    "notFound": "Chapitre non trouvé",
+    "notFoundDescription": "Ce chapitre n'existe pas.",
+    "description-metadata": "Découvrez les chapitres de la collection Sahih Moslim.",
+    "description-metadata-slug": "Collection de hadiths du chapitre {name} - Sahih Moslim"
+  },
+
+  "hadith": {
+    "title": "N° {numero} - {narrator}",
+    "notFound": "Hadith non trouvé"
+  },
 
   "header": {
     "home": "Accueil",
@@ -15,13 +39,89 @@
   },
 
   "home": {
-    "title": "Sahih Moslim en français"
+    "title": "Sahih Moslim en français",
+
+    "descriptive": {
+      "bookName": "Sahih Moslim",
+      "hadithCount": "3 033",
+      "prophetName": "Prophète Muhammad ﷺ",
+      "imamName": "L'Imam Moslim ibn al-Hajjaj",
+      "bukharName": "Sahih al-Bukhari",
+      "paragraph1": {
+        "part1": "est l'une des collections de hadiths les plus authentiques de l'islam, reconnue pour sa rigueur et sa fiabilité. Elle rassemble plus de",
+        "part2": "récits du",
+        "part3": ", soigneusement vérifiés et classés par thèmes."
+      },
+      "paragraph2": {
+        "part1": "Compilée au IX",
+        "superscript": "e",
+        "part2": "siècle, cette œuvre occupe une place centrale dans la tradition musulmane, juste après le",
+        "part3": ". Elle est une référence majeure pour l'étude de la Sunna et du droit islamique."
+      },
+      "paragraph3": {
+        "part1": "(821-875), originaire de Nishapur (actuel Iran), était un érudit réputé pour son intégrité et sa méthodologie stricte dans la collecte des hadiths. Son travail a profondément marqué la science du hadith."
+      }
+    }
   },
 
   "layout": {
     "title": "Sahih Moslim en français",
     "description": "Une collection de hadiths authentiques."
   },
+
+  "sahabas": {
+    "title": "Liste des Compagnons",
+    "title-slug": "Hadiths mentionnant le compagnon",
+    "title-metadata": "Les Compagnons dans Moslim",
+    "title-metadata-slug": "Compagnon: {name}",
+    "notFound": "Compagnon non trouvé",
+    "notFoundDescription": "Ce compagnon n'existe pas.",
+    "description-metadata": "Découvrez les compagnons de hadiths dans la collection Sahih Moslim.",
+    "description-metadata-slug": "Collection de hadiths du compagnon {name} - Sahih Moslim"
+  },
+
+  "search": {
+    "title": "Recherche de Hadiths",
+    "title-metadata": "Rechercher dans Moslim",
+    "description-metadata": "Recherchez des hadiths authentiques dans la collection Sahih Moslim",
+
+    "filters": {
+      "word": "Par mot",
+      "sahaba": "Par Compagnon",
+      "transmitter": "Par Transmetteur",
+      "numero": "Par Numéro"
+    },
+
+    "placeholders": {
+      "wordInput": "Rechercher par mot (3 lettres min)...",
+      "sahabaSelect": "Choisir un ou plusieurs rapporteurs",
+      "transmitterSelect": "Choisir un ou plusieurs transmetteurs",
+      "numeroInput": "Numéro du hadith"
+    },
+
+    "validation": {
+      "min3letters": "Merci de saisir au moins 3 lettres pour la recherche par mot."
+    },
+    "loading": "Recherche en cours...",
+    "empty": "Aucun hadith trouvé..."
+  },
+
+  "signin": {
+    "title": "Se connecter",
+    "description": "Connectez-vous avec votre compte GitHub pour accéder aux fonctionnalités d'administration."
+  },
+
+  "transmitters": {
+    "title": "Liste des Transmetteurs",
+    "title-slug": "Hadiths du transmetteur",
+    "title-metadata": "Les Transmetteurs dans Moslim",
+    "title-metadata-slug": "Transmetteur: {name}",
+    "notFound": "Transmetteur non trouvé",
+    "notFoundDescription": "Ce transmetteur n'existe pas.",
+    "description-metadata": "Découvrez les transmetteurs de hadiths dans la collection Sahih Moslim.",
+    "description-metadata-slug": "Collection de hadiths du transmetteur {name} - Sahih Moslim"
+  },
+
   "unauthorized": {
     "title": "Accès non autorisé",
     "noPermission": "Vous n'avez pas les autorisations nécessaires pour accéder à cette page.",

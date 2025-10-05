@@ -1,10 +1,10 @@
 import { Link } from "@/i18n/navigation";
-import { ParamsPromise } from "@/src/types/types";
+import { ParamsLocale } from "@/src/types/types";
 import { useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { use } from "react";
 
-export default function UnauthorizedPage(params: ParamsPromise) {
+export default function UnauthorizedPage({ params }: { params: ParamsLocale }) {
   const { locale } = use(params);
   setRequestLocale(locale);
 

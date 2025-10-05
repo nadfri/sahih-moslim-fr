@@ -4,7 +4,12 @@ import { z } from "zod";
 export type FilterType = "word" | "sahaba" | "transmitter" | "numero";
 export type VariantType = "chapters" | "sahabas" | "transmitters";
 export type ThemeType = "light" | "dark" | null;
-export type ParamsPromise = Promise<{ locale: Locale }>;
+export type ParamsLocale = Promise<{ locale: Locale }>;
+export type ParamsType = Promise<{
+  locale: Locale;
+  slug: string;
+  numero: string;
+}>;
 
 // --- Structural Schema (for ItemType, data representation) ---
 export const SchemaItemStructure = z.object({

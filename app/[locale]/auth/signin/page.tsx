@@ -1,41 +1,44 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 
 import { Route, type Metadata } from "next";
+import { ParamsLocale } from "@/src/types/types";
 import { redirect } from "next/navigation";
-
 import { getServerUser } from "@/src/lib/auth/supabase/helpers";
 import { ButtonGithub } from "@/src/ui/SignButtons/ButtonGithub";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
-export const metadata: Metadata = {
-  title: "Se connecter",
-  description:
-    "Connectez-vous avec votre compte GitHub pour accéder aux fonctionnalités d'administration",
-};
-
-export default async function SignInPage({
-  searchParams,
-}: {
+export default async function SignInPage(props: {
+  params: ParamsLocale;
   searchParams: Promise<{ callbackUrl?: string }>;
 }) {
-  // Check if user is already authenticated
   const user = await getServerUser();
+  const { locale } = await props.params;
+  setRequestLocale(locale);
+
+  const { callbackUrl } = await props.searchParams;
 
   if (user) {
-    // User is already authenticated, redirect to callbackUrl or home
-    const params = await searchParams;
-    const callbackUrl = params.callbackUrl || "/";
-    redirect(callbackUrl as Route);
+    redirect((callbackUrl || "/") as Route);
   }
+
+  const t = await getTranslations("signin");
 
   return (
     <div className="container mx-auto py-8 flex flex-col items-center">
-      <h1 className="title">Se connecter</h1>
+      <h1 className="title">{t("title")}</h1>
       <p className="mb-10 text-slate-600 dark:text-slate-400">
-        Connectez-vous avec votre compte GitHub pour accéder aux fonctionnalités
-        d'administration
+        {t("description")}
       </p>
-
       <ButtonGithub />
     </div>
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("signin");
+
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
 }

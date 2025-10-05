@@ -212,7 +212,7 @@ export async function POST(request: NextRequest) {
     }
 
     revalidatePath("/");
-    revalidatePath("/hadiths");
+    revalidatePath("/hadith");
 
     return NextResponse.json({
       message: `Imported ${results.length} hadiths`,

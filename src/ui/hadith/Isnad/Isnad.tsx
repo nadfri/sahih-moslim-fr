@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import {
   ChevronRightCircle,
@@ -19,7 +19,8 @@ type Props = {
 
 export function Isnad({ isnadTransmitters, edit }: Props) {
   const [isIsnadVisible, setIsIsnadVisible] = useState(edit ?? false);
-  const isnadContentId = useId();
+  // Use a stable id based on the last transmitter (narrator)
+  const isnadContentId = `isnad-${isnadTransmitters[isnadTransmitters.length - 1]?.id ?? "unknown"}`;
 
   const toggleIsnadVisibility = () => {
     setIsIsnadVisible(!isIsnadVisible);

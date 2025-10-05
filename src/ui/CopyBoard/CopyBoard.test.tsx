@@ -136,7 +136,7 @@ describe("CopyBoard", () => {
 
     await user.click(linkOption);
     await waitFor(() => {
-      const expectedText = `https://test.com/hadiths/123`;
+      const expectedText = `https://test.com/hadith/123`;
       expect(mockWriteText).toHaveBeenCalledWith(expectedText);
     });
   });
