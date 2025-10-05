@@ -1,8 +1,10 @@
 import { Link } from "@/i18n/navigation";
 import { BookOpenText, MoveRight } from "lucide-react";
+import { MoveLeft } from "lucide-react";
 
 import { ItemType, VariantType } from "@/src/types/types";
-import { ChapterIndex } from "@/src/ui/Card/ChapterIndex/ChapterIndex";
+import { ChapterIndex } from "@/src/ui/FilteredListCard/Card/ChapterIndex/ChapterIndex";
+import { useLocale, useTranslations } from "next-intl";
 
 type Props = {
   item: ItemType;
@@ -10,6 +12,10 @@ type Props = {
 };
 
 export function Card({ item, variant }: Props) {
+  const t = useTranslations("search");
+
+  const locale = useLocale();
+
   return (
     <Link
       href={`/${variant}/${item.slug}`}
@@ -29,15 +35,19 @@ export function Card({ item, variant }: Props) {
 
           <p className="text-xs inline-flex items-center font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md px-2 py-0.5">
             <BookOpenText className="h-3 w-3 me-1" />
-            {item.hadithCount} Hadiths
+            {t("hadiths-count", { count: item.hadithCount ?? 0 })}
           </p>
         </div>
 
         {/* Navigation indicator (appears more clearly on hover) */}
         <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
           <p className="text-sm font-medium text-emerald-600 dark:text-emerald-500 flex items-center group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
-            Explorer
-            <MoveRight className="h-4 w-4 ms-1 transition-transform group-hover:translate-x-1" />
+            {t("explore")}
+            {locale === "ar" ? (
+              <MoveLeft className="h-4 w-4 me-1 transition-transform group-hover:-translate-x-1" />
+            ) : (
+              <MoveRight className="h-4 w-4 ms-1 transition-transform group-hover:translate-x-1" />
+            )}
           </p>
         </div>
       </div>

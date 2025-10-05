@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithI18n } from "@/__tests__/renderWithI18n";
 import { describe, expect, it, vi } from "vitest";
 
 import { Card } from "./Card";
@@ -27,7 +28,7 @@ describe("Card", () => {
   const variant: VariantType = "chapters";
 
   it("renders the card with correct data", () => {
-    render(
+    renderWithI18n(
       <Card
         item={item}
         variant={variant}
@@ -37,15 +38,15 @@ describe("Card", () => {
     expect(screen.getByText("Test Chapter")).toBeInTheDocument();
     // Check hadith count
     expect(screen.getByText(/42 Hadiths/)).toBeInTheDocument();
-    // Check chapter index
-    expect(screen.getByTestId("chapter-index")).toHaveTextContent("3");
+    // Check chapter index (traduction)
+    expect(screen.getByText(/Chapitre 3/)).toBeInTheDocument();
     // Check link
     const link = screen.getByRole("link");
     expect(link).toHaveAttribute("href", "/chapters/test-chapter");
   });
 
   it("shows navigation indicator", () => {
-    render(
+    renderWithI18n(
       <Card
         item={item}
         variant={variant}

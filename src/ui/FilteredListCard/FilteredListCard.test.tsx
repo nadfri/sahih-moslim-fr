@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithI18n } from "@/__tests__/renderWithI18n";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
@@ -13,7 +14,7 @@ const items = [
 
 describe("FilteredListCard", () => {
   it("renders all items initially", () => {
-    render(
+    renderWithI18n(
       <FilteredListCard
         items={items}
         variant="chapters"
@@ -26,7 +27,7 @@ describe("FilteredListCard", () => {
   });
 
   it("filters items when search text is entered", async () => {
-    render(
+    renderWithI18n(
       <FilteredListCard
         items={items}
         variant="chapters"
@@ -53,7 +54,7 @@ describe("FilteredListCard", () => {
   });
 
   it("filters items when an option is selected from dropdown", async () => {
-    render(
+    renderWithI18n(
       <FilteredListCard
         items={items}
         variant="chapters"

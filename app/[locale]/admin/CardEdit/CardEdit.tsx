@@ -5,7 +5,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { deleteItem } from "@/src/services/actions";
 import { ItemType, VariantType } from "@/src/types/types";
-import { ConfirmDeleteModal } from "@/src/ui/ConfirmDeleteModal/ConfirmDeleteModal";
+import { ConfirmDeleteModal } from "@/src/ui/forms/ConfirmDeleteModal/ConfirmDeleteModal";
 import { EditItemFormDialog } from "@/src/ui/forms/EditItemFormDialog/EditItemFormDialog";
 import { BadgeNumberOfHadith } from "@/src/ui/hadith/BadgeNumberOfHadith/BadgeNumberOfHadith";
 

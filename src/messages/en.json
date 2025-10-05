@@ -76,24 +76,36 @@
   "search": {
     "description-metadata": "Look for authentic hadiths in the Sahih Moslim collection",
     "empty": "No hadith found ...",
+
     "filters": {
       "numero": "Per number",
       "sahaba": "Companion",
       "transmitter": "By transmitter",
       "word": "By word"
     },
+
     "loading": "Search in progress ...",
+
     "placeholders": {
       "numeroInput": "Hadith number",
       "sahabaSelect": "Choose one or more rapporteurs",
       "transmitterSelect": "Choose one or more transmitters",
       "wordInput": "Search by word (3 letters min) ..."
     },
+
     "title": "Hadiths search",
     "title-metadata": "Search in Moslim",
+
     "validation": {
       "min3letters": "Please enter at least 3 letters for word research."
-    }
+    },
+
+    "chapterIndex": "Chapter {index}",
+    "explore": "Explore",
+    "hadiths-count": "{count} Hadiths",
+    "search-chapter": "Search for a chapter ...",
+    "search-sahaba": "Search for a companion ...",
+    "search-transmitter": "Search for a transmitter ..."
   },
   "signin": {
     "title": "Sign In",

@@ -23,7 +23,7 @@ const mockRouter = {
   push: vi.fn(),
 };
 
-vi.mock("next/navigation", () => ({
+vi.mock("@/i18n/navigation", () => ({
   useRouter: () => mockRouter,
 }));
 
@@ -167,5 +167,8 @@ describe("useDataManagementEvents", () => {
     unmount();
 
     expect(removeEventListenerSpy).toHaveBeenCalled();
+
+    addEventListenerSpy.mockRestore();
+    removeEventListenerSpy.mockRestore();
   });
 });

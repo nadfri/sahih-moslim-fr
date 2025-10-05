@@ -16,15 +16,15 @@ import {
 } from "@/src/services/hadithSchemaServer";
 /*UI*/
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
-import { Input } from "@/src/ui/inputs/Input/Input";
-import { MdTextArea } from "@/src/ui/inputs/MdTextArea/MdTextArea";
-import { Select } from "@/src/ui/inputs/Select/Select";
+import { Input } from "@/src/ui/forms/inputs/Input/Input";
+import { MdTextArea } from "@/src/ui/forms/inputs/MdTextArea/MdTextArea";
+import { Select } from "@/src/ui/forms/inputs/Select/Select";
 /*Utils*/
 import { cleanArabicText } from "@/src/utils/cleanArabicText";
 import { wrapProphetNames } from "@/src/utils/wrapProphetNames";
 import { BtnAddItem } from "../hadith/BtnAddItem/BtnAddItem";
-import { MultiSelect } from "../inputs/MultiSelect/MultiSelect";
-import { MultiSelectDragNDrop } from "../inputs/MultiSelectDragNDrop/MultiSelectDragNDrop";
+import { MultiSelect } from "./inputs/MultiSelect/MultiSelect";
+import { MultiSelectDragNDrop } from "./inputs/MultiSelectDragNDrop/MultiSelectDragNDrop";
 import { AddItemFormDialog } from "./AddItemFormDialog/AddItemFormDialog";
 
 type Props = {

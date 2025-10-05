@@ -85,6 +85,15 @@
     "title-metadata": "Rechercher dans Moslim",
     "description-metadata": "Recherchez des hadiths authentiques dans la collection Sahih Moslim",
 
+    "search-chapter": "Rechercher un chapitre...",
+    "search-sahaba": "Rechercher un compagnon...",
+    "search-transmitter": "Rechercher un transmetteur...",
+    "chapterIndex": "Chapitre {index}",
+
+    "hadiths-count": " {count} Hadiths",
+    "explore": "Explorer",
+
+
     "filters": {
       "word": "Par mot",
       "sahaba": "Par Compagnon",

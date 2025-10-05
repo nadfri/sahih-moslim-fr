@@ -10,7 +10,7 @@ import { useSearch } from "@/src/hooks/useSearch";
 import { FilterType } from "@/src/types/types";
 import { BadgeNumberOfHadith } from "@/src/ui/hadith/BadgeNumberOfHadith/BadgeNumberOfHadith";
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
-import { MultiSelect } from "@/src/ui/inputs/MultiSelect/MultiSelect";
+import { MultiSelect } from "@/src/ui/forms/inputs/MultiSelect/MultiSelect";
 import {
   buildSearchParams,
   detectFilterMode,

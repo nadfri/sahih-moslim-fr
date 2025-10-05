@@ -9,9 +9,9 @@ import { toast } from "react-toastify";
 import { addItem } from "@/src/services/actions";
 import { ItemType, VariantType } from "@/src/types/types";
 import { getItemFormSchema } from "@/src/ui/forms/schemas/getItemFormSchema";
-import { Input } from "@/src/ui/inputs/Input/Input";
+import { Input } from "@/src/ui/forms/inputs/Input/Input";
 import { nextAvailableIndex } from "@/src/utils/nextAvailableIndex";
-import { Dialog } from "../../Dialog/Dialog";
+import { Dialog } from "../Dialog/Dialog";
 
 type Props = {
   open: boolean;

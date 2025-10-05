@@ -3,21 +3,18 @@
 import { useState } from "react";
 
 import { ItemType, VariantType } from "@/src/types/types";
-import { Card } from "@/src/ui/Card/Card";
-import { SearchSelect } from "@/src/ui/inputs/SearchSelect/SearchSelect";
+import { Card } from "@/src/ui/FilteredListCard/Card/Card";
+import { SearchSelect } from "@/src/ui/forms/inputs/SearchSelect/SearchSelect";
+import { useTranslations } from "next-intl";
 
 type Props = {
   items: ItemType[];
   variant: VariantType;
 };
 
-const placeholder = {
-  chapters: "Rechercher un chapitre...",
-  sahabas: "Rechercher un compagnon...",
-  transmitters: "Rechercher un transmetteur...",
-};
-
 export function FilteredListCard({ items, variant }: Props) {
+  const t = useTranslations("search");
+
   const [inputValue, setInputValue] = useState("");
   const [selected, setSelected] = useState("");
 
@@ -30,6 +27,12 @@ export function FilteredListCard({ items, variant }: Props) {
 
   // Extract names for SearchSelect options
   const options = items.map((item) => item.name_fr);
+
+  const placeholder = {
+    chapters: t("search-chapter"),
+    sahabas: t("search-sahaba"),
+    transmitters: t("search-transmitter"),
+  };
 
   return (
     <div className="container mx-auto max-w-5xl">
@@ -44,7 +47,6 @@ export function FilteredListCard({ items, variant }: Props) {
             setInputValue(value);
           }}
           placeholder={placeholder[variant]}
-          // Add onInputChange to update inputValue dynamically
           onInputChange={setInputValue}
         />
       </div>

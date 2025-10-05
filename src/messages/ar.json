@@ -79,6 +79,14 @@
     "title-metadata": "البحث في صحيح مسلم",
     "description-metadata": "ابحث عن الأحاديث الصحيحة في مجموعة صحيح مسلم",
 
+    "search-chapter": "ابحث عن فصل",
+    "search-sahaba": "ابحث عن صحابي",
+    "search-transmitter": "ابحث عن راوٍ",
+    "chapterIndex": "الفصل {index}",
+
+    "hadiths-count": " {count} حديث",
+    "explore": "استكشاف",
+
     "filters": {
       "word": "بالكلمة",
       "sahaba": "بالصحابي",

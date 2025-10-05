@@ -1,7 +1,7 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 import { getAllHadiths } from "@/src/services/services";
 import { ParamsLocale } from "@/src/types/types";
-import { Descriptive } from "@/src/ui/Descriptive/Descriptive";
+import { Descriptive } from "@/app/[locale]/(home)/Descriptive/Descriptive";
 import { ListLayoutHadith } from "@/src/ui/hadith/ListLayoutHadith/ListLayoutHadith";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 

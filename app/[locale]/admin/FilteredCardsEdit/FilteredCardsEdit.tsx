@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import type { ItemType, VariantType } from "@/src/types/types";
-import { Input } from "@/src/ui/inputs/Input/Input";
+import { Input } from "@/src/ui/forms/inputs/Input/Input";
 import { CardEdit } from "../CardEdit/CardEdit";
 
 type Props = {

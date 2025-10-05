@@ -3,10 +3,10 @@
 import { Link } from "@/i18n/navigation";
 import { Pencil, TriangleAlert, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { ConfirmDeleteModal } from "@/ui/ConfirmDeleteModal/ConfirmDeleteModal";
+import { ConfirmDeleteModal } from "@/src/ui/forms/ConfirmDeleteModal/ConfirmDeleteModal";
 
 import { HadithType } from "@/src/types/types";
-import { CopyBoard } from "../../CopyBoard/CopyBoard";
+import { CopyBoard } from "../CopyBoard/CopyBoard";
 import { deleteHadith } from "@/src/services/actions";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
