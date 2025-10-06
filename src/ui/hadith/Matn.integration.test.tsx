@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
+import { renderWithI18n } from "@/__tests__/renderWithI18n";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Matn_ar } from "./Matn_ar/Matn_ar";
@@ -49,7 +50,7 @@ describe("Matn Components Integration", () => {
   });
 
   it("should render both French and Arabic components together", () => {
-    render(
+    renderWithI18n(
       <div>
         <Matn_fr matn={mockHadith.matn_fr} />
         <Matn_ar matn={mockHadith.matn_ar} />
@@ -69,7 +70,7 @@ describe("Matn Components Integration", () => {
   it("should highlight search terms in both French and Arabic texts", () => {
     const searchTerm = "الله"; // Arabic term
 
-    render(
+    renderWithI18n(
       <div>
         <Matn_fr
           matn={mockHadith.matn_fr}
@@ -94,7 +95,7 @@ describe("Matn Components Integration", () => {
   it("should handle French search terms correctly", () => {
     const frenchTerm = "Messager";
 
-    render(
+    renderWithI18n(
       <div>
         <Matn_fr
           matn={mockHadith.matn_fr}
@@ -118,7 +119,7 @@ describe("Matn Components Integration", () => {
   });
 
   it("should maintain independent state between components", () => {
-    render(
+    renderWithI18n(
       <div>
         <Matn_fr matn={mockHadith.matn_fr} />
         <Matn_ar matn={mockHadith.matn_ar} />
@@ -148,7 +149,7 @@ describe("Matn Components Integration", () => {
   it("should handle mixed content scenarios", () => {
     const mixedHighlight = "رسول"; // Arabic in search
 
-    render(
+    renderWithI18n(
       <div>
         <Matn_fr
           matn="Le Prophète ﷺ a dit"
@@ -171,7 +172,7 @@ describe("Matn Components Integration", () => {
   });
 
   it("should handle empty search terms gracefully", () => {
-    render(
+    renderWithI18n(
       <div>
         <Matn_fr
           matn={mockHadith.matn_fr}
@@ -194,7 +195,7 @@ describe("Matn Components Integration", () => {
   });
 
   it("should handle undefined highlight props", () => {
-    render(
+    renderWithI18n(
       <div>
         <Matn_fr matn={mockHadith.matn_fr} />
         <Matn_ar matn={mockHadith.matn_ar} />
@@ -211,7 +212,7 @@ describe("Matn Components Integration", () => {
   });
 
   it("should preserve accessibility features", () => {
-    render(
+    renderWithI18n(
       <div>
         <Matn_fr matn={mockHadith.matn_fr} />
         <Matn_ar matn={mockHadith.matn_ar} />

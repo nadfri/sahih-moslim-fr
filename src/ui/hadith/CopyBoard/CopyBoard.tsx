@@ -6,11 +6,13 @@ import { Check, Files, LinkIcon } from "lucide-react";
 import { useClickOutside } from "@/src/hooks/useClickOutside";
 import { HadithType } from "@/src/types/types";
 import { getNarratorName } from "@/src/utils/getNarratorName";
+import { useTranslations } from "next-intl";
 
 type CopyOption = "fr" | "ar" | "both" | "link";
 
 // Accept hadith as a prop
 export function CopyBoard({ hadith }: { hadith: HadithType }) {
+  const t = useTranslations("hadith.ActionsBtns");
   // Extract fields from hadith
   const frenchText = hadith.matn_fr;
   const arabicText = hadith.matn_ar;
@@ -29,7 +31,11 @@ export function CopyBoard({ hadith }: { hadith: HadithType }) {
     let textToCopy = "";
 
     // Create header with hadith info
-    const header = `Sahih Moslim - Hadith n°${hadithNumber}\nChapitre: ${chapter}\nD' après: ${getNarratorName(hadith)}\n\n`;
+    const header = t("header-copy", {
+      numero: hadithNumber,
+      chapter,
+      narrator: getNarratorName(hadith) ?? "",
+    });
 
     switch (option) {
       case "fr":
@@ -62,8 +68,8 @@ export function CopyBoard({ hadith }: { hadith: HadithType }) {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="inline-flex items-center gap-1.5 text-sm font-medium bg-emerald-50 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 px-3 py-1.5 rounded-md hover:bg-emerald-100 dark:hover:bg-emerald-800/60 hover:text-emerald-700 dark:hover:text-emerald-300 transition-all duration-200"
-        title="Copier le hadith"
-        aria-label="Copier le contenu du hadith"
+        title={t("copy-aria")}
+        aria-label={t("copy-aria")}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
@@ -78,7 +84,7 @@ export function CopyBoard({ hadith }: { hadith: HadithType }) {
             aria-hidden="true"
           />
         )}
-        <span>{copied ? "Copié!" : "Copier"}</span>
+        <span>{copied ? t("copied") : t("copy")}</span>
       </button>
 
       {isOpen && (
@@ -87,25 +93,25 @@ export function CopyBoard({ hadith }: { hadith: HadithType }) {
             onClick={() => handleCopy("fr")}
             className="text-left px-3 py-2 text-sm text-emerald-700 dark:text-emerald-500 bg-emerald-50 dark:bg-emerald-950/70 transition-colors border-l-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-600"
           >
-            Français
+            {t("french")}
           </button>
           <button
             onClick={() => handleCopy("ar")}
             className="text-left px-3 py-2 text-sm text-emerald-700 dark:text-emerald-500 bg-emerald-100 dark:bg-emerald-900/70 transition-colors border-l-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-600"
           >
-            Arabe
+            {t("arabic")}
           </button>
           <button
             onClick={() => handleCopy("both")}
             className="text-left px-3 py-2 text-sm text-emerald-700 dark:text-emerald-500 bg-emerald-200 dark:bg-emerald-900/90 transition-colors border-l-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-600"
           >
-            Les deux
+            {t("both")}
           </button>
           <button
             onClick={() => handleCopy("link")}
             className="text-left px-3 py-2 text-sm text-emerald-700 dark:text-emerald-500 bg-emerald-300/75 dark:bg-emerald-800/90 transition-colors border-l-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-600 inline-flex items-center gap-1.5"
           >
-            Le lien
+            {t("link")}
             <LinkIcon
               size={12}
               aria-hidden="true"

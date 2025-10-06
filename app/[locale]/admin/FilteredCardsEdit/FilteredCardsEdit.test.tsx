@@ -104,7 +104,7 @@ describe("FilteredCardsEdit Component", () => {
       />
     );
 
-    const searchInput = screen.getByTestId("search-input");
+    const searchInput = screen.getByRole("textbox", { name: /Recherche/ });
     expect(searchInput).toHaveAttribute(
       "placeholder",
       "Rechercher un chapitre..."
@@ -133,7 +133,7 @@ describe("FilteredCardsEdit Component", () => {
       />
     );
 
-    const searchInput = screen.getByTestId("search-input");
+    const searchInput = screen.getByRole("textbox", { name: /Recherche/ });
 
     // Search for "foi"
     await user.type(searchInput, "foi");
@@ -153,7 +153,7 @@ describe("FilteredCardsEdit Component", () => {
       />
     );
 
-    const searchInput = screen.getByTestId("search-input");
+    const searchInput = screen.getByRole("textbox", { name: /Recherche/ });
 
     // Search with different case
     await user.type(searchInput, "PURIFICATION");
@@ -172,7 +172,7 @@ describe("FilteredCardsEdit Component", () => {
       />
     );
 
-    const searchInput = screen.getByTestId("search-input");
+    const searchInput = screen.getByRole("textbox", { name: /Recherche/ });
 
     // Search for something that doesn't exist
     await user.type(searchInput, "inexistant");
@@ -191,7 +191,7 @@ describe("FilteredCardsEdit Component", () => {
         variant="sahabas"
       />
     );
-    const searchInput = screen.getByTestId("search-input");
+    const searchInput = screen.getByRole("textbox", { name: /Recherche/ });
 
     await user.type(searchInput, "inexistant");
     expect(screen.getByText("Aucun sahaba trouvé")).toBeInTheDocument();
@@ -217,7 +217,7 @@ describe("FilteredCardsEdit Component", () => {
       />
     );
 
-    const searchInput = screen.getByTestId("search-input");
+    const searchInput = screen.getByRole("textbox", { name: /Recherche/ });
 
     // Search first
     await user.type(searchInput, "foi");
@@ -271,7 +271,7 @@ describe("FilteredCardsEdit Component", () => {
       />
     );
 
-    const searchInput = screen.getByTestId("search-input");
+    const searchInput = screen.getByRole("textbox", { name: /Recherche/ });
 
     // Type gradually - searching for "prière" to match only "La Prière"
     await user.type(searchInput, "pri");

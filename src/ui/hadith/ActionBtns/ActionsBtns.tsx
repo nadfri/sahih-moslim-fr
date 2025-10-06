@@ -10,6 +10,7 @@ import { CopyBoard } from "../CopyBoard/CopyBoard";
 import { deleteHadith } from "@/src/services/actions";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { useTranslations } from "next-intl";
 
 export function ActionsBtns({
   hadith,
@@ -21,6 +22,8 @@ export function ActionsBtns({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
+
+  const t = useTranslations("hadith.ActionsBtns");
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -48,14 +51,14 @@ export function ActionsBtns({
 
         <button
           className="inline-flex items-center gap-1.5 text-sm font-medium bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-500 px-3 py-1.5 rounded-md hover:bg-amber-100 dark:hover:bg-amber-900/70 hover:text-amber-700 dark:hover:text-amber-400 transition-all duration-200"
-          title="Signaler une erreur"
-          aria-label="Signaler une erreur dans ce hadith"
+          title={t("report")}
+          aria-label={t("reportErrorAria")}
         >
           <TriangleAlert
             className="h-4 w-4"
             aria-hidden="true"
           />
-          <span>Signaler</span>
+          <span>{t("report")}</span>
         </button>
 
         {isAdmin && (
@@ -70,13 +73,13 @@ export function ActionsBtns({
                 className="h-4 w-4"
                 aria-hidden="true"
               />
-              <span>Éditer</span>
+              <span>{t("edit")}</span>
             </Link>
 
             <button
               className="inline-flex items-center justify-center aspect-square size-8 bg-red-50 dark:bg-red-950/60 text-red-600 dark:text-red-400 rounded-md hover:bg-red-100 dark:hover:bg-red-900/70 hover:text-red-700 dark:hover:text-red-300"
-              title="Supprimer ce hadith"
-              aria-label="Supprimer le hadith"
+              title={t("delete")}
+              aria-label={t("delete")}
               onClick={() => setShowDeleteModal(true)}
               disabled={isDeleting}
             >
@@ -88,8 +91,8 @@ export function ActionsBtns({
               onCancel={() => setShowDeleteModal(false)}
               onConfirm={handleDelete}
               loading={isDeleting}
-              title={`Supprimer le hadith n°${hadith.numero} ?`}
-              description="Êtes-vous sûr de vouloir supprimer ce hadith ? Cette action est irréversible."
+              title={t("deleteConfirmModal-title", { numero: hadith.numero })}
+              description={t("deleteConfirmModal-description")}
             />
           </>
         )}

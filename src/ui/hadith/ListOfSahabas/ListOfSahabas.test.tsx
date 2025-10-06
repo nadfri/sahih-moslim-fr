@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { renderWithI18n } from "@/__tests__/renderWithI18n";
+import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { ItemType } from "@/src/types/types";
@@ -13,9 +14,9 @@ const mockEmptySahabas: ItemType[] = [];
 
 describe("ListOfSahabas", () => {
   it("renders list of sahabas with correct links", () => {
-    render(<ListOfSahabas sahabas={mockSahabas} />);
+    renderWithI18n(<ListOfSahabas sahabas={mockSahabas} />);
 
-    expect(screen.getByText("Sahaba(s) mentionné(s)")).toBeInTheDocument();
+    expect(screen.getByText("Sahabas mentionnés")).toBeInTheDocument();
 
     const links = screen.getAllByRole("link");
     expect(links[0]).toHaveAttribute("href", "/sahabas/abu-bakr");
@@ -25,13 +26,15 @@ describe("ListOfSahabas", () => {
   });
 
   it("does not render when no sahabas are mentioned", () => {
-    const { container } = render(<ListOfSahabas sahabas={mockEmptySahabas} />);
+    const { container } = renderWithI18n(
+      <ListOfSahabas sahabas={mockEmptySahabas} />
+    );
 
     expect(container.firstChild).toBeNull();
   });
 
   it("renders without highlighting when no highlight prop is provided", () => {
-    render(<ListOfSahabas sahabas={mockSahabas} />);
+    renderWithI18n(<ListOfSahabas sahabas={mockSahabas} />);
 
     expect(screen.getByText("Abu Bakr")).toBeInTheDocument();
     // Check that no mark elements exist since component doesn't support highlight

@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { renderWithI18n } from "@/__tests__/renderWithI18n";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -66,7 +67,7 @@ describe("Hadith", () => {
   });
 
   it("renders the hadith basic information correctly", () => {
-    render(
+    renderWithI18n(
       <Hadith
         hadith={mockHadith}
         isAdmin={false}
@@ -91,7 +92,7 @@ describe("Hadith", () => {
 
   it("toggles Arabic text visibility when button is clicked", async () => {
     const user = userEvent.setup();
-    render(
+    renderWithI18n(
       <Hadith
         hadith={mockHadith}
         isAdmin={false}
@@ -124,7 +125,7 @@ describe("Hadith", () => {
   });
 
   it("highlights text when highlight prop is provided", () => {
-    render(
+    renderWithI18n(
       <Hadith
         hadith={mockHadith}
         highlight="test"
@@ -144,7 +145,7 @@ describe("Hadith", () => {
   });
 
   it("shows preview badge in update mode", () => {
-    render(
+    renderWithI18n(
       <Hadith
         hadith={mockHadith}
         edit={true}
@@ -157,7 +158,7 @@ describe("Hadith", () => {
   });
 
   it("shows edit link for admin users", () => {
-    render(
+    renderWithI18n(
       <Hadith
         hadith={mockHadith}
         isAdmin={true}
@@ -173,7 +174,7 @@ describe("Hadith", () => {
   });
 
   it("doesn't show edit link for non-admin users", () => {
-    render(
+    renderWithI18n(
       <Hadith
         hadith={mockHadith}
         isAdmin={false}
@@ -194,7 +195,7 @@ describe("Hadith", () => {
       matn_fr: "Normal text with **bold text** and *italic block quote*",
     };
 
-    render(
+    renderWithI18n(
       <Hadith
         hadith={hadithWithMarkdown}
         isAdmin={false}
@@ -212,7 +213,7 @@ describe("Hadith", () => {
 
   it("renders the report button", async () => {
     const user = userEvent.setup();
-    render(
+    renderWithI18n(
       <Hadith
         hadith={mockHadith}
         isAdmin={false}

@@ -4,8 +4,11 @@ import { useState } from "react";
 import { Github, LoaderCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/src/lib/auth/supabase/client";
+import { useTranslations } from "next-intl";
 
 export function ButtonGithub() {
+  const t = useTranslations("signin");
+
   const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
@@ -52,7 +55,7 @@ export function ButtonGithub() {
             className="h-5 w-5 animate-spin"
             aria-hidden="true"
           />
-          <span>Connexion en cours...</span>
+          <span>{t("loading")}</span>
         </>
       ) : (
         <>
@@ -60,7 +63,7 @@ export function ButtonGithub() {
             className="h-5 w-5"
             aria-hidden="true"
           />
-          <span>Connexion avec Github</span>
+          <span>{t("github")}</span>
         </>
       )}
     </button>

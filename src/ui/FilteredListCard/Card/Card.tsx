@@ -1,10 +1,11 @@
 import { Link } from "@/i18n/navigation";
-import { BookOpenText, MoveRight } from "lucide-react";
+import { MoveRight } from "lucide-react";
 import { MoveLeft } from "lucide-react";
 
 import { ItemType, VariantType } from "@/src/types/types";
 import { ChapterIndex } from "@/src/ui/FilteredListCard/Card/ChapterIndex/ChapterIndex";
 import { useLocale, useTranslations } from "next-intl";
+import { BadgeNumberOfHadith } from "../../hadith/BadgeNumberOfHadith/BadgeNumberOfHadith";
 
 type Props = {
   item: ItemType;
@@ -33,10 +34,7 @@ export function Card({ item, variant }: Props) {
             {item.name_fr}
           </h2>
 
-          <p className="text-xs inline-flex items-center font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md px-2 py-0.5">
-            <BookOpenText className="h-3 w-3 me-1" />
-            {t("hadiths-count", { count: item.hadithCount ?? 0 })}
-          </p>
+          <BadgeNumberOfHadith count={item.hadithCount} />
         </div>
 
         {/* Navigation indicator (appears more clearly on hover) */}

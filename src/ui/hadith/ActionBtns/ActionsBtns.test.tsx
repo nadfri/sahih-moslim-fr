@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithI18n } from "@/__tests__/renderWithI18n";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { mockHadith } from "@/src/mocks/mockHadith";
@@ -58,7 +59,7 @@ describe("ActionsBtns Component", () => {
   });
 
   it("should render all basic elements", () => {
-    render(
+    renderWithI18n(
       <ActionsBtns
         hadith={mockHadith}
         isAdmin={false}
@@ -67,13 +68,13 @@ describe("ActionsBtns Component", () => {
 
     expect(screen.getByTestId("copy-board")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /Signaler une erreur/ })
+      screen.getByRole("button", { name: /Signaler/ })
     ).toBeInTheDocument();
     expect(screen.getByText("Signaler")).toBeInTheDocument();
   });
 
   it("should render Signaler button with correct styling and attributes", () => {
-    render(
+    renderWithI18n(
       <ActionsBtns
         hadith={mockHadith}
         isAdmin={false}
@@ -81,10 +82,10 @@ describe("ActionsBtns Component", () => {
     );
 
     const signalerButton = screen.getByRole("button", {
-      name: /Signaler une erreur/,
+      name: /Signaler/,
     });
 
-    expect(signalerButton).toHaveAttribute("title", "Signaler une erreur");
+    expect(signalerButton).toHaveAttribute("title", "Signaler");
     expect(signalerButton).toHaveAttribute(
       "aria-label",
       "Signaler une erreur dans ce hadith"
@@ -93,7 +94,7 @@ describe("ActionsBtns Component", () => {
 
   describe("Development mode", () => {
     it("should show edit link when user is admin", () => {
-      render(
+      renderWithI18n(
         <ActionsBtns
           hadith={mockHadith}
           isAdmin={true}
@@ -111,7 +112,7 @@ describe("ActionsBtns Component", () => {
     });
 
     it("should render edit link with correct styling for admin", () => {
-      render(
+      renderWithI18n(
         <ActionsBtns
           hadith={mockHadith}
           isAdmin={true}
@@ -127,7 +128,7 @@ describe("ActionsBtns Component", () => {
 
   describe("Production mode", () => {
     it("should not show edit link when user is not admin", () => {
-      render(
+      renderWithI18n(
         <ActionsBtns
           hadith={mockHadith}
           isAdmin={false}
@@ -141,7 +142,7 @@ describe("ActionsBtns Component", () => {
     });
 
     it("should not show edit link when user is not admin (test mode)", () => {
-      render(
+      renderWithI18n(
         <ActionsBtns
           hadith={mockHadith}
           isAdmin={false}
@@ -155,7 +156,7 @@ describe("ActionsBtns Component", () => {
   });
 
   it("should have proper container layout", () => {
-    const { container } = render(
+    const { container } = renderWithI18n(
       <ActionsBtns
         hadith={mockHadith}
         isAdmin={false}
@@ -174,15 +175,13 @@ describe("ActionsBtns Component", () => {
   });
 
   it("should pass hadith prop to CopyBoard component", () => {
-    render(
+    renderWithI18n(
       <ActionsBtns
         hadith={mockHadith}
         isAdmin={false}
       />
     );
 
-    expect(screen.getByTestId("copy-board")).toHaveTextContent(
-      `CopyBoard for hadith ${mockHadith.numero}`
-    );
+    expect(screen.getByTestId("copy-board")).toHaveTextContent("Copier");
   });
 });

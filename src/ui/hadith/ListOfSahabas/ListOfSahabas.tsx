@@ -2,15 +2,17 @@ import { Link } from "@/i18n/navigation";
 import { SquareArrowOutUpRight } from "lucide-react";
 
 import { ItemType } from "@/src/types/types";
+import { useTranslations } from "next-intl";
 
 export function ListOfSahabas({ sahabas }: { sahabas: ItemType[] }) {
+  const t = useTranslations("hadith");
   if (sahabas.length === 0) return null;
 
   return (
     <div className="">
       <div className="flex flex-wrap gap-2 mt-10">
         <span className="text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-300 px-2 py-1">
-          Sahaba(s) mentionné(s)
+          {t("mentioned-sahabas", { count: sahabas.length })}
         </span>
 
         {sahabas.map((sahaba) => (

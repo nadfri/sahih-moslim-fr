@@ -24,9 +24,41 @@
     "title-metadata-slug": "Chapter: {name}",
     "title-slug": "Chapter Hadiths"
   },
+  "footer": {
+    "description": "Facilitate access to authentic lessons reported by Imam Muslim.",
+    "title": "Sahih Muslim"
+  },
   "hadith": {
     "notFound": "Hadith not found",
-    "title": "N ° {number} - {narrator}"
+    "title": "N° {number} - {narrator}",
+    "hadith-count": "{count, plural, =0 {0 Hadith} =1 {1 Hadith} other {# Hadiths}}",
+    "mentioned-sahabas": "{count, plural, =1 {Sahaba mentioned} other {Sahabas mentioned}}",
+    "preview": "Preview",
+    "from": "From ",
+    "ActionsBtns": {
+      "copied": "Copied!",
+      "copy": "Copy",
+      "delete": "Delete hadith",
+      "deleteConfirmModal-description": "Are you sure you want to delete this hadith? \nThis action is irreversible.",
+      "deleteConfirmModal-title": "Remove the hadith n°{numero}?",
+      "edit": "Edit",
+      "report": "Report",
+      "reportError": "Make an error",
+      "reportErrorAria": "Report an error in this hadith",
+      "share": "Share the hadith",
+      "addItem": "Add an element",
+      "arabic": "Arabic",
+      "both": "Both",
+      "copy-aria": "Copy the hadith",
+      "english": "English",
+      "french": "French",
+      "header-copy": "Sahih Moslim - Hadith n°{number}\n\nChapter: {chapter}\n\nFrom: {narrator}",
+      "link": "Link",
+      "hide-isnad": "Hide Isnad",
+      "see-isnad": "See Isnad",
+      "hide-arabic": "Hide the Arabic version",
+      "see-arabic": "See the Arabic version"
+    }
   },
   "header": {
     "home": "Home",
@@ -76,30 +108,24 @@
   "search": {
     "description-metadata": "Look for authentic hadiths in the Sahih Moslim collection",
     "empty": "No hadith found ...",
-
     "filters": {
       "numero": "Per number",
       "sahaba": "Companion",
       "transmitter": "By transmitter",
       "word": "By word"
     },
-
     "loading": "Search in progress ...",
-
     "placeholders": {
       "numeroInput": "Hadith number",
       "sahabaSelect": "Choose one or more rapporteurs",
       "transmitterSelect": "Choose one or more transmitters",
       "wordInput": "Search by word (3 letters min) ..."
     },
-
     "title": "Hadiths search",
     "title-metadata": "Search in Moslim",
-
     "validation": {
       "min3letters": "Please enter at least 3 letters for word research."
     },
-
     "chapterIndex": "Chapter {index}",
     "explore": "Explore",
     "hadiths-count": "{count} Hadiths",
@@ -109,7 +135,9 @@
   },
   "signin": {
     "title": "Sign In",
-    "description": "Sign in with your GitHub account to access administration features."
+    "description": "Sign in with your GitHub account to access administration features.",
+    "github": "Connect with Github",
+    "loading": "Current connection ..."
   },
   "transmitters": {
     "description-metadata": "Discover the Hadith transmitters in the Sahih Moslim collection.",

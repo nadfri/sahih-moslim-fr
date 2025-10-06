@@ -5,6 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 
 import { MarkdownHighlighter } from "@/src/ui/hadith/MarkdownHighlighter/MarkdownHighlighter";
 import { containsArabic } from "@/src/utils/normalizeArabicText";
+import { useTranslations } from "next-intl";
 
 type Props = {
   matn: string;
@@ -13,6 +14,8 @@ type Props = {
 };
 
 export function Matn_ar({ matn, highlight, edit }: Props) {
+  const t = useTranslations("hadith.ActionsBtns");
+
   // Auto-show Arabic if searching for Arabic text
   const shouldAutoShow = highlight && containsArabic(highlight);
   const [isArabicVisible, setIsArabicVisible] = useState(
@@ -52,11 +55,7 @@ export function Matn_ar({ matn, highlight, edit }: Props) {
               aria-hidden="true"
             />
           )}
-          <span>
-            {isArabicVisible
-              ? "Masquer la version arabe"
-              : "Voir la version arabe"}
-          </span>
+          <span>{isArabicVisible ? t("hide-arabic") : t("see-arabic")}</span>
         </button>
       )}
 

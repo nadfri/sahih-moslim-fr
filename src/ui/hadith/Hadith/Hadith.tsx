@@ -5,7 +5,7 @@ import { Isnad } from "../Isnad/Isnad";
 import { ListOfSahabas } from "../ListOfSahabas/ListOfSahabas";
 import { Matn_ar } from "../Matn_ar/Matn_ar";
 import { Matn_fr } from "../Matn_fr/Matn_fr";
-import { ScanEye } from "lucide-react";
+import { Preview } from "../Preview";
 
 type HadithProps = {
   hadith: HadithType;
@@ -55,13 +55,7 @@ export function Hadith({
 
         {/* Action buttons section */}
         {edit ? (
-          <span className="text-sm font-medium bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-1 rounded inline-flex items-center gap-1">
-            <ScanEye
-              className="h-3.5 w-3.5"
-              aria-hidden="true"
-            />
-            Aperçu
-          </span>
+          <Preview />
         ) : (
           <ActionsBtns
             hadith={hadith}

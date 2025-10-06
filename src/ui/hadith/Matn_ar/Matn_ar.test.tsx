@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { NextIntlClientProvider } from "next-intl";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Matn_ar } from "./Matn_ar";
@@ -42,12 +43,32 @@ vi.mock("@/src/utils/normalizeArabicText", () => ({
 }));
 
 describe("Matn_ar Component", () => {
+  const messages = {
+    hadith: {
+      ActionsBtns: {
+        "see-arabic": "Voir la version arabe",
+        "hide-arabic": "Masquer la version arabe",
+      },
+    },
+  };
+
+  function renderWithIntl(ui: React.ReactElement) {
+    return render(
+      <NextIntlClientProvider
+        messages={messages}
+        locale="fr"
+      >
+        {ui}
+      </NextIntlClientProvider>
+    );
+  }
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it("should render the toggle button", () => {
-    render(<Matn_ar matn={mockHadith.matn_ar} />);
+    renderWithIntl(<Matn_ar matn={mockHadith.matn_ar} />);
 
     const toggleButton = screen.getByRole("button");
     expect(toggleButton).toBeInTheDocument();
@@ -55,7 +76,7 @@ describe("Matn_ar Component", () => {
   });
 
   it("should initially hide the Arabic text", () => {
-    render(<Matn_ar matn={mockHadith.matn_ar} />);
+    renderWithIntl(<Matn_ar matn={mockHadith.matn_ar} />);
 
     // Arabic text should not be visible initially (check by grid rows class)
     const arabicContainer = document.querySelector("[id]");
@@ -63,7 +84,7 @@ describe("Matn_ar Component", () => {
   });
 
   it("should show Arabic text when toggle button is clicked", () => {
-    render(<Matn_ar matn={mockHadith.matn_ar} />);
+    renderWithIntl(<Matn_ar matn={mockHadith.matn_ar} />);
 
     const toggleButton = screen.getByRole("button");
     fireEvent.click(toggleButton);
@@ -75,7 +96,7 @@ describe("Matn_ar Component", () => {
   });
 
   it("should hide Arabic text when toggle button is clicked again", () => {
-    render(<Matn_ar matn={mockHadith.matn_ar} />);
+    renderWithIntl(<Matn_ar matn={mockHadith.matn_ar} />);
 
     const toggleButton = screen.getByRole("button");
 
@@ -93,7 +114,7 @@ describe("Matn_ar Component", () => {
   it("should auto-show Arabic text when highlight contains Arabic characters", () => {
     const arabicHighlight = "رسول";
 
-    render(
+    renderWithIntl(
       <Matn_ar
         matn={mockHadith.matn_ar}
         highlight={arabicHighlight}
@@ -111,7 +132,7 @@ describe("Matn_ar Component", () => {
   it("should not auto-show Arabic text when highlight contains only Latin characters", () => {
     const latinHighlight = "test";
 
-    render(
+    renderWithIntl(
       <Matn_ar
         matn={mockHadith.matn_ar}
         highlight={latinHighlight}
@@ -127,7 +148,7 @@ describe("Matn_ar Component", () => {
   });
 
   it("should render with correct CSS classes for the container", () => {
-    render(<Matn_ar matn={mockHadith.matn_ar} />);
+    renderWithIntl(<Matn_ar matn={mockHadith.matn_ar} />);
 
     const container = screen.getByRole("button").parentElement;
     expect(container).toHaveClass(
@@ -140,7 +161,7 @@ describe("Matn_ar Component", () => {
   });
 
   it("should render toggle button with correct styling", () => {
-    render(<Matn_ar matn={mockHadith.matn_ar} />);
+    renderWithIntl(<Matn_ar matn={mockHadith.matn_ar} />);
 
     const toggleButton = screen.getByRole("button");
     expect(toggleButton).toHaveClass(
@@ -155,7 +176,7 @@ describe("Matn_ar Component", () => {
   });
 
   it("should render Arabic text with correct styling when visible", () => {
-    render(<Matn_ar matn={mockHadith.matn_ar} />);
+    renderWithIntl(<Matn_ar matn={mockHadith.matn_ar} />);
 
     const toggleButton = screen.getByRole("button");
     fireEvent.click(toggleButton);
@@ -176,7 +197,7 @@ describe("Matn_ar Component", () => {
   it("should pass highlight prop to MarkdownHighlighter when visible", () => {
     const highlightTerm = "رسول";
 
-    render(
+    renderWithIntl(
       <Matn_ar
         matn={mockHadith.matn_ar}
         highlight={highlightTerm}
@@ -190,7 +211,7 @@ describe("Matn_ar Component", () => {
   });
 
   it("should handle empty matn content", () => {
-    render(<Matn_ar matn="" />);
+    renderWithIntl(<Matn_ar matn="" />);
 
     const toggleButton = screen.getByRole("button");
     expect(toggleButton).toBeInTheDocument();
@@ -200,7 +221,7 @@ describe("Matn_ar Component", () => {
   });
 
   it("should handle undefined highlight prop", () => {
-    render(
+    renderWithIntl(
       <Matn_ar
         matn={mockHadith.matn_ar}
         highlight={undefined}
@@ -212,7 +233,7 @@ describe("Matn_ar Component", () => {
   });
 
   it("should handle empty highlight prop", () => {
-    render(
+    renderWithIntl(
       <Matn_ar
         matn={mockHadith.matn_ar}
         highlight=""
@@ -225,7 +246,7 @@ describe("Matn_ar Component", () => {
   });
 
   it("should update visibility when highlight prop changes", () => {
-    const { rerender } = render(
+    const { rerender } = renderWithIntl(
       <Matn_ar
         matn={mockHadith.matn_ar}
         highlight="test"
@@ -238,10 +259,15 @@ describe("Matn_ar Component", () => {
 
     // Update to Arabic highlight
     rerender(
-      <Matn_ar
-        matn={mockHadith.matn_ar}
-        highlight="رسول"
-      />
+      <NextIntlClientProvider
+        messages={messages}
+        locale="fr"
+      >
+        <Matn_ar
+          matn={mockHadith.matn_ar}
+          highlight="رسول"
+        />
+      </NextIntlClientProvider>
     );
 
     // Should now be visible
@@ -249,7 +275,7 @@ describe("Matn_ar Component", () => {
   });
 
   it("should preserve manual toggle state when highlight is not Arabic", () => {
-    render(
+    renderWithIntl(
       <Matn_ar
         matn={mockHadith.matn_ar}
         highlight="test"
@@ -271,7 +297,7 @@ describe("Matn_ar Component", () => {
   it("should handle long Arabic text content", () => {
     const longArabicText = "قال رسول الله صلى الله عليه وسلم ".repeat(10);
 
-    render(<Matn_ar matn={longArabicText} />);
+    renderWithIntl(<Matn_ar matn={longArabicText} />);
 
     const toggleButton = screen.getByRole("button");
     fireEvent.click(toggleButton);
@@ -284,7 +310,7 @@ describe("Matn_ar Component", () => {
   it("should handle mixed Arabic and non-Arabic characters", () => {
     const mixedText = "قال رسول الله ﷺ said";
 
-    render(<Matn_ar matn={mixedText} />);
+    renderWithIntl(<Matn_ar matn={mixedText} />);
 
     const toggleButton = screen.getByRole("button");
     fireEvent.click(toggleButton);

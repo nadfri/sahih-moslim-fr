@@ -11,6 +11,7 @@ import {
 
 import { ItemType } from "@/src/types/types";
 import { NarratedBy } from "../NarratedBy/NarratedBy";
+import { useTranslations } from "next-intl";
 
 type Props = {
   isnadTransmitters: ItemType[];
@@ -18,6 +19,8 @@ type Props = {
 };
 
 export function Isnad({ isnadTransmitters, edit }: Props) {
+  const t = useTranslations("hadith.ActionsBtns");
+
   const [isIsnadVisible, setIsIsnadVisible] = useState(edit ?? false);
   // Use a stable id based on the last transmitter (narrator)
   const isnadContentId = `isnad-${isnadTransmitters[isnadTransmitters.length - 1]?.id ?? "unknown"}`;
@@ -54,7 +57,7 @@ export function Isnad({ isnadTransmitters, edit }: Props) {
                 className="size-4"
                 aria-hidden="true"
               />
-              <span>Voir Isnad</span>
+              <span>{t("see-isnad")}</span>
             </button>
           </div>
         </>
@@ -70,7 +73,7 @@ export function Isnad({ isnadTransmitters, edit }: Props) {
               className="size-4"
               aria-hidden="true"
             />
-            <span>Masquer Isnad</span>
+            <span>{t("hide-isnad")}</span>
           </button>
           <div className="basis-full md:hidden" />
           {isnadTransmitters.map((transmitter, index) => {

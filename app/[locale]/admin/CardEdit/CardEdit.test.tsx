@@ -190,9 +190,8 @@ describe("CardEdit Component", () => {
     const deleteButton = screen.getByLabelText("Supprimer");
     await user.click(deleteButton);
 
-    expect(screen.getByTestId("confirm-delete-modal")).toBeInTheDocument();
     expect(screen.getByText("Supprimer ce chapitre ?")).toBeInTheDocument();
-    expect(screen.getByText("Hadith count: 15")).toBeInTheDocument();
+    expect(screen.getByTestId("hadith-badge")).toHaveTextContent("15 hadiths");
   });
 
   it("should close delete modal when cancel is clicked", async () => {
@@ -207,13 +206,13 @@ describe("CardEdit Component", () => {
 
     // Open modal
     await user.click(screen.getByLabelText("Supprimer"));
-    expect(screen.getByTestId("confirm-delete-modal")).toBeInTheDocument();
+    expect(screen.getByText("Supprimer ce chapitre ?")).toBeInTheDocument();
 
     // Close modal
     await user.click(screen.getByText("Annuler"));
     await waitFor(() => {
       expect(
-        screen.queryByTestId("confirm-delete-modal")
+        screen.queryByText("Supprimer ce chapitre ?")
       ).not.toBeInTheDocument();
     });
   });

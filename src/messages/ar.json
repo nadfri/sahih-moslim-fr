@@ -24,9 +24,41 @@
     "description-metadata": "اكتشف فصول مجموعة صحيح مسلم",
     "description-metadata-slug": "مجموعة أحاديث الفصل {name} - صحيح مسلم"
   },
+  "footer": {
+    "description": "تسهيل الوصول إلى الدروس الأصيلة التي أبلغ عنها الإمام المسلم.",
+    "title": "Sahih مسلم"
+  },
   "hadith": {
-    "title": "رقم {numero} - {narrator}",
-    "notFound": "الحديث غير موجود"
+    "notFound": "الحديث غير موجود",
+    "title": "الرقم {number} - {narrator}",
+    "hadith-count": "{count, plural, =0 {0 حديث} =1 {1 حديث} other {# أحاديث}}",
+    "mentioned-sahabas": "{count, plural, =1 {صحابي مذكور} other {صحابة مذكورون}}",
+    "preview": "معاينة",
+    "from": " عن",
+    "ActionsBtns": {
+      "copied": "نص منسوخ!",
+      "copy": "انسخ النص",
+      "delete": "احذف الحديث",
+      "deleteConfirmModal-description": "هل أنت متأكد منك تريد حذف هذا الحديث؟ \nهذا الإجراء لا رجعة فيه.",
+      "deleteConfirmModal-title": "إزالة الحديث رقم {numero}",
+      "edit": "عدل",
+      "report": "بلغ",
+      "reportError": "بلغ عن خطأ",
+      "reportErrorAria": "بلغ عن خطأ في هذا الحديث",
+      "share": "شارك الحديث",
+      "header-copy": "صحيح مسلم - الحديث رقم {numero}\nالفصل: {chapter}\nعن: {narrator}\n\n",
+      "addItem": "إضافة عنصر",
+      "arabic": "عربي",
+      "both": "كلاهما",
+      "copy-aria": "انسخ الحديث",
+      "english": "إنجليزي",
+      "french": "فرنسي",
+      "link": "الرابط",
+      "hide-isnad": "إخفاء Isnad",
+      "see-isnad": "انظر Isnad",
+      "hide-arabic": "إخفاء النسخة العربية",
+      "see-arabic": "انظر النسخة العربية"
+    }
   },
   "header": {
     "home": "الرئيسية",
@@ -37,7 +69,6 @@
   },
   "home": {
     "title": "صحيح مسلم باللغة الفرنسية",
-
     "descriptive": {
       "bookName": "صحيح مسلم",
       "hadithCount": "3033",
@@ -78,29 +109,24 @@
     "title": "بحث عن الأحاديث",
     "title-metadata": "البحث في صحيح مسلم",
     "description-metadata": "ابحث عن الأحاديث الصحيحة في مجموعة صحيح مسلم",
-
     "search-chapter": "ابحث عن فصل",
     "search-sahaba": "ابحث عن صحابي",
     "search-transmitter": "ابحث عن راوٍ",
     "chapterIndex": "الفصل {index}",
-
     "hadiths-count": " {count} حديث",
     "explore": "استكشاف",
-
     "filters": {
       "word": "بالكلمة",
       "sahaba": "بالصحابي",
       "transmitter": "بالراوي",
       "numero": "بالرقم"
     },
-
     "placeholders": {
       "wordInput": "أدخل كلمة (3 أحرف على الأقل)",
       "sahabaSelect": "اختر صحابي أو أكثر",
       "transmitterSelect": "اختر راوي أو أكثر",
       "numeroInput": "رقم الحديث"
     },
-
     "validation": {
       "min3letters": "الرجاء إدخال 3 أحرف على الأقل للبحث بالكلمة"
     },
@@ -109,7 +135,9 @@
   },
   "signin": {
     "title": "تسجيل الدخول",
-    "description": "قم بتسجيل الدخول باستخدام حساب GitHub للوصول إلى ميزات الإدارة"
+    "description": "قم بتسجيل الدخول باستخدام حساب GitHub للوصول إلى ميزات الإدارة",
+    "github": "تواصل مع جيثب",
+    "loading": "الاتصال الحالي ..."
   },
   "transmitters": {
     "title": "قائمة الرواة",

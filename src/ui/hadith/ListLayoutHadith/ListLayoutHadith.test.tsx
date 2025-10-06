@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { renderWithI18n } from "@/__tests__/renderWithI18n";
+import { screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { mockHadiths } from "@/src/mocks/mockHadiths";
@@ -19,7 +20,7 @@ vi.mock("@/src/hooks/useAuth", () => ({
 
 describe("ListLayoutHadith", () => {
   it("renders title, name, hadith count and hadiths", () => {
-    render(
+    renderWithI18n(
       <ListLayoutHadith
         title="Chapter"
         name="Faith"

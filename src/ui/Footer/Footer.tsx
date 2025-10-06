@@ -1,4 +1,7 @@
+import { useTranslations } from "next-intl";
+
 export function Footer() {
+  const t = useTranslations("footer");
   const currentYear = new Date().getFullYear();
 
   return (
@@ -8,14 +11,12 @@ export function Footer() {
           <p>
             © {currentYear}{" "}
             <span className="font-semibold text-emerald-800 dark:text-emerald-500">
-              Sahih Muslim FR
+              {t("title")}
             </span>
-            . Tous droits réservés.
           </p>
 
           <p className="mt-2 text-xs text-gray-500 dark:text-gray-500">
-            Faciliter l'accès aux enseignements authentiques rapportés par
-            l'Imam Muslim.
+            {t("description")}
           </p>
 
           {/* <nav className="mt-4">

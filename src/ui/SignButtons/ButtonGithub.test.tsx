@@ -1,6 +1,7 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { renderWithI18n } from "@/__tests__/renderWithI18n";
 
 import { ButtonGithub } from "./ButtonGithub";
 
@@ -39,11 +40,11 @@ describe("ButtonGithub", () => {
   it("renders with correct text and triggers signInWithOAuth on click", async () => {
     const user = userEvent.setup();
 
-    render(<ButtonGithub />);
+    renderWithI18n(<ButtonGithub />);
 
     // Check that the button renders with the correct text
     const button = screen.getByRole("button", {
-      name: /connexion avec github/i,
+      name: /se connecter avec github/i,
     });
     expect(button).toBeInTheDocument();
 
@@ -64,10 +65,10 @@ describe("ButtonGithub", () => {
   it("shows loading state when clicked", async () => {
     const user = userEvent.setup();
 
-    render(<ButtonGithub />);
+    renderWithI18n(<ButtonGithub />);
 
     const button = screen.getByRole("button", {
-      name: /connexion avec github/i,
+      name: /se connecter avec github/i,
     });
 
     await user.click(button);

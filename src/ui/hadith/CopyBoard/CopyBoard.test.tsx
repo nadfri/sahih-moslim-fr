@@ -1,4 +1,5 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { renderWithI18n } from "@/__tests__/renderWithI18n";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -58,9 +59,9 @@ describe("CopyBoard", () => {
   });
 
   it("renders the copy button correctly", () => {
-    render(<CopyBoard hadith={mockHadith} />);
+    renderWithI18n(<CopyBoard hadith={mockHadith} />);
     const button = screen.getByRole("button", {
-      name: /copier le contenu du hadith/i,
+      name: /copier le hadith/i,
     });
     expect(button).toBeInTheDocument();
     expect(button).toHaveTextContent("Copier");
@@ -69,9 +70,9 @@ describe("CopyBoard", () => {
 
   it("displays dropdown menu when button is clicked", async () => {
     const user = userEvent.setup();
-    render(<CopyBoard hadith={mockHadith} />);
+    renderWithI18n(<CopyBoard hadith={mockHadith} />);
     const button = screen.getByRole("button", {
-      name: /copier le contenu du hadith/i,
+      name: /copier le hadith/i,
     });
     await user.click(button);
     await waitFor(() => {
@@ -84,9 +85,9 @@ describe("CopyBoard", () => {
   });
   it('copies French text when "Français" option is selected', async () => {
     const user = userEvent.setup();
-    render(<CopyBoard hadith={mockHadith} />);
+    renderWithI18n(<CopyBoard hadith={mockHadith} />);
     const button = screen.getByRole("button", {
-      name: /copier le contenu du hadith/i,
+      name: /copier le hadith/i,
     });
     await user.click(button);
     const frenchOption = screen.getByText("Français");
@@ -98,9 +99,9 @@ describe("CopyBoard", () => {
   });
   it('copies Arabic text when "Arabe" option is selected', async () => {
     const user = userEvent.setup();
-    render(<CopyBoard hadith={mockHadith} />);
+    renderWithI18n(<CopyBoard hadith={mockHadith} />);
     const button = screen.getByRole("button", {
-      name: /copier le contenu du hadith/i,
+      name: /copier le hadith/i,
     });
     await user.click(button);
     const arabicOption = screen.getByText("Arabe");
@@ -112,9 +113,9 @@ describe("CopyBoard", () => {
   });
   it('copies both texts when "Les deux" option is selected', async () => {
     const user = userEvent.setup();
-    render(<CopyBoard hadith={mockHadith} />);
+    renderWithI18n(<CopyBoard hadith={mockHadith} />);
     const button = screen.getByRole("button", {
-      name: /copier le contenu du hadith/i,
+      name: /copier le hadith/i,
     });
     await user.click(button);
     const bothOption = screen.getByText("Les deux");
@@ -127,9 +128,9 @@ describe("CopyBoard", () => {
 
   it('copies link when "Le lien" option is selected', async () => {
     const user = userEvent.setup();
-    render(<CopyBoard hadith={mockHadith} />);
+    renderWithI18n(<CopyBoard hadith={mockHadith} />);
     const button = screen.getByRole("button", {
-      name: /copier le contenu du hadith/i,
+      name: /copier le hadith/i,
     });
     await user.click(button);
     const linkOption = screen.getByText("Le lien");
@@ -143,14 +144,14 @@ describe("CopyBoard", () => {
 
   it('shows "Copié!" text after successful copy and reverts after 1 second', async () => {
     const user = userEvent.setup();
-    render(<CopyBoard hadith={mockHadith} />);
+    renderWithI18n(<CopyBoard hadith={mockHadith} />);
     const button = screen.getByRole("button", {
-      name: /copier le contenu du hadith/i,
+      name: /copier le hadith/i,
     });
     await user.click(button);
     const frenchOption = screen.getByText("Français");
     await user.click(frenchOption);
-    expect(await screen.findByText("Copié!")).toBeInTheDocument();
+    expect(await screen.findByText("Copié !")).toBeInTheDocument();
     // Wait for revert (1s)
     await waitFor(
       () => {
@@ -162,7 +163,7 @@ describe("CopyBoard", () => {
 
   it("closes dropdown when clicking outside", async () => {
     const user = userEvent.setup();
-    render(
+    renderWithI18n(
       <div>
         {/* This div is used to simulate clicking outside the CopyBoard component */}
         <div data-testid="outside">Outside area</div>
@@ -170,7 +171,7 @@ describe("CopyBoard", () => {
       </div>
     );
     const button = screen.getByRole("button", {
-      name: /copier le contenu du hadith/i,
+      name: /copier le hadith/i,
     });
     await user.click(button);
 
