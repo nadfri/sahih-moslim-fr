@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint \"./**/*.+(ts|tsx)\"",
     "lint:fix": "eslint \"./**/*.+(ts|tsx)\" --fix",
@@ -13,8 +13,6 @@
     "prisma:migrate": "pnpx prisma migrate dev",
     "prisma:generate": "pnpx prisma generate",
     "prisma:studio": "pnpx prisma studio",
-    "prisma:format": "pnpx prisma format",
-    "prisma:seed": "node prisma/seed.js",
     "restore:emergency": "node backups/restore-emergency.cjs",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",

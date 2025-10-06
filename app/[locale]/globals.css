@@ -26,7 +26,7 @@ html[lang="ar"] {
   font-family:
     var(--font-amiri), "Amiri", "Noto Naskh Arabic", "Scheherazade", "Arial",
     sans-serif;
-    line-height: 170%;
+  line-height: 170%;
 }
 
 body {
@@ -48,7 +48,9 @@ button {
 }
 
 .title {
-  @apply text-2xl text-balance md:text-4xl font-serif font-bold text-center text-emerald-800 mb-8 md:mb-10 tracking-tight dark:text-emerald-500;
+  @apply text-3xl text-balance md:text-4xl font-bold text-center text-emerald-800 mb-8 md:mb-10 tracking-tight dark:text-emerald-500;
+
+  letter-spacing: 2px;
 
   span {
     @apply text-nowrap;

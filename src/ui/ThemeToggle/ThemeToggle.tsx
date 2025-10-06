@@ -48,7 +48,7 @@ export function ThemeToggle() {
 
   return (
     <button
-      className="inline-flex items-center justify-center transition-colors duration-200 text-yellow-400 hover:text-yellow-600 dark:hover:text-yellow-200 -mx-1"
+      className="inline-flex items-center justify-center text-yellow-400 hover:text-yellow-600 dark:hover:text-yellow-200 -mx-0.5"
       onClick={toggleTheme}
       aria-label={`Toggle theme to ${theme === "dark" ? "light" : "dark"}`}
       disabled={!theme}

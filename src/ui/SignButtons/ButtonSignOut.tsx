@@ -18,10 +18,10 @@ export function ButtonSignOut() {
     <button
       type="button"
       onClick={signOut}
-      className="w-full sm:w-auto inline-flex items-center justify-center bg-orange-100 dark:bg-orange-700/20 text-orange-600 dark:text-orange-300 p-1 md:p-2 rounded-md hover:bg-orange-200 dark:hover:bg-orange-700/30 hover:text-orange-700 dark:hover:text-orange-400"
+      className="w-full sm:w-auto inline-flex items-center justify-center bg-orange-100 dark:bg-orange-700/20 text-orange-600 dark:text-orange-300 p-1.5 rounded-md hover:bg-orange-200 dark:hover:bg-orange-700/30 hover:text-orange-700 dark:hover:text-orange-400"
     >
       <PowerOff
-        className="size-5"
+        className="size-4"
         aria-hidden="true"
       />
     </button>

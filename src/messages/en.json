@@ -68,7 +68,7 @@
     "search": "Search"
   },
   "home": {
-    "title": "Sahih Moslim in French",
+    "title": "Sahih Moslim",
     "descriptive": {
       "bookName": "Sahih Moslim",
       "bukharName": "Sahih al-Bukhari",
@@ -93,7 +93,7 @@
   },
   "layout": {
     "description": "A collection of authentic hadiths.",
-    "title": "Sahih Moslim in French"
+    "title": "Sahih Moslim"
   },
   "sahabas": {
     "description-metadata": "Discover the companions of Hadiths in the Sahih Moslim collection.",
