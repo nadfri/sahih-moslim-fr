@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { NextIntlClientProvider } from "next-intl";
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -34,6 +35,13 @@ Object.defineProperty(window, "location", {
 });
 
 describe("Authentication Flow - Redirect After Login", () => {
+  const messages = {
+    signin: {
+      github: "Se connecter avec GitHub",
+      loading: "Connexion en cours...",
+    },
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
     mockSignInWithOAuth.mockResolvedValue({ error: null });
@@ -44,11 +52,17 @@ describe("Authentication Flow - Redirect After Login", () => {
 
   it("should call signInWithOAuth with correct redirect URL when callbackUrl is provided", async () => {
     const { ButtonGithub } = await import("@/src/ui/SignButtons/ButtonGithub");
-
-    render(<ButtonGithub />);
+    render(
+      <NextIntlClientProvider
+        locale="fr"
+        messages={messages}
+      >
+        <ButtonGithub />
+      </NextIntlClientProvider>
+    );
 
     const signInButton = screen.getByRole("button", {
-      name: /connexion avec github/i,
+      name: /se connecter avec github/i,
     });
     expect(signInButton).toBeInTheDocument();
 
@@ -65,16 +79,19 @@ describe("Authentication Flow - Redirect After Login", () => {
 
   it("should show loading state during sign-in process", async () => {
     const { ButtonGithub } = await import("@/src/ui/SignButtons/ButtonGithub");
-
-    render(<ButtonGithub />);
-
+    render(
+      <NextIntlClientProvider
+        locale="fr"
+        messages={messages}
+      >
+        <ButtonGithub />
+      </NextIntlClientProvider>
+    );
     const signInButton = screen.getByRole("button", {
-      name: /connexion avec github/i,
+      name: /se connecter avec github/i,
     });
-
     // Click to start loading
     await userEvent.click(signInButton);
-
     // Should show loading text
     expect(screen.getByText("Connexion en cours...")).toBeInTheDocument();
     expect(signInButton).toBeDisabled();
@@ -82,17 +99,19 @@ describe("Authentication Flow - Redirect After Login", () => {
 
   it("should use default redirect when no callbackUrl", async () => {
     mockGet.mockReturnValue(null);
-
     const { ButtonGithub } = await import("@/src/ui/SignButtons/ButtonGithub");
-
-    render(<ButtonGithub />);
-
+    render(
+      <NextIntlClientProvider
+        locale="fr"
+        messages={messages}
+      >
+        <ButtonGithub />
+      </NextIntlClientProvider>
+    );
     const signInButton = screen.getByRole("button", {
-      name: /connexion avec github/i,
+      name: /se connecter avec github/i,
     });
-
     await userEvent.click(signInButton);
-
     expect(mockSignInWithOAuth).toHaveBeenCalledWith({
       provider: "github",
       options: {

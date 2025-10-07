@@ -2,7 +2,7 @@ import { renderWithI18n } from "@/__tests__/renderWithI18n";
 import { screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { mockHadiths } from "@/src/mocks/mockHadiths";
+import { mockHadiths } from "@/__tests__/mocks/mockHadiths";
 import { ListLayoutHadith } from "./ListLayoutHadith";
 
 // Mock useAuth hook

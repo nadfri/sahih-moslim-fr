@@ -2,7 +2,7 @@ import { screen } from "@testing-library/react";
 import { renderWithI18n } from "@/__tests__/renderWithI18n";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { mockHadith } from "@/src/mocks/mockHadith";
+import { mockHadith } from "@/__tests__/mocks/mockHadith";
 import { HadithType } from "@/src/types/types";
 import { ActionsBtns } from "./ActionsBtns";
 

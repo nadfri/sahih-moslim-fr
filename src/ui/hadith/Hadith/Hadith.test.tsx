@@ -3,7 +3,7 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { mockHadith } from "@/src/mocks/mockHadith";
+import { mockHadith } from "@/__tests__/mocks/mockHadith";
 import type { HadithType } from "@/src/types/types";
 import { Hadith } from "./Hadith";
 

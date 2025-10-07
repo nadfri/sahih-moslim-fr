@@ -3,7 +3,7 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { mockHadith } from "@/src/mocks/mockHadith";
+import { mockHadith } from "@/__tests__/mocks/mockHadith";
 import { CopyBoard } from "./CopyBoard";
 
 // Mock minimal HadithType for test
