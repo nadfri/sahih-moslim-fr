@@ -25,8 +25,8 @@
     "description-metadata-slug": "Collection de hadiths du chapitre {name} - Sahih Moslim"
   },
   "footer": {
-    "title": "Sahih Muslim",
-    "description": "Faciliter l'accès aux enseignements authentiques rapportés par l'Imam Muslim."
+    "title": "Sahih Moslim",
+    "description": "Faciliter l'accès aux enseignements authentiques rapportés par l'Imam Moslim."
   },
 
   "hadith": {
@@ -70,7 +70,11 @@
     "chapters": "Chapitres",
     "sahabas": "Compagnons",
     "transmitters": "Transmetteurs",
-    "search": "Recherche"
+    "search": "Recherche",
+    "sahih": "Sahih",
+    "moslim": "Moslim",
+    "logo-title": "Sahih Moslim"
+
   },
   "home": {
     "title": "Sahih Moslim",

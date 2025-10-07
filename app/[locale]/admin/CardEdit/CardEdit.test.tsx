@@ -190,7 +190,9 @@ describe("CardEdit Component", () => {
     const deleteButton = screen.getByLabelText("Supprimer");
     await user.click(deleteButton);
 
-    expect(screen.getByText("Supprimer ce chapitre ?")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Supprimer ce chapitre ?")).toBeInTheDocument();
+    });
     expect(screen.getByTestId("hadith-badge")).toHaveTextContent("15 hadiths");
   });
 
@@ -206,7 +208,9 @@ describe("CardEdit Component", () => {
 
     // Open modal
     await user.click(screen.getByLabelText("Supprimer"));
-    expect(screen.getByText("Supprimer ce chapitre ?")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Supprimer ce chapitre ?")).toBeInTheDocument();
+    });
 
     // Close modal
     await user.click(screen.getByText("Annuler"));
@@ -229,7 +233,9 @@ describe("CardEdit Component", () => {
     );
 
     await user.click(screen.getByLabelText("Supprimer"));
-    expect(screen.getByText("Supprimer ce chapitre ?")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Supprimer ce chapitre ?")).toBeInTheDocument();
+    });
 
     // Close modal and rerender with different variant
     await user.click(screen.getByText("Annuler"));
@@ -243,7 +249,9 @@ describe("CardEdit Component", () => {
     );
 
     await user.click(screen.getByLabelText("Supprimer"));
-    expect(screen.getByText("Supprimer ce compagnon ?")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Supprimer ce compagnon ?")).toBeInTheDocument();
+    });
   });
 
   it("should handle transmitters variant correctly", async () => {
@@ -257,7 +265,11 @@ describe("CardEdit Component", () => {
     );
 
     await user.click(screen.getByLabelText("Supprimer"));
-    expect(screen.getByText("Supprimer ce transmetteur ?")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.getByText("Supprimer ce transmetteur ?")
+      ).toBeInTheDocument();
+    });
   });
 
   it("should render transmitter information correctly", () => {

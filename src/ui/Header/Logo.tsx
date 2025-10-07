@@ -1,7 +1,21 @@
 import { Link } from "@/i18n/navigation";
 import { BookOpen } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 
 export function Logo() {
+  const t = useTranslations("header");
+  const locale = useLocale();
+  const isArabic = locale === "ar";
+
+  // Common styles for Arabic locale
+  const arabicStyle = isArabic ? { lineHeight: "80%" } : undefined;
+
+  const mobileTextSize = isArabic ? "text-2xl" : "text-xl";
+
+  const desktopTextSize = isArabic
+    ? "md:text-3xl"
+    : "md:text-2xl md:leading-tight";
+
   return (
     <Link
       href="/"
@@ -12,13 +26,18 @@ export function Logo() {
         strokeWidth="1"
       />
       {/* Original title for mobile */}
-      <span className="text-xl font-bold font-serif md:hidden">
-        Sahih Muslim
+      <span
+        className={`font-bold md:hidden ${mobileTextSize}`}
+      >
+        {t("logo-title")}
       </span>
 
-      <div className="hidden md:flex md:flex-col md:leading-tight">
-        <span className="text-2xl font-bold font-serif">Sahih</span>
-        <span className="text-2xl font-bold font-serif">Muslim</span>
+      <div
+        className={`hidden md:flex md:flex-col ${desktopTextSize}`}
+        style={arabicStyle}
+      >
+        <span className="font-bold">{t("sahih")}</span>
+        <span className="font-bold">{t("moslim")}</span>
       </div>
     </Link>
   );

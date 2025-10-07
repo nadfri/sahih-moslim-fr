@@ -26,7 +26,7 @@
   },
   "footer": {
     "description": "تسهيل الوصول إلى الدروس الأصيلة التي أبلغ عنها الإمام المسلم.",
-    "title": "Sahih مسلم"
+    "title": "صحيح مسلم"
   },
   "hadith": {
     "notFound": "الحديث غير موجود",
@@ -65,7 +65,10 @@
     "chapters": "الفصول",
     "sahabas": "الصحابة",
     "transmitters": "الرواة",
-    "search": "البحث"
+    "search": "البحث",
+    "logo-title": "صحيح مسلم",
+    "moslim": "مسلم",
+    "sahih": "صحيح"
   },
   "home": {
     "title": "صحيح مسلم",
