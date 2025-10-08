@@ -150,7 +150,7 @@ export async function addItem(
       }
     }
 
-    // Fallback : détection par message d'erreur technique (cas Next.js 15 ou edge)
+    // Fallback: détection par message d'erreur technique (cas Next.js 15 ou edge)
     if (userMessage === "Erreur inconnue lors de l'ajout." && errorDetails) {
       if (
         /Unique constraint failed on the fields: \(`name`\)/.test(errorDetails)

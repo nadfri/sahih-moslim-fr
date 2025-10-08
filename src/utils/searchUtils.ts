@@ -55,17 +55,17 @@ export function buildSearchParams(
     case "word":
       if (query) params.set("query", query);
       break;
-      // case "narrator":
-      //   if (narrator) params.set("narrator", narrator);
-      break;
+
     case "sahaba":
       sahabas.forEach((sahaba) => params.append("sahaba", sahaba));
       break;
+
     case "transmitter":
       transmitters.forEach((transmitter) =>
         params.append("transmitter", transmitter)
       );
       break;
+
     case "numero":
       if (numero) params.set("numero", numero);
       break;

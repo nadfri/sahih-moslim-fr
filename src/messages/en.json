@@ -65,7 +65,10 @@
     "chapters": "Chapters",
     "sahabas": "Companions",
     "transmitters": "Transmitters",
-    "search": "Search"
+    "search": "Search",
+    "logo-title": "Sahih Muslim",
+    "moslim": "Moslim",
+    "sahih": "Sahih"
   },
   "home": {
     "title": "Sahih Moslim",
@@ -109,15 +112,15 @@
     "description-metadata": "Look for authentic hadiths in the Sahih Moslim collection",
     "empty": "No hadith found ...",
     "filters": {
-      "numero": "Per number",
-      "sahaba": "Companion",
+      "numero": "By number",
+      "sahaba": "By sahaba",
       "transmitter": "By transmitter",
       "word": "By word"
     },
     "loading": "Search in progress ...",
     "placeholders": {
       "numeroInput": "Hadith number",
-      "sahabaSelect": "Choose one or more rapporteurs",
+      "sahabaSelect": "Choose one or more sahabas",
       "transmitterSelect": "Choose one or more transmitters",
       "wordInput": "Search by word (3 letters min) ..."
     },
@@ -130,7 +133,7 @@
     "explore": "Explore",
     "hadiths-count": "{count} Hadiths",
     "search-chapter": "Search for a chapter ...",
-    "search-sahaba": "Search for a companion ...",
+    "search-sahaba": "Search for a sahaba ...",
     "search-transmitter": "Search for a transmitter ..."
   },
   "signin": {
@@ -154,5 +157,12 @@
     "backHome": "Back to reception",
     "noPermission": "You do not have the necessary permissions to access this page.",
     "title": "Unauthorized access"
+  },
+  "form": {
+    "clear": "To erase",
+    "close-list": "Close list",
+    "no-results": "No results",
+    "open-list": "Open list",
+    "search": "To research..."
   }
 }

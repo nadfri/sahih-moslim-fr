@@ -166,5 +166,14 @@
     "noPermission": "Vous n'avez pas les autorisations nécessaires pour accéder à cette page.",
     "adminOnly": "Seuls les administrateurs peuvent accéder à cette section.",
     "backHome": "Retour à l'accueil"
+  },
+
+  "form": {
+    "clear": "Effacer",
+    "open-list": "Ouvrir la liste",
+    "close-list": "Fermer la liste",
+    "no-results": "Aucun résultat",
+    "search": "Rechercher..."
+
   }
 }

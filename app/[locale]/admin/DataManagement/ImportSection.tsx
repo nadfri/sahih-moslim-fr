@@ -40,10 +40,12 @@ export function ImportSection() {
       <div className="grid grid-cols-1 gap-2">
         {dataOptions.map((option) => {
           const Icon = option.icon;
+
           return (
             <label
               key={`${option.key}-import`}
               className="group flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg border border-amber-200 dark:border-amber-800 hover:border-amber-300 dark:hover:border-amber-700 hover:shadow-md transition-all duration-200 cursor-pointer"
+              aria-label={`Importer ${option.label}`}
             >
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-md bg-amber-100 dark:bg-amber-900/30">

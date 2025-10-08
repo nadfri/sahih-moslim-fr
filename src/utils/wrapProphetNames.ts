@@ -46,8 +46,8 @@ const patterns = [
 ];
 
 export function wrapProphetNames(text: string): string {
-  // Remove invisible Unicode whitespace characters
-  let result = text.replace(/[\u000B\u000C\u000F\u{EFF}]/gu, "");
+  // Remove invisible Unicode whitespace characters using character class
+  let result = text.replace(/[\p{Cc}\u{EFF}]/gu, "");
 
   // Direct replacement of complete phrases with wrapped icon
   result = result.replace(

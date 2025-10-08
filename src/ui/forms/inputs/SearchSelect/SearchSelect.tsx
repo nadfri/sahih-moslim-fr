@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, ChevronUp, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type SearchSelectProps = {
   id: string;
@@ -28,6 +29,8 @@ export function SearchSelect({
   errorMessage,
   onInputChange,
 }: SearchSelectProps) {
+  const t = useTranslations("form");
+
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState(value);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -137,7 +140,7 @@ export function SearchSelect({
               type="button"
               className="p-2 text-gray-500 dark:text-gray-400 hover:text-red-700 dark:hover:text-red-500"
               onClick={handleClear}
-              aria-label="Effacer"
+              aria-label={t("clear")}
               tabIndex={-1}
             >
               <X className="h-4 w-4" />
@@ -152,7 +155,7 @@ export function SearchSelect({
             }`}
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => setIsOpen(!isOpen)}
-            aria-label={isOpen ? "Fermer la liste" : "Ouvrir la liste"}
+            aria-label={isOpen ? t("close-list") : t("open-list")}
             tabIndex={-1}
           >
             {isOpen ? (
@@ -167,35 +170,34 @@ export function SearchSelect({
           <ul
             id={listboxId}
             className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-lg"
-            role="listbox"
             aria-label={label}
-            onMouseDown={(e) => e.preventDefault()}
           >
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <li
                   key={option}
                   id={`${id}-option-${option.replace(/\s+/g, "-")}`}
-                  className={`p-2 cursor-pointer hover:bg-emerald-100 dark:hover:bg-emerald-900/50 ${
-                    value === option
-                      ? "bg-emerald-50 dark:bg-emerald-950/60 font-medium"
-                      : ""
-                  } dark:text-gray-200`}
-                  onMouseDown={() => handleSelectOption(option)}
-                  role="option"
-                  aria-selected={value === option}
+                  className="p-0"
                 >
-                  {option}
+                  <button
+                    type="button"
+                    className={`w-full text-left p-2 cursor-pointer hover:bg-emerald-100 dark:hover:bg-emerald-900/50 ${
+                      value === option
+                        ? "bg-emerald-50 dark:bg-emerald-950/60 font-medium"
+                        : ""
+                    } dark:text-gray-200`}
+                    onMouseDown={() => handleSelectOption(option)}
+                    role="option"
+                    aria-selected={value === option}
+                    tabIndex={-1}
+                  >
+                    {option}
+                  </button>
                 </li>
               ))
             ) : (
-              <li
-                className="p-2 text-gray-500 dark:text-gray-400 italic"
-                role="option"
-                aria-selected="false"
-                aria-disabled="true"
-              >
-                Pas de résultat
+              <li className="p-2 text-gray-500 dark:text-gray-400 italic">
+                {t("no-results")}
               </li>
             )}
           </ul>

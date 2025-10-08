@@ -68,10 +68,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    try {
-      revalidatePath("/");
-      revalidatePath("/transmitters");
-    } catch {}
+    revalidatePath("/");
+    revalidatePath("/transmitters");
 
     return NextResponse.json({
       message: `Imported ${results.length} transmitters`,

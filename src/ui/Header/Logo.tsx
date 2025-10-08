@@ -26,9 +26,7 @@ export function Logo() {
         strokeWidth="1"
       />
       {/* Original title for mobile */}
-      <span
-        className={`font-bold md:hidden ${mobileTextSize}`}
-      >
+      <span className={`font-bold md:hidden ${mobileTextSize}`}>
         {t("logo-title")}
       </span>
 

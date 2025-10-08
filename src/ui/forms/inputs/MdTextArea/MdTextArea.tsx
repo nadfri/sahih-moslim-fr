@@ -46,10 +46,7 @@ export function MdTextArea<T extends FieldValues>({
               : "border border-gray-300 dark:border-gray-700"
         }`}
       >
-        <div
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-        >
+        <div>
           <Controller
             name={name}
             control={control}

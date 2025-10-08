@@ -84,9 +84,8 @@ export function ImportConfirmModal({
             position: "top-right",
             autoClose: 3000,
           });
-          try {
-            router.refresh();
-          } catch {}
+
+          router.refresh();
         }
       } else {
         toast.error("❌ Erreur lors de l'import", {

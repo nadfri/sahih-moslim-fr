@@ -7,6 +7,7 @@ type Props = {
 
 export function MobileMenu({ isMobileMenuOpen, closeMobileMenu }: Props) {
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
       className={`md:hidden bg-white dark:bg-gray-900 overflow-hidden transition-[max-height] duration-200 ease-in-out ${isMobileMenuOpen ? "max-h-96" : "max-h-0"}`}
       onClick={closeMobileMenu}
