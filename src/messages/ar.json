@@ -30,7 +30,7 @@
   },
   "hadith": {
     "notFound": "الحديث غير موجود",
-    "title": "الرقم {number} - {narrator}",
+    "title": "الرقم {numero} - {narrator}",
     "hadith-count": "{count, plural, =0 {0 حديث} =1 {1 حديث} other {# أحاديث}}",
     "mentioned-sahabas": "{count, plural, =1 {صحابي مذكور} other {صحابة مذكورون}}",
     "preview": "معاينة",
@@ -58,7 +58,8 @@
       "see-isnad": "انظر Isnad",
       "hide-arabic": "إخفاء النسخة العربية",
       "see-arabic": "انظر النسخة العربية"
-    }
+    },
+    "noResults": "لم يتم العثور على حديث"
   },
   "header": {
     "home": "الرئيسية",

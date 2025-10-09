@@ -30,7 +30,7 @@
   },
   "hadith": {
     "notFound": "Hadith not found",
-    "title": "N° {number} - {narrator}",
+    "title": "N° {numero} - {narrator}",
     "hadith-count": "{count, plural, =0 {0 Hadith} =1 {1 Hadith} other {# Hadiths}}",
     "mentioned-sahabas": "{count, plural, =1 {Sahaba mentioned} other {Sahabas mentioned}}",
     "preview": "Preview",
@@ -58,12 +58,13 @@
       "see-isnad": "See Isnad",
       "hide-arabic": "Hide the Arabic version",
       "see-arabic": "See the Arabic version"
-    }
+    },
+    "noResults": "No hadith found."
   },
   "header": {
     "home": "Home",
     "chapters": "Chapters",
-    "sahabas": "Companions",
+    "sahabas": "Sahabas",
     "transmitters": "Transmitters",
     "search": "Search",
     "logo-title": "Sahih Muslim",
@@ -99,14 +100,14 @@
     "title": "Sahih Moslim"
   },
   "sahabas": {
-    "description-metadata": "Discover the companions of Hadiths in the Sahih Moslim collection.",
+    "description-metadata": "Discover the sahabas of Hadiths in the Sahih Moslim collection.",
     "description-metadata-slug": "Collection of Hadiths du Compagnon {name} - Sahih Moslim",
-    "notFound": "Companion not found",
-    "notFoundDescription": "This companion does not exist.",
-    "title": "List of companions",
-    "title-metadata": "Companions in Moslim",
-    "title-metadata-slug": "Companion: {name}",
-    "title-slug": "Hadiths mentioning the companion"
+    "notFound": "Sahaba not found",
+    "notFoundDescription": "This sahaba does not exist.",
+    "title": "List of sahabas",
+    "title-metadata": "Sahabas in Moslim",
+    "title-metadata-slug": "Sahaba: {name}",
+    "title-slug": "Hadiths mentioning the sahaba"
   },
   "search": {
     "description-metadata": "Look for authentic hadiths in the Sahih Moslim collection",

@@ -36,8 +36,8 @@ describe("Card", () => {
     );
     // Check chapter name
     expect(screen.getByText("Test Chapter")).toBeInTheDocument();
-    // Check hadith count
-    expect(screen.getByText(/42 Hadiths/)).toBeInTheDocument();
+    // Check hadith count (ICU key)
+    expect(screen.getByText("42 Hadiths")).toBeInTheDocument();
     // Check chapter index (traduction)
     expect(screen.getByText(/Chapitre 3/)).toBeInTheDocument();
     // Check link

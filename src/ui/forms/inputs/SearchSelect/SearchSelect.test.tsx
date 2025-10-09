@@ -1,14 +1,15 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
+import { renderWithI18n } from "@/__tests__/renderWithI18n";
 import { SearchSelect } from "./SearchSelect";
 
 describe("SearchSelect", () => {
   const options = ["Option 1", "Option 2", "Option 3", "Another option"];
 
   it("renders search select with label and placeholder", () => {
-    render(
+    renderWithI18n(
       <SearchSelect
         id="test-searchselect"
         label="Test Label"
@@ -28,7 +29,7 @@ describe("SearchSelect", () => {
   it("filters options based on input value", async () => {
     const user = userEvent.setup();
 
-    render(
+    renderWithI18n(
       <SearchSelect
         id="test-searchselect"
         label="Test Label"
@@ -61,7 +62,7 @@ describe("SearchSelect", () => {
     const handleChange = vi.fn();
     const user = userEvent.setup();
 
-    render(
+    renderWithI18n(
       <SearchSelect
         id="test-searchselect"
         label="Test Label"
@@ -82,7 +83,7 @@ describe("SearchSelect", () => {
     const handleChange = vi.fn();
     const user = userEvent.setup();
 
-    render(
+    renderWithI18n(
       <SearchSelect
         id="test-searchselect"
         label="Test Label"
@@ -106,7 +107,7 @@ describe("SearchSelect", () => {
   it("toggles dropdown when clicking the chevron button", async () => {
     const user = userEvent.setup();
 
-    render(
+    renderWithI18n(
       <SearchSelect
         id="test-searchselect"
         label="Test Label"
@@ -116,26 +117,32 @@ describe("SearchSelect", () => {
       />
     );
 
-    // Initially, dropdown should be closed
-    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+    // Initially, dropdown is closed (chevron shows 'Ouvrir la liste')
+    expect(
+      screen.queryByRole("list", { name: "Test Label" })
+    ).not.toBeInTheDocument();
 
     // Click the chevron button to open dropdown
     const openButton = screen.getByLabelText("Ouvrir la liste");
     await user.click(openButton);
 
     // Verify dropdown is open
-    expect(screen.getByRole("listbox")).toBeInTheDocument();
+    expect(
+      screen.getByRole("list", { name: "Test Label" })
+    ).toBeInTheDocument();
 
     // Click the chevron button again to close dropdown
     const closeButton = screen.getByLabelText("Fermer la liste");
     await user.click(closeButton);
 
     // Verify dropdown is closed
-    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("list", { name: "Test Label" })
+    ).not.toBeInTheDocument();
   });
 
   it("displays error message when error is true", () => {
-    render(
+    renderWithI18n(
       <SearchSelect
         id="test-searchselect"
         label="Test Label"
@@ -150,10 +157,10 @@ describe("SearchSelect", () => {
     expect(screen.getByText("This is an error message")).toBeInTheDocument();
   });
 
-  it("shows 'Pas de résultat' when no options match the search", async () => {
+  it("shows 'Aucun résultat' when no options match the search", async () => {
     const user = userEvent.setup();
 
-    render(
+    renderWithI18n(
       <SearchSelect
         id="test-searchselect"
         label="Test Label"
@@ -167,6 +174,6 @@ describe("SearchSelect", () => {
     await user.click(input);
     await user.type(input, "nonexistent option");
 
-    expect(screen.getByText("Pas de résultat")).toBeInTheDocument();
+    expect(screen.getByText("Aucun résultat")).toBeInTheDocument();
   });
 });

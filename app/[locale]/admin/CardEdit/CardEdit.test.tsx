@@ -1,4 +1,5 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { renderWithI18n } from "@/__tests__/renderWithI18n";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -82,7 +83,7 @@ const mockItems: ItemType[] = [
 
 describe("CardEdit Component", () => {
   it("should render item information correctly", () => {
-    render(
+    renderWithI18n(
       <CardEdit
         item={mockChapterItem}
         items={mockItems}
@@ -97,7 +98,7 @@ describe("CardEdit Component", () => {
   });
 
   it("should render Arabic name when provided", () => {
-    render(
+    renderWithI18n(
       <CardEdit
         item={mockSahabaItem}
         items={mockItems}
@@ -113,7 +114,7 @@ describe("CardEdit Component", () => {
     const itemWithoutIndex = { ...mockSahabaItem };
     delete itemWithoutIndex.index;
 
-    render(
+    renderWithI18n(
       <CardEdit
         item={itemWithoutIndex}
         items={mockItems}
@@ -126,7 +127,7 @@ describe("CardEdit Component", () => {
   });
 
   it("should render edit and delete buttons", () => {
-    render(
+    renderWithI18n(
       <CardEdit
         item={mockChapterItem}
         items={mockItems}
@@ -140,7 +141,7 @@ describe("CardEdit Component", () => {
 
   it("should open edit dialog when edit button is clicked", async () => {
     const user = userEvent.setup();
-    render(
+    renderWithI18n(
       <CardEdit
         item={mockChapterItem}
         items={mockItems}
@@ -158,7 +159,7 @@ describe("CardEdit Component", () => {
 
   it("should close edit dialog when cancel is clicked", async () => {
     const user = userEvent.setup();
-    render(
+    renderWithI18n(
       <CardEdit
         item={mockChapterItem}
         items={mockItems}
@@ -179,7 +180,7 @@ describe("CardEdit Component", () => {
 
   it("should open delete modal when delete button is clicked", async () => {
     const user = userEvent.setup();
-    render(
+    renderWithI18n(
       <CardEdit
         item={mockChapterItem}
         items={mockItems}
@@ -191,6 +192,7 @@ describe("CardEdit Component", () => {
     await user.click(deleteButton);
 
     await waitFor(() => {
+      // Patch: matcher sur le titre du modal sans data-testid
       expect(screen.getByText("Supprimer ce chapitre ?")).toBeInTheDocument();
     });
     expect(screen.getByTestId("hadith-badge")).toHaveTextContent("15 hadiths");
@@ -198,7 +200,7 @@ describe("CardEdit Component", () => {
 
   it("should close delete modal when cancel is clicked", async () => {
     const user = userEvent.setup();
-    render(
+    renderWithI18n(
       <CardEdit
         item={mockChapterItem}
         items={mockItems}
@@ -224,7 +226,8 @@ describe("CardEdit Component", () => {
   it("should display correct variant-specific delete text", async () => {
     const user = userEvent.setup();
 
-    const { rerender } = render(
+    // Test chapters variant
+    renderWithI18n(
       <CardEdit
         item={mockChapterItem}
         items={mockItems}
@@ -237,10 +240,20 @@ describe("CardEdit Component", () => {
       expect(screen.getByText("Supprimer ce chapitre ?")).toBeInTheDocument();
     });
 
-    // Close modal and rerender with different variant
+    // Close modal
     await user.click(screen.getByText("Annuler"));
+    await waitFor(() => {
+      expect(
+        screen.queryByText("Supprimer ce chapitre ?")
+      ).not.toBeInTheDocument();
+    });
+  });
 
-    rerender(
+  it("should display correct sahabas variant delete text", async () => {
+    const user = userEvent.setup();
+
+    // Test sahabas variant
+    renderWithI18n(
       <CardEdit
         item={mockSahabaItem}
         items={mockItems}
@@ -256,7 +269,7 @@ describe("CardEdit Component", () => {
 
   it("should handle transmitters variant correctly", async () => {
     const user = userEvent.setup();
-    render(
+    renderWithI18n(
       <CardEdit
         item={mockTransmitterItem}
         items={mockItems}
@@ -273,7 +286,7 @@ describe("CardEdit Component", () => {
   });
 
   it("should render transmitter information correctly", () => {
-    render(
+    renderWithI18n(
       <CardEdit
         item={mockTransmitterItem}
         items={mockItems}

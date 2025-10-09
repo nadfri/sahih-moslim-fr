@@ -1,4 +1,5 @@
-import { screen, fireEvent } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
 import { renderWithI18n } from "@/__tests__/renderWithI18n";
@@ -11,17 +12,19 @@ vi.mock("@/src/hooks/useAuth", () => ({
 }));
 
 // Mock next/navigation hooks used across components
-vi.mock("next/navigation", async () => {
+vi.mock("next/navigation", () => {
   return {
     usePathname: () => "/",
-    useSearchParams: () => ({ toString: () => "" }),
+    // Using URLSearchParams provides .get/.toString behavior close to Next's ReadonlyURLSearchParams
+    useSearchParams: () => new URLSearchParams(),
     useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
   };
 });
 
 describe("Header component", () => {
   beforeEach(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
+    mockUseAuth.mockReset();
   });
 
   it("renders logo and navigation links", () => {
@@ -30,8 +33,8 @@ describe("Header component", () => {
 
     renderWithI18n(<Header />);
 
-    // Logo text
-    expect(screen.getByText("Sahih Muslim")).toBeInTheDocument();
+    // Logo text (mobile shows single span "Sahih Moslim"; desktop splits into two spans)
+    expect(screen.getByText("Sahih Moslim")).toBeInTheDocument();
     // Nav links (desktop + mobile) render multiple times; assert at least one exists
     expect(screen.getAllByText("Accueil").length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText("Chapitres").length).toBeGreaterThanOrEqual(1);
@@ -92,7 +95,7 @@ describe("Header component", () => {
     expect(toggle).toBeInTheDocument();
   });
 
-  it("hamburger button toggles mobile menu via aria-expanded", () => {
+  it("hamburger button toggles mobile menu via aria-expanded", async () => {
     mockUseAuth.mockReturnValue({ user: null, loading: false, isAdmin: false });
 
     renderWithI18n(<Header />);
@@ -104,11 +107,11 @@ describe("Header component", () => {
     expect(hamburger).toHaveAttribute("aria-expanded", "false");
 
     // Click to open
-    fireEvent.click(hamburger);
+    await userEvent.click(hamburger);
     expect(hamburger).toHaveAttribute("aria-expanded", "true");
 
     // Click to close
-    fireEvent.click(hamburger);
+    await userEvent.click(hamburger);
     expect(hamburger).toHaveAttribute("aria-expanded", "false");
   });
 });

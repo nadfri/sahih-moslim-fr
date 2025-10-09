@@ -13,11 +13,9 @@ const mockSahabas: ItemType[] = [
 const mockEmptySahabas: ItemType[] = [];
 
 describe("ListOfSahabas", () => {
-  it("renders list of sahabas with correct links", () => {
+  it("renders ICU pluralization key for sahabas", () => {
     renderWithI18n(<ListOfSahabas sahabas={mockSahabas} />);
-
     expect(screen.getByText("Sahabas mentionnés")).toBeInTheDocument();
-
     const links = screen.getAllByRole("link");
     expect(links[0]).toHaveAttribute("href", "/sahabas/abu-bakr");
     expect(links[0]).toHaveTextContent("Abu Bakr");

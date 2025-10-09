@@ -5,7 +5,23 @@ import { cleanup } from "@testing-library/react";
 import { afterEach, beforeAll, beforeEach, vi } from "vitest";
 import React from "react";
 
-import { cleanupTestData } from "@/__tests__/test-helpers";
+// NOTE: Avoid importing Prisma-dependent helpers at module load.
+// We dynamically import them only when needed to prevent errors when running isolated tests.
+const shouldSkipDbCleanup =
+  process.env.VITEST_SKIP_DB_CLEANUP === "1" ||
+  process.env.VITEST_SKIP_DB_CLEANUP === "true";
+
+async function cleanupDb() {
+  if (shouldSkipDbCleanup) return;
+  try {
+    const mod = await import("@/__tests__/test-helpers");
+    if (typeof mod.cleanupTestData === "function") {
+      await mod.cleanupTestData();
+    }
+  } catch (error) {
+    console.warn("Failed to cleanup test data (skipping):", error);
+  }
+}
 
 // Load test environment variables
 import { config } from "dotenv";
@@ -32,11 +48,13 @@ vi.mock("next-intl/server", () => ({
   setRequestLocale: vi.fn(),
 }));
 
-// Mock next-intl client functions
+// Mock next-intl client functions with safe translation fallback
 vi.mock("next-intl", async (importOriginal) => {
   const actual = await importOriginal();
+
   return {
     ...(actual as Record<string, unknown>),
+    // Remove the custom useTranslations mock to let NextIntlClientProvider work normally
   };
 });
 
@@ -110,11 +128,7 @@ beforeEach(async () => {
   const isVitest = typeof (import.meta as any).vitest !== "undefined";
 
   if (isVitest) {
-    try {
-      await cleanupTestData();
-    } catch (error) {
-      console.warn("Failed to cleanup test data in beforeEach:", error);
-    }
+    await cleanupDb();
   }
 });
 
@@ -130,10 +144,6 @@ beforeAll(async () => {
   // The cleanup function itself has a safety gate to avoid running in production
   // unless explicitly allowed via ALLOW_LARGE_CLEANUP=true.
   if (isVitest) {
-    try {
-      await cleanupTestData();
-    } catch (error) {
-      console.warn("Failed to cleanup test data:", error);
-    }
+    await cleanupDb();
   }
 });
