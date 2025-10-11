@@ -35,7 +35,7 @@ export default async function SearchPage({ params }: { params: ParamsLocale }) {
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("search");
 
-  const title = t("title-metadata");
+  const title = `${t("title-metadata")} | Moslim`;
   const description = t("description-metadata");
 
   return {

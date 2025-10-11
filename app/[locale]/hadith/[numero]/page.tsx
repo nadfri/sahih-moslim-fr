@@ -67,10 +67,11 @@ export async function generateMetadata({
   }
 
   return {
-    title: t("title", {
-      numero: hadith.numero,
-      narrator: getNarratorName(hadith) ?? "",
-    }),
+    title:
+      t("title", {
+        numero: hadith.numero,
+        narrator: getNarratorName(hadith) ?? "",
+      }) + " | Moslim",
     description: hadith.matn_fr.substring(0, 160) + "...",
   };
 }

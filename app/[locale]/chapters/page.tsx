@@ -36,7 +36,7 @@ export default async function ChaptersPage({
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("chapters");
 
-  const title = t("title-metadata");
+  const title = `${t("title-metadata")} | Moslim`;
   const description = t("description-metadata");
 
   return {

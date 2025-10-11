@@ -99,9 +99,9 @@ export function MarkdownHighlighter({ children, highlight }: Props) {
 
     // Exact highlight only (yellow)
     if (isArabicTerm(highlight)) {
-      applyArabicHighlight(highlight, "bg-yellow-200 dark:bg-yellow-600");
+      applyArabicHighlight(highlight, "bg-yellow-200");
     } else {
-      applyLatinHighlight(highlight, "bg-yellow-200 dark:bg-yellow-600");
+      applyLatinHighlight(highlight, "bg-yellow-200");
     }
 
     // Cleanup function

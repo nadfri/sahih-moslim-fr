@@ -26,6 +26,13 @@ export function SearchBar({
   transmitters: string[];
 }) {
   const t = useTranslations("search");
+  const filterOptions: { key: FilterType; label: string }[] = [
+    { key: "word", label: t("filters.word") },
+    { key: "sahaba", label: t("filters.sahaba") },
+    { key: "transmitter", label: t("filters.transmitter") },
+    { key: "numero", label: t("filters.numero") },
+  ];
+
   const { isAdmin } = useAuth();
   // Safely handle useSearchParams (can be null in test environments)
   const rawSearchParams = useSearchParams();
@@ -79,6 +86,14 @@ export function SearchBar({
   // Handle filter mode change
   const handleFilterModeChange = (newFilterMode: FilterType) => {
     setFilterMode(newFilterMode);
+    setQuery("");
+    setSelectedSahabas([]);
+    setSelectedTransmitters([]);
+    setNumero("");
+    // Update URL to reflect reset state
+    const params = buildSearchParams(newFilterMode, "", [], [], "");
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState({}, "", newUrl);
   };
 
   // Handle search input changes with debounced URL updates
@@ -133,77 +148,23 @@ export function SearchBar({
       <form
         className="mb-6"
         autoComplete="off"
+        aria-labelledby="search-form-legend"
       >
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
-          <label
-            className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
-              filterMode === "word"
-                ? "bg-emerald-100 dark:bg-emerald-900/50 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 font-medium"
-                : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
-            }`}
-          >
-            <input
-              type="radio"
-              name="filterMode"
-              value="word"
-              checked={filterMode === "word"}
-              onChange={() => handleFilterModeChange("word")}
-              className="sr-only"
-            />
-            <span>{t("filters.word")}</span>
-          </label>
-          {/* Narrator filter removed */}
-          <label
-            className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
-              filterMode === "sahaba"
-                ? "bg-emerald-100 dark:bg-emerald-900/50 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 font-medium"
-                : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
-            }`}
-          >
-            <input
-              type="radio"
-              name="filterMode"
-              value="sahaba"
-              checked={filterMode === "sahaba"}
-              onChange={() => handleFilterModeChange("sahaba")}
-              className="sr-only"
-            />
-            <span>{t("filters.sahaba")}</span>
-          </label>
-          <label
-            className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
-              filterMode === "transmitter"
-                ? "bg-emerald-100 dark:bg-emerald-900/50 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 font-medium"
-                : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
-            }`}
-          >
-            <input
-              type="radio"
-              name="filterMode"
-              value="transmitter"
-              checked={filterMode === "transmitter"}
-              onChange={() => handleFilterModeChange("transmitter")}
-              className="sr-only"
-            />
-            <span>{t("filters.transmitter")}</span>
-          </label>
-          <label
-            className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm transition ${
-              filterMode === "numero"
-                ? "bg-emerald-100 dark:bg-emerald-900/50 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 font-medium"
-                : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
-            }`}
-          >
-            <input
-              type="radio"
-              name="filterMode"
-              value="numero"
-              checked={filterMode === "numero"}
-              onChange={() => handleFilterModeChange("numero")}
-              className="sr-only"
-            />
-            <span>{t("filters.numero")}</span>
-          </label>
+          {filterOptions.map((option) => (
+            <button
+              key={option.key}
+              type="button"
+              onClick={() => handleFilterModeChange(option.key)}
+              className={`flex items-center justify-center gap-2 cursor-pointer p-2 rounded-md border text-center text-sm ${
+                filterMode === option.key
+                  ? "bg-emerald-100 dark:bg-emerald-900/50 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 font-medium"
+                  : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
         </div>
 
         <div className="flex flex-col sm:flex-row sm:space-x-2 sm:items-start gap-2 sm:gap-0">
@@ -223,7 +184,21 @@ export function SearchBar({
                     )
                   }
                   placeholder={t("placeholders.wordInput")}
+                  aria-label={t("placeholders.wordInput")}
                   className="w-full p-2 pe-10 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-600 bg-white dark:bg-gray-800 dark:text-gray-200"
+                  aria-invalid={
+                    filterMode === "word" &&
+                    query.length > 0 &&
+                    query.length < 3
+                  }
+                  aria-describedby={
+                    filterMode === "word" &&
+                    query.length > 0 &&
+                    query.length < 3
+                      ? "search-query-error"
+                      : undefined
+                  }
+                  autoComplete="off"
                 />
                 <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
               </div>
@@ -231,7 +206,7 @@ export function SearchBar({
             {filterMode === "sahaba" && (
               <MultiSelect
                 id="sahaba-multiselect"
-                label=""
+                label={t("placeholders.sahabaSelect")}
                 options={sahabas}
                 selected={selectedSahabas}
                 onChange={(values) =>
@@ -244,12 +219,13 @@ export function SearchBar({
                 }
                 placeholder={t("placeholders.sahabaSelect")}
                 name="sahabaInput"
+                aria-label={t("placeholders.sahabaSelect")}
               />
             )}
             {filterMode === "transmitter" && (
               <MultiSelect
                 id="transmitter-multiselect"
-                label=""
+                label={t("placeholders.transmitterSelect")}
                 options={transmitters}
                 selected={selectedTransmitters}
                 onChange={(values) =>
@@ -257,6 +233,7 @@ export function SearchBar({
                 }
                 placeholder={t("placeholders.transmitterSelect")}
                 name="transmitterInput"
+                aria-label={t("placeholders.transmitterSelect")}
               />
             )}
             {filterMode === "numero" && (
@@ -274,8 +251,10 @@ export function SearchBar({
                     )
                   }
                   placeholder={t("placeholders.numeroInput")}
+                  aria-label={t("placeholders.numeroInput")}
                   className="w-full p-2 pe-10 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-600 bg-white dark:bg-gray-800 dark:text-gray-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   min="1"
+                  autoComplete="off"
                 />
                 <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
               </div>
@@ -286,18 +265,32 @@ export function SearchBar({
 
       {/* Validation Messages */}
       {filterMode === "word" && query.length > 0 && query.length < 3 && (
-        <p className="text-red-400 italic">{t("validation.min3letters")}</p>
+        <p
+          id="search-query-error"
+          className="text-red-400 italic"
+          role="alert"
+          aria-live="assertive"
+        >
+          {t("validation.min3letters")}
+        </p>
       )}
 
       {isLoading && (
-        <div className="text-center text-gray-600 dark:text-gray-400">
+        <div
+          className="text-center text-gray-600 dark:text-gray-400"
+          role="status"
+          aria-live="polite"
+        >
           {t("loading")}
         </div>
       )}
 
       {/* Search Stats */}
       {(results.length > 0 || hasSearched) && (
-        <>
+        <div
+          aria-live="polite"
+          aria-atomic="true"
+        >
           {results.length > 0 ? (
             <BadgeNumberOfHadith
               count={results.length}
@@ -306,12 +299,16 @@ export function SearchBar({
           ) : hasSearched && !isLoading ? (
             <p className="text-gray-600 dark:text-gray-400">{t("empty")}</p>
           ) : null}
-        </>
+        </div>
       )}
 
       {/* Results */}
       {results.length > 0 && (
-        <div className="space-y-4">
+        <div
+          className="space-y-4"
+          aria-live="polite"
+          aria-label={t("results")}
+        >
           {results.map((hadith) => (
             <Hadith
               key={hadith.id}

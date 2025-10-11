@@ -37,7 +37,7 @@ export default async function TransmittersPage({
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("transmitters");
 
-  const title = t("title-metadata");
+  const title = `${t("title-metadata")} | Moslim`;
   const description = t("description-metadata");
 
   return {

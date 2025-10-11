@@ -40,7 +40,7 @@ export function Matn_ar({ matn, highlight, edit }: Props) {
       {!edit && (
         <button
           onClick={toggleArabicVisibility}
-          className="flex items-center space-x-2 text-sm font-medium text-emerald-700 dark:text-emerald-500 hover:text-emerald-900 dark:hover:text-emerald-400 focus:outline-none rounded mb-3 transition-colors duration-200"
+          className="flex items-center space-x-2 text-sm font-medium text-emerald-700 dark:text-emerald-500 hover:text-emerald-900 dark:hover:text-emerald-400 rounded mb-3 transition-colors duration-200"
           aria-expanded={isArabicVisible}
           aria-controls={arabicContentId}
         >

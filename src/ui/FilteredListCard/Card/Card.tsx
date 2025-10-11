@@ -20,6 +20,7 @@ export function Card({ item, variant }: Props) {
   return (
     <Link
       href={`/${variant}/${item.slug}`}
+      aria-label={t("see-item", { item: item.name_fr })}
       key={item.name_fr}
       className="group block h-full"
     >

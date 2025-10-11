@@ -5,6 +5,7 @@
     "backHome": "Retour à l'accueil",
     "ifError": "Si vous pensez qu'il s'agit d'une erreur, n'hésitez pas à nous le signaler."
   },
+  
   "auth": {
     "error": {
       "title": "Erreur d'authentification",
@@ -14,6 +15,7 @@
       "tryAgain": "Réessayer"
     }
   },
+
   "chapters": {
     "title": "Liste des Chapitres",
     "title-slug": "Hadiths du Chapitre",
@@ -33,6 +35,9 @@
     "title": "N° {numero} - {narrator}",
     "notFound": "Hadith non trouvé",
     "noResults": "Aucun hadith trouvé.",
+    "see-chapter": "Voir le chapitre: {chapter}",
+    "see-sahaba": "Voir le compagnon: {sahaba}",
+    "see-transmitter": "Voir le transmetteur: {transmitter}",
 
     "hadith-count": "{count, plural, =0 {0 Hadith} =1 {1 Hadith} other {# Hadiths}}",
 
@@ -77,6 +82,7 @@
     "logo-title": "Sahih Moslim"
 
   },
+
   "home": {
     "title": "Sahih Moslim",
     "descriptive": {
@@ -101,10 +107,12 @@
       }
     }
   },
+
   "layout": {
     "title": "Sahih Moslim en français",
     "description": "Une collection de hadiths authentiques."
   },
+
   "sahabas": {
     "title": "Liste des Compagnons",
     "title-slug": "Hadiths mentionnant le compagnon",
@@ -115,6 +123,7 @@
     "description-metadata": "Découvrez les compagnons de hadiths dans la collection Sahih Moslim.",
     "description-metadata-slug": "Collection de hadiths du compagnon {name} - Sahih Moslim"
   },
+
   "search": {
     "title": "Recherche de Hadiths",
     "title-metadata": "Rechercher dans Moslim",
@@ -125,6 +134,7 @@
     "chapterIndex": "Chapitre {index}",
     "hadiths-count": " {count} Hadiths",
     "explore": "Explorer",
+    "see-item": "Voir: {item}",
     "filters": {
       "word": "Par mot",
       "sahaba": "Par Compagnon",
@@ -133,7 +143,7 @@
     },
     "placeholders": {
       "wordInput": "Rechercher par mot (3 lettres min)...",
-      "sahabaSelect": "Choisir un ou plusieurs rapporteurs",
+      "sahabaSelect": "Choisir un ou plusieurs compagnons",
       "transmitterSelect": "Choisir un ou plusieurs transmetteurs",
       "numeroInput": "Numéro du hadith"
     },
@@ -141,7 +151,8 @@
       "min3letters": "Merci de saisir au moins 3 lettres pour la recherche par mot."
     },
     "loading": "Recherche en cours...",
-    "empty": "Aucun hadith trouvé..."
+    "empty": "Aucun hadith trouvé...",
+    "results": "Résultat de la recherche"
   },
 
   "signin": {
@@ -174,7 +185,10 @@
     "open-list": "Ouvrir la liste",
     "close-list": "Fermer la liste",
     "no-results": "Aucun résultat",
-    "search": "Rechercher..."
+    "search": "Rechercher...",
+    "noResult": "Aucun résultat trouvé",
+    "noOptionsAvailable": "Aucune option disponible"
+
 
   }
 }

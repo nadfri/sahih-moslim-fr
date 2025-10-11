@@ -123,7 +123,7 @@ describe("MarkdownHighlighter Component", () => {
         ignoreJoiners: true,
         separateWordSearch: false,
         diacritics: true,
-        className: "bg-yellow-200 dark:bg-yellow-600",
+        className: "bg-yellow-200",
       });
     });
 

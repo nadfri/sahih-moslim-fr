@@ -1,12 +1,13 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-noninteractive-element-to-interactive-role */
 "use client";
 
 import { useRef, useState } from "react";
 import { ChevronDown, ChevronUp, X } from "lucide-react";
 
 import { useClickOutside } from "@/src/hooks/useClickOutside";
+import { useTranslations } from "next-intl";
 
 type MultiSelectProps = {
   id: string;
@@ -31,8 +32,10 @@ export function MultiSelect({
   error = false,
   errorMessage,
 }: MultiSelectProps) {
+  const t = useTranslations("form");
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -50,6 +53,7 @@ export function MultiSelect({
       onChange(newSelected);
     }
     setSearchTerm("");
+    setHighlightedIndex(-1);
     inputRef.current?.blur();
     setIsOpen(false);
   };
@@ -59,19 +63,50 @@ export function MultiSelect({
     onChange(updatedSelected);
   };
 
-  const showLabel = label && label.trim() !== "";
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!isOpen) {
+      if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setIsOpen(true);
+        setHighlightedIndex(0);
+      }
+      return;
+    }
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setHighlightedIndex((prev) =>
+          prev < filteredOptions.length - 1 ? prev + 1 : 0
+        );
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setHighlightedIndex((prev) =>
+          prev > 0 ? prev - 1 : filteredOptions.length - 1
+        );
+        break;
+      case "Enter":
+        e.preventDefault();
+        if (highlightedIndex >= 0 && filteredOptions[highlightedIndex]) {
+          handleSelect(filteredOptions[highlightedIndex]);
+        }
+        break;
+      case "Escape":
+        e.preventDefault();
+        setIsOpen(false);
+        setHighlightedIndex(-1);
+        inputRef.current?.blur();
+        break;
+      case "Tab":
+        setIsOpen(false);
+        setHighlightedIndex(-1);
+        break;
+    }
+  };
 
   return (
     <div className="w-full">
-      {showLabel && (
-        <label
-          htmlFor={id}
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-        >
-          {label}
-        </label>
-      )}
-
       <div
         ref={dropdownRef}
         className="relative"
@@ -113,10 +148,25 @@ export function MultiSelect({
                   : "bg-white dark:bg-gray-800 dark:text-gray-200"
               }`}
               placeholder={selected.length === 0 ? placeholder : ""}
+              aria-label={label || placeholder}
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setHighlightedIndex(-1);
+              }}
               onClick={(e) => e.stopPropagation()}
               onFocus={() => setIsOpen(true)}
+              onKeyDown={handleKeyDown}
+              role="combobox"
+              aria-expanded={isOpen}
+              aria-controls={`${id}-listbox`}
+              aria-haspopup="listbox"
+              aria-autocomplete="list"
+              aria-activedescendant={
+                highlightedIndex >= 0
+                  ? `${id}-option-${highlightedIndex}`
+                  : undefined
+              }
             />
           </div>
 
@@ -132,7 +182,7 @@ export function MultiSelect({
               e.stopPropagation();
               setIsOpen(!isOpen);
             }}
-            aria-label={isOpen ? "Fermer la liste" : "Ouvrir la liste"}
+            aria-label={isOpen ? t("close-list") : t("open-list")}
             tabIndex={-1}
           >
             {isOpen ? (
@@ -145,24 +195,33 @@ export function MultiSelect({
 
         {isOpen && (
           <ul
+            id={`${id}-listbox`}
+            role="listbox"
+            aria-multiselectable="true"
             className="absolute z-10 w-full mt-1 max-h-60 overflow-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-lg"
             onMouseDown={(e) => e.preventDefault()}
           >
             {filteredOptions.length > 0 ? (
-              filteredOptions.map((option) => (
+              filteredOptions.map((option, index) => (
                 <li
                   key={option}
-                  className="p-2 cursor-pointer hover:bg-emerald-100 dark:hover:bg-emerald-900/50 dark:text-gray-200"
+                  id={`${id}-option-${index}`}
+                  role="option"
+                  aria-selected="false"
+                  className={`p-2 cursor-pointer dark:text-gray-200 ${
+                    index === highlightedIndex
+                      ? "bg-emerald-100 dark:bg-emerald-900/50"
+                      : "hover:bg-emerald-100 dark:hover:bg-emerald-900/50"
+                  }`}
                   onMouseDown={() => handleSelect(option)}
+                  onMouseEnter={() => setHighlightedIndex(index)}
                 >
                   {option}
                 </li>
               ))
             ) : (
               <li className="p-2 text-gray-500 dark:text-gray-400">
-                {searchTerm
-                  ? "Aucun résultat trouvé"
-                  : "Toutes les options sont sélectionnées"}
+                {searchTerm ? t("noResult") : t("noOptionsAvailable")}
               </li>
             )}
           </ul>

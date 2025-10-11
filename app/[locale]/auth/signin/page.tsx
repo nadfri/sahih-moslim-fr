@@ -38,7 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("signin");
 
   return {
-    title: t("title"),
+    title: `${t("title")} | Moslim`,
     description: t("description"),
   };
 }

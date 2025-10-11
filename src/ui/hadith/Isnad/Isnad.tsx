@@ -2,12 +2,7 @@
 
 import { useState } from "react";
 import { Link } from "@/i18n/navigation";
-import {
-  ChevronRightCircle,
-  Eye,
-  EyeOff,
-  SquareArrowOutUpRight,
-} from "lucide-react";
+import { ChevronRightCircle, Eye, EyeOff, LinkIcon } from "lucide-react";
 
 import { ItemType } from "@/src/types/types";
 import { NarratedBy } from "../NarratedBy/NarratedBy";
@@ -19,7 +14,7 @@ type Props = {
 };
 
 export function Isnad({ isnadTransmitters, edit }: Props) {
-  const t = useTranslations("hadith.ActionsBtns");
+  const t = useTranslations("hadith");
 
   const [isIsnadVisible, setIsIsnadVisible] = useState(edit ?? false);
   // Use a stable id based on the last transmitter (narrator)
@@ -49,7 +44,7 @@ export function Isnad({ isnadTransmitters, edit }: Props) {
           <div className="w-full md:w-auto">
             <button
               onClick={toggleIsnadVisibility}
-              className="flex items-center space-x-1 text-xs font-medium rounded-md bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 px-2 py-1 focus:outline-none shrink-0 md:ms-2 ms-0"
+              className="flex items-center space-x-1 text-xs font-medium rounded-md bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 px-2 py-1 shrink-0 md:ms-2 ms-0"
               aria-expanded={isIsnadVisible}
               aria-controls={isnadContentId}
             >
@@ -57,7 +52,7 @@ export function Isnad({ isnadTransmitters, edit }: Props) {
                 className="size-4"
                 aria-hidden="true"
               />
-              <span>{t("see-isnad")}</span>
+              <span>{t("ActionsBtns.see-isnad")}</span>
             </button>
           </div>
         </>
@@ -65,7 +60,7 @@ export function Isnad({ isnadTransmitters, edit }: Props) {
         <>
           <button
             onClick={toggleIsnadVisibility}
-            className="flex items-center space-x-1 text-xs font-medium rounded-md bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 px-2 py-1 focus:outline-none shrink-0"
+            className="flex items-center space-x-1 text-xs font-medium rounded-md bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 px-2 py-1 shrink-0 "
             aria-expanded={isIsnadVisible}
             aria-controls={isnadContentId}
           >
@@ -73,7 +68,7 @@ export function Isnad({ isnadTransmitters, edit }: Props) {
               className="size-4"
               aria-hidden="true"
             />
-            <span>{t("hide-isnad")}</span>
+            <span>{t("ActionsBtns.hide-isnad")}</span>
           </button>
           <div className="basis-full md:hidden" />
           {isnadTransmitters.map((transmitter, index) => {
@@ -89,10 +84,13 @@ export function Isnad({ isnadTransmitters, edit }: Props) {
 
                 <Link
                   href={`/transmitters/${transmitter.slug}`}
+                  aria-label={t("see-transmitter", {
+                    transmitter: transmitter.name_fr,
+                  })}
                   className={linkClassName}
                 >
                   {transmitter.name_fr}{" "}
-                  <SquareArrowOutUpRight className="inline size-2.5 align-middle" />
+                  <LinkIcon className="inline size-2.5 align-middle" />
                 </Link>
               </div>
             );

@@ -59,7 +59,10 @@
       "hide-arabic": "Hide the Arabic version",
       "see-arabic": "See the Arabic version"
     },
-    "noResults": "No hadith found."
+    "noResults": "No hadith found.",
+    "see-chapter": "See chapter: {chapter}",
+    "see-sahaba": "See companion: {sahaba}",
+    "see-transmitter": "See transmitter: {transmitter}"
   },
   "header": {
     "home": "Home",
@@ -135,7 +138,9 @@
     "hadiths-count": "{count} Hadiths",
     "search-chapter": "Search for a chapter ...",
     "search-sahaba": "Search for a sahaba ...",
-    "search-transmitter": "Search for a transmitter ..."
+    "search-transmitter": "Search for a transmitter ...",
+    "see-item": "See: {item}",
+    "results": "Search result"
   },
   "signin": {
     "title": "Sign In",
@@ -164,6 +169,8 @@
     "close-list": "Close list",
     "no-results": "No results",
     "open-list": "Open list",
-    "search": "To research..."
+    "search": "To research...",
+    "noOptionsAvailable": "No options available",
+    "noResult": "No results found"
   }
 }

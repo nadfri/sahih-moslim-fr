@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { SquareArrowOutUpRight } from "lucide-react";
+import { LinkIcon } from "lucide-react";
 
 import { ItemType } from "@/src/types/types";
 import { useTranslations } from "next-intl";
@@ -19,10 +19,10 @@ export function ListOfSahabas({ sahabas }: { sahabas: ItemType[] }) {
           <Link
             key={sahaba.id}
             href={`/sahabas/${sahaba.slug}`}
+            aria-label={t("see-sahaba", { sahaba: sahaba.name_fr })}
             className="text-sm bg-emerald-50 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-300 px-2 py-1 rounded-md transition-colors duration-200 hover:bg-emerald-200 dark:hover:bg-emerald-800/50"
           >
-            {sahaba.name_fr}{" "}
-            <SquareArrowOutUpRight className="inline size-3 align-middle" />
+            {sahaba.name_fr} <LinkIcon className="inline size-3 align-middle" />
           </Link>
         ))}
       </div>
