@@ -2,253 +2,217 @@
   {
     "index": 0,
     "name_fr": "Introduction",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "introduction"
+    "name_ar": "المقدمة",
+    "name_en": "Introduction"
   },
   {
     "index": 1,
     "name_fr": "La Foi",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "la-foi"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 2,
     "name_fr": "Purification",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "purification"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 3,
     "name_fr": "Menstruations",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "menstruations"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 4,
     "name_fr": "Prières",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "prieres"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 5,
     "name_fr": "Mosquées et lieux de prière",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "mosquees-et-lieux-de-priere"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 6,
     "name_fr": "Prière du voyageur",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "priere-du-voyageur"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 7,
     "name_fr": "Prière du vendredi",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "priere-du-vendredi"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 8,
     "name_fr": "Prière des deux fêtes",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "priere-des-deux-fetes"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 9,
     "name_fr": "Prière pour la pluie",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "priere-pour-la-pluie"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 10,
     "name_fr": "Prière des éclipses",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "priere-des-eclipses"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 11,
     "name_fr": "Prière des funérailles",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "priere-des-funerailles"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 12,
     "name_fr": "Zakat",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "zakat"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 13,
     "name_fr": "Jeûne",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "jeune"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 14,
     "name_fr": "Retraite spirituelle",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "retraite-spirituelle"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 15,
     "name_fr": "Pèlerinage",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "pelerinage"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 16,
     "name_fr": "Mariage",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "mariage"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 17,
     "name_fr": "Allaitement",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "allaitement"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 18,
     "name_fr": "Divorce",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "divorce"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 19,
     "name_fr": "Invoquer des malédictions",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "invoquer-des-maledictions"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 20,
     "name_fr": "Affranchissement",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "affranchissement"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 21,
     "name_fr": "Transactions",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "transactions"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 22,
     "name_fr": "Irrigations",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "irrigations"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 23,
     "name_fr": "Successions",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "successions"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 24,
     "name_fr": "Donations",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "donations"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 25,
     "name_fr": "Testaments",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "testaments"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 26,
     "name_fr": "Voeux",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "voeux"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 27,
     "name_fr": "Serments",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "serments"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 28,
     "name_fr": "Serments collectifs",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "serments-collectifs"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 29,
     "name_fr": "Peines légales",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "peines-legales"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 30,
     "name_fr": "Jugements",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "jugements"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 31,
     "name_fr": "Objets trouvés",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "objets-trouves"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 32,
     "name_fr": "Jihad et Expéditions",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "jihad-et-expeditions"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 33,
     "name_fr": "Commandements",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "commandements"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 34,
     "name_fr": "TEST",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "test"
+    "name_ar": "",
+    "name_en": ""
   },
   {
     "index": 999,
     "name_fr": "Inconnu",
-    "name_ar": null,
-    "name_en": null,
-    "slug": "inconnu"
+    "name_ar": "",
+    "name_en": ""
   }
 ]
