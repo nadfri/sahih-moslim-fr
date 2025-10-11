@@ -59,8 +59,8 @@ function LocaleToggle() {
           src={localeConfig[currentLocale].flag}
           alt={localeConfig[currentLocale].label}
           width={24}
-          height={24}
-          style={{ height: "100%" }}
+          height={18}
+          className="w-6 h-4.5"
         />
       </button>
 
@@ -70,23 +70,25 @@ function LocaleToggle() {
           className="fadeIn absolute -top-[9px] -left-[9px] bg-white dark:bg-neutral-900 border border-gray-300 dark:border-neutral-700 rounded-md shadow-lg z-50"
           role="listbox"
         >
-          {locales.map((locale) => (
-            <button
-              key={locale}
-              onClick={() => handleLocaleChange(locale)}
-              className="flex items-center justify-center p-2 w-full hover:bg-gray-50 dark:hover:bg-neutral-800"
-              role="option"
-              aria-selected={locale === currentLocale}
-            >
-              <div className="relative w-6 h-4.5">
-                <Image
-                  src={localeConfig[locale].flag}
-                  alt={localeConfig[locale].label}
-                  fill
-                />
-              </div>
-            </button>
-          ))}
+          {[currentLocale, ...locales.filter((l) => l !== currentLocale)].map(
+            (locale) => (
+              <button
+                key={locale}
+                onClick={() => handleLocaleChange(locale)}
+                className="flex items-center justify-center p-2 w-full hover:bg-gray-50 dark:hover:bg-neutral-800"
+                role="option"
+                aria-selected={locale === currentLocale}
+              >
+                <div className="relative w-6 h-4.5">
+                  <Image
+                    src={localeConfig[locale].flag}
+                    alt={localeConfig[locale].label}
+                    fill
+                  />
+                </div>
+              </button>
+            )
+          )}
         </div>
       )}
     </div>
