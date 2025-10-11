@@ -110,10 +110,10 @@ export function EditItemFormDialog({
             label="Index*"
             type="number"
             placeholder="Index"
-            min={1}
+            min={0}
             error={!!errors.index}
             errorMessage={errors.index?.message}
-            register={register("index")}
+            register={register("index", { valueAsNumber: true })}
           />
         )}
 

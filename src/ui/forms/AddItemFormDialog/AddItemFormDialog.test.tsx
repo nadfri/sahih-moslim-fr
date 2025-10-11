@@ -31,9 +31,9 @@ const mockNextAvailableIndex = nextAvailableIndex as Mock;
 
 // Accept either the Zod generic number error or localized schema messages
 const INDEX_ERROR_REGEX =
-  /Invalid input: expected number, received string|L'index doit être un nombre positif|L'index doit être un nombre entier positif et unique pour les chapitres/i;
+  /Invalid input: expected number, received (string|NaN)|L'index doit être un entier non négatif et unique pour les chapitres/i;
 const UNIQUE_INDEX_REGEX =
-  /Invalid input: expected number, received string|Cet index est déjà utilisé\. Veuillez en choisir un autre\.|L'index doit être un nombre entier positif et unique pour les chapitres/i;
+  /Invalid input: expected number, received (string|NaN)|Cet index est déjà utilisé\. Veuillez en choisir un autre\.|L'index doit être un entier non négatif et unique pour les chapitres/i;
 
 // Données de test
 const mockChapterItem: ItemType = {
@@ -214,7 +214,7 @@ describe("AddItemFormDialog", () => {
     expect(await screen.findByText(INDEX_ERROR_REGEX)).toBeInTheDocument();
 
     await userEvent.clear(indexInput);
-    await userEvent.type(indexInput, "0");
+    await userEvent.type(indexInput, "-1");
     await userEvent.click(submitButton);
     expect(await screen.findByText(INDEX_ERROR_REGEX)).toBeInTheDocument();
     expect(mockAddItem).not.toHaveBeenCalled();

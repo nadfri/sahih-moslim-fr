@@ -29,7 +29,7 @@ const mockToastError = vi.mocked(toast.error);
 
 // Accept either Zod generic number error or the localized schema message
 const INDEX_ERROR_REGEX =
-  /Invalid input: expected number, received string|L'index doit être un nombre positif/i;
+  /Invalid input: expected number, received (string|NaN)|L'index doit être un entier non négatif et unique pour les chapitres/i;
 
 const mockChapterItem: ItemType = {
   id: "chap1",
@@ -183,17 +183,10 @@ describe("EditItemFormDialog", () => {
     expect(await screen.findByText(INDEX_ERROR_REGEX)).toBeInTheDocument();
   });
 
-  it("shows an error message if index is not a positive number for a chapter", async () => {
+  it("shows an error message if index is negative for a chapter", async () => {
     render(<EditItemFormDialog {...getDefaultProps()} />);
     const indexInput = screen.getByLabelText("Index*");
     const submitButton = screen.getByRole("button", { name: "Enregistrer" });
-
-    await userEvent.clear(indexInput);
-    await userEvent.type(indexInput, "0"); // Non-positive index
-    await userEvent.click(submitButton);
-
-    expect(mockEditItem).not.toHaveBeenCalled();
-    expect(await screen.findByText(INDEX_ERROR_REGEX)).toBeInTheDocument();
 
     await userEvent.clear(indexInput);
     await userEvent.type(indexInput, "-5"); // Negative index
@@ -222,7 +215,7 @@ describe("EditItemFormDialog", () => {
     // If the input is treated as a string the Zod generic message may appear.
     // Accept either the uniqueness message or the generic Zod message.
     const uniqueIndexRegex =
-      /Invalid input: expected number, received string|Cet index est déjà utilisé. Veuillez en choisir un autre\./i;
+      /Invalid input: expected number, received (string|NaN)|Cet index est déjà utilisé. Veuillez en choisir un autre\.|L'index doit être un entier non négatif et unique pour les chapitres/i;
     expect(await screen.findByText(uniqueIndexRegex)).toBeInTheDocument();
   });
 

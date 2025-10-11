@@ -108,10 +108,10 @@ export function AddItemForm({ items: serverItems, variant }: Props) {
                 id="index"
                 label="Numero du chapitre*"
                 type="number"
-                min={1}
+                min={0}
                 error={!!errors.index}
                 errorMessage={errors.index?.message}
-                register={register("index")}
+                register={register("index", { valueAsNumber: true })}
               />
             </div>
           )}

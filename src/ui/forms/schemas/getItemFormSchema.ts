@@ -52,7 +52,7 @@ export function getItemFormSchema(
           if (variant === "chapters" && index !== null && index !== undefined) {
             return (
               Number.isInteger(index) &&
-              index > 0 &&
+              index >= 0 &&
               !items.some(
                 (chapter) =>
                   (id ? chapter.id !== id : true) && chapter.index === index
@@ -63,7 +63,7 @@ export function getItemFormSchema(
         },
         {
           message:
-            "L'index doit être un nombre entier positif et unique pour les chapitres",
+            "L'index doit être un entier non négatif et unique pour les chapitres",
         }
       ),
   });
