@@ -4,6 +4,7 @@ import { HadithType } from "@/src/types/types";
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { BadgeNumberOfHadith } from "@/src/ui/hadith/BadgeNumberOfHadith/BadgeNumberOfHadith";
 import { useTranslations } from "next-intl";
+import { ArabicIcon } from "../../icons/ArabicIcon";
 
 type ListLayoutHadithProps = {
   title?: string;
@@ -24,7 +25,11 @@ export function ListLayoutHadith({
       {title && (
         <h1 className="title">
           {title}{" "}
-          <p className="text-emerald-900 dark:text-emerald-300">{name}</p>
+          <p className="text-emerald-900 dark:text-emerald-200 flex items-center justify-center gap-1 w-fit m-auto rounded-xl px-3 py-1 bg-emerald-50 dark:bg-emerald-900/30">
+            <ArabicIcon className="h-5" />
+            {name}
+            <ArabicIcon className="h-5" />
+          </p>
         </h1>
       )}
 

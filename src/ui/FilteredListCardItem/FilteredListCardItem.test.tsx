@@ -3,7 +3,7 @@ import { renderWithI18n } from "@/__tests__/renderWithI18n";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
-import { FilteredListCard } from "./FilteredListCard";
+import { FilteredListCardItem } from "./FilteredListCardItem";
 
 // Mock data for testing
 const items = [
@@ -12,10 +12,10 @@ const items = [
   { id: "3", name_fr: "Item 3", name_ar: null, name_en: null, slug: "item-3" },
 ];
 
-describe("FilteredListCard", () => {
+describe("FilteredListCardItem", () => {
   it("renders all items initially", () => {
     renderWithI18n(
-      <FilteredListCard
+      <FilteredListCardItem
         items={items}
         variant="chapters"
       />
@@ -28,7 +28,7 @@ describe("FilteredListCard", () => {
 
   it("filters items when search text is entered", async () => {
     renderWithI18n(
-      <FilteredListCard
+      <FilteredListCardItem
         items={items}
         variant="chapters"
       />
@@ -55,7 +55,7 @@ describe("FilteredListCard", () => {
 
   it("filters items when an option is selected from dropdown", async () => {
     renderWithI18n(
-      <FilteredListCard
+      <FilteredListCardItem
         items={items}
         variant="chapters"
       />

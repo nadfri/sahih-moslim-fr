@@ -21,8 +21,8 @@
     "notFoundDescription": "This chapter does not exist.",
     "title": "List of chapters",
     "title-metadata": "The chapters in Moslim",
-    "title-metadata-slug": "Chapter: {name}",
-    "title-slug": "Chapter Hadiths"
+    "title-metadata-slug": "Hadiths from the chapter of: {name}",
+    "title-slug": "Hadiths from the chapter of"
   },
   "footer": {
     "description": "Facilitate access to authentic lessons reported by Imam Muslim.",

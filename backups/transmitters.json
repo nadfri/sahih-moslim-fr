@@ -1,620 +1,877 @@
 [
   {
     "name_fr": "Abbad ibn Tamim",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abbad-ibn-tamim"
+    "name_ar": "عباد بن تميم",
+    "name_en": "Abbad ibn Tamim"
   },
   {
     "name_fr": "Abbas",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abbas"
+    "name_ar": "عباس",
+    "name_en": "Abbas"
   },
   {
     "name_fr": "Abbas ibn Abd al-Muttalib",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abbas-ibn-abd-al-muttalib"
+    "name_ar": "عباس بن عبد المطلب",
+    "name_en": "Abbas ibn Abd al-Muttalib"
+  },
+  {
+    "name_fr": "Abd al-A'la ibn Abd al-A'la",
+    "name_ar": "عبد الأعلى بن عبد الأعلى",
+    "name_en": "Abd al-A'la ibn Abd al-A'la"
+  },
+  {
+    "name_fr": "Abd al-A'la ibn Hammad al-Bahili",
+    "name_ar": "عبد الأعلى بن حماد الباهلي",
+    "name_en": "Abd al-A'la ibn Hammad al-Bahili"
+  },
+  {
+    "name_fr": "Abd al-Aziz ibn Abi Hazim",
+    "name_ar": "عبد العزيز بن أبى حازم",
+    "name_en": "Abd al-Aziz ibn Abi Hazim"
   },
   {
     "name_fr": "Abd al-Aziz ibn Muhammad ad-Darawardi",
     "name_ar": "عبد العزيز بن محمد الدراوردي",
-    "name_en": null,
-    "slug": "abd-al-aziz-ibn-muhammad-ad-darawardi"
+    "name_en": "Abd al-Aziz ibn Muhammad ad-Darawardi"
   },
   {
     "name_fr": "Abd al-Aziz ibn Suhayb",
     "name_ar": "عبد العزيز بن صهيب",
-    "name_en": null,
-    "slug": "abd-al-aziz-ibn-suhayb"
+    "name_en": "Abd al-Aziz ibn Suhayb"
   },
   {
-    "name_fr": "Abd al-Rahman ibn Awf",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abd-al-rahman-ibn-awf"
+    "name_fr": "Abd al-Malik ibn Omayr al-Qabti",
+    "name_ar": "عبد الملك بن عمير بن سويد القبطي",
+    "name_en": "Abd al-Malik ibn Umayr al-Qabti"
+  },
+  {
+    "name_fr": "Abd al-Malik ibn Shuayb",
+    "name_ar": "عبد الملك بن شعيب",
+    "name_en": "Abd al-Malik ibn Shu'ayb"
+  },
+  {
+    "name_fr": "Abd al-Samad ibn Abd al-Warith",
+    "name_ar": "عبد الصمد بن عبد الوارث بن سعيد",
+    "name_en": "Abd al-Samad ibn Abd al-Warith"
+  },
+  {
+    "name_fr": "Abd al-Wahhab ibn Abd al-Majid al-Thaqafi",
+    "name_ar": "عبد الوهاب بن عبد المجيد الثقفي",
+    "name_en": "Abd al-Wahhab ibn Abd al-Majid al-Thaqafi"
+  },
+  {
+    "name_fr": "Abd al-Wahid ibn Ziyad al-Abdi",
+    "name_ar": "عبد الواحد بن زياد العبدي",
+    "name_en": "Abd al-Wahid ibn Ziyad al-Abdi"
+  },
+  {
+    "name_fr": "Abd al-Warith ibn Saïd",
+    "name_ar": "عبد الوارث بن سعيد بن ذكوان",
+    "name_en": "Abd al-Warith ibn Said"
+  },
+  {
+    "name_fr": "Abd ar-Rahman ibn Abi Layla",
+    "name_ar": "عبد الرحمن بن أبي ليلى",
+    "name_en": "Abd al-Rahman ibn Abi Layla"
+  },
+  {
+    "name_fr": "Abd ar-Rahman ibn Awf",
+    "name_ar": "عبد الرحمن بن عوف",
+    "name_en": "Abd al-Rahman ibn Awf"
+  },
+  {
+    "name_fr": "Abd ar-Rahman ibn Hurmuz al-A'raj",
+    "name_ar": "عبد الرحمن بن هرمز الأعرج",
+    "name_en": "Abd al-Rahman ibn Hurmuz al-A'raj"
   },
   {
     "name_fr": "Abd ar-Rahman ibn Mahdi",
     "name_ar": "عبد الرحمن بن مهدي",
-    "name_en": null,
-    "slug": "abd-ar-rahman-ibn-mahdi"
+    "name_en": "Abd al-Rahman ibn Mahdi"
+  },
+  {
+    "name_fr": "Abd ar-Rahman ibn Yaqub",
+    "name_ar": "عبد الرحمن بن يعقوب",
+    "name_en": "Abd al-Rahman ibn Yaqub"
+  },
+  {
+    "name_fr": "Abd ar-Razzaq al-San'ani",
+    "name_ar": "عبد الرزاق الصنعاني",
+    "name_en": "Abd al-Razzaq al-San'ani"
+  },
+  {
+    "name_fr": "Abd ibn Hamid ibn Nasr",
+    "name_ar": "عبد بن حميد بن نصر",
+    "name_en": "Abd bin Hameed bin Nasr"
   },
   {
     "name_fr": "Abda",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abda"
+    "name_ar": "عبدة",
+    "name_en": "Abda"
+  },
+  {
+    "name_fr": "Abda ibn Sulayman al-Kilabi",
+    "name_ar": "عبدة بن سليمان الكلابي",
+    "name_en": "Abda ibn Sulayman al-Kilabi"
   },
   {
     "name_fr": "Abdallah ibn Abbas",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abdallah-ibn-abbas"
+    "name_ar": "عبد الله بن عباس",
+    "name_en": "Abdullah ibn Abbas"
+  },
+  {
+    "name_fr": "Abdallah ibn Abd ar-Rahman al-Darimi",
+    "name_ar": "عبد الله بن عبد الرحمن الدارمي",
+    "name_en": "Abdullah ibn Abd al-Rahman al-Darimi"
   },
   {
     "name_fr": "Abdallah ibn Amr ibn al-Aas",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abdallah-ibn-amr-ibn-al-aas"
+    "name_ar": "عبد الله بن عمرو بن العاص",
+    "name_en": "Abdullah ibn Amr ibn al-As"
+  },
+  {
+    "name_fr": "Abdallah ibn Dhakwan",
+    "name_ar": "عبد الله بن ذكوان",
+    "name_en": "Abdullah ibn Dhakwan"
+  },
+  {
+    "name_fr": "Abdallah ibn Dinar",
+    "name_ar": "عبد الله بن دينار العدوي",
+    "name_en": "Abdullah ibn Dinar"
+  },
+  {
+    "name_fr": "Abdallah ibn Idris al-Awdi",
+    "name_ar": "عبد الله بن إدريس بن يزيد الأودي",
+    "name_en": "Abdullah ibn Idris al-Awdi"
   },
   {
     "name_fr": "Abdallah ibn Jafar",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abdallah-ibn-jafar"
+    "name_ar": "عبد الله بن جعفر",
+    "name_en": "Abdullah ibn Ja'far"
   },
   {
     "name_fr": "Abdallah ibn Mas'ud",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abdallah-ibn-masud"
+    "name_ar": "عبد الله بن مسعود",
+    "name_en": "Abdullah ibn Mas'ud"
   },
   {
-    "name_fr": "Abdallah ibn Noumayr",
+    "name_fr": "Abdallah ibn Maslama al-Qa'nabi",
+    "name_ar": "عبد الله بن مسلمة بن قعنب القعنبي",
+    "name_en": "Abdullah ibn Maslama al-Qa‘nabi"
+  },
+  {
+    "name_fr": "Abdallah ibn Maslama al-Qa'nabi",
+    "name_ar": "عبد الله بن مسلمة بن قعنب القعنبي",
+    "name_en": "Abdullah ibn Maslama al-Qa'nabi"
+  },
+  {
+    "name_fr": "Abdallah ibn Mubarak",
+    "name_ar": "عبد الله بن المبارك",
+    "name_en": "Abdullah ibn Mubarak"
+  },
+  {
+    "name_fr": "Abdallah ibn Numayr",
     "name_ar": "عبد الله بن نمير",
-    "name_en": null,
-    "slug": "abdallah-ibn-noumayr"
+    "name_en": "Abdullah ibn Numayr"
   },
   {
     "name_fr": "Abdallah ibn Omar",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abdallah-ibn-omar"
+    "name_ar": "عبد الله بن عمر",
+    "name_en": "Abdullah ibn Umar"
+  },
+  {
+    "name_fr": "Abdallah ibn Tawus",
+    "name_ar": "عبد الله بن طاوس",
+    "name_en": "Abdullah ibn Tawus"
+  },
+  {
+    "name_fr": "Abdallah ibn Wahb",
+    "name_ar": "عبد الله بن وهب",
+    "name_en": "Abdullah ibn Wahb"
   },
   {
     "name_fr": "Abdallah ibn Yazid",
     "name_ar": "عبد الله بن يزيد",
-    "name_en": null,
-    "slug": "abdallah-ibn-yazid"
+    "name_en": "Abdullah ibn Yazid"
   },
   {
     "name_fr": "Abdallah ibn Zaid",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abdallah-ibn-zaid"
+    "name_ar": "عبد الله بن زيد",
+    "name_en": "Abdullah ibn Zayd"
   },
   {
     "name_fr": "Abdur Rahman ibn Abou Bakra",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abdur-rahman-ibn-abou-bakra"
+    "name_ar": "عبد الرحمن بن أبي بكرة",
+    "name_en": "Abd al-Rahman ibn Abi Bakra"
   },
   {
     "name_fr": "Abou Abdallah As-Sunabihi",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abou-abdallah-as-sunabihi"
+    "name_ar": "أبو عبد الله السنابحي",
+    "name_en": "Abu Abdullah as-Sunabihi"
   },
   {
     "name_fr": "Abou Awanah",
     "name_ar": "أبو عوانة",
-    "name_en": null,
-    "slug": "abou-awanah"
+    "name_en": "Abu Awanah"
   },
   {
     "name_fr": "Abou Ayyub al Ansari",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abou-ayyub-al-ansari"
+    "name_ar": "أبو أيوب الأنصاري",
+    "name_en": "Abu Ayyub al-Ansari"
   },
   {
     "name_fr": "Abou Bakr as-Siddiq",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abou-bakr-as-siddiq"
+    "name_ar": "أبو بكر الصديق",
+    "name_en": "Abu Bakr as-Siddiq"
   },
   {
     "name_fr": "Abou Bakr ibn Abou Shaiba",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abou-bakr-ibn-abou-shaiba"
+    "name_ar": "أبو بكر بن أبي شيبة",
+    "name_en": "Abu Bakr ibn Abi Shayba"
   },
   {
     "name_fr": "Abou Barza al-Aslami",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abou-barza-al-aslami"
+    "name_ar": "أبو برزة الأسلمي",
+    "name_en": "Abu Barza al-Aslami"
   },
   {
     "name_fr": "Abou Chourayh Al Khouza'i",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abou-chourayh-al-khouzai"
+    "name_ar": "أبو شعيب الخزاعي",
+    "name_en": "Abu Shu'ayb al-Khuza'i"
   },
   {
     "name_fr": "Abou Darda",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abou-darda"
+    "name_ar": "أبو الدرداء",
+    "name_en": "Abu al-Darda"
   },
   {
     "name_fr": "Abou Hani",
     "name_ar": "ابو هانئ",
-    "name_en": null,
-    "slug": "abou-hani"
+    "name_en": "Abu Hani"
   },
   {
     "name_fr": "Abou Hassin",
     "name_ar": "أبو حصين",
-    "name_en": null,
-    "slug": "abou-hassin"
+    "name_en": "Abu Husayn"
   },
   {
     "name_fr": "Abou Huraira",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abou-huraira"
+    "name_ar": "أبو هريرة",
+    "name_en": "Abu Hurayra"
   },
   {
     "name_fr": "Abou Moussa al-Achari",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abou-moussa-al-achari"
+    "name_ar": "أبو موسى الأشعري",
+    "name_en": "Abu Musa al-Ash'ari"
   },
   {
     "name_fr": "Abou Musa al-Ash'ari",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abou-musa-al-ashari"
-  },
-  {
-    "name_fr": "Abou Othman Moslim ibn Yassar",
-    "name_ar": "ابو عثمان مسلم بن يسار",
-    "name_en": null,
-    "slug": "abou-othman-moslim-ibn-yassar"
+    "name_ar": "أبو موسى الأشعري",
+    "name_en": "Abu Musa al-Ash'ari"
   },
   {
     "name_fr": "Abou Qatada",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abou-qatada"
+    "name_ar": "أبو قتادة",
+    "name_en": "Abu Qatada"
   },
   {
     "name_fr": "Abou Sa'id al-Khudri",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abou-said-al-khudri"
+    "name_ar": "أبو سعيد الخدري",
+    "name_en": "Abu Sa'id al-Khudri"
   },
   {
     "name_fr": "Abou Salama",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abou-salama"
+    "name_ar": "أبو سلمة",
+    "name_en": "Abu Salama"
+  },
+  {
+    "name_fr": "Abou Salih",
+    "name_ar": "أبو صالح",
+    "name_en": "Abu Salih"
+  },
+  {
+    "name_fr": "Abou Salih as-Sammam",
+    "name_ar": "أبو صالح السمان",
+    "name_en": "Abu Salih as-Sammam"
   },
   {
     "name_fr": "Abou Sufyan",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abou-sufyan"
+    "name_ar": "أبو سفيان",
+    "name_en": "Abu Sufyan"
   },
   {
     "name_fr": "Abou Umama",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "abou-umama"
+    "name_ar": "أبو أمامة",
+    "name_en": "Abu Umama"
   },
   {
-    "name_fr": "Abu Salih as-Sammam",
-    "name_ar": "أبو صالح السمان",
-    "name_en": null,
-    "slug": "abu-salih-as-sammam"
+    "name_fr": "Ahmad ibn Amr ibn al-Sarih",
+    "name_ar": "أحمد بن عمرو بن السرح",
+    "name_en": "Ahmad ibn Amr ibn al-Sarih"
   },
   {
     "name_fr": "Aisha bint Abi Bakr",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "aisha-bint-abi-bakr"
+    "name_ar": "عائشة بنت أبي بكر",
+    "name_en": "Aisha bint Abi Bakr"
   },
   {
     "name_fr": "Al Mughirah ibn Shu'bah",
     "name_ar": "المغيرة بن شعبة",
-    "name_en": null,
-    "slug": "al-mughirah-ibn-shubah"
+    "name_en": "Al-Mughira ibn Shu'ba"
+  },
+  {
+    "name_fr": "Al-'Ala ibn Abd ar-Rahman",
+    "name_ar": "العلاء بن عبد الرحمن",
+    "name_en": "al-Ala ibn Abd al-Rahman"
+  },
+  {
+    "name_fr": "Al-Hakam ibn 'Utayba",
+    "name_ar": "الحكم بن عتيبة",
+    "name_en": "al-Hakam ibn Utayba"
+  },
+  {
+    "name_fr": "Al-Harith ibn Abi Musa al-Ash'ari",
+    "name_ar": "الحارث بن أبي موسى الأشعري",
+    "name_en": "al-Harith ibn Abi Musa al-Ash'ari"
+  },
+  {
+    "name_fr": "Al-Hassan al-Basri",
+    "name_ar": "الحسن البصري",
+    "name_en": "al-Hasan al-Basri"
+  },
+  {
+    "name_fr": "Al-Layth ibn Sa'd",
+    "name_ar": "الليث بن سعد",
+    "name_en": "al-Layth ibn Sa'd"
+  },
+  {
+    "name_fr": "Al-Qasim ibn Muhammad",
+    "name_ar": "القاسم بن محمد",
+    "name_en": "al-Qasim ibn Muhammad"
   },
   {
     "name_fr": "Al-Walid ibn Muslim",
     "name_ar": "الوليد بن مسلم",
-    "name_en": null,
-    "slug": "al-walid-ibn-muslim"
+    "name_en": "al-Walid ibn Muslim"
   },
   {
     "name_fr": "Ali ibn Abi Talib",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "ali-ibn-abi-talib"
+    "name_ar": "علي بن أبي طالب",
+    "name_en": "Ali ibn Abi Talib"
+  },
+  {
+    "name_fr": "Ali ibn Hajar",
+    "name_ar": "علي بن حجر",
+    "name_en": "Ali ibn Hajar"
   },
   {
     "name_fr": "Ali ibn Rabi'ah",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "ali-ibn-rabiah"
+    "name_ar": "علي بن ربيعة",
+    "name_en": "Ali ibn Rabi'a"
+  },
+  {
+    "name_fr": "Alqama ibn Qays",
+    "name_ar": "علقمة بن قيس",
+    "name_en": "Alqama ibn Qays"
   },
   {
     "name_fr": "Amir ibn Saad",
     "name_ar": "عامر بن سعد",
-    "name_en": null,
-    "slug": "amir-ibn-saad"
+    "name_en": "Amir ibn Sa'd"
+  },
+  {
+    "name_fr": "Amir ibn Shurahil",
+    "name_ar": "عامر بن شراحيل",
+    "name_en": "Amir ibn Shurahil"
+  },
+  {
+    "name_fr": "Amr ibn Abdallah al-Sibaiy",
+    "name_ar": "عمرو بن عبد الله السبيعي",
+    "name_en": "Amr ibn Abdullah al-Sibaiy"
   },
   {
     "name_fr": "Amr ibn al-Aas",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "amr-ibn-al-aas"
+    "name_ar": "عمرو بن العاص",
+    "name_en": "Amr ibn al-As"
+  },
+  {
+    "name_fr": "Amr ibn al-Harith",
+    "name_ar": "عمرو بن الحارث",
+    "name_en": "Amr ibn al-Harith"
+  },
+  {
+    "name_fr": "Amr ibn Dinar",
+    "name_ar": "عمرو بن دينار",
+    "name_en": "Amr ibn Dinar"
+  },
+  {
+    "name_fr": "Amr ibn Muhammad",
+    "name_ar": "عمرو بن محمد",
+    "name_en": "Amr ibn Muhammad"
   },
   {
     "name_fr": "Anas ibn Malik",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "anas-ibn-malik"
+    "name_ar": "أنس بن مالك",
+    "name_en": "Anas ibn Malik"
+  },
+  {
+    "name_fr": "Asim al-Ahwal",
+    "name_ar": "عاصم الأحول",
+    "name_en": "Asim al-Ahwal"
   },
   {
     "name_fr": "Asma bint Abi Bakr",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "asma-bint-abi-bakr"
+    "name_ar": "أسماء بنت أبي بكر",
+    "name_en": "Asma bint Abi Bakr"
+  },
+  {
+    "name_fr": "Ata ibn Abi Rabah",
+    "name_ar": "عطاء بن أبي رباح",
+    "name_en": "Ata ibn Abi Rabah"
+  },
+  {
+    "name_fr": "Ayyub al-Sakhtiyani",
+    "name_ar": "أيوب السختياني",
+    "name_en": "Ayyub al-Sakhtiyani"
   },
   {
     "name_fr": "Bilal ibn Rabah",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "bilal-ibn-rabah"
+    "name_ar": "بلال بن رباح",
+    "name_en": "Bilal ibn Rabah"
   },
   {
     "name_fr": "Bishr ibn al-Hakam",
     "name_ar": "بشر بن الحكم",
-    "name_en": null,
-    "slug": "bishr-ibn-al-hakam"
+    "name_en": "Bishr ibn al-Hakam"
   },
   {
     "name_fr": "Burayda ibn al-Husayb",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "burayda-ibn-al-husayb"
+    "name_ar": "بريدة بن الحصيب",
+    "name_en": "Burayda ibn al-Husayb"
   },
   {
     "name_fr": "Dawud ibn Rashid",
     "name_ar": "داود بن رشيد",
-    "name_en": null,
-    "slug": "dawud-ibn-rashid"
+    "name_en": "Dawud ibn Rashid"
+  },
+  {
+    "name_fr": "Dhakwan al-Samman",
+    "name_ar": "ذكوان السمان",
+    "name_en": "Dhakwan al-Samman"
   },
   {
     "name_fr": "Fatima bint Muhammad",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "fatima-bint-muhammad"
+    "name_ar": "فاطمة بنت محمد",
+    "name_en": "Fatima bint Muhammad"
+  },
+  {
+    "name_fr": "Fudayl ibn Husayn",
+    "name_ar": "فضيل بن حسين",
+    "name_en": "Fudayl ibn Husayn"
   },
   {
     "name_fr": "Ghundar",
     "name_ar": "غُنْدَر",
-    "name_en": null,
-    "slug": "ghundar"
+    "name_en": "Ghundar"
   },
   {
     "name_fr": "Hafs ibn Asim",
     "name_ar": "حفص بن عاصم",
-    "name_en": null,
-    "slug": "hafs-ibn-asim"
+    "name_en": "Hafs ibn Asim"
   },
   {
     "name_fr": "Hafsa bint Omar",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "hafsa-bint-omar"
+    "name_ar": "حفصة بنت عمر",
+    "name_en": "Hafsa bint Umar"
+  },
+  {
+    "name_fr": "Hammad ibn Salama",
+    "name_ar": "حماد بن سلمة",
+    "name_en": "Hammad ibn Salama"
+  },
+  {
+    "name_fr": "Hammad ibn Zayd",
+    "name_ar": "حماد بن زيد",
+    "name_en": "Hammad ibn Zayd"
   },
   {
     "name_fr": "Hamza ibn Abd al-Muttalib",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "hamza-ibn-abd-al-muttalib"
+    "name_ar": "حمزة بن عبد المطلب",
+    "name_en": "Hamza ibn Abd al-Muttalib"
+  },
+  {
+    "name_fr": "Harmala ibn Yahya",
+    "name_ar": "حرملة بن يحيى",
+    "name_en": "Harmala ibn Yahya"
+  },
+  {
+    "name_fr": "Hisham al-Tayalisi",
+    "name_ar": "هشام الطيالسي",
+    "name_en": "Hisham al-Tayalisi"
+  },
+  {
+    "name_fr": "Hisham ibn Abi Abdallah",
+    "name_ar": "هشام بن أبي عبد الله",
+    "name_en": "Hisham ibn Abi Abdullah"
+  },
+  {
+    "name_fr": "Hisham ibn Urwa",
+    "name_ar": "هشام بن عروة",
+    "name_en": "Hisham ibn Urwa"
   },
   {
     "name_fr": "Ibn Jabir",
     "name_ar": "ابْنِ جَابِرٍ",
-    "name_en": null,
-    "slug": "ibn-jabir"
+    "name_en": "Ibn Jabir"
+  },
+  {
+    "name_fr": "Ibn Jurayj",
+    "name_ar": "ابن جريج",
+    "name_en": "Ibn Jurayj"
+  },
+  {
+    "name_fr": "Ibrahim al-Nakha'i",
+    "name_ar": "إبراهيم النخعي",
+    "name_en": "Ibrahim al-Nakha'i"
+  },
+  {
+    "name_fr": "Ibrahim ibn Sa'd",
+    "name_ar": "إبراهيم بن سعد",
+    "name_en": "Ibrahim ibn Sa'd"
   },
   {
     "name_fr": "Imran ibn Husain",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "imran-ibn-husain"
+    "name_ar": "عمران بن حصين",
+    "name_en": "Imran ibn Husayn"
   },
   {
     "name_fr": "Inconnu",
     "name_ar": "",
-    "name_en": null,
-    "slug": "inconnu"
+    "name_en": null
+  },
+  {
+    "name_fr": "Isa ibn Yunus",
+    "name_ar": "عيسى بن يونس",
+    "name_en": "Isa ibn Yunus"
+  },
+  {
+    "name_fr": "Ishaq ibn Rahwayh",
+    "name_ar": "إسحاق بن راهويه",
+    "name_en": "Ishaq ibn Rahwayh"
+  },
+  {
+    "name_fr": "Isma'il ibn Ibrahim",
+    "name_ar": "إسماعيل بن إبراهيم",
+    "name_en": "Isma'il ibn Ibrahim"
+  },
+  {
+    "name_fr": "Isma'il ibn Ja'far",
+    "name_ar": "إسماعيل بن جعفر",
+    "name_en": "Isma'il ibn Ja'far"
   },
   {
     "name_fr": "Ismail ibn Ulayyah",
     "name_ar": "إسماعيل بن علية",
-    "name_en": null,
-    "slug": "ismail-ibn-ulayyah"
+    "name_en": "Ismail ibn Ulayyah"
   },
   {
     "name_fr": "Itban ibn Malik",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "itban-ibn-malik"
+    "name_ar": "عتبان بن مالك",
+    "name_en": "Itban ibn Malik"
   },
   {
     "name_fr": "Jabir ibn Abdallah",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "jabir-ibn-abdallah"
+    "name_ar": "جابر بن عبد الله",
+    "name_en": "Jabir ibn Abdullah"
+  },
+  {
+    "name_fr": "Jarir ibn Abd al-Hamid",
+    "name_ar": "جرير بن عبد الحميد",
+    "name_en": "Jarir ibn Abd al-Hamid"
   },
   {
     "name_fr": "Jarir Ibn Abdallah",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "jarir-ibn-abdallah"
+    "name_ar": "جرير بن عبد الله",
+    "name_en": "Jarir ibn Abdullah"
   },
   {
     "name_fr": "Junada ibn Abi Omayya",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "junada-ibn-abi-omayya"
+    "name_ar": "جنادة بن أبي أمية",
+    "name_en": "Junada ibn Abi Umayya"
+  },
+  {
+    "name_fr": "Jundub ibn Junada al-Ghifari",
+    "name_ar": "جندب بن جنادة الغفاري",
+    "name_en": "Jundub ibn Junada al-Ghifari"
   },
   {
     "name_fr": "Khabbab ibn al-Aratt",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "khabbab-ibn-al-aratt"
+    "name_ar": "خبّاب بن الأرت",
+    "name_en": "Khabbab ibn al-Aratt"
   },
   {
-    "name_fr": "Khubayb ibn Abd al-Rahman",
+    "name_fr": "Khubayb ibn Abd ar-Rahman",
     "name_ar": "خُبَيْبِ بْنِ عَبْدِ الرَّحْمَنِ",
-    "name_en": null,
-    "slug": "khubayb-ibn-abd-al-rahman"
+    "name_en": "Khubayb ibn Abd al-Rahman"
   },
   {
     "name_fr": "Malik ibn al-Huwayrith",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "malik-ibn-al-huwayrith"
+    "name_ar": "مالك بن الحويرث",
+    "name_en": "Malik ibn al-Huwayrith"
   },
   {
-    "name_fr": "Mansur ibn al-Muʿtamir",
+    "name_fr": "Malik ibn Anas",
+    "name_ar": "مالك بن أنس",
+    "name_en": "Malik ibn Anas"
+  },
+  {
+    "name_fr": "Mansur ibn al-Mu'tamir",
     "name_ar": "منصور بن المعتمر",
-    "name_en": null,
-    "slug": "mansur-ibn-al-mutamir"
+    "name_en": "Mansur ibn al-Mu'tamir"
+  },
+  {
+    "name_fr": "Masruq ibn al-Ajda",
+    "name_ar": "مسروق بن الأجدع",
+    "name_en": "Masruq ibn al-Ajda'"
   },
   {
     "name_fr": "Mousayib ibn Hazan",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "mousayib-ibn-hazan"
+    "name_ar": "مسيب بن حزن",
+    "name_en": "Musayyib ibn Hazan"
   },
   {
-    "name_fr": "Muadh ibn Jabal",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "muadh-ibn-jabal"
+    "name_fr": "Mu'adh ibn Hisham",
+    "name_ar": "معاذ بن هشام",
+    "name_en": "Mu'adh ibn Hisham"
   },
   {
-    "name_fr": "Muadh ibn Muadh",
+    "name_fr": "Mu'adh ibn Jabal",
+    "name_ar": "معاذ بن جبل",
+    "name_en": "Mu'adh ibn Jabal"
+  },
+  {
+    "name_fr": "Mu'adh ibn Mu'adh",
     "name_ar": "معاذ بن معاذ",
-    "name_en": null,
-    "slug": "muadh-ibn-muadh"
+    "name_en": "Mu'adh ibn Mu'adh"
   },
   {
-    "name_fr": "Muhammad ibn Abdallah ibn Noumayr",
+    "name_fr": "Mu'ammar ibn Rashid",
+    "name_ar": "معمر بن راشد",
+    "name_en": "Mu'ammar ibn Rashid"
+  },
+  {
+    "name_fr": "Muhammad ibn Abdallah ibn Numayr",
     "name_ar": "محمد بن عبد الله بن نمير",
-    "name_en": null,
-    "slug": "muhammad-ibn-abdallah-ibn-noumayr"
+    "name_en": "Muhammad ibn Abdullah ibn Numayr"
+  },
+  {
+    "name_fr": "Muhammad ibn Abi 'Adi",
+    "name_ar": "محمد بن أبي عدي",
+    "name_en": "Muhammad ibn Abi Adi"
+  },
+  {
+    "name_fr": "Muhammad ibn al-'Ala",
+    "name_ar": "محمد بن العلاء",
+    "name_en": "Muhammad ibn al-Ala"
   },
   {
     "name_fr": "Muhammad ibn al-Muthanna",
     "name_ar": "مُحَمَّدُ بْنُ الْمُثَنَّى",
-    "name_en": null,
-    "slug": "muhammad-ibn-al-muthanna"
+    "name_en": "Muhammad ibn al-Muthanna"
+  },
+  {
+    "name_fr": "Muhammad ibn Bashar",
+    "name_ar": "محمد بن بشار بندار",
+    "name_en": "Muhammad ibn Bashar"
+  },
+  {
+    "name_fr": "Muhammad ibn Hatim",
+    "name_ar": "محمد بن حاتم",
+    "name_en": "Muhammad ibn Hatim"
   },
   {
     "name_fr": "Muhammad ibn Ibrahim",
     "name_ar": "محمد بن إبراهيم",
-    "name_en": null,
-    "slug": "muhammad-ibn-ibrahim"
+    "name_en": "Muhammad ibn Ibrahim"
   },
   {
     "name_fr": "Muhammad ibn Jafar",
     "name_ar": "محمد بن جعفر",
-    "name_en": null,
-    "slug": "muhammad-ibn-jafar"
+    "name_en": "Muhammad ibn Ja'far"
+  },
+  {
+    "name_fr": "Muhammad ibn Shihab al-Zuhri",
+    "name_ar": "محمد بن شهاب الزهري",
+    "name_en": "Muhammad ibn Shihab al-Zuhri"
+  },
+  {
+    "name_fr": "Muhammad ibn Sirin",
+    "name_ar": "محمد بن سيرين",
+    "name_en": "Muhammad ibn Sirin"
   },
   {
     "name_fr": "Muhammad ibn Ubayd al-Ghubari",
     "name_ar": "محمد بن عبيد الغبري",
-    "name_en": null,
-    "slug": "muhammad-ibn-ubayd-al-ghubari"
+    "name_en": "Muhammad ibn Ubayd al-Ghubari"
   },
   {
     "name_fr": "Muhammad ibn Yahya ibn Abi Omar el-Mekki",
     "name_ar": "محمد بن يحيى بن أبي عمر المكي",
-    "name_en": null,
-    "slug": "muhammad-ibn-yahya-ibn-abi-omar-el-mekki"
+    "name_en": "Muhammad ibn Yahya ibn Abi Umar al-Makki"
   },
   {
     "name_fr": "Nou'man ibn Qawqal",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "nouman-ibn-qawqal"
+    "name_ar": "نعمان بن قوقل",
+    "name_en": "Nu'man ibn Qawqal"
   },
   {
     "name_fr": "Omar ibn al-Khattab",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "omar-ibn-al-khattab"
+    "name_ar": "عمر بن الخطاب",
+    "name_en": "Umar ibn al-Khattab"
   },
   {
     "name_fr": "Oqba ibn Amr",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "oqba-ibn-amr"
+    "name_ar": "عقبة بن عمرو",
+    "name_en": "Uqba ibn Amr"
   },
   {
     "name_fr": "Othman ibn Affan",
     "name_ar": "",
-    "name_en": null,
-    "slug": "othman-ibn-affan"
+    "name_en": null
+  },
+  {
+    "name_fr": "Othman Moslim ibn Yassar",
+    "name_ar": "ابو عثمان مسلم بن يسار",
+    "name_en": "Uthman Moslim ibn Yasar"
   },
   {
     "name_fr": "Oubada ibn as-Samit",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "oubada-ibn-as-samit"
+    "name_ar": "عبادة بن الصامت",
+    "name_en": "Ubayda ibn as-Samit"
   },
   {
     "name_fr": "Oum Salama",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "oum-salama"
+    "name_ar": "أم سلمة",
+    "name_en": "Umm Salama"
   },
   {
     "name_fr": "Ousama ibn Zayd",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "ousama-ibn-zayd"
+    "name_ar": "أسامة بن زيد",
+    "name_en": "Usama ibn Zayd"
   },
   {
-    "name_fr": "Rib’i ibn Hirash",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "ribi-ibn-hirash"
+    "name_fr": "Rab'i ibn Hirash",
+    "name_ar": "ربيع بن هراش",
+    "name_en": "Rab'i ibn Hirash"
   },
   {
     "name_fr": "Sa'd ibn Abi Waqqas",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "sad-ibn-abi-waqqas"
+    "name_ar": "سعد بن أبي وقاص",
+    "name_en": "Saad ibn Abi Waqqas"
   },
   {
-    "name_fr": "Said ibn Abi Ayyoub",
+    "name_fr": "Sa'd ibn Malik al-Khudri",
+    "name_ar": "سعد بن مالك الخدري",
+    "name_en": "Saad ibn Malik al-Khudri"
+  },
+  {
+    "name_fr": "Sa'id ibn Abi Ayyub",
     "name_ar": "سعيد بن ابي ايوب",
-    "name_en": null,
-    "slug": "said-ibn-abi-ayyoub"
+    "name_en": "Sa'id ibn Abi Ayyub"
   },
   {
-    "name_fr": "Said ibn Oubayd",
+    "name_fr": "Sa'id ibn Ubayd",
     "name_ar": "سعيد بن عبيد",
-    "name_en": null,
-    "slug": "said-ibn-oubayd"
+    "name_en": "Sa'id ibn Ubayd"
+  },
+  {
+    "name_fr": "Salam ibn Sulaym al-Hanafi",
+    "name_ar": "سلام بن سليم الحنفي",
+    "name_en": "Salam ibn Sulaym al-Hanafi"
+  },
+  {
+    "name_fr": "Salama ibn Abd ar-Rahman ibn 'Awf",
+    "name_ar": "سلمة بن عبد الرحمن بن عوف",
+    "name_en": "Salama ibn Abd ar-Rahman ibn Awf"
   },
   {
     "name_fr": "Salman al-Farsi",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "salman-al-farsi"
+    "name_ar": "سلمان الفارسي",
+    "name_en": "Salman al-Farsi"
   },
   {
     "name_fr": "Shu'ba ibn al-Hajjaj",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "shuba-ibn-al-hajjaj"
+    "name_ar": "شعبة بن الحجاج",
+    "name_en": "Shu'ba ibn al-Hajjaj"
   },
   {
     "name_fr": "Sofian Ibn Abdillah Al Thaqafi",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "sofian-ibn-abdillah-al-thaqafi"
+    "name_ar": "سفيان بن عبد الله الثقفي",
+    "name_en": "Sufyan ibn Abdullah al-Thaqafi"
   },
   {
     "name_fr": "Talha ibn Ubayd Allah",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "talha-ibn-ubayd-allah"
+    "name_ar": "طلحة بن عبيد الله",
+    "name_en": "Talha ibn Ubayd Allah"
   },
   {
     "name_fr": "Tamim ad-Dari",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "tamim-ad-dari"
+    "name_ar": "تميم الداري",
+    "name_en": "Tamim ad-Dari"
   },
   {
     "name_fr": "Tariq ibn Ouchaym",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "tariq-ibn-ouchaym"
+    "name_ar": "طارق بن أشيم",
+    "name_en": "Tariq ibn Ashim"
   },
   {
     "name_fr": "Tariq ibn Shihab",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "tariq-ibn-shihab"
+    "name_ar": "طارق بن شهاب",
+    "name_en": "Tariq ibn Shihab"
   },
   {
     "name_fr": "Ubayd Allah ibn Muadh al-Anbari",
     "name_ar": "عبيد الله بن معاذ العنبرى",
-    "name_en": null,
-    "slug": "ubayd-allah-ibn-muadh-al-anbari"
+    "name_en": "Ubayd Allah ibn Muadh al-Anbari"
   },
   {
     "name_fr": "Umayr ibn Hani",
     "name_ar": "عُمَيْرُ بْنُ هَانِئٍ",
-    "name_en": null,
-    "slug": "umayr-ibn-hani"
+    "name_en": "Umayr ibn Hani"
   },
   {
     "name_fr": "Yahya ibn Ma'mar",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "yahya-ibn-mamar"
+    "name_ar": "يحيى بن معمر",
+    "name_en": "Yahya ibn Ma'mar"
   },
   {
     "name_fr": "Yahya ibn Yamur",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "yahya-ibn-yamur"
+    "name_ar": "يحيى بن يعمر",
+    "name_en": "Yahya ibn Ya'mur"
   },
   {
     "name_fr": "Yazid al-Faqir",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "yazid-al-faqir"
+    "name_ar": "يزيد الفقير",
+    "name_en": "Yazid al-Faqir"
   },
   {
     "name_fr": "Yazid ibn al-Had",
     "name_ar": "يزيد بن الهاد",
-    "name_en": null,
-    "slug": "yazid-ibn-al-had"
+    "name_en": "Yazid ibn al-Had"
   },
   {
     "name_fr": "Zayd ibn Thabit",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "zayd-ibn-thabit"
+    "name_ar": "زيد بن ثابت",
+    "name_en": "Zayd ibn Thabit"
   },
   {
     "name_fr": "Zubair ibn al-Awwam",
-    "name_ar": "",
-    "name_en": null,
-    "slug": "zubair-ibn-al-awwam"
+    "name_ar": "الزبير بن العوام",
+    "name_en": "Zubayr ibn al-Awwam"
   },
   {
     "name_fr": "Zuhayr ibn Harb",
     "name_ar": "زهير بن حرب",
-    "name_en": null,
-    "slug": "zuhayr-ibn-harb"
+    "name_en": "Zuhayr ibn Harb"
   }
 ]

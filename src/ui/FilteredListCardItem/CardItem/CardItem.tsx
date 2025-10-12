@@ -3,16 +3,17 @@ import { MoveRight } from "lucide-react";
 import { MoveLeft } from "lucide-react";
 
 import { ItemType, VariantType } from "@/src/types/types";
-import { ChapterIndex } from "@/src/ui/FilteredListCard/Card/ChapterIndex/ChapterIndex";
+import { ChapterIndex } from "@/src/ui/FilteredListCardItem/CardItem/ChapterIndex/ChapterIndex";
 import { useLocale, useTranslations } from "next-intl";
 import { BadgeNumberOfHadith } from "../../hadith/BadgeNumberOfHadith/BadgeNumberOfHadith";
+import { getLocalizedName } from "@/src/utils/getLocalizedName";
 
 type Props = {
   item: ItemType;
   variant: VariantType;
 };
 
-export function Card({ item, variant }: Props) {
+export function CardItem({ item, variant }: Props) {
   const t = useTranslations("search");
 
   const locale = useLocale();
@@ -20,8 +21,8 @@ export function Card({ item, variant }: Props) {
   return (
     <Link
       href={`/${variant}/${item.slug}`}
-      aria-label={t("see-item", { item: item.name_fr })}
-      key={item.name_fr}
+      aria-label={t("see-item", { item: getLocalizedName(item, locale) })}
+      key={item.id}
       className="group block h-full"
     >
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden h-full flex flex-col p-3 transition-all duration-200 ease-in-out border border-transparent group-hover:shadow-xl group-hover:border-emerald-300 dark:group-hover:border-emerald-700 group-hover:-translate-y-1">
@@ -32,7 +33,7 @@ export function Card({ item, variant }: Props) {
 
           {/* Chapter Name */}
           <h2 className="text-xl font-semibold font-serif text-emerald-700 dark:text-emerald-500 mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-            {item.name_fr}
+            {getLocalizedName(item, locale)}
           </h2>
 
           <BadgeNumberOfHadith count={item.hadithCount} />

@@ -2,7 +2,7 @@ import { screen } from "@testing-library/react";
 import { renderWithI18n } from "@/__tests__/renderWithI18n";
 import { describe, expect, it, vi } from "vitest";
 
-import { Card } from "./Card";
+import { CardItem } from "./CardItem";
 
 import "@testing-library/jest-dom";
 
@@ -29,7 +29,7 @@ describe("Card", () => {
 
   it("renders the card with correct data", () => {
     renderWithI18n(
-      <Card
+      <CardItem
         item={item}
         variant={variant}
       />
@@ -47,7 +47,7 @@ describe("Card", () => {
 
   it("shows navigation indicator", () => {
     renderWithI18n(
-      <Card
+      <CardItem
         item={item}
         variant={variant}
       />

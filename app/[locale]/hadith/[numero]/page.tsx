@@ -9,6 +9,7 @@ import { getNarratorName } from "@/src/utils/getNarratorName";
 import { requireAdmin } from "@/src/lib/auth/supabase/helpers";
 import { ParamsNumero } from "@/src/types/types";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getLocalizedMatn } from "@/src/utils/getLocalizedMatn";
 
 export default async function PageByNumero({
   params,
@@ -54,7 +55,7 @@ export async function generateMetadata({
 }: {
   params: ParamsNumero;
 }): Promise<Metadata> {
-  const { numero } = await params;
+  const { numero, locale } = await params;
 
   const t = await getTranslations("hadith");
 
@@ -72,7 +73,7 @@ export async function generateMetadata({
         numero: hadith.numero,
         narrator: getNarratorName(hadith) ?? "",
       }) + " | Moslim",
-    description: hadith.matn_fr.substring(0, 160) + "...",
+    description: getLocalizedMatn(hadith, locale).substring(0, 160) + "...",
   };
 }
 

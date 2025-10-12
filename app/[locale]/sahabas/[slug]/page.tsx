@@ -1,5 +1,4 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
-import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import {
@@ -10,6 +9,7 @@ import {
 import { ListLayoutHadith } from "@/src/ui/hadith/ListLayoutHadith/ListLayoutHadith";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ParamsSlug } from "@/src/types/types";
+import { getLocalizedName } from "@/src/utils/getLocalizedName";
 
 export default async function PageBySahabas({
   params,
@@ -30,19 +30,15 @@ export default async function PageBySahabas({
   return (
     <ListLayoutHadith
       title={t("title-slug")}
-      name={sahaba.name_fr}
+      name={getLocalizedName(sahaba, locale)}
       hadiths={hadiths}
     />
   );
 }
 
 /*Generate metadata for each hadith*/
-export async function generateMetadata(props: {
-  params: ParamsSlug;
-}): Promise<Metadata> {
-  const params = await props.params;
-
-  const slug = params.slug;
+export async function generateMetadata({ params }: { params: ParamsSlug }) {
+  const { slug, locale } = await params;
 
   const sahaba = await getSahabaBySlug(slug);
 
@@ -56,8 +52,13 @@ export async function generateMetadata(props: {
   }
 
   return {
-    title: t("title-slug", { name: sahaba.name_fr }),
-    description: t("description-metadata-slug", { name: sahaba.name_fr }),
+    title:
+      t("title-metadata-slug", {
+        name: getLocalizedName(sahaba, locale),
+      }) + " | Moslim",
+    description: t("description-metadata-slug", {
+      name: getLocalizedName(sahaba, locale),
+    }),
   };
 }
 

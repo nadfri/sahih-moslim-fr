@@ -3,17 +3,19 @@
 import { useState } from "react";
 
 import { ItemType, VariantType } from "@/src/types/types";
-import { Card } from "@/src/ui/FilteredListCard/Card/Card";
 import { SearchSelect } from "@/src/ui/forms/inputs/SearchSelect/SearchSelect";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { CardItem } from "./CardItem/CardItem";
+import { getLocalizedName } from "@/src/utils/getLocalizedName";
 
 type Props = {
   items: ItemType[];
   variant: VariantType;
 };
 
-export function FilteredListCard({ items, variant }: Props) {
+export function FilteredListCardItem({ items, variant }: Props) {
   const t = useTranslations("search");
+  const locale = useLocale();
 
   const [inputValue, setInputValue] = useState("");
   const [selected, setSelected] = useState("");
@@ -22,11 +24,13 @@ export function FilteredListCard({ items, variant }: Props) {
   const filteredItems = !inputValue
     ? items
     : items.filter((item) =>
-        item.name_fr.toLowerCase().includes(inputValue.toLowerCase())
+        getLocalizedName(item, locale)
+          .toLowerCase()
+          .includes(inputValue.toLowerCase())
       );
 
   // Extract names for SearchSelect options
-  const options = items.map((item) => item.name_fr);
+  const options = items.map((item) => getLocalizedName(item, locale));
 
   const placeholder = {
     chapters: t("search-chapter"),
@@ -55,7 +59,7 @@ export function FilteredListCard({ items, variant }: Props) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {/*Links*/}
         {filteredItems.map((item) => (
-          <Card
+          <CardItem
             key={item.id}
             item={item}
             variant={variant}

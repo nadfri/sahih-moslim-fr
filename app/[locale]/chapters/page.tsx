@@ -2,7 +2,7 @@
 
 import { getAllChapters } from "@/src/services/services";
 import { ParamsLocale } from "@/src/types/types";
-import { FilteredListCard } from "@/src/ui/FilteredListCard/FilteredListCard";
+import { FilteredListCardItem } from "@/src/ui/FilteredListCardItem/FilteredListCardItem";
 import { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 
@@ -24,7 +24,7 @@ export default async function ChaptersPage({
     <div className="container mx-auto max-w-5xl">
       <h1 className="title">{t("title")}</h1>
 
-      <FilteredListCard
+      <FilteredListCardItem
         items={chapters}
         variant="chapters"
       />

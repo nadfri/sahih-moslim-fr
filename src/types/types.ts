@@ -12,7 +12,7 @@ export type ParamsNumero = ParamsLocale & Promise<{ numero: string }>;
 export const SchemaItemStructure = z.object({
   id: z.string(),
   index: z.number().nullable().optional(),
-  name_fr: z.string(), // Obligatoire - base de l'app française
+  name_fr: z.string(),
   name_ar: z.string().nullable().optional(),
   name_en: z.string().nullable().optional(),
   slug: z.string(),
