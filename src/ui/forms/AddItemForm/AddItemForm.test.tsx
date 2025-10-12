@@ -182,7 +182,7 @@ describe("AddItemForm", () => {
 
     expect(mockAddItem).not.toHaveBeenCalled();
     expect(
-      await screen.findByText("Invalid input: expected number, received string")
+      await screen.findByText("Invalid input: expected number, received NaN")
     ).toBeInTheDocument();
   });
 

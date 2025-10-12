@@ -8,6 +8,7 @@ import { ChevronDown, ChevronUp, X } from "lucide-react";
 
 import { useClickOutside } from "@/src/hooks/useClickOutside";
 import { useTranslations } from "next-intl";
+import { normalizeTextForSearch } from "@/src/utils/textNormalization";
 
 type MultiSelectProps = {
   id: string;
@@ -41,11 +42,13 @@ export function MultiSelect({
 
   useClickOutside(dropdownRef, () => setIsOpen(false));
 
-  const filteredOptions = options.filter(
-    (option) =>
-      option.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      !selected.includes(option)
-  );
+  const filteredOptions = options.filter((option) => {
+    const normalizedOption = normalizeTextForSearch(option);
+    const normalizedSearch = normalizeTextForSearch(searchTerm);
+    return (
+      normalizedOption.includes(normalizedSearch) && !selected.includes(option)
+    );
+  });
 
   const handleSelect = (option: string) => {
     if (options.includes(option) && !selected.includes(option)) {

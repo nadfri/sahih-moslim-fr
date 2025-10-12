@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, ChevronUp, X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { normalizeTextForSearch } from "@/src/utils/textNormalization";
 
 type SearchSelectProps = {
   id: string;
@@ -37,9 +38,11 @@ export function SearchSelect({
   const inputRef = useRef<HTMLInputElement>(null);
   const listboxId = `${id}-listbox`;
 
-  const filteredOptions = options.filter((option) =>
-    option.toLowerCase().includes(inputValue.toLowerCase())
-  );
+  const filteredOptions = options.filter((option) => {
+    const normalizedOption = normalizeTextForSearch(option);
+    const normalizedInput = normalizeTextForSearch(inputValue);
+    return normalizedOption.includes(normalizedInput);
+  });
 
   const handleSelectOption = (option: string) => {
     if (options.includes(option)) {

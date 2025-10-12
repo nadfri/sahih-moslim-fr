@@ -1,8 +1,9 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { MultiSelect } from "./MultiSelect";
+import { renderWithI18n } from "@/__tests__/renderWithI18n";
 
 describe("MultiSelect", () => {
   const options = ["Option 1", "Option 2", "Option 3"];
@@ -20,21 +21,24 @@ describe("MultiSelect", () => {
   });
 
   it("renders correctly with label", () => {
-    render(<MultiSelect {...defaultProps} />);
+    renderWithI18n(<MultiSelect {...defaultProps} />);
 
-    expect(screen.getByText("Test Select")).toBeInTheDocument();
+    // Assert combobox is labeled correctly via accessible name
+    expect(
+      screen.getByRole("combobox", { name: "Test Select" })
+    ).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Rechercher...")).toBeInTheDocument();
   });
 
   it("shows placeholder when no options are selected", () => {
-    render(<MultiSelect {...defaultProps} />);
+    renderWithI18n(<MultiSelect {...defaultProps} />);
 
     const input = screen.getByPlaceholderText("Rechercher...");
     expect(input).toBeInTheDocument();
   });
 
   it("displays selected options as badges", () => {
-    render(
+    renderWithI18n(
       <MultiSelect
         {...defaultProps}
         selected={["Option 1", "Option 3"]}
@@ -48,7 +52,7 @@ describe("MultiSelect", () => {
 
   it("opens dropdown when input is clicked", async () => {
     const user = userEvent.setup();
-    render(<MultiSelect {...defaultProps} />);
+    renderWithI18n(<MultiSelect {...defaultProps} />);
 
     // Click the input to open dropdown
     await user.click(screen.getByPlaceholderText("Rechercher..."));
@@ -61,7 +65,7 @@ describe("MultiSelect", () => {
 
   it("filters options based on search term", async () => {
     const user = userEvent.setup();
-    render(<MultiSelect {...defaultProps} />);
+    renderWithI18n(<MultiSelect {...defaultProps} />);
 
     // Focus on input and type to search
     const input = screen.getByPlaceholderText("Rechercher...");
@@ -78,7 +82,7 @@ describe("MultiSelect", () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
 
-    render(
+    renderWithI18n(
       <MultiSelect
         {...defaultProps}
         onChange={onChange}
@@ -98,7 +102,7 @@ describe("MultiSelect", () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
 
-    render(
+    renderWithI18n(
       <MultiSelect
         {...defaultProps}
         selected={["Option 1", "Option 2"]}
@@ -114,7 +118,7 @@ describe("MultiSelect", () => {
   });
 
   it("displays error message when error prop is true", () => {
-    render(
+    renderWithI18n(
       <MultiSelect
         {...defaultProps}
         error={true}
@@ -128,7 +132,7 @@ describe("MultiSelect", () => {
   it("closes dropdown when clicking outside", async () => {
     const user = userEvent.setup();
 
-    render(
+    renderWithI18n(
       <>
         <div data-testid="outside">Outside element</div>
         <MultiSelect {...defaultProps} />

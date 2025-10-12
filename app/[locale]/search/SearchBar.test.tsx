@@ -223,10 +223,10 @@ describe("SearchBar", () => {
         transmitters={transmitters}
       />
     );
-    const radio = screen.getByLabelText(/Par Compagnon/i);
-    await userEvent.click(radio);
+    const modeBtn = screen.getByRole("button", { name: /Par Compagnon/i });
+    await userEvent.click(modeBtn);
     const select = screen.getByPlaceholderText(
-      /Choisir un ou plusieurs rapporteurs/i
+      /Choisir un ou plusieurs compagnons/i
     );
     await userEvent.click(select);
     await userEvent.click(screen.getByText("Abu Bakr"));
@@ -256,8 +256,8 @@ describe("SearchBar", () => {
         transmitters={transmitters}
       />
     );
-    const radio = screen.getByLabelText(/Par Transmetteur/i);
-    await userEvent.click(radio);
+    const modeBtn = screen.getByRole("button", { name: /Par Transmetteur/i });
+    await userEvent.click(modeBtn);
     const select = screen.getByPlaceholderText(
       /Choisir un ou plusieurs transmetteurs/i
     );
@@ -289,8 +289,8 @@ describe("SearchBar", () => {
         transmitters={transmitters}
       />
     );
-    const radio = screen.getByLabelText(/Par Numéro/i);
-    await userEvent.click(radio);
+    const modeBtn = screen.getByRole("button", { name: /Par Numéro/i });
+    await userEvent.click(modeBtn);
     const input = screen.getByPlaceholderText(/Numéro du hadith/i);
     await userEvent.type(input, "200");
 

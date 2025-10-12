@@ -2,7 +2,7 @@
 
 import { prisma } from "@/prisma/prisma";
 import { HadithType } from "@/src/types/types";
-import { prepareArabicForSearch } from "@/src/utils/normalizeArabicText";
+import { createSearchVariants } from "@/src/utils/textNormalization";
 import { searchCache } from "./searchCache";
 
 /**
@@ -40,38 +40,68 @@ export async function searchHadithsCombined(
     return cachedResults;
   }
 
-  // Normalize the query for better matching
-  const normalizedQuery = prepareArabicForSearch(query);
+  // Generate search variants with different normalizations
+  const searchVariants = createSearchVariants(query);
 
   try {
-    // Simplified single SQL query - let PostgreSQL handle optimization
-    // Fallback for test environments without unaccent extension
-    const results = await prisma.$queryRaw<SearchResult[]>`
-      SELECT 
-        h.id,
-        h.numero,
-        h.matn_fr,
-        h.matn_ar,
-        h.matn_en,
-        json_build_object(
-          'id', c.id,
-          'name_fr', c.name_fr,
-          'name_ar', c.name_ar,
-          'name_en', c.name_en,
-          'slug', c.slug,
-          'index', c.index
-        ) as chapter
-      FROM "Hadith" h
-      INNER JOIN "Chapter" c ON h."chapterId" = c.id
-      WHERE 
-        -- Unified search: case-insensitive search
-        lower(h.matn_fr) LIKE '%' || lower(${query}) || '%'
-        OR lower(h.matn_ar) LIKE '%' || lower(${query}) || '%'
-        OR lower(h.matn_en) LIKE '%' || lower(${query}) || '%'
-        OR lower(h.matn_ar) LIKE '%' || lower(${normalizedQuery}) || '%'
-      ORDER BY h.numero ASC
-      LIMIT ${limit}
-    `;
+    // Use Prisma's findMany with OR conditions for better compatibility
+    const hadiths = await prisma.hadith.findMany({
+      where: {
+        OR: searchVariants.flatMap((variant) => [
+          {
+            matn_fr: {
+              contains: variant,
+              mode: "insensitive",
+            },
+          },
+          {
+            matn_ar: {
+              contains: variant,
+              mode: "insensitive",
+            },
+          },
+          {
+            matn_en: {
+              contains: variant,
+              mode: "insensitive",
+            },
+          },
+        ]),
+      },
+      include: {
+        chapter: {
+          select: {
+            id: true,
+            name_fr: true,
+            name_ar: true,
+            name_en: true,
+            slug: true,
+            index: true,
+          },
+        },
+      },
+      orderBy: {
+        numero: "asc",
+      },
+      take: limit,
+    });
+
+    // Transform to match expected SearchResult format
+    const results: SearchResult[] = hadiths.map((hadith) => ({
+      id: hadith.id,
+      numero: hadith.numero,
+      matn_fr: hadith.matn_fr,
+      matn_ar: hadith.matn_ar,
+      matn_en: hadith.matn_en || "",
+      chapter: {
+        id: hadith.chapter.id,
+        name_fr: hadith.chapter.name_fr,
+        name_ar: hadith.chapter.name_ar,
+        name_en: hadith.chapter.name_en,
+        slug: hadith.chapter.slug,
+        index: hadith.chapter.index || 0,
+      },
+    }));
 
     // Cache the results for faster subsequent queries
     searchCache.set(query, limit, results);

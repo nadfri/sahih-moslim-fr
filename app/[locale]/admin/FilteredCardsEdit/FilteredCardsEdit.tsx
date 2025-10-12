@@ -5,6 +5,7 @@ import { useState } from "react";
 import type { ItemType, VariantType } from "@/src/types/types";
 import { Input } from "@/src/ui/forms/inputs/Input/Input";
 import { CardEdit } from "../CardEdit/CardEdit";
+import { normalizeTextForSearch } from "@/src/utils/textNormalization";
 
 type Props = {
   items: ItemType[];
@@ -32,14 +33,17 @@ const variantOptions = {
 export function FilteredCardsEdit({ items, variant }: Props) {
   const [inputValue, setInputValue] = useState("");
 
-  // Filter items based on search
+  // Filter items based on search with text normalization
+  // This ignores accents and special characters for better search experience
   const filteredItems = (() => {
     if (!inputValue) return items;
-    const searchLower = inputValue.toLowerCase();
 
     return items.filter((item) => {
-      const label = (item.name_fr ?? "").toLowerCase();
-      return label.includes(searchLower);
+      const itemName = item.name_fr ?? "";
+      const normalizedItemName = normalizeTextForSearch(itemName);
+      const normalizedInput = normalizeTextForSearch(inputValue);
+
+      return normalizedItemName.includes(normalizedInput);
     });
   })();
 

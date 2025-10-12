@@ -7,6 +7,7 @@ import { SearchSelect } from "@/src/ui/forms/inputs/SearchSelect/SearchSelect";
 import { useLocale, useTranslations } from "next-intl";
 import { CardItem } from "./CardItem/CardItem";
 import { getLocalizedName } from "@/src/utils/getLocalizedName";
+import { normalizeTextForSearch } from "@/src/utils/textNormalization";
 
 type Props = {
   items: ItemType[];
@@ -20,14 +21,17 @@ export function FilteredListCardItem({ items, variant }: Props) {
   const [inputValue, setInputValue] = useState("");
   const [selected, setSelected] = useState("");
 
-  // Dynamically filter items based on input value
+  // Dynamically filter items based on input value with text normalization
+  // This ignores accents and special characters for better search experience
   const filteredItems = !inputValue
     ? items
-    : items.filter((item) =>
-        getLocalizedName(item, locale)
-          .toLowerCase()
-          .includes(inputValue.toLowerCase())
-      );
+    : items.filter((item) => {
+        const itemName = getLocalizedName(item, locale);
+        const normalizedItemName = normalizeTextForSearch(itemName);
+        const normalizedInput = normalizeTextForSearch(inputValue);
+
+        return normalizedItemName.includes(normalizedInput);
+      });
 
   // Extract names for SearchSelect options
   const options = items.map((item) => getLocalizedName(item, locale));
