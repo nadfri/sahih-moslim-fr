@@ -6,7 +6,8 @@ import { ChevronRightCircle, Eye, EyeOff, LinkIcon } from "lucide-react";
 
 import { ItemType } from "@/src/types/types";
 import { NarratedBy } from "../NarratedBy/NarratedBy";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { getLocalizedName } from "@/utils/getLocalizedName";
 
 type Props = {
   isnadTransmitters: ItemType[];
@@ -15,6 +16,7 @@ type Props = {
 
 export function Isnad({ isnadTransmitters, edit }: Props) {
   const t = useTranslations("hadith");
+  const locale = useLocale();
 
   const [isIsnadVisible, setIsIsnadVisible] = useState(edit ?? false);
   // Use a stable id based on the last transmitter (narrator)
@@ -80,16 +82,20 @@ export function Isnad({ isnadTransmitters, edit }: Props) {
                 key={transmitter.id}
                 className="flex items-center fadeIn"
               >
-                <ChevronRightCircle className="size-4 text-gray-500 dark:text-gray-300 me-1" />
+                <ChevronRightCircle
+                  className={`size-4 text-gray-500 dark:text-gray-300 me-1 ${
+                    locale === "ar" ? "rotate-180" : ""
+                  }`}
+                />
 
                 <Link
                   href={`/transmitters/${transmitter.slug}`}
                   aria-label={t("see-transmitter", {
-                    transmitter: transmitter.name_fr,
+                    transmitter: getLocalizedName(transmitter, locale),
                   })}
                   className={linkClassName}
                 >
-                  {transmitter.name_fr}{" "}
+                  {getLocalizedName(transmitter, locale)}{" "}
                   <LinkIcon className="inline size-2.5 align-middle" />
                 </Link>
               </div>

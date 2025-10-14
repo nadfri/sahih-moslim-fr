@@ -29,7 +29,7 @@ export function ScrollBtns() {
   if (!show) return null;
 
   return (
-    <div className="fixed flex flex-col gap-2 right-1 z-10 bottom-4 md:bottom-1/2 md:translate-y-1/2">
+    <div className="fixed flex flex-col gap-2 end-1 z-10 bottom-4 md:bottom-1/2 md:translate-y-1/2">
       <button
         onClick={handleScrollUp}
         className="rounded-full bg-emerald-100/90 dark:bg-emerald-900/50 hover:bg-emerald-100 dark:hover:bg-emerald-800/70"

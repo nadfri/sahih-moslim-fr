@@ -41,7 +41,7 @@ export function Dialog({ open, onClose, title, children }: DialogProps) {
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-lg w-full duration-200 moveUp relative">
         <button
           onClick={handleClose}
-          className="absolute top-3 right-3 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 text-xl font-bold"
+          className="absolute top-3 end-3 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 text-xl font-bold"
           aria-label="Fermer"
         >
           ×

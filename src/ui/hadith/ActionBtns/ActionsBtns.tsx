@@ -55,7 +55,7 @@ export function ActionsBtns({
           aria-label={t("reportErrorAria")}
         >
           <TriangleAlert
-            className="h-4 w-4"
+            className="size-4"
             aria-hidden="true"
           />
           <span>{t("report")}</span>
@@ -70,7 +70,7 @@ export function ActionsBtns({
               aria-label="Éditer le hadith"
             >
               <Pencil
-                className="h-4 w-4"
+                className="size-4"
                 aria-hidden="true"
               />
               <span>{t("edit")}</span>

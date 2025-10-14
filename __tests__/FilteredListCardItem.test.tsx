@@ -94,8 +94,10 @@ describe("FilteredListCardItem", () => {
       const searchInput = screen.getByRole("combobox");
       await user.type(searchInput, "cafe");
 
-      // Should show the café item (normalized search)
-      expect(screen.getByText("Café de Paris")).toBeInTheDocument();
+      // Should show the café item (normalized search) - check in the card grid
+      expect(
+        screen.getByRole("heading", { name: "Café de Paris" })
+      ).toBeInTheDocument();
 
       // Should not show other items
       expect(screen.queryByText("La foi")).not.toBeInTheDocument();
@@ -117,8 +119,10 @@ describe("FilteredListCardItem", () => {
       const searchInput = screen.getByRole("combobox");
       await user.type(searchInput, "cree");
 
-      // Should find "Créé avec amour" even without accent
-      expect(screen.getByText("Créé avec amour")).toBeInTheDocument();
+      // Should find "Créé avec amour" even without accent - check in the card grid
+      expect(
+        screen.getByRole("heading", { name: "Créé avec amour" })
+      ).toBeInTheDocument();
       expect(screen.queryByText("Café de Paris")).not.toBeInTheDocument();
       expect(screen.queryByText("La foi")).not.toBeInTheDocument();
       expect(screen.queryByText("Hello World")).not.toBeInTheDocument();
@@ -138,8 +142,10 @@ describe("FilteredListCardItem", () => {
       const searchInput = screen.getByRole("combobox");
       await user.type(searchInput, "naive");
 
-      // Should find "Chapitre naïve" even without ï
-      expect(screen.getByText("Chapitre naïve")).toBeInTheDocument();
+      // Should find "Chapitre naïve" even without ï - check in the card grid
+      expect(
+        screen.getByRole("heading", { name: "Chapitre naïve" })
+      ).toBeInTheDocument();
       expect(screen.queryByText("Café de Paris")).not.toBeInTheDocument();
       expect(screen.queryByText("La foi")).not.toBeInTheDocument();
       expect(screen.queryByText("Hello World")).not.toBeInTheDocument();

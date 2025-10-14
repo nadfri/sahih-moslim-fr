@@ -28,6 +28,15 @@
     "description": "تسهيل الوصول إلى الدروس الأصيلة التي أبلغ عنها الإمام المسلم.",
     "title": "صحيح مسلم"
   },
+  "form": {
+    "clear": "لمحو",
+    "close-list": "إغلاق القائمة",
+    "no-results": "لا نتائج",
+    "open-list": "قائمة",
+    "search": "للبحث",
+    "noOptionsAvailable": "لا توجد خيارات متاحة",
+    "noResult": "لم يتم العثور على نتائج"
+  },
   "hadith": {
     "notFound": "الحديث غير موجود",
     "title": "الرقم {numero} - {narrator}",
@@ -54,8 +63,8 @@
       "english": "إنجليزي",
       "french": "فرنسي",
       "link": "الرابط",
-      "hide-isnad": "إخفاء Isnad",
-      "see-isnad": "انظر Isnad",
+      "hide-isnad": "إخفاء الإسناد",
+      "see-isnad": "انظر الإسناد",
       "hide-arabic": "إخفاء النسخة العربية",
       "see-arabic": "انظر النسخة العربية"
     },
@@ -163,14 +172,5 @@
     "noPermission": "ليس لديك الصلاحيات اللازمة للوصول إلى هذه الصفحة",
     "adminOnly": "المديرون فقط يمكنهم الوصول إلى هذا القسم",
     "backHome": "العودة إلى الرئيسية"
-  },
-  "form": {
-    "clear": "لمحو",
-    "close-list": "إغلاق القائمة",
-    "no-results": "لا نتائج",
-    "open-list": "قائمة",
-    "search": "للبحث",
-    "noOptionsAvailable": "لا توجد خيارات متاحة",
-    "noResult": "لم يتم العثور على نتائج"
   }
 }

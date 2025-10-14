@@ -4,8 +4,10 @@ import { ChapterName } from "../ChapterName/ChapterName";
 import { Isnad } from "../Isnad/Isnad";
 import { ListOfSahabas } from "../ListOfSahabas/ListOfSahabas";
 import { Matn_ar } from "../Matn_ar/Matn_ar";
-import { Matn_fr } from "../Matn_fr/Matn_fr";
+import { Matn } from "../Matn/Matn";
 import { Preview } from "../Preview";
+import { useLocale } from "next-intl";
+import { getLocalizedMatn } from "@/src/utils/getLocalizedMatn";
 
 type HadithProps = {
   hadith: HadithType;
@@ -20,6 +22,8 @@ export function Hadith({
   highlight,
   isAdmin = false,
 }: HadithProps) {
+  const locale = useLocale();
+
   return (
     <div
       key={hadith.id}
@@ -37,9 +41,10 @@ export function Hadith({
           />
         </div>
 
-        {/* Matn_fr */}
-        <Matn_fr
-          matn={hadith.matn_fr}
+        {/* Matn */}
+
+        <Matn
+          matn={getLocalizedMatn(hadith, locale)}
           highlight={highlight}
         />
 
@@ -47,11 +52,13 @@ export function Hadith({
         <ListOfSahabas sahabas={hadith.mentionedSahabas} />
 
         {/* Matn_ar */}
-        <Matn_ar
-          matn={hadith.matn_ar}
-          highlight={highlight}
-          edit={edit}
-        />
+        {locale !== "ar" && (
+          <Matn_ar
+            matn={hadith.matn_ar}
+            highlight={highlight}
+            edit={edit}
+          />
+        )}
 
         {/* Action buttons section */}
         {edit ? (

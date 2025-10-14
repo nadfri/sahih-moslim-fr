@@ -74,7 +74,9 @@ export function AddHadithForm({
   const formValues = watch();
 
   const chapterOptions = chaptersData.map((chapter) => chapter.name_fr);
+
   const sahabaOptions = sahabasData.map((s) => s.name_fr);
+
   const transmitterOptions = transmittersData.map((t) => t.name_fr);
 
   // Function to open the dialog with the correct variant

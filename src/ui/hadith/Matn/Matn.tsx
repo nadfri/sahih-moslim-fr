@@ -5,7 +5,7 @@ type Props = {
   highlight?: string;
 };
 
-export function Matn_fr({ matn, highlight }: Props) {
+export function Matn({ matn, highlight }: Props) {
   return (
     <MarkdownHighlighter highlight={highlight}>{matn}</MarkdownHighlighter>
   );

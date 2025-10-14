@@ -5,6 +5,7 @@ import Mark from "mark.js";
 import ReactMarkdown, { Components } from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
+import { useLocale } from "next-intl";
 
 import { prepareArabicForHighlight } from "@/src/utils/normalizeArabicText";
 
@@ -15,6 +16,7 @@ type Props = {
 
 export function MarkdownHighlighter({ children, highlight }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const locale = useLocale();
 
   // Custom renderers for ReactMarkdown (moved inside client component)
   const customRenderers: Components = {
@@ -113,7 +115,9 @@ export function MarkdownHighlighter({ children, highlight }: Props) {
   return (
     <div
       ref={containerRef}
-      className="markdown-content text-gray-700 dark:text-gray-300 leading-relaxed text-pretty whitespace-pre-line pb-3"
+      className={`markdown-content text-gray-700 dark:text-gray-300 text-pretty whitespace-pre-line pb-3 ${
+        locale === "ar" ? "text-lg leading-loose" : "leading-relaxed"
+      }`}
     >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}

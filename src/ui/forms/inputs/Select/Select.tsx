@@ -56,7 +56,7 @@ export function Select({
             </option>
           ))}
         </select>
-        <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+        <div className="absolute inset-y-0 end-0 flex items-center px-2 pointer-events-none">
           <ChevronDown className="h-5 w-5 text-gray-500 dark:text-gray-400" />
         </div>
       </div>

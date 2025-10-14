@@ -37,7 +37,7 @@ export default async function PageByNumero({
       <h1 className="title">
         {t("title", {
           numero: hadith.numero,
-          narrator: getNarratorName(hadith) ?? "",
+          narrator: getNarratorName(hadith, locale) ?? "",
         })}
       </h1>
 
@@ -71,7 +71,7 @@ export async function generateMetadata({
     title:
       t("title", {
         numero: hadith.numero,
-        narrator: getNarratorName(hadith) ?? "",
+        narrator: getNarratorName(hadith, locale) ?? "",
       }) + " | Moslim",
     description: getLocalizedMatn(hadith, locale).substring(0, 160) + "...",
   };

@@ -1,7 +1,8 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { MarkdownHighlighter } from "./MarkdownHighlighter";
+import { renderWithI18n } from "@/__tests__/renderWithI18n";
 
 // Mock Mark.js
 const mockUnmark = vi.fn();
@@ -34,7 +35,7 @@ describe("MarkdownHighlighter Component", () => {
   describe("Basic Rendering", () => {
     it("should render markdown content correctly", () => {
       const content = "This is **bold** and *italic* text";
-      render(<MarkdownHighlighter>{content}</MarkdownHighlighter>);
+      renderWithI18n(<MarkdownHighlighter>{content}</MarkdownHighlighter>);
 
       // Check that the content is rendered
       expect(screen.getByText("bold")).toBeInTheDocument();
@@ -43,14 +44,14 @@ describe("MarkdownHighlighter Component", () => {
 
     it("should render without highlight when no highlight prop is provided", () => {
       const content = "Simple text content";
-      render(<MarkdownHighlighter>{content}</MarkdownHighlighter>);
+      renderWithI18n(<MarkdownHighlighter>{content}</MarkdownHighlighter>);
 
       expect(screen.getByText(content)).toBeInTheDocument();
       expect(mockMark).not.toHaveBeenCalled();
     });
 
     it("should handle empty content", () => {
-      render(<MarkdownHighlighter>{""}</MarkdownHighlighter>);
+      renderWithI18n(<MarkdownHighlighter>{""}</MarkdownHighlighter>);
       // Should render without errors
       expect(mockMark).not.toHaveBeenCalled();
     });
@@ -59,7 +60,7 @@ describe("MarkdownHighlighter Component", () => {
   describe("Custom Markdown Renderers", () => {
     it("should apply custom styling to strong elements", () => {
       const content = "This is **important** text";
-      render(<MarkdownHighlighter>{content}</MarkdownHighlighter>);
+      renderWithI18n(<MarkdownHighlighter>{content}</MarkdownHighlighter>);
 
       const strongElement = screen.getByText("important");
       expect(strongElement).toHaveClass(
@@ -71,7 +72,7 @@ describe("MarkdownHighlighter Component", () => {
 
     it("should apply custom styling to emphasis elements", () => {
       const content = "This is *emphasized* text";
-      render(<MarkdownHighlighter>{content}</MarkdownHighlighter>);
+      renderWithI18n(<MarkdownHighlighter>{content}</MarkdownHighlighter>);
 
       const emElement = screen.getByText("emphasized");
       expect(emElement).toHaveClass(
@@ -92,7 +93,7 @@ describe("MarkdownHighlighter Component", () => {
 
     it("should apply custom styling to deleted elements", () => {
       const content = "This is ~~deleted~~ text";
-      render(<MarkdownHighlighter>{content}</MarkdownHighlighter>);
+      renderWithI18n(<MarkdownHighlighter>{content}</MarkdownHighlighter>);
 
       const delElement = screen.getByText("deleted");
       expect(delElement).toHaveClass(
@@ -109,7 +110,7 @@ describe("MarkdownHighlighter Component", () => {
       const content = "This is a test message";
       const highlight = "test";
 
-      render(
+      renderWithI18n(
         <MarkdownHighlighter highlight={highlight}>
           {content}
         </MarkdownHighlighter>
@@ -131,7 +132,7 @@ describe("MarkdownHighlighter Component", () => {
       const content = "Email: test@example.com";
       const highlight = "test@example.com";
 
-      render(
+      renderWithI18n(
         <MarkdownHighlighter highlight={highlight}>
           {content}
         </MarkdownHighlighter>
@@ -144,7 +145,7 @@ describe("MarkdownHighlighter Component", () => {
       const content = "The Prophet said";
       const highlight = "prophet";
 
-      render(
+      renderWithI18n(
         <MarkdownHighlighter highlight={highlight}>
           {content}
         </MarkdownHighlighter>
@@ -159,7 +160,7 @@ describe("MarkdownHighlighter Component", () => {
       const content = "قال رسول الله صلى الله عليه وسلم";
       const highlight = "رسول";
 
-      render(
+      renderWithI18n(
         <MarkdownHighlighter highlight={highlight}>
           {content}
         </MarkdownHighlighter>
@@ -175,7 +176,7 @@ describe("MarkdownHighlighter Component", () => {
       const content = "قَالَ رَسُولُ اللَّهِ";
       const highlight = "رسول"; // Without diacritics
 
-      render(
+      renderWithI18n(
         <MarkdownHighlighter highlight={highlight}>
           {content}
         </MarkdownHighlighter>
@@ -189,7 +190,7 @@ describe("MarkdownHighlighter Component", () => {
       const content = "The Prophet ﷺ said: قال رسول الله";
       const highlight = "رسول";
 
-      render(
+      renderWithI18n(
         <MarkdownHighlighter highlight={highlight}>
           {content}
         </MarkdownHighlighter>
@@ -203,7 +204,7 @@ describe("MarkdownHighlighter Component", () => {
   describe("Highlight Updates", () => {
     it("should update highlighting when highlight prop changes", () => {
       const content = "This is a test message";
-      const { rerender } = render(
+      const { rerender } = renderWithI18n(
         <MarkdownHighlighter highlight="test">{content}</MarkdownHighlighter>
       );
 
@@ -222,7 +223,7 @@ describe("MarkdownHighlighter Component", () => {
 
     it("should clear highlighting when highlight prop is removed", () => {
       const content = "This is a test message";
-      const { rerender } = render(
+      const { rerender } = renderWithI18n(
         <MarkdownHighlighter highlight="test">{content}</MarkdownHighlighter>
       );
 
@@ -237,7 +238,7 @@ describe("MarkdownHighlighter Component", () => {
     });
 
     it("should update highlighting when content changes", () => {
-      const { rerender } = render(
+      const { rerender } = renderWithI18n(
         <MarkdownHighlighter highlight="test">
           {"This is a test"}
         </MarkdownHighlighter>
@@ -261,7 +262,7 @@ describe("MarkdownHighlighter Component", () => {
     it("should handle undefined highlight prop", () => {
       const content = "Test content";
 
-      render(
+      renderWithI18n(
         <MarkdownHighlighter highlight={undefined}>
           {content}
         </MarkdownHighlighter>
@@ -274,7 +275,9 @@ describe("MarkdownHighlighter Component", () => {
     it("should handle empty highlight prop", () => {
       const content = "Test content";
 
-      render(<MarkdownHighlighter highlight="">{content}</MarkdownHighlighter>);
+      renderWithI18n(
+        <MarkdownHighlighter highlight="">{content}</MarkdownHighlighter>
+      );
 
       expect(mockMark).not.toHaveBeenCalled();
       expect(screen.getByText(content)).toBeInTheDocument();
@@ -289,7 +292,7 @@ This is **bold** text with a [link](https://example.com).
       `;
       const highlight = "bold";
 
-      render(
+      renderWithI18n(
         <MarkdownHighlighter highlight={highlight}>
           {content}
         </MarkdownHighlighter>
@@ -305,7 +308,7 @@ This is **bold** text with a [link](https://example.com).
       const longContent = "Lorem ipsum dolor sit amet. ".repeat(100);
       const highlight = "Lorem";
 
-      render(
+      renderWithI18n(
         <MarkdownHighlighter highlight={highlight}>
           {longContent}
         </MarkdownHighlighter>
@@ -318,7 +321,7 @@ This is **bold** text with a [link](https://example.com).
       const content = "Special chars: ™ © ® ﷺ";
       const highlight = "chars";
 
-      render(
+      renderWithI18n(
         <MarkdownHighlighter highlight={highlight}>
           {content}
         </MarkdownHighlighter>
@@ -332,7 +335,7 @@ This is **bold** text with a [link](https://example.com).
   describe("Cleanup", () => {
     it("should cleanup Mark.js instance on unmount", () => {
       const content = "Test content";
-      const { unmount } = render(
+      const { unmount } = renderWithI18n(
         <MarkdownHighlighter highlight="test">{content}</MarkdownHighlighter>
       );
 
@@ -351,7 +354,7 @@ This is **bold** text with a [link](https://example.com).
     it("should maintain proper DOM structure for screen readers", () => {
       const content = "This is **important** information";
 
-      render(
+      renderWithI18n(
         <MarkdownHighlighter highlight="important">
           {content}
         </MarkdownHighlighter>
@@ -366,7 +369,7 @@ This is **bold** text with a [link](https://example.com).
     it("should handle ARIA labels correctly", () => {
       const content = "Read this *carefully*";
 
-      render(
+      renderWithI18n(
         <MarkdownHighlighter highlight="carefully">
           {content}
         </MarkdownHighlighter>

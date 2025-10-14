@@ -28,6 +28,15 @@
     "description": "Facilitate access to authentic lessons reported by Imam Muslim.",
     "title": "Sahih Muslim"
   },
+  "form": {
+    "clear": "To erase",
+    "close-list": "Close list",
+    "no-results": "No results",
+    "open-list": "Open list",
+    "search": "To research...",
+    "noOptionsAvailable": "No options available",
+    "noResult": "No results found"
+  },
   "hadith": {
     "notFound": "Hadith not found",
     "title": "N° {numero} - {narrator}",
@@ -52,7 +61,7 @@
       "copy-aria": "Copy the hadith",
       "english": "English",
       "french": "French",
-      "header-copy": "Sahih Moslim - Hadith n°{number}\n\nChapter: {chapter}\n\nFrom: {narrator}",
+      "header-copy": "Sahih Muslim - Hadith n°{numero}\nChapter: {chapter}\nFrom: {narrator}\n\n",
       "link": "Link",
       "hide-isnad": "Hide Isnad",
       "see-isnad": "See Isnad",
@@ -163,14 +172,5 @@
     "backHome": "Back to reception",
     "noPermission": "You do not have the necessary permissions to access this page.",
     "title": "Unauthorized access"
-  },
-  "form": {
-    "clear": "To erase",
-    "close-list": "Close list",
-    "no-results": "No results",
-    "open-list": "Open list",
-    "search": "To research...",
-    "noOptionsAvailable": "No options available",
-    "noResult": "No results found"
   }
 }
