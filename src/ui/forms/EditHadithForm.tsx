@@ -129,7 +129,7 @@ export function EditHadithForm({
       numero: data.numero,
       matn_fr: data.matn_fr,
       matn_ar: data.matn_ar,
-      matn_en: data.matn_en ?? "",
+      matn_en: data.matn_en,
       chapter: selectedChapter.name_fr,
       mentionedSahabas: selectedSahabas.map((s) => s.name_fr),
       isnadTransmitters: selectedTransmitters.map((t) => t.name_fr),
@@ -194,6 +194,7 @@ export function EditHadithForm({
     ),
     matn_fr: formValues.matn_fr || "...",
     matn_ar: formValues.matn_ar || "...",
+    matn_en: formValues.matn_en || "...",
   };
 
   return (
@@ -299,7 +300,7 @@ export function EditHadithForm({
             type="textarea"
             rows={3}
             dir="rtl"
-            className="font-matn_ar text-lg"
+            className="text-lg"
             error={!!errors.matn_ar}
             errorMessage={errors.matn_ar?.message}
             register={register("matn_ar")}
@@ -311,15 +312,15 @@ export function EditHadithForm({
           />
 
           {/* matn_en (English text) */}
-          <Input
+          <MdTextArea
             id="matn_en"
-            label="Texte anglais (optionnel)"
-            type="textarea"
-            rows={2}
-            className="font-matn_en text-lg"
+            name="matn_en"
+            label="Texte anglais*"
+            control={control}
             error={!!errors.matn_en}
             errorMessage={errors.matn_en?.message}
-            register={register("matn_en")}
+            placeholder="Enter the English hadith text..."
+            height={200}
           />
 
           {/* Submit Button */}

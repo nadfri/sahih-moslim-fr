@@ -72,7 +72,7 @@ export function Matn_ar({ matn, highlight, edit }: Props) {
       >
         <div className="overflow-hidden">
           <div
-            className="pt-2 text-right font-matn_ar text-xl leading-loose text-pretty dark:text-gray-300"
+            className="pt-2 text-right text-xl leading-loose text-pretty dark:text-gray-300"
             dir="rtl"
           >
             <MarkdownHighlighter highlight={highlight}>

@@ -39,7 +39,7 @@ export const createHadithFormSchema = (
     isnadTransmitters: z.array(z.string()),
     matn_fr: z.string().min(1, "Le texte du hadith est requis"),
     matn_ar: z.string().min(1, "Le texte arabe est requis"),
-    matn_en: z.string().optional(),
+    matn_en: z.string().min(1, "Le texte anglais est requis"),
   });
 };
 
@@ -64,7 +64,7 @@ export const createEditHadithSchema = (
     isnadTransmitters: z.array(z.string()),
     matn_fr: z.string().min(1, "Le texte du hadith est requis"),
     matn_ar: z.string().min(1, "Le texte arabe est requis"),
-    matn_en: z.string().optional(),
+    matn_en: z.string().min(1, "Le texte anglais est requis"),
   });
 };
 

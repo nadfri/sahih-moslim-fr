@@ -186,7 +186,6 @@ describe("Matn_ar Component", () => {
     expect(arabicTextContainer).toHaveClass(
       "pt-2",
       "text-right",
-      "font-matn_ar",
       "text-xl",
       "leading-loose",
       "text-pretty",

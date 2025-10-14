@@ -267,7 +267,7 @@ export function AddHadithForm({
             <BtnAddItem onOpen={() => handleOpenDialog("sahabas")} />
           </div>
 
-          {/* matn_fr FR */}
+          {/* matn FR */}
           <MdTextArea
             id="matn_fr"
             name="matn_fr"
@@ -285,14 +285,14 @@ export function AddHadithForm({
             height={200}
           />
 
-          {/* matn_fr AR */}
+          {/* matn AR */}
           <Input
             id="matn_ar"
             label="Texte arabe*"
             type="textarea"
             rows={3}
             dir="rtl"
-            className="font-matn_ar text-lg"
+            className="text-lg"
             error={!!errors.matn_ar}
             errorMessage={errors.matn_ar?.message}
             register={register("matn_ar")}
@@ -303,13 +303,13 @@ export function AddHadithForm({
             helperText="Le texte sera automatiquement nettoyé"
           />
 
-          {/* matn_fr EN */}
+          {/* matn EN */}
           <Input
             id="matn_en"
             label="Texte anglais (optionnel)"
             type="textarea"
             rows={2}
-            className="font-matn_en text-lg"
+            className=""
             error={!!errors.matn_en}
             errorMessage={errors.matn_en?.message}
             register={register("matn_en")}

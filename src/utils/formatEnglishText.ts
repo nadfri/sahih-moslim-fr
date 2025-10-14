@@ -34,17 +34,44 @@ export function formatEnglishText(text: string): string {
     "\n\n$1"
   );
 
-  // Add paragraph breaks before narration transitions
+  // Add paragraph breaks before specific inquiry patterns and descriptive transitions
   formatted = formatted.replace(
-    /(The narrator said|Upon this|After having uttered|When he turned)/g,
+    /(He \(the inquirer\) (?:said|again said):\s*)/g,
     "\n\n$1"
   );
 
+  // Add breaks after long contextual sentences that end with periods before new narratives
+  formatted = formatted.replace(
+    /(\. And then after taking about their affairs, added:)/g,
+    ".\n\nAnd then after taking about their affairs, added:"
+  );
+
+  // Add breaks before direct speech introductions in narratives
+  formatted = formatted.replace(
+    /(\. I expected that my companion would authorize me to speak)/g,
+    ".\n\nI expected that my companion would authorize me to speak"
+  );
+
+  // Add breaks before authority statements and oath declarations
+  formatted = formatted.replace(/(Abdullah Ibn Umar swore by Him)/g, "\n\n$1");
+
+  // Add paragraph breaks before narration transitions
+  formatted = formatted.replace(
+    /(The narrator said|Upon this|After having uttered|When he turned|Accidentally we came across|One day we were sitting|My companion and I surrounded him)/g,
+    "\n\n$1"
+  );
+
+  // Add paragraph breaks for long narrative transitions
+  formatted = formatted.replace(/(At last he sat with the)/g, "\n\n$1");
+
   // Add paragraph breaks before new speakers in dialogue
   formatted = formatted.replace(
-    /\. (He said:|The man said:|The bedouin said:|The inquirer said:)/g,
+    /\. (He said:|The man said:|The bedouin said:|The inquirer said:|He replied:|He remarked:)/g,
     ".\n\n$1"
   );
+
+  // Add paragraph breaks for specific dialogue patterns in long narratives
+  formatted = formatted.replace(/\. (He \([^)]+\) said:)/g, ".\n\n$1");
 
   // Improve spacing around parenthetical expressions
   formatted = formatted.replace(/\(\s+/g, "(");

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { Matn } from "./Matn";
+import { Matn_fr } from "./Matn_fr";
 
 // Mock data for testing
 const mockHadith = {
@@ -44,7 +44,7 @@ describe("Matn Component", () => {
   });
 
   it("should render the French text content", () => {
-    render(<Matn matn={mockHadith.matn_fr} />);
+    render(<Matn_fr matn={mockHadith.matn_fr} />);
 
     expect(screen.getByText(mockHadith.matn_fr)).toBeInTheDocument();
   });
@@ -52,7 +52,7 @@ describe("Matn Component", () => {
   it("should pass highlight prop to MarkdownHighlighter", () => {
     const highlightTerm = "test";
     render(
-      <Matn
+      <Matn_fr
         matn="This is a test text"
         highlight={highlightTerm}
       />
@@ -65,7 +65,7 @@ describe("Matn Component", () => {
   });
 
   it("should render without highlight when no highlight prop is provided", () => {
-    render(<Matn matn={mockHadith.matn_fr} />);
+    render(<Matn_fr matn={mockHadith.matn_fr} />);
 
     // Check that no <mark> elements are present
     const markElements = document.querySelectorAll("mark");
@@ -74,7 +74,7 @@ describe("Matn Component", () => {
 
   it("should handle markdown content correctly", () => {
     const markdownText = "**Bold text** and *italic text*";
-    render(<Matn matn={markdownText} />);
+    render(<Matn_fr matn={markdownText} />);
 
     // Our simple mock doesn't process markdown, so check for the raw text
     expect(screen.getByText(markdownText)).toBeInTheDocument();
@@ -85,7 +85,7 @@ describe("Matn Component", () => {
     const highlightTerm = "Prophète";
 
     render(
-      <Matn
+      <Matn_fr
         matn={textWithMultipleOccurrences}
         highlight={highlightTerm}
       />
@@ -101,7 +101,7 @@ describe("Matn Component", () => {
     const highlightTerm = "prophète"; // lowercase
 
     render(
-      <Matn
+      <Matn_fr
         matn={text}
         highlight={highlightTerm}
       />
@@ -115,7 +115,7 @@ describe("Matn Component", () => {
   it("should render long text content properly", () => {
     const longText =
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ".repeat(5);
-    render(<Matn matn={longText} />);
+    render(<Matn_fr matn={longText} />);
 
     // Check that container is rendered with proper classes
     const container = document.querySelector(".markdown-content");
@@ -125,14 +125,14 @@ describe("Matn Component", () => {
 
   it("should handle special characters in text", () => {
     const textWithSpecialChars = "Le Messager d'Allah ﷺ a dit: « Bismillah »";
-    render(<Matn matn={textWithSpecialChars} />);
+    render(<Matn_fr matn={textWithSpecialChars} />);
 
     expect(screen.getByText(textWithSpecialChars)).toBeInTheDocument();
   });
 
   it("should handle undefined highlight prop gracefully", () => {
     render(
-      <Matn
+      <Matn_fr
         matn={mockHadith.matn_fr}
         highlight={undefined}
       />
@@ -145,7 +145,7 @@ describe("Matn Component", () => {
 
   it("should handle empty highlight prop", () => {
     render(
-      <Matn
+      <Matn_fr
         matn={mockHadith.matn_fr}
         highlight=""
       />

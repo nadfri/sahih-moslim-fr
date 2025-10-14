@@ -11,10 +11,22 @@ type Props = {
 };
 
 export function Matn_en({ matn, highlight }: Props) {
-  // Format the text automatically for better readability
-  const formattedText = formatHadithNarration(matn);
-  // Split into paragraphs BEFORE applying Prophet name formatting to preserve structure
-  const paragraphs = splitIntoParagraphs(formattedText);
+  // Check if text already contains manual paragraph breaks (double line breaks)
+  const hasManualParagraphs = matn.includes("\n\n");
+
+  let paragraphs: string[];
+
+  if (hasManualParagraphs) {
+    // If manual paragraphs exist, respect them and don't apply automatic formatting
+    paragraphs = matn
+      .split("\n\n")
+      .map((p) => p.trim())
+      .filter((p) => p.length > 0);
+  } else {
+    // Apply automatic formatting only if no manual paragraphs exist
+    const formattedText = formatHadithNarration(matn);
+    paragraphs = splitIntoParagraphs(formattedText);
+  }
 
   if (paragraphs.length === 0) {
     return null;
