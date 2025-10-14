@@ -5,6 +5,7 @@ export const mockHadith: HadithType = {
   numero: 123,
   matn_fr: "Ceci est un **test** de hadith en français.",
   matn_ar: "هذا اختبار للحديث باللغة العربية",
+  matn_en: "This is a **test** of hadith in English.",
   chapter: {
     id: "ch1",
     name_fr: "Test Chapter",

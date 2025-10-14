@@ -4,10 +4,9 @@ import { ChapterName } from "../ChapterName/ChapterName";
 import { Isnad } from "../Isnad/Isnad";
 import { ListOfSahabas } from "../ListOfSahabas/ListOfSahabas";
 import { Matn_ar } from "../Matn_ar/Matn_ar";
-import { Matn } from "../Matn/Matn";
+import { LocalizedMatn } from "../LocalizedMatn/LocalizedMatn";
 import { Preview } from "../Preview";
 import { useLocale } from "next-intl";
-import { getLocalizedMatn } from "@/src/utils/getLocalizedMatn";
 
 type HadithProps = {
   hadith: HadithType;
@@ -43,9 +42,10 @@ export function Hadith({
 
         {/* Matn */}
 
-        <Matn
-          matn={getLocalizedMatn(hadith, locale)}
+        <LocalizedMatn
+          hadith={hadith}
           highlight={highlight}
+          edit={edit}
         />
 
         {/* Sahabas */}

@@ -6,6 +6,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { MarkdownHighlighter } from "@/src/ui/hadith/MarkdownHighlighter/MarkdownHighlighter";
 import { containsArabic } from "@/src/utils/normalizeArabicText";
 import { useTranslations } from "next-intl";
+import { wrapArabicProphetNames } from "@/src/utils/wrapProphetNamesMultilingual";
 
 type Props = {
   matn: string;
@@ -75,7 +76,7 @@ export function Matn_ar({ matn, highlight, edit }: Props) {
             dir="rtl"
           >
             <MarkdownHighlighter highlight={highlight}>
-              {matn}
+              {wrapArabicProphetNames(matn)}
             </MarkdownHighlighter>
           </div>
         </div>
