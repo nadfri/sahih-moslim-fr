@@ -1,5 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -34,12 +34,13 @@ model Hadith {
   chapter            Chapter             @relation(fields: [chapterId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_hadith_chapter")
   hadithTransmitters HadithTransmitter[]
   mentionedSahabas   Sahaba[]
+  // Full-text search indexes are created manually via SQL migration
+  // @@index([matn_ar], map: "idx_hadith_matn_ar_fts") - Created via SQL
+  // @@index([matn_en], map: "idx_hadith_matn_en_fts") - Created via SQL  
+  // @@index([matn_fr], map: "idx_hadith_matn_fr_fts") - Created via SQL
 
   @@index([chapterId], map: "idx_hadith_chapterid")
   @@index([chapterId, numero], map: "idx_hadith_chapterid_numero")
-  @@index([matn_ar], map: "idx_hadith_matn_ar")
-  @@index([matn_en], map: "idx_hadith_matn_en")
-  @@index([matn_fr], map: "idx_hadith_matn_fr")
   @@index([numero], map: "idx_hadith_numero")
 }
 

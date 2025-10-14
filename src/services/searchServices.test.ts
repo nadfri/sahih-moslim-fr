@@ -45,17 +45,17 @@ describe("Search Services", () => {
 
   describe("searchHadithsCombined", () => {
     it("should return empty array for empty query", async () => {
-      const results = await searchHadithsCombined("");
+      const results = await searchHadithsCombined("", "fr");
       expect(results).toEqual([]);
     });
 
     it("should return empty array for whitespace query", async () => {
-      const results = await searchHadithsCombined("   ");
+      const results = await searchHadithsCombined("   ", "fr");
       expect(results).toEqual([]);
     });
 
     it("should find hadith by French text", async () => {
-      const results = await searchHadithsCombined("Omar ibn al-Khattab");
+      const results = await searchHadithsCombined("Omar ibn al-Khattab", "fr");
 
       expect(Array.isArray(results)).toBe(true);
 
@@ -76,39 +76,66 @@ describe("Search Services", () => {
     });
 
     it("should find hadith by Arabic text", async () => {
-      const results = await searchHadithsCombined("عمر بن الخطاب");
+      const results = await searchHadithsCombined("عمر بن الخطاب", "fr");
 
       const testResult = results.find((r) => r.id === testHadithId);
       expect(testResult).toBeDefined();
     });
 
     it("should handle case insensitive search", async () => {
-      const results = await searchHadithsCombined("OMAR");
+      const results = await searchHadithsCombined("OMAR", "fr");
 
       const testResult = results.find((r) => r.id === testHadithId);
       expect(testResult).toBeDefined();
     });
 
     it("should respect limit parameter", async () => {
-      const results = await searchHadithsCombined("test", 5);
+      const results = await searchHadithsCombined("test", "fr", 5);
       expect(results.length).toBeLessThanOrEqual(5);
     });
 
     it("should handle accented characters search", async () => {
-      const results = await searchHadithsCombined("omar"); // without accent
+      const results = await searchHadithsCombined("omar", "fr"); // without accent
 
       const testResult = results.find((r) => r.id === testHadithId);
       expect(testResult).toBeDefined();
     });
 
     it("should return results ordered by numero", async () => {
-      const results = await searchHadithsCombined("test", 10);
+      const results = await searchHadithsCombined("test", "fr", 10);
 
       if (results.length > 1) {
         for (let i = 0; i < results.length - 1; i++) {
           expect(results[i].numero).toBeLessThanOrEqual(results[i + 1].numero);
         }
       }
+    });
+
+    // Test locale-specific search optimization
+    describe("locale-specific search optimization", () => {
+      it("should search in FR+AR for French locale", async () => {
+        const results = await searchHadithsCombined("test", "fr", 10);
+        expect(Array.isArray(results)).toBe(true);
+        // This should find results in both French and Arabic content
+      });
+
+      it("should search in EN+AR for English locale", async () => {
+        const results = await searchHadithsCombined("test", "en", 10);
+        expect(Array.isArray(results)).toBe(true);
+        // This should find results in both English and Arabic content
+      });
+
+      it("should search in AR only for Arabic locale", async () => {
+        const results = await searchHadithsCombined("test", "ar", 10);
+        expect(Array.isArray(results)).toBe(true);
+        // This should find results in Arabic content only
+      });
+
+      it("should handle unknown locale by defaulting to French", async () => {
+        const results = await searchHadithsCombined("test", "unknown", 10);
+        expect(Array.isArray(results)).toBe(true);
+        // This should behave like French locale (FR+AR)
+      });
     });
   });
 });

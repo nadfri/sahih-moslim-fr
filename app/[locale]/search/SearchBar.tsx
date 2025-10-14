@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 import { useSearch } from "@/src/hooks/useSearch";
 import { FilterType } from "@/src/types/types";
@@ -26,6 +26,7 @@ export function SearchBar({
   transmitters: string[];
 }) {
   const t = useTranslations("search");
+  const locale = useLocale();
   const filterOptions: { key: FilterType; label: string }[] = [
     { key: "word", label: t("filters.word") },
     { key: "sahaba", label: t("filters.sahaba") },
@@ -58,6 +59,7 @@ export function SearchBar({
     sahabas: selectedSahabas,
     transmitters: selectedTransmitters,
     numero,
+    locale,
   });
 
   // Timer for URL updates only
@@ -200,7 +202,7 @@ export function SearchBar({
                   }
                   autoComplete="off"
                 />
-                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
+                <Search className="absolute end-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
               </div>
             )}
             {filterMode === "sahaba" && (
@@ -256,7 +258,7 @@ export function SearchBar({
                   min="1"
                   autoComplete="off"
                 />
-                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
+                <Search className="absolute end-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
               </div>
             )}
           </div>

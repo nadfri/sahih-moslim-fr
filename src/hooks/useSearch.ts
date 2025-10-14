@@ -19,6 +19,7 @@ export type UseSearchProps = {
   sahabas: string[];
   transmitters: string[];
   numero: string;
+  locale?: string; // Add locale parameter
   debounceMs?: number;
 };
 
@@ -30,6 +31,7 @@ export function useSearch({
   sahabas,
   transmitters,
   numero,
+  locale = "fr", // Default to French
 }: UseSearchProps) {
   const [results, setResults] = useState<HadithType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,6 +68,9 @@ export function useSearch({
           numero
         );
 
+        // Add locale to search params
+        searchParams.set("locale", locale);
+
         // Make API call
         const response = await fetch(`/api/search?${searchParams.toString()}`);
         const data: SearchApiResponse = await response.json();
@@ -89,7 +94,7 @@ export function useSearch({
     }, DEBOUNCE_MS);
 
     return () => clearTimeout(timer);
-  }, [filterMode, query, sahabas, transmitters, numero]);
+  }, [filterMode, query, sahabas, transmitters, numero, locale]);
 
   // Reset function
   const resetSearch = () => {

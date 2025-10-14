@@ -2,7 +2,6 @@
 
 import { prisma } from "@/prisma/prisma";
 import { HadithType } from "@/src/types/types";
-import { createSearchVariants } from "@/src/utils/textNormalization";
 import { searchCache } from "./searchCache";
 
 /**
@@ -26,67 +25,96 @@ export type SearchResult = {
   };
 };
 
-// Search only in Hadith content (French and Arabic text)
+// Search only in Hadith content based on locale preferences
 // Optimized for <300ms performance: caching + smaller result sets + efficient queries
 export async function searchHadithsCombined(
   query: string,
+  locale: string = "fr", // Default to French
   limit = 25 // Reduced default limit for better performance
 ): Promise<SearchResult[]> {
   if (!query.trim()) return [];
 
-  // Check cache first for instant results
-  const cachedResults = searchCache.get(query, limit);
+  // Create cache key that includes locale for proper caching
+  const cacheKey = `${query}_${locale}`;
+  const cachedResults = searchCache.get(cacheKey, limit);
   if (cachedResults) {
     return cachedResults;
   }
 
-  // Generate search variants with different normalizations
-  const searchVariants = createSearchVariants(query);
-
   try {
-    // Use Prisma's findMany with OR conditions for better compatibility
-    const hadiths = await prisma.hadith.findMany({
-      where: {
-        OR: searchVariants.flatMap((variant) => [
-          {
-            matn_fr: {
-              contains: variant,
-              mode: "insensitive",
-            },
-          },
-          {
-            matn_ar: {
-              contains: variant,
-              mode: "insensitive",
-            },
-          },
-          {
-            matn_en: {
-              contains: variant,
-              mode: "insensitive",
-            },
-          },
-        ]),
-      },
-      include: {
-        chapter: {
-          select: {
-            id: true,
-            name_fr: true,
-            name_ar: true,
-            name_en: true,
-            slug: true,
-            index: true,
-          },
-        },
-      },
-      orderBy: {
-        numero: "asc",
-      },
-      take: limit,
-    });
+    let sql: string;
 
-    // Transform to match expected SearchResult format
+    // Optimize search based on locale - select only necessary columns
+    // FR: search in French and Arabic only, get FR+AR content
+    // EN: search in English and Arabic only, get EN+AR content
+    // AR: search in Arabic only, get AR content only
+    if (locale === "ar") {
+      sql = `
+        SELECT 
+          h.id, h.numero, h.matn_ar,
+          '' as matn_fr, '' as matn_en,
+          c.id as chapter_id, c.name_ar as chapter_name_ar, c.name_fr as chapter_name_fr, c.name_en as chapter_name_en, 
+          c.slug as chapter_slug, c.index as chapter_index
+        FROM "Hadith" h
+        JOIN "Chapter" c ON h."chapterId" = c.id
+        WHERE to_tsvector('arabic', h.matn_ar) @@ plainto_tsquery('arabic', $1)
+        ORDER BY h.numero ASC
+        LIMIT $2
+      `;
+    } else if (locale === "en") {
+      sql = `
+        SELECT 
+          h.id, h.numero, h.matn_ar, h.matn_en,
+          '' as matn_fr,
+          c.id as chapter_id, c.name_ar as chapter_name_ar, c.name_en as chapter_name_en, c.name_fr as chapter_name_fr,
+          c.slug as chapter_slug, c.index as chapter_index
+        FROM "Hadith" h
+        JOIN "Chapter" c ON h."chapterId" = c.id
+        WHERE (
+          to_tsvector('arabic', h.matn_ar) @@ plainto_tsquery('arabic', $1)
+          OR to_tsvector('english', h.matn_en) @@ plainto_tsquery('english', $1)
+        )
+        ORDER BY h.numero ASC
+        LIMIT $2
+      `;
+    } else {
+      // Default for FR locale
+      sql = `
+        SELECT 
+          h.id, h.numero, h.matn_ar, h.matn_fr,
+          '' as matn_en,
+          c.id as chapter_id, c.name_ar as chapter_name_ar, c.name_fr as chapter_name_fr, c.name_en as chapter_name_en,
+          c.slug as chapter_slug, c.index as chapter_index
+        FROM "Hadith" h
+        JOIN "Chapter" c ON h."chapterId" = c.id
+        WHERE (
+          to_tsvector('arabic', h.matn_ar) @@ plainto_tsquery('arabic', $1)
+          OR to_tsvector('french', h.matn_fr) @@ plainto_tsquery('french', $1)
+        )
+        ORDER BY h.numero ASC
+        LIMIT $2
+      `;
+    }
+
+    type HadithWithChapter = {
+      id: string;
+      numero: number;
+      matn_fr: string;
+      matn_ar: string;
+      matn_en: string;
+      chapter_id: string;
+      chapter_name_fr: string;
+      chapter_name_ar: string | null;
+      chapter_name_en: string | null;
+      chapter_slug: string;
+      chapter_index: number;
+    };
+    const hadiths = await prisma.$queryRawUnsafe<HadithWithChapter[]>(
+      sql,
+      query,
+      limit
+    );
+
     const results: SearchResult[] = hadiths.map((hadith) => ({
       id: hadith.id,
       numero: hadith.numero,
@@ -94,18 +122,17 @@ export async function searchHadithsCombined(
       matn_ar: hadith.matn_ar,
       matn_en: hadith.matn_en || "",
       chapter: {
-        id: hadith.chapter.id,
-        name_fr: hadith.chapter.name_fr,
-        name_ar: hadith.chapter.name_ar,
-        name_en: hadith.chapter.name_en,
-        slug: hadith.chapter.slug,
-        index: hadith.chapter.index || 0,
+        id: hadith.chapter_id,
+        name_fr: hadith.chapter_name_fr,
+        name_ar: hadith.chapter_name_ar,
+        name_en: hadith.chapter_name_en,
+        slug: hadith.chapter_slug,
+        index: hadith.chapter_index || 0,
       },
     }));
 
-    // Cache the results for faster subsequent queries
-    searchCache.set(query, limit, results);
-
+    // Cache the results for faster subsequent queries with locale-specific key
+    searchCache.set(cacheKey, limit, results);
     return results;
   } catch (error) {
     console.error("Error in searchHadithsCombined:", error);

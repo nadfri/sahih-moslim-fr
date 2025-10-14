@@ -25,6 +25,12 @@ export async function GET(request: NextRequest) {
     const offset = parseInt(searchParams.get("offset") || "0");
     const limit = parseInt(searchParams.get("limit") || "25");
 
+    // Extract locale from query params or headers, fallback to "fr"
+    const locale =
+      searchParams.get("locale") ||
+      request.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ||
+      "fr";
+
     // Auto-detect filterMode based on present parameters
     const filterMode = detectFilterMode(params);
 
@@ -34,7 +40,11 @@ export async function GET(request: NextRequest) {
       case "word":
         if (query.length >= 3) {
           // Use optimized PostgreSQL Full-Text Search with GIN indexes
-          const searchResults = await searchHadithsCombined(query, limit);
+          const searchResults = await searchHadithsCombined(
+            query,
+            locale,
+            limit
+          );
 
           // Multilingual mapping for chapter
           results = searchResults.map((result) => ({
