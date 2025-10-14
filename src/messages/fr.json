@@ -32,7 +32,7 @@
   },
 
   "hadith": {
-    "title": "N° {numero} - {narrator}",
+    "title": "Hadith N° {numero} - {narrator}",
     "notFound": "Hadith non trouvé",
     "noResults": "Aucun hadith trouvé.",
     "see-chapter": "Voir le chapitre: {chapter}",
@@ -67,7 +67,10 @@
       "see-isnad": "Voir Isnad",
       "hide-isnad": "Masquer Isnad",
       "see-arabic": "Voir la version arabe",
-      "hide-arabic": "Masquer la version arabe"
+      "hide-arabic": "Masquer la version arabe",
+      "link-to": "Lien vers le hadith n°{numero}",
+      "previous": "Précédent n°{numero}",
+      "next": "Suivant n°{numero}"
     }
   },
 

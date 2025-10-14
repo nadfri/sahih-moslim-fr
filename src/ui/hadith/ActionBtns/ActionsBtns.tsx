@@ -1,7 +1,7 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
-import { Pencil, TriangleAlert, Trash2 } from "lucide-react";
+import { Pencil, TriangleAlert, Trash2, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { ConfirmDeleteModal } from "@/src/ui/forms/ConfirmDeleteModal/ConfirmDeleteModal";
 
@@ -47,10 +47,28 @@ export function ActionsBtns({
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
       <div className="flex flex-wrap items-center gap-3 ms-auto">
+        <Link
+          href={`/hadith/${hadith.numero}`}
+          className="inline-flex items-center justify-center aspect-square size-8 
+          rounded-md 
+          bg-emerald-200 
+        text-emerald-700 
+        hover:bg-emerald-300 
+          dark:bg-emerald-400 
+          dark:text-emerald-900 
+        dark:hover:bg-emerald-300
+          transition duration-200
+          "
+          title={t("link-to", { numero: hadith.numero })}
+          aria-label={t("link-to", { numero: hadith.numero })}
+        >
+          <ExternalLink className="size-4" />
+        </Link>
+
         <CopyBoard hadith={hadith} />
 
         <button
-          className="inline-flex items-center gap-1.5 text-sm font-medium bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-500 px-3 py-1.5 rounded-md hover:bg-amber-100 dark:hover:bg-amber-900/70 hover:text-amber-700 dark:hover:text-amber-400 transition-all duration-200"
+          className="inline-flex items-center gap-1.5 text-sm font-medium bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-500 px-3 py-1.5 rounded-md hover:bg-amber-100 dark:hover:bg-amber-900/70 hover:text-amber-700 dark:hover:text-amber-400"
           title={t("report")}
           aria-label={t("reportErrorAria")}
         >
@@ -65,7 +83,7 @@ export function ActionsBtns({
           <>
             <Link
               href={`/hadith/${hadith.numero}/edit`}
-              className="inline-flex items-center gap-1.5 text-sm font-medium bg-orange-50 dark:bg-orange-700 text-orange-600 dark:text-orange-300 px-3 py-1.5 rounded-md hover:bg-orange-100 dark:hover:bg-orange-900/70 hover:text-orange-700 dark:hover:text-orange-400 transition-all duration-200"
+              className="inline-flex items-center gap-1.5 text-sm font-medium bg-orange-50 dark:bg-orange-700 text-orange-600 dark:text-orange-300 px-3 py-1.5 rounded-md hover:bg-orange-100 dark:hover:bg-orange-900/70 hover:text-orange-700 dark:hover:text-orange-400"
               title="Modifier ce hadith"
               aria-label="Éditer le hadith"
             >

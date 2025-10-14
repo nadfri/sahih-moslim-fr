@@ -82,11 +82,7 @@ export function Isnad({ isnadTransmitters, edit }: Props) {
                 key={transmitter.id}
                 className="flex items-center fadeIn"
               >
-                <ChevronRightCircle
-                  className={`size-4 text-gray-500 dark:text-gray-300 me-1 ${
-                    locale === "ar" ? "rotate-180" : ""
-                  }`}
-                />
+                <ChevronRightCircle className="size-4 text-gray-500 dark:text-gray-300 me-1 rtl:rotate-180" />
 
                 <Link
                   href={`/transmitters/${transmitter.slug}`}

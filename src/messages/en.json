@@ -39,11 +39,12 @@
   },
   "hadith": {
     "notFound": "Hadith not found",
-    "title": "N° {numero} - {narrator}",
+    "title": "Hadith N°{numero} - {narrator}",
     "hadith-count": "{count, plural, =0 {0 Hadith} =1 {1 Hadith} other {# Hadiths}}",
     "mentioned-sahabas": "{count, plural, =1 {Sahaba mentioned} other {Sahabas mentioned}}",
     "preview": "Preview",
     "from": "From ",
+    
     "ActionsBtns": {
       "copied": "Copied!",
       "copy": "Copy",
@@ -66,7 +67,10 @@
       "hide-isnad": "Hide Isnad",
       "see-isnad": "See Isnad",
       "hide-arabic": "Hide the Arabic version",
-      "see-arabic": "See the Arabic version"
+      "see-arabic": "See the Arabic version",
+      "link-to": "Link to hadith n°{numero}",
+      "next": "Next n°{numero}",
+      "previous": "Previous n°{numero}"
     },
     "noResults": "No hadith found.",
     "see-chapter": "See chapter: {chapter}",

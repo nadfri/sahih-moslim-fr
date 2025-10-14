@@ -10,6 +10,8 @@ import { requireAdmin } from "@/src/lib/auth/supabase/helpers";
 import { ParamsNumero } from "@/src/types/types";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getLocalizedMatn } from "@/src/utils/getLocalizedMatn";
+import { HadithNavigation } from "@/src/ui/hadith/HadithNavigation/HadithNavigation";
+import { getHadithNavigation } from "@/src/services/getHadithNavigation";
 
 export default async function PageByNumero({
   params,
@@ -32,6 +34,11 @@ export default async function PageByNumero({
     return notFound();
   }
 
+  // Get navigation data for previous/next buttons
+  const { previousNumero, nextNumero } = await getHadithNavigation(
+    parseInt(numero)
+  );
+
   return (
     <>
       <h1 className="title">
@@ -44,6 +51,11 @@ export default async function PageByNumero({
       <Hadith
         hadith={hadith}
         isAdmin={isAdmin}
+      />
+
+      <HadithNavigation
+        previousNumero={previousNumero}
+        nextNumero={nextNumero}
       />
     </>
   );
