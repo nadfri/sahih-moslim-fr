@@ -230,10 +230,9 @@ export function EditHadithForm({
               />
             )}
           />
-          {/* Narrator supprimé */}
 
           {/* IsnadTransmitters */}
-          <div className="flex justify-between items-center gap-1">
+          <div className="flex justify-between items-end gap-1">
             <Controller
               name="isnadTransmitters"
               control={control}

@@ -26,7 +26,7 @@
     "@prisma/extension-accelerate": "^2.0.2",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.75.0",
-    "@uiw/react-md-editor": "^4.0.8",
+    "@uiw/react-md-editor": "4.0.1",
     "lucide-react": "^0.545.0",
     "mark.js": "^8.11.1",
     "next": "15.5.4",
@@ -77,8 +77,5 @@
     "typescript": "^5.8.3",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
-  },
-  "prisma": {
-    "seed": "node prisma/seeds/seed.js"
   }
 }
