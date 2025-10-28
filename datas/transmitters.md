@@ -1,0 +1,88 @@
+# Transmetteurs (Isnad)
+
+- Abd Al-Razzaq - عَبْدُ الرَّزَّاقِ
+- Abd ibn Humaid - عَبْدُ بْنُ حُمَيْدٍ
+- Abou Al-Aliya - أَبُو الْعَالِيَةِ
+- Abou al-Ghayth - أبو الغيث
+- Abou Dhbyan - أبو ظبيان
+- Abou Hazim - أبو حازم
+- Abou Ishaq - أبو إسحاق
+- Abou Jamra - أبو جمرة
+- Abou Kathir - أبو كثير
+- Abou Kurayb - أَبُو كُرَيْبٍ
+- Abou Kurayb Muhammad ibn Al-Ala' - أَبُو كُرَيْبٍ مُحَمَّدُ بْنُ الْعَلاَءِ
+- Abou Ma'bad - أبو معبد
+- Abou Malik - أبو مالك
+- Abou Maslama - أَبُو مَسْلَمَةَ
+- Abou Mu'awiya - أبو معاوية
+- Abou Murawih - أبو مراوح
+- Abou Nadrah - أَبُو نَضْرَةَ
+- Abou Rafi - أبو رافع
+- Abou Salih - أبو صالح
+- Abou Soufyan - أبو سفيان
+- Abou Sufyan - أبو سفيان
+- Abou Usama - أبو أسامة
+- Abou Wail - أبو وائل
+- Abou Yunus - أَبُو يُونُسَ
+- Abou Zumayil - أبو زميل
+- Al-A'la - الْعَلاَءِ
+- Al-A'mash - الأعمش
+- al-Amash - الأعمش
+- al-Bara - البراء
+- Al-Fadl ibn Sahl Al-A'raj - الْفَضْلُ بْنُ سَهْلٍ الأَعْرَجُ
+- al-Harith - الحارث
+- al-Ma'rur ibn Suwayd - المعرور بن سويد
+- al-Nadr ibn Muhammad - النضر بن محمد
+- Al-Numan ibn Bashir - النُّعْمَانَ بْنَ بَشِيرٍ
+- al-Sha'bi - الشعبي
+- al-Shaybaní - الشيباني
+- Ali ibn Mudrik - علي بن مدرك
+- Alqama - علقمة
+- Ataa' - عَطَاءٍ
+- Ataa' ibn Yasar - عَطَاءِ بْنِ يَسَارٍ
+- Aun ibn Sallam - عون بن سلام
+- Buraydi - بريد
+- Hafs - حَفْصٌ
+- Hammad - حماد
+- Hammam - همام
+- Hisham - هِشَامٌ
+- Humran - حمران
+- Husayn al-Mu'allim - حسين المعلم
+- Hushaim - هُشَيْمٌ
+- Ibn Abi Maryam - ابن أبي مريم
+- Ibn Abi Omar - ابْنُ أَبِي عُمَرَ
+- Ibn Ajlan - ابن عجلان
+- Ibn al-Hadi - ابن الهادي
+- Ibn Al-Musayyib - ابْنِ الْمُسَيَّبِ
+- Ibn Bashar - ابْنُ بَشَّارٍ
+- Ibn Fudail - ابْنُ فُضَيْلٍ
+- Ibn Hujar - ابْنُ حُجْرٍ
+- Ibn Muhayriz - ابن محيريز
+- Ibn Numayr - ابن نمير
+- Ibn Shihab - ابن شهاب
+- Ibn Ulayya - ابْنُ عُلَيَّةَ
+- Jundab - جندب
+- Kadha - كَذَا
+- Khalid - خالد
+- Malik - مالك
+- Mansur - منصور
+- Marwan - مروان
+- Masruq - مسروق
+- Mu'ammar - مَعْمَرٌ
+- Mu'tamir - معتمر
+- Mughira - مغيرة
+- Murra - مُرَّةَ
+- Mutraff - مُطَرِّفٍ
+- Nafi' - نَافِعٌ
+- Qays - قيس
+- Rawh - رَوْحٍ
+- Riba'i - رِبْعِيٍّ
+- Shaqiq - شقيق
+- Shu'ba - شعبة
+- Sufyan - سفيان
+- Suhaib - صُهَيْبٍ
+- Suhail - سهيل
+- Thabit - ثابت
+- Ya'qub ibn Ibrahim - يَعْقُوبُ بْنُ إِبْرَاهِيمَ
+- Zirr - زرّ
+- Zubayd - زبيد
