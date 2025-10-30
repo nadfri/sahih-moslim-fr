@@ -49,7 +49,7 @@ describe("Performance Optimization Tests", () => {
 
   it("should perform optimized search for Arabic locale (AR only)", async () => {
     const startTime = performance.now();
-    const results = await searchHadithsCombined("حديث", "ar", 25);
+    const results = await searchHadithsCombined("حديث", "ar", 50);
     const endTime = performance.now();
 
     expect(results.length).toBeGreaterThan(0);
@@ -67,7 +67,7 @@ describe("Performance Optimization Tests", () => {
 
   it("should perform optimized search for French locale (FR+AR)", async () => {
     const startTime = performance.now();
-    const results = await searchHadithsCombined("test", "fr", 25);
+    const results = await searchHadithsCombined("test", "fr", 50);
     const endTime = performance.now();
 
     expect(results.length).toBeGreaterThan(0);
@@ -85,7 +85,7 @@ describe("Performance Optimization Tests", () => {
 
   it("should perform optimized search for English locale (EN+AR)", async () => {
     const startTime = performance.now();
-    const results = await searchHadithsCombined("test", "en", 25);
+    const results = await searchHadithsCombined("test", "en", 50);
     const endTime = performance.now();
 
     expect(results.length).toBeGreaterThan(0);

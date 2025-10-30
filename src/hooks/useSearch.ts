@@ -5,21 +5,13 @@ import { useEffect, useState } from "react";
 import { FilterType, HadithType } from "@/src/types/types";
 import { buildSearchParams } from "@/src/utils/searchUtils";
 
-export type SearchApiResponse = {
-  success: boolean;
-  results: HadithType[];
-  count: number;
-  hasMore: boolean;
-  error?: string;
-};
-
 export type UseSearchProps = {
   filterMode: FilterType;
   query: string;
   sahabas: string[];
   transmitters: string[];
   numero: string;
-  locale?: string; // Add locale parameter
+  locale?: string;
   debounceMs?: number;
 };
 
@@ -31,14 +23,13 @@ export function useSearch({
   sahabas,
   transmitters,
   numero,
-  locale = "fr", // Default to French
+  locale = "fr",
 }: UseSearchProps) {
   const [results, setResults] = useState<HadithType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Debounced effect - use JSON.stringify for array dependencies
   useEffect(() => {
     const timer = setTimeout(async () => {
       // Check if we have search criteria
@@ -73,7 +64,7 @@ export function useSearch({
 
         // Make API call
         const response = await fetch(`/api/search?${searchParams.toString()}`);
-        const data: SearchApiResponse = await response.json();
+        const data = await response.json();
 
         if (data.success) {
           setResults(data.results);

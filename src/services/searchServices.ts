@@ -30,13 +30,12 @@ export type SearchResult = {
 export async function searchHadithsCombined(
   query: string,
   locale: string = "fr", // Default to French
-  limit = 25 // Reduced default limit for better performance
+  limit = 50 // Reduced default limit for better performance
 ): Promise<SearchResult[]> {
   if (!query.trim()) return [];
 
-  // Create cache key that includes locale for proper caching
-  const cacheKey = `${query}_${locale}`;
-  const cachedResults = searchCache.get(cacheKey, limit);
+  // Get cached results with locale support
+  const cachedResults = searchCache.get(query, locale, limit);
   if (cachedResults) {
     return cachedResults;
   }
@@ -57,7 +56,7 @@ export async function searchHadithsCombined(
           c.slug as chapter_slug, c.index as chapter_index
         FROM "Hadith" h
         JOIN "Chapter" c ON h."chapterId" = c.id
-        WHERE to_tsvector('arabic', h.matn_ar) @@ plainto_tsquery('arabic', $1)
+        WHERE h.matn_ar ILIKE '%' || $1 || '%'
         ORDER BY h.numero ASC
         LIMIT $2
       `;
@@ -71,14 +70,14 @@ export async function searchHadithsCombined(
         FROM "Hadith" h
         JOIN "Chapter" c ON h."chapterId" = c.id
         WHERE (
-          to_tsvector('arabic', h.matn_ar) @@ plainto_tsquery('arabic', $1)
-          OR to_tsvector('english', h.matn_en) @@ plainto_tsquery('english', $1)
+          h.matn_ar ILIKE '%' || $1 || '%'
+          OR h.matn_en ILIKE '%' || $1 || '%'
         )
         ORDER BY h.numero ASC
         LIMIT $2
       `;
     } else {
-      // Default for FR locale
+      // Default for FR locale - using ILIKE for case-insensitive substring search
       sql = `
         SELECT 
           h.id, h.numero, h.matn_ar, h.matn_fr,
@@ -88,8 +87,8 @@ export async function searchHadithsCombined(
         FROM "Hadith" h
         JOIN "Chapter" c ON h."chapterId" = c.id
         WHERE (
-          to_tsvector('arabic', h.matn_ar) @@ plainto_tsquery('arabic', $1)
-          OR to_tsvector('french', h.matn_fr) @@ plainto_tsquery('french', $1)
+          h.matn_ar ILIKE '%' || $1 || '%'
+          OR h.matn_fr ILIKE '%' || $1 || '%'
         )
         ORDER BY h.numero ASC
         LIMIT $2
@@ -132,7 +131,7 @@ export async function searchHadithsCombined(
     }));
 
     // Cache the results for faster subsequent queries with locale-specific key
-    searchCache.set(cacheKey, limit, results);
+    searchCache.set(query, locale, limit, results);
     return results;
   } catch (error) {
     console.error("Error in searchHadithsCombined:", error);
@@ -168,8 +167,6 @@ export async function searchHadithsBySahabas(
             name_fr: true,
             name_ar: true,
             name_en: true,
-            createdAt: true,
-            updatedAt: true,
           },
         },
         mentionedSahabas: {
@@ -179,8 +176,6 @@ export async function searchHadithsBySahabas(
             name_fr: true,
             name_ar: true,
             name_en: true,
-            createdAt: true,
-            updatedAt: true,
           },
         },
         hadithTransmitters: {
@@ -192,8 +187,6 @@ export async function searchHadithsBySahabas(
                 name_fr: true,
                 name_ar: true,
                 name_en: true,
-                createdAt: true,
-                updatedAt: true,
               },
             },
           },
@@ -236,8 +229,6 @@ export async function searchHadithsBySahabas(
           name_fr: s.name_fr ?? "",
           name_ar: s.name_ar ?? "",
           name_en: s.name_en ?? "",
-          createdAt: s.createdAt ?? new Date(),
-          updatedAt: s.updatedAt ?? new Date(),
         })) ?? [],
       isnadTransmitters:
         hadith.hadithTransmitters?.map((ht) => ({
@@ -246,11 +237,7 @@ export async function searchHadithsBySahabas(
           name_fr: ht.transmitter?.name_fr ?? "",
           name_ar: ht.transmitter?.name_ar ?? "",
           name_en: ht.transmitter?.name_en ?? "",
-          createdAt: ht.transmitter?.createdAt ?? new Date(),
-          updatedAt: ht.transmitter?.updatedAt ?? new Date(),
         })) ?? [],
-      createdAt: hadith.createdAt ?? new Date(),
-      updatedAt: hadith.updatedAt ?? new Date(),
     }));
   } catch (error) {
     console.error("Error in searchHadithsBySahabas:", error);
@@ -288,8 +275,6 @@ export async function searchHadithsByTransmitters(
             name_fr: true,
             name_ar: true,
             name_en: true,
-            createdAt: true,
-            updatedAt: true,
           },
         },
         mentionedSahabas: {
@@ -299,8 +284,6 @@ export async function searchHadithsByTransmitters(
             name_fr: true,
             name_ar: true,
             name_en: true,
-            createdAt: true,
-            updatedAt: true,
           },
         },
         hadithTransmitters: {
@@ -312,8 +295,6 @@ export async function searchHadithsByTransmitters(
                 name_fr: true,
                 name_ar: true,
                 name_en: true,
-                createdAt: true,
-                updatedAt: true,
               },
             },
           },
@@ -358,8 +339,6 @@ export async function searchHadithsByTransmitters(
           name_fr: s.name_fr ?? "",
           name_ar: s.name_ar ?? "",
           name_en: s.name_en ?? "",
-          createdAt: s.createdAt ?? new Date(),
-          updatedAt: s.updatedAt ?? new Date(),
         })) ?? [],
       isnadTransmitters:
         hadith.hadithTransmitters?.map((ht) => ({
@@ -368,11 +347,7 @@ export async function searchHadithsByTransmitters(
           name_fr: ht.transmitter?.name_fr ?? "",
           name_ar: ht.transmitter?.name_ar ?? "",
           name_en: ht.transmitter?.name_en ?? "",
-          createdAt: ht.transmitter?.createdAt ?? new Date(),
-          updatedAt: ht.transmitter?.updatedAt ?? new Date(),
         })) ?? [],
-      createdAt: hadith.createdAt ?? new Date(),
-      updatedAt: hadith.updatedAt ?? new Date(),
     }));
   } catch (error) {
     console.error("Error in searchHadithsByTransmitters:", error);

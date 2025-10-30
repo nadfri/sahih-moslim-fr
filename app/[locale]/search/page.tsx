@@ -1,6 +1,6 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 import { Metadata } from "next";
-import { SearchBar } from "@/app/[locale]/search/SearchBar";
+import { SearchContainer } from "./SearchContainer";
 import { getSahabaNames, getTransmitterNames } from "@/src/services/services";
 import { ParamsLocale } from "@/src/types/types";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -23,7 +23,7 @@ export default async function SearchPage({ params }: { params: ParamsLocale }) {
     <div className="container mx-auto max-w-5xl">
       <h1 className="title">{t("title")}</h1>
 
-      <SearchBar
+      <SearchContainer
         sahabas={sahabaNames}
         transmitters={transmitterNames}
       />

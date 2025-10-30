@@ -7,24 +7,30 @@ import { Search } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 
 import { useSearch } from "@/src/hooks/useSearch";
-import { FilterType } from "@/src/types/types";
-import { BadgeNumberOfHadith } from "@/src/ui/hadith/BadgeNumberOfHadith/BadgeNumberOfHadith";
-import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
+import { FilterType, HadithType } from "@/src/types/types";
 import { MultiSelect } from "@/src/ui/forms/inputs/MultiSelect/MultiSelect";
 import {
   buildSearchParams,
   detectFilterMode,
   extractSearchParams,
 } from "@/src/utils/searchUtils";
-import { useAuth } from "@/src/hooks/useAuth";
+
+type SearchBarProps = {
+  sahabas: string[];
+  transmitters: string[];
+  onSearchResults: (
+    results: HadithType[],
+    isLoading: boolean,
+    hasSearched: boolean,
+    highlight: string
+  ) => void;
+};
 
 export function SearchBar({
   sahabas,
   transmitters,
-}: {
-  sahabas: string[];
-  transmitters: string[];
-}) {
+  onSearchResults,
+}: SearchBarProps) {
   const t = useTranslations("search");
   const locale = useLocale();
   const filterOptions: { key: FilterType; label: string }[] = [
@@ -34,7 +40,6 @@ export function SearchBar({
     { key: "numero", label: t("filters.numero") },
   ];
 
-  const { isAdmin } = useAuth();
   // Safely handle useSearchParams (can be null in test environments)
   const rawSearchParams = useSearchParams();
   const searchParams = rawSearchParams ?? new URLSearchParams();
@@ -66,6 +71,13 @@ export function SearchBar({
   const [urlUpdateTimer, setUrlUpdateTimer] = useState<NodeJS.Timeout | null>(
     null
   );
+
+  // Notify parent component of search results
+  useEffect(() => {
+    const highlight = filterMode === "word" ? query : "";
+    onSearchResults(results, isLoading, hasSearched, highlight);
+  }, [results, isLoading, hasSearched, filterMode, query, onSearchResults]);
+
   // Update URL function
   const updateUrl = (
     urlFilterMode: FilterType,
@@ -284,41 +296,6 @@ export function SearchBar({
           aria-live="polite"
         >
           {t("loading")}
-        </div>
-      )}
-
-      {/* Search Stats */}
-      {(results.length > 0 || hasSearched) && (
-        <div
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          {results.length > 0 ? (
-            <BadgeNumberOfHadith
-              count={results.length}
-              size="large"
-            />
-          ) : hasSearched && !isLoading ? (
-            <p className="text-gray-600 dark:text-gray-400">{t("empty")}</p>
-          ) : null}
-        </div>
-      )}
-
-      {/* Results */}
-      {results.length > 0 && (
-        <div
-          className="space-y-4"
-          aria-live="polite"
-          aria-label={t("results")}
-        >
-          {results.map((hadith) => (
-            <Hadith
-              key={hadith.id}
-              hadith={hadith}
-              highlight={filterMode === "word" ? query : ""}
-              isAdmin={isAdmin}
-            />
-          ))}
         </div>
       )}
     </div>

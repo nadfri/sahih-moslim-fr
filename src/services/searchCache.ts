@@ -13,16 +13,28 @@ type CacheEntry = {
   ttl: number; // Time to live in milliseconds
 };
 
+type CacheStats = {
+  size: number;
+  maxSize: number;
+  ttl: number;
+  hits: number;
+  misses: number;
+  hitRate: number;
+};
+
 class SearchCache {
   private cache = new Map<string, CacheEntry>();
   private readonly DEFAULT_TTL = 5 * 60 * 1000; // 5 minutes
   private readonly MAX_CACHE_SIZE = 100; // Limit cache size
+  private hits = 0;
+  private misses = 0;
 
   /**
-   * Generate cache key from query and limit
+   * Generate cache key from query, locale and limit
+   * Format: query:locale:limit (all lowercase, trimmed)
    */
-  private getCacheKey(query: string, limit: number): string {
-    return `${query.toLowerCase().trim()}:${limit}`;
+  private getCacheKey(query: string, locale: string, limit: number): string {
+    return `${query.toLowerCase().trim()}:${locale.toLowerCase()}:${limit}`;
   }
 
   /**
@@ -58,16 +70,26 @@ class SearchCache {
 
   /**
    * Get cached results
+   * Matches by query, locale, and limit
    */
-  get(query: string, limit: number): SearchResult[] | null {
+  get(query: string, locale: string, limit: number): SearchResult[] | null {
     if (!query.trim()) return null;
 
-    const key = this.getCacheKey(query, limit);
+    const key = this.getCacheKey(query, locale, limit);
     const entry = this.cache.get(key);
 
     if (entry && this.isValid(entry)) {
+      this.hits++;
+      console.debug(
+        `[SearchCache] HIT: ${key} (hits: ${this.hits}, misses: ${this.misses})`
+      );
       return entry.results;
     }
+
+    this.misses++;
+    console.debug(
+      `[SearchCache] MISS: ${key} (hits: ${this.hits}, misses: ${this.misses})`
+    );
 
     // Remove expired entry
     if (entry) {
@@ -78,17 +100,18 @@ class SearchCache {
   }
 
   /**
-   * Cache search results
+   * Cache search results with locale support
    */
   set(
     query: string,
+    locale: string,
     limit: number,
     results: SearchResult[],
     ttl?: number
   ): void {
     if (!query.trim()) return;
 
-    const key = this.getCacheKey(query, limit);
+    const key = this.getCacheKey(query, locale, limit);
 
     // Cleanup and eviction
     this.cleanup();
@@ -111,12 +134,16 @@ class SearchCache {
   /**
    * Get cache statistics
    */
-  getStats() {
+  getStats(): CacheStats {
+    const total = this.hits + this.misses;
     return {
       size: this.cache.size,
       maxSize: this.MAX_CACHE_SIZE,
       ttl: this.DEFAULT_TTL,
-    };
+      hits: this.hits,
+      misses: this.misses,
+      hitRate: total > 0 ? ((this.hits / total) * 100).toFixed(2) : "0",
+    } as unknown as CacheStats;
   }
 }
 

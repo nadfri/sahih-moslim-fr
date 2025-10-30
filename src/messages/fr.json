@@ -5,7 +5,7 @@
     "backHome": "Retour à l'accueil",
     "ifError": "Si vous pensez qu'il s'agit d'une erreur, n'hésitez pas à nous le signaler."
   },
-  
+
   "auth": {
     "error": {
       "title": "Erreur d'authentification",
@@ -31,6 +31,15 @@
     "description": "Faciliter l'accès aux enseignements authentiques rapportés par l'Imam Moslim."
   },
 
+  "form": {
+    "clear": "Effacer",
+    "open-list": "Ouvrir la liste",
+    "close-list": "Fermer la liste",
+    "no-results": "Aucun résultat",
+    "search": "Rechercher...",
+    "noResult": "Aucun résultat trouvé",
+    "noOptionsAvailable": "Aucune option disponible"
+  },
   "hadith": {
     "title": "Hadith N° {numero} - {narrator}",
     "notFound": "Hadith non trouvé",
@@ -83,7 +92,6 @@
     "sahih": "Sahih",
     "moslim": "Moslim",
     "logo-title": "Sahih Moslim"
-
   },
 
   "home": {
@@ -155,6 +163,7 @@
     },
     "loading": "Recherche en cours...",
     "empty": "Aucun hadith trouvé...",
+    "noResults": "Aucun hadith trouvé.",
     "results": "Résultat de la recherche"
   },
 
@@ -181,17 +190,5 @@
     "noPermission": "Vous n'avez pas les autorisations nécessaires pour accéder à cette page.",
     "adminOnly": "Seuls les administrateurs peuvent accéder à cette section.",
     "backHome": "Retour à l'accueil"
-  },
-
-  "form": {
-    "clear": "Effacer",
-    "open-list": "Ouvrir la liste",
-    "close-list": "Fermer la liste",
-    "no-results": "Aucun résultat",
-    "search": "Rechercher...",
-    "noResult": "Aucun résultat trouvé",
-    "noOptionsAvailable": "Aucune option disponible"
-
-
   }
 }

@@ -10,15 +10,20 @@ type ListLayoutHadithProps = {
   title?: string;
   name?: string;
   hadiths: HadithType[];
+  highlight?: string;
 };
 
 export function ListLayoutHadith({
   title,
   name,
   hadiths,
+  highlight = "",
 }: ListLayoutHadithProps) {
   const { isAdmin } = useAuth();
   const t = useTranslations("hadith");
+
+  // Determine empty message based on context
+  const emptyMessage = t("noResults");
 
   return (
     <>
@@ -38,16 +43,19 @@ export function ListLayoutHadith({
         size="large"
       />
 
-      {hadiths.length === 0 ? (
+      {hadiths.length === 0 && (
         <p className="text-center text-gray-500 dark:text-gray-400 mt-8">
-          {t("noResults")}
+          {emptyMessage}
         </p>
-      ) : (
+      )}
+
+      {hadiths.length > 0 && (
         <div className="space-y-8">
           {hadiths.map((hadith) => (
             <Hadith
               key={hadith.id}
               hadith={hadith}
+              highlight={highlight}
               isAdmin={isAdmin}
             />
           ))}
