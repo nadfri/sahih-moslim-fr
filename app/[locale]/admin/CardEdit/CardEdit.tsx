@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
+import { Link } from "@/i18n/navigation";
 import { deleteItem } from "@/src/services/actions";
 import { ItemType, VariantType } from "@/src/types/types";
 import { ConfirmDeleteModal } from "@/src/ui/forms/ConfirmDeleteModal/ConfirmDeleteModal";
@@ -66,7 +67,7 @@ export function CardEdit({ item, items, variant }: Props) {
   return (
     <div className="bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-3 flex">
       {/* Main content on the left */}
-      <div className="flex-grow flex flex-col gap-1">
+      <div className="grow flex flex-col gap-1">
         <div className="flex items-center gap-2">
           {/* Index */}
           {item.index !== undefined && (
@@ -104,6 +105,15 @@ export function CardEdit({ item, items, variant }: Props) {
       </div>
 
       <div className="flex items-center ms-3">
+        <Link
+          href={`/${variant}/${item.slug}`}
+          className="p-1.5 rounded text-blue-500 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/70 flex items-center justify-center"
+          aria-label="Voir"
+          title="Voir"
+        >
+          <Eye className="size-4" />
+        </Link>
+
         <button
           type="button"
           onClick={() => setShowEditDialog(true)}
@@ -113,6 +123,7 @@ export function CardEdit({ item, items, variant }: Props) {
         >
           <Pencil className="size-4" />
         </button>
+
         <button
           type="button"
           onClick={() => setShowDeleteModal(true)}
