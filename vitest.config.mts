@@ -5,9 +5,8 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   plugins: [tsconfigPaths(), react()],
   test: {
-    globals: true, // Optional: Enables global APIs like describe, it, expect
+    globals: true,
     environment: "jsdom",
-    // Add this line to run the setup file before tests
     setupFiles: ["src/vitest.setup.ts"],
     coverage: {
       provider: "v8",
@@ -15,8 +14,11 @@ export default defineConfig({
     server: {
       deps: {
         // https://github.com/vercel/next.js/issues/77200
-        inline: ['next-intl']
-      }
-    }
+        inline: ["next-intl"],
+      },
+    },
+    // Vitest 4 configuration for better test isolation
+    isolate: true,
+    include: ["**/*.test.{ts,tsx}"],
   },
 });

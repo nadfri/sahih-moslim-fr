@@ -9,23 +9,9 @@ import { CopyBoard } from "./CopyBoard";
 // Mock minimal HadithType for test
 
 describe("CopyBoard", () => {
-  // Mock clipboard API
-  const mockWriteText = vi.fn().mockImplementation(() => Promise.resolve());
   let originalLocation: PropertyDescriptor | undefined;
 
   beforeEach(() => {
-    // Setup clipboard mock
-    if (!navigator.clipboard) {
-      Object.defineProperty(navigator, "clipboard", {
-        value: { writeText: mockWriteText },
-        configurable: true,
-      });
-    } else {
-      vi.spyOn(navigator.clipboard, "writeText").mockImplementation(
-        mockWriteText
-      );
-    }
-    vi.clearAllMocks();
     // Store and mock window.location for link copy
     originalLocation = Object.getOwnPropertyDescriptor(window, "location");
     Object.defineProperty(window, "location", {
@@ -45,6 +31,15 @@ describe("CopyBoard", () => {
         protocol: "https:",
         search: "",
       } as Location,
+      writable: true,
+      configurable: true,
+    });
+
+    // Mock clipboard
+    Object.defineProperty(navigator, "clipboard", {
+      value: {
+        writeText: vi.fn(() => Promise.resolve()),
+      },
       writable: true,
       configurable: true,
     });
@@ -85,6 +80,12 @@ describe("CopyBoard", () => {
   });
   it('copies French text when "Français" option is selected', async () => {
     const user = userEvent.setup();
+    const writeTextSpy = vi.fn(() => Promise.resolve());
+    Object.defineProperty(navigator, "clipboard", {
+      value: { writeText: writeTextSpy },
+      writable: true,
+      configurable: true,
+    });
     renderWithI18n(<CopyBoard hadith={mockHadith} />);
     const button = screen.getByRole("button", {
       name: /copier le hadith/i,
@@ -94,11 +95,17 @@ describe("CopyBoard", () => {
     await user.click(frenchOption);
     await waitFor(() => {
       const expectedText = `Sahih Moslim - Hadith n°123\nChapitre: Test Chapter\nD' après: Transmitter Test 2\n\nCeci est un **test** de hadith en français.`;
-      expect(mockWriteText).toHaveBeenCalledWith(expectedText);
+      expect(writeTextSpy).toHaveBeenCalledWith(expectedText);
     });
   });
   it('copies Arabic text when "Arabe" option is selected', async () => {
     const user = userEvent.setup();
+    const writeTextSpy = vi.fn(() => Promise.resolve());
+    Object.defineProperty(navigator, "clipboard", {
+      value: { writeText: writeTextSpy },
+      writable: true,
+      configurable: true,
+    });
     renderWithI18n(<CopyBoard hadith={mockHadith} />);
     const button = screen.getByRole("button", {
       name: /copier le hadith/i,
@@ -108,11 +115,17 @@ describe("CopyBoard", () => {
     await user.click(arabicOption);
     await waitFor(() => {
       const expectedText = `Sahih Moslim - Hadith n°123\nChapitre: Test Chapter\nD' après: Transmitter Test 2\n\nهذا اختبار للحديث باللغة العربية`;
-      expect(mockWriteText).toHaveBeenCalledWith(expectedText);
+      expect(writeTextSpy).toHaveBeenCalledWith(expectedText);
     });
   });
   it('copies both texts when "Les deux" option is selected', async () => {
     const user = userEvent.setup();
+    const writeTextSpy = vi.fn(() => Promise.resolve());
+    Object.defineProperty(navigator, "clipboard", {
+      value: { writeText: writeTextSpy },
+      writable: true,
+      configurable: true,
+    });
     renderWithI18n(<CopyBoard hadith={mockHadith} />);
     const button = screen.getByRole("button", {
       name: /copier le hadith/i,
@@ -122,12 +135,18 @@ describe("CopyBoard", () => {
     await user.click(bothOption);
     await waitFor(() => {
       const expectedText = `Sahih Moslim - Hadith n°123\nChapitre: Test Chapter\nD' après: Transmitter Test 2\n\nCeci est un **test** de hadith en français.\n\nهذا اختبار للحديث باللغة العربية`;
-      expect(mockWriteText).toHaveBeenCalledWith(expectedText);
+      expect(writeTextSpy).toHaveBeenCalledWith(expectedText);
     });
   });
 
   it('copies link when "Le lien" option is selected', async () => {
     const user = userEvent.setup();
+    const writeTextSpy = vi.fn(() => Promise.resolve());
+    Object.defineProperty(navigator, "clipboard", {
+      value: { writeText: writeTextSpy },
+      writable: true,
+      configurable: true,
+    });
     renderWithI18n(<CopyBoard hadith={mockHadith} />);
     const button = screen.getByRole("button", {
       name: /copier le hadith/i,
@@ -138,7 +157,7 @@ describe("CopyBoard", () => {
     await user.click(linkOption);
     await waitFor(() => {
       const expectedText = `https://test.com/fr/hadith/123`;
-      expect(mockWriteText).toHaveBeenCalledWith(expectedText);
+      expect(writeTextSpy).toHaveBeenCalledWith(expectedText);
     });
   });
 
@@ -151,13 +170,18 @@ describe("CopyBoard", () => {
     await user.click(button);
     const frenchOption = screen.getByText("Français");
     await user.click(frenchOption);
-    expect(await screen.findByText("Copié !")).toBeInTheDocument();
-    // Wait for revert (1s)
+
+    // The text "Copié !" should appear immediately after clipboard write
+    await waitFor(() => {
+      expect(screen.getByText("Copié !")).toBeInTheDocument();
+    });
+
+    // Wait for the text to revert after 1s
     await waitFor(
       () => {
         expect(screen.getByText("Copier")).toBeInTheDocument();
       },
-      { timeout: 1500 }
+      { timeout: 2000 }
     );
   });
 

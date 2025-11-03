@@ -39,8 +39,8 @@ vi.mock("next-intl/middleware", () => {
   };
 });
 
-// Import middleware after mocks are set up
-import { middleware } from "../middleware";
+// Import proxy after mocks are set up
+import { proxy } from "../proxy";
 
 // Mock Supabase client
 type GetUserResult = {
@@ -167,7 +167,7 @@ describe("Middleware with next-intl", () => {
     mockIntlMiddleware.mockReturnValue(intlResponse);
 
     const req = new NextRequest(new URL("/chapters", "http://localhost:3000"));
-    const result = await middleware(req);
+    const result = await proxy(req);
 
     expect(result).toBe(intlResponse);
     expect(mockIntlMiddleware).toHaveBeenCalledWith(req);
@@ -179,7 +179,7 @@ describe("Middleware with next-intl", () => {
     const req = new NextRequest(
       new URL("/fr/chapters", "http://localhost:3000")
     );
-    await middleware(req);
+    await proxy(req);
 
     expect(mockNextResponseNext).not.toHaveBeenCalled();
     // The updateSession response is returned directly for non-protected routes
@@ -198,7 +198,7 @@ describe("Middleware with next-intl", () => {
     await supa.__setGetUserResult({ data: { user: null } });
 
     const req = new NextRequest(new URL("/admin", "http://localhost:3000"));
-    const result = await middleware(req);
+    const result = await proxy(req);
 
     // Should redirect to signin, NOT to intl redirect
     expect(mockNextResponseRedirect).toHaveBeenCalled();
@@ -229,7 +229,7 @@ describe("Middleware with next-intl", () => {
     });
 
     const req = new NextRequest(new URL("/admin", "http://localhost:3000"));
-    const result = await middleware(req);
+    const result = await proxy(req);
 
     // Should NOT redirect to signin or unauthorized
     expect(mockNextResponseRedirect).not.toHaveBeenCalled();
@@ -250,7 +250,7 @@ describe("Middleware with next-intl", () => {
         await supa.__setGetUserResult({ data: { user: null } });
 
         const req = new NextRequest(new URL(path, "http://localhost:3000"));
-        await middleware(req);
+        await proxy(req);
 
         expect(mockNextResponseRedirect).toHaveBeenCalled();
         const redirectUrl = new URL(mockNextResponseRedirect.mock.calls[0][0]);
@@ -272,7 +272,7 @@ describe("Middleware with next-intl", () => {
         await prisma.__setProfileResult(null); // No role in profile
 
         const req = new NextRequest(new URL(path, "http://localhost:3000"));
-        await middleware(req);
+        await proxy(req);
 
         expect(mockNextResponseRedirect).toHaveBeenCalled();
         const redirectUrl = new URL(mockNextResponseRedirect.mock.calls[0][0]);
@@ -293,7 +293,7 @@ describe("Middleware with next-intl", () => {
         });
 
         const req = new NextRequest(new URL(path, "http://localhost:3000"));
-        const result = await middleware(req);
+        const result = await proxy(req);
 
         expect(mockNextResponseRedirect).not.toHaveBeenCalled();
         // Should return the supabase response (updateSession result)
@@ -312,7 +312,7 @@ describe("Middleware with next-intl", () => {
         await prisma.__setProfileResult({ role: "ADMIN" });
 
         const req = new NextRequest(new URL(path, "http://localhost:3000"));
-        const result = await middleware(req);
+        const result = await proxy(req);
 
         expect(mockNextResponseRedirect).not.toHaveBeenCalled();
         expect(result).toBeDefined();

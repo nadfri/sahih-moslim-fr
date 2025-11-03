@@ -9,11 +9,17 @@ const mockUnmark = vi.fn();
 const mockMark = vi.fn();
 
 vi.mock("mark.js", () => {
+  // Return a class constructor, not a function
+  class MockMark {
+    constructor(public element: Element) {}
+
+    mark = mockMark;
+
+    unmark = mockUnmark;
+  }
+
   return {
-    default: vi.fn().mockImplementation(() => ({
-      unmark: mockUnmark,
-      mark: mockMark,
-    })),
+    default: MockMark,
   };
 });
 

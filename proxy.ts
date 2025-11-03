@@ -9,7 +9,7 @@ import { routing } from "./src/i18n/routing";
 // Create the intl middleware
 const handleI18nRouting = createIntlMiddleware(routing);
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
   const isProtectedRoute =
     pathname.endsWith("/add") ||
@@ -102,7 +102,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  // Run middleware in Node.js runtime so server-side libraries work properly
-  runtime: "nodejs",
-  matcher: ["/((?!api|trpc|_next|_vercel|.*\\..*).*)"],
+  matcher: ["/((?!api|trpc|_next|_vercel|.*\\..*).*)"]
 };
