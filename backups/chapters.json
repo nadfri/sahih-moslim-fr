@@ -7,207 +7,339 @@
   },
   {
     "index": 1,
-    "name_fr": "La Foi",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "La foi",
+    "name_ar": "كتاب الإيمان",
+    "name_en": "Faith"
   },
   {
     "index": 2,
-    "name_fr": "Purification",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "La purification",
+    "name_ar": "كتاب الطهارة",
+    "name_en": "Purification"
   },
   {
     "index": 3,
-    "name_fr": "Menstruations",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "Les menstrues",
+    "name_ar": "كتاب الحيض",
+    "name_en": "Menstruation"
   },
   {
     "index": 4,
-    "name_fr": "Prières",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "La prière",
+    "name_ar": "كتاب الصلاة",
+    "name_en": "Prayers"
   },
   {
     "index": 5,
-    "name_fr": "Mosquées et lieux de prière",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "Les mosquées et les lieux de prière",
+    "name_ar": "كتاب المساجد ومواضع الصلاة",
+    "name_en": "Mosques & Places of Prayer"
   },
   {
     "index": 6,
-    "name_fr": "Prière du voyageur",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "La prière du voyageur et sa réduction",
+    "name_ar": "كتاب صلاة المسافرين وقصرها",
+    "name_en": "Prayer – Travellers (Qasr)"
   },
   {
     "index": 7,
-    "name_fr": "Prière du vendredi",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "La prière du vendredi",
+    "name_ar": "كتاب الجمعة",
+    "name_en": "Friday Prayer"
   },
   {
     "index": 8,
-    "name_fr": "Prière des deux fêtes",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "La prière des deux fêtes",
+    "name_ar": "كتاب صلاة العيدين",
+    "name_en": "Prayer – Two Eids"
   },
   {
     "index": 9,
-    "name_fr": "Prière pour la pluie",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "La prière pour la pluie",
+    "name_ar": "كتاب صلاة الاستسقاء",
+    "name_en": "Prayer – Rain (Istisqa)"
   },
   {
     "index": 10,
-    "name_fr": "Prière des éclipses",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "La prière de l’éclipse",
+    "name_ar": "كتاب الكسوف",
+    "name_en": "Prayer – Eclipses"
   },
   {
     "index": 11,
-    "name_fr": "Prière des funérailles",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "Les funérailles",
+    "name_ar": "كتاب الجنائز",
+    "name_en": "Funerals"
   },
   {
     "index": 12,
-    "name_fr": "Zakat",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "La zakat",
+    "name_ar": "كتاب الزكاة",
+    "name_en": "Zakat"
   },
   {
     "index": 13,
-    "name_fr": "Jeûne",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "Le jeûne",
+    "name_ar": "كتاب الصيام",
+    "name_en": "Fasting"
   },
   {
     "index": 14,
-    "name_fr": "Retraite spirituelle",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "La retraite spirituelle (I'tikaf)",
+    "name_ar": "كتاب الاعتكاف",
+    "name_en": "I'tikaf"
   },
   {
     "index": 15,
-    "name_fr": "Pèlerinage",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "Le pèlerinage (Hajj)",
+    "name_ar": "كتاب الحج",
+    "name_en": "Pilgrimage (Hajj)"
   },
   {
     "index": 16,
-    "name_fr": "Mariage",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "Le mariage",
+    "name_ar": "كتاب النكاح",
+    "name_en": "Marriage"
   },
   {
     "index": 17,
-    "name_fr": "Allaitement",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "L’allaitement",
+    "name_ar": "كتاب الرضاع",
+    "name_en": "Suckling (Breastfeeding)"
   },
   {
     "index": 18,
-    "name_fr": "Divorce",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "Le divorce",
+    "name_ar": "كتاب الطلاق",
+    "name_en": "Divorce"
   },
   {
     "index": 19,
-    "name_fr": "Invoquer des malédictions",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "L’appel à la malédiction (Li'an)",
+    "name_ar": "كتاب اللعان",
+    "name_en": "Invoking Curses (Li'an)"
   },
   {
     "index": 20,
-    "name_fr": "Affranchissement",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "L’affranchissement des esclaves",
+    "name_ar": "كتاب العتق",
+    "name_en": "Emancipating Slaves"
   },
   {
     "index": 21,
-    "name_fr": "Transactions",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "Les transactions commerciales",
+    "name_ar": "كتاب البيوع",
+    "name_en": "Transactions (Sales)"
   },
   {
     "index": 22,
-    "name_fr": "Irrigations",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "La métayage et le partage des récoltes",
+    "name_ar": "كتاب المساقاة",
+    "name_en": "Musaqah (Sharecropping)"
   },
   {
     "index": 23,
-    "name_fr": "Successions",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "L’héritage",
+    "name_ar": "كتاب الفرائض",
+    "name_en": "Inheritance"
   },
   {
     "index": 24,
-    "name_fr": "Donations",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "Les dons et cadeaux",
+    "name_ar": "كتاب الهبات",
+    "name_en": "Gifts"
   },
   {
     "index": 25,
-    "name_fr": "Testaments",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "Les testaments",
+    "name_ar": "كتاب الوصية",
+    "name_en": "Wills (Bequests)"
   },
   {
     "index": 26,
-    "name_fr": "Voeux",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "Les vœux",
+    "name_ar": "كتاب النذر",
+    "name_en": "Vows"
   },
   {
     "index": 27,
-    "name_fr": "Serments",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "Les serments",
+    "name_ar": "كتاب الأيمان",
+    "name_en": "Oaths"
   },
   {
     "index": 28,
-    "name_fr": "Serments collectifs",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "Les serments, les meurtres et les réparations (Qisas & Diyat)",
+    "name_ar": "كتاب القسامة والمحاربين والقصاص والديات",
+    "name_en": "Oaths, Muharibin, Qisas & Diyat"
   },
   {
     "index": 29,
-    "name_fr": "Peines légales",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "Les peines légales (Hudud)",
+    "name_ar": "كتاب الحدود",
+    "name_en": "Legal Punishments (Hudud)"
   },
   {
     "index": 30,
-    "name_fr": "Jugements",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "Les jugements et décisions judiciaires",
+    "name_ar": "كتاب الأقضية",
+    "name_en": "Judicial Decisions (Qada)"
   },
   {
     "index": 31,
-    "name_fr": "Objets trouvés",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "Les objets trouvés",
+    "name_ar": "كتاب اللقطة",
+    "name_en": "Lost Property (Luqata)"
   },
   {
     "index": 32,
-    "name_fr": "Jihad et Expéditions",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "Le jihad et les expéditions",
+    "name_ar": "كتاب الجهاد والسير",
+    "name_en": "Jihad & Expeditions"
   },
   {
     "index": 33,
-    "name_fr": "Commandements",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "Le gouvernement et l’autorité",
+    "name_ar": "كتاب الإمارة",
+    "name_en": "Government (Imarah)"
   },
   {
     "index": 34,
-    "name_fr": "TEST",
-    "name_ar": "",
-    "name_en": ""
+    "name_fr": "La chasse, l’abattage et les aliments permis",
+    "name_ar": "كتاب الصيد والذبائح وما يؤكل من الحيوان",
+    "name_en": "Hunting, Slaughter & What May Be Eaten"
+  },
+  {
+    "index": 35,
+    "name_fr": "Les sacrifices",
+    "name_ar": "كتاب الأضاحي",
+    "name_en": "Sacrifices"
+  },
+  {
+    "index": 36,
+    "name_fr": "Les boissons",
+    "name_ar": "كتاب الأشربة",
+    "name_en": "Drinks"
+  },
+  {
+    "index": 37,
+    "name_fr": "Les vêtements et l’ornement",
+    "name_ar": "كتاب اللباس والزينة",
+    "name_en": "Clothes & Adornment"
+  },
+  {
+    "index": 38,
+    "name_fr": "Les bonnes manières",
+    "name_ar": "كتاب الآداب",
+    "name_en": "Manners & Etiquette"
+  },
+  {
+    "index": 39,
+    "name_fr": "Les salutations",
+    "name_ar": "كتاب السلام",
+    "name_en": "Greetings"
+  },
+  {
+    "index": 40,
+    "name_fr": "Les expressions et autres règles de politesse",
+    "name_ar": "كتاب الألفاظ من الأدب وغيرها",
+    "name_en": "Correct Words & Other Adab"
+  },
+  {
+    "index": 41,
+    "name_fr": "La poésie",
+    "name_ar": "كتاب الشعر",
+    "name_en": "Poetry"
+  },
+  {
+    "index": 42,
+    "name_fr": "Les rêves",
+    "name_ar": "كتاب الرؤيا",
+    "name_en": "Dreams"
+  },
+  {
+    "index": 43,
+    "name_fr": "Les vertus",
+    "name_ar": "كتاب الفضائل",
+    "name_en": "Virtues"
+  },
+  {
+    "index": 44,
+    "name_fr": "Les mérites des compagnons",
+    "name_ar": "كتاب فضائل الصحابة رضي الله عنهم",
+    "name_en": "Merits of the Companions"
+  },
+  {
+    "index": 45,
+    "name_fr": "La bonté, la piété filiale et les liens familiaux",
+    "name_ar": "كتاب البر والصلة والآداب",
+    "name_en": "Virtue, Enjoining Good & Joining Kinship"
+  },
+  {
+    "index": 46,
+    "name_fr": "Le destin (Qadr)",
+    "name_ar": "كتاب القدر",
+    "name_en": "Destiny (Qadr)"
+  },
+  {
+    "index": 47,
+    "name_fr": "La science",
+    "name_ar": "كتاب العلم",
+    "name_en": "Knowledge"
+  },
+  {
+    "index": 48,
+    "name_fr": "L’évocation, les invocations et le repentir",
+    "name_ar": "كتاب الذكر والدعاء والتوبة والاستغفار",
+    "name_en": "Remembrance, Supplication & Repentance"
+  },
+  {
+    "index": 49,
+    "name_fr": "Les traditions attendrissantes (Riqaq)",
+    "name_ar": "كتاب الرقاق",
+    "name_en": "Heart-Melting Traditions (Riqaq)"
+  },
+  {
+    "index": 50,
+    "name_fr": "Le repentir",
+    "name_ar": "كتاب التوبة",
+    "name_en": "Repentance"
+  },
+  {
+    "index": 51,
+    "name_fr": "Les hypocrites et leurs caractéristiques",
+    "name_ar": "كتاب صفات المنافقين وأحكامهم",
+    "name_en": "Characteristics of the Hypocrites"
+  },
+  {
+    "index": 52,
+    "name_fr": "Le Jour du Jugement, le Paradis et l’Enfer",
+    "name_ar": "كتاب صفة القيامة والجنة والنار",
+    "name_en": "Day of Judgment, Paradise & Hell"
+  },
+  {
+    "index": 53,
+    "name_fr": "Le Paradis, ses bienfaits et ses habitants",
+    "name_ar": "كتاب الجنة وصفة نعيمها وأهلها",
+    "name_en": "Paradise: Description, Bounties & Inhabitants"
+  },
+  {
+    "index": 54,
+    "name_fr": "Les épreuves et les signes de la fin des temps",
+    "name_ar": "كتاب الفتن وأشراط الساعة",
+    "name_en": "Tribulations & Portents of the Last Hour"
+  },
+  {
+    "index": 55,
+    "name_fr": "L’ascétisme et l’attendrissement du cœur",
+    "name_ar": "كتاب الزهد والرقائق",
+    "name_en": "Zuhd & Softening of Hearts"
+  },
+  {
+    "index": 56,
+    "name_fr": "Le commentaire du Coran (Tafsir)",
+    "name_ar": "كتاب التفسير",
+    "name_en": "Commentary on the Qur’an (Tafsir)"
   },
   {
     "index": 999,
