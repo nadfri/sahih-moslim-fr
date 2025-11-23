@@ -22,7 +22,7 @@ export function Logo() {
       className="flex items-center md:items-center space-x-2 text-emerald-500 hover:text-emerald-400 transition-colors"
     >
       <BookOpen
-        className="size-8 md:size-22 flex-shrink-0"
+        className="size-8 md:size-22"
         strokeWidth="1"
       />
       {/* Original title for mobile */}
