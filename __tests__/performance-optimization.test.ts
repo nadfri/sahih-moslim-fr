@@ -1,13 +1,17 @@
 import { describe, expect, it, beforeAll, afterAll } from "vitest";
-import { prisma } from "@/prisma/prisma";
+import prisma from "@/prisma/prisma";
 import { searchHadithsCombined } from "@/src/services/searchServices";
-import { testDataHelpers } from "./test-helpers";
+import { searchCache } from "@/src/services/searchCache";
+import { cleanupTestData, testDataHelpers } from "./test-helpers";
 
 describe("Performance Optimization Tests", () => {
   let testChapterId: string;
   let testHadithIds: string[] = [];
 
   beforeAll(async () => {
+    await cleanupTestData();
+    searchCache.clear();
+
     // Create test chapter
     const chapterData = testDataHelpers.createTestChapter(998);
     const testChapter = await prisma.chapter.create({
@@ -36,15 +40,8 @@ describe("Performance Optimization Tests", () => {
   });
 
   afterAll(async () => {
-    // Clean up test data
-    if (testHadithIds.length > 0) {
-      await prisma.hadith.deleteMany({
-        where: { id: { in: testHadithIds } },
-      });
-    }
-    if (testChapterId) {
-      await prisma.chapter.delete({ where: { id: testChapterId } });
-    }
+    searchCache.clear();
+    await cleanupTestData();
   });
 
   it("should perform optimized search for Arabic locale (AR only)", async () => {

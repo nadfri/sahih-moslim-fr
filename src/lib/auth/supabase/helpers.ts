@@ -1,4 +1,4 @@
-import { prisma } from "@/prisma/prisma";
+import prisma from "@/prisma/prisma";
 import { redirect } from "next/navigation";
 import { createClient } from "./server";
 

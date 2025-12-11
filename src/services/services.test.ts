@@ -1,6 +1,6 @@
 import { afterAll, describe, expect, it } from "vitest";
 
-import { prisma } from "@/prisma/prisma";
+import prisma from "@/prisma/prisma";
 import {
   getAllChapters,
   getAllHadiths,

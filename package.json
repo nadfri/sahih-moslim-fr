@@ -1,6 +1,6 @@
 {
   "name": "sahih-moslim-fr",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -27,6 +27,7 @@
     "@prisma/extension-accelerate": "^3.0.1",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.87.1",
+    "@types/pg": "^8.16.0",
     "@uiw/react-md-editor": "4.0.1",
     "lucide-react": "^0.545.0",
     "mark.js": "^8.11.1",
@@ -40,6 +41,7 @@
     "react-toastify": "^11.0.5",
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
+    "save-dev": "0.0.1-security",
     "zod": "^4.1.13"
   },
   "devDependencies": {

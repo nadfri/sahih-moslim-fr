@@ -85,11 +85,11 @@ const mockExistingTransmitters: ItemType[] = [
 ];
 
 describe("EditItemFormDialog", () => {
-  let mockOnCancel: ReturnType<typeof vi.fn>;
+  let mockOnCancel: () => void;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockOnCancel = vi.fn(); // Create a fresh mock for each test
+    mockOnCancel = vi.fn(() => {}); // fresh noop callback for each test
     // Default mock implementation for editItem
     mockEditItem.mockResolvedValue({
       success: true,

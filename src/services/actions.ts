@@ -2,15 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { Prisma } from "@prisma/client";
 
-import { prisma } from "@/prisma/prisma";
 import { requireAdmin } from "@/src/lib/auth/supabase/helpers";
 import { getItemFormSchema } from "@/src/ui/forms/schemas/getItemFormSchema";
 import { slugify } from "@/src/utils/slugify";
 import { ItemFormValues, ItemType, VariantType } from "../types/types";
 import { hadithSchemaServer } from "./hadithSchemaServer";
-
+import prisma from "@/prisma/prisma";
+import { Prisma } from "@/prisma/generated/prisma/client";
 export type ActionResponse = {
   success: boolean;
   message: string;
@@ -127,8 +126,9 @@ export async function addItem(
   } catch (error: unknown) {
     let userMessage = "Erreur inconnue lors de l'ajout.";
     const errorDetails = error instanceof Error ? error.message : String(error);
+    const logPayload = error instanceof Error ? error : { error };
 
-    console.error("AddItem server error:", error);
+    console.error("AddItem server error:", logPayload);
 
     // Prisma error type (classique)
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -278,7 +278,9 @@ export async function editItem(
     let userMessage = "Erreur inconnue lors de la modification.";
     const errorDetails = error instanceof Error ? error.message : String(error);
     // Log serveur pour tout échec
-    console.error("[editItem] Erreur lors de la modification:", error);
+    const logPayload = error instanceof Error ? error : { error };
+
+    console.error("[editItem] Erreur lors de la modification:", logPayload);
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
@@ -384,6 +386,9 @@ export async function deleteItem(
     let userMessage = "Erreur inconnue lors de la suppression.";
 
     const errorDetails = error instanceof Error ? error.message : String(error);
+    const logPayload = error instanceof Error ? error : { error };
+
+    console.error("[deleteItem] Erreur lors de la suppression:", logPayload);
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2025") {

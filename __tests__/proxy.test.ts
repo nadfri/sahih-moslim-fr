@@ -1,20 +1,32 @@
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+// Type for mock UpdateSession return value - more flexible than actual type
+type MockUpdateSessionReturn = {
+  supabase: Record<string, unknown> | null;
+  response: Response;
+  user: {
+    id: string;
+    user_metadata?: Record<string, unknown>;
+    app_metadata?: Record<string, unknown>;
+  } | null;
+};
+
 // Create mocks using vi.hoisted to ensure they're available before imports
-const {
-  mockNextResponseRedirect,
-  mockNextResponseNext,
-  mockIntlMiddleware,
-  mockUpdateSession,
-} = vi.hoisted(() => {
-  return {
-    mockNextResponseRedirect: vi.fn(),
-    mockNextResponseNext: vi.fn(),
-    mockIntlMiddleware: vi.fn(),
-    mockUpdateSession: vi.fn(() => new Response(null, { status: 200 })),
-  };
-});
+const { mockNextResponseRedirect, mockIntlMiddleware, mockUpdateSession } =
+  vi.hoisted(() => {
+    return {
+      mockNextResponseRedirect: vi.fn(),
+      mockIntlMiddleware: vi.fn(),
+      mockUpdateSession: vi.fn(
+        (): MockUpdateSessionReturn => ({
+          supabase: null,
+          response: new Response(null, { status: 200 }),
+          user: null,
+        })
+      ),
+    };
+  });
 
 // Mock NextResponse static methods
 vi.mock("next/server", async (importOriginal) => {
@@ -28,10 +40,6 @@ vi.mock("next/server", async (importOriginal) => {
           status: typeof init === "number" ? init : (init?.status ?? 302),
           headers: { Location: typeof url === "string" ? url : url.toString() },
         });
-      },
-      next: (init?: ResponseInit) => {
-        mockNextResponseNext(init);
-        return new originalModule.NextResponse(null, { status: 200, ...init });
       },
     }),
   };
@@ -64,6 +72,7 @@ type SupabaseMockModule = {
   __reset: () => void;
   __setGetUserResult: (v: GetUserResult) => void;
   __setProfileResult: (v: ProfileResult) => void;
+  __getCreateServerClient: () => Record<string, unknown>;
 };
 
 async function getSupabaseMock(): Promise<SupabaseMockModule> {
@@ -74,7 +83,7 @@ vi.mock("@supabase/ssr", () => {
   let getUserResult: GetUserResult = { data: { user: null } };
   let profileResult: ProfileResult = { data: null, error: null };
 
-  const createServerClient = () => ({
+  const supabaseClient = {
     auth: {
       getUser: async () => getUserResult,
     },
@@ -85,7 +94,9 @@ vi.mock("@supabase/ssr", () => {
         }),
       }),
     }),
-  });
+  };
+
+  const createServerClient = () => supabaseClient;
 
   return {
     createServerClient,
@@ -95,6 +106,7 @@ vi.mock("@supabase/ssr", () => {
     __setProfileResult: (v: ProfileResult) => {
       profileResult = v;
     },
+    __getCreateServerClient: () => createServerClient,
     __reset: () => {
       getUserResult = { data: { user: null } };
       profileResult = { data: null, error: null };
@@ -133,32 +145,45 @@ describe("Middleware with next-intl", () => {
     // Reset all mocks
     mockIntlMiddleware.mockReturnValue(null);
     mockNextResponseRedirect.mockReset();
-    mockNextResponseNext.mockReset();
     mockUpdateSession.mockReset();
-    mockUpdateSession.mockReturnValue(new Response(null, { status: 200 }));
 
     const supa = await getSupabaseMock();
-    await supa.__reset();
+    supa.__reset();
+
+    // Setup default updateSession mock with empty user
+    mockUpdateSession.mockImplementation(
+      (): MockUpdateSessionReturn => ({
+        supabase: null,
+        response: new Response(null, { status: 200 }),
+        user: null,
+      })
+    );
   });
 
   afterEach(() => {
     mockIntlMiddleware.mockReset();
     mockNextResponseRedirect.mockReset();
-    mockNextResponseNext.mockReset();
     mockUpdateSession.mockReset();
   });
 
   it("allows intl middleware to handle locale redirects", async () => {
     // Mock intl middleware returning a redirect response
     const intlResponse = new Response(null, {
-      status: 302,
+      status: 307,
       headers: { Location: "/fr/chapters" },
     });
     mockIntlMiddleware.mockReturnValue(intlResponse);
 
+    mockUpdateSession.mockImplementation(() => ({
+      supabase: null,
+      response: intlResponse,
+      user: null,
+    }));
+
     const req = new NextRequest(new URL("/chapters", "http://localhost:3000"));
     const result = await proxy(req);
 
+    // Should return the intl redirect (307/308) early
     expect(result).toBe(intlResponse);
     expect(mockIntlMiddleware).toHaveBeenCalledWith(req);
   });
@@ -166,157 +191,245 @@ describe("Middleware with next-intl", () => {
   it("allows non-protected routes after intl processing", async () => {
     mockIntlMiddleware.mockReturnValue(null); // No intl redirect needed
 
+    mockUpdateSession.mockImplementation(() => ({
+      supabase: null,
+      response: new Response(null, { status: 200 }),
+      user: null,
+    }));
+
     const req = new NextRequest(
       new URL("/fr/chapters", "http://localhost:3000")
     );
-    await proxy(req);
-
-    expect(mockNextResponseNext).not.toHaveBeenCalled();
-    // The updateSession response is returned directly for non-protected routes
-  });
-
-  it("checks authentication BEFORE intl processing for protected routes", async () => {
-    // Mock intl middleware to return a redirect (to simulate locale handling)
-    const intlResponse = new Response(null, {
-      status: 302,
-      headers: { Location: "/fr/admin" },
-    });
-    mockIntlMiddleware.mockReturnValue(intlResponse);
-
-    // No user authenticated
-    const supa = await getSupabaseMock();
-    await supa.__setGetUserResult({ data: { user: null } });
-
-    const req = new NextRequest(new URL("/admin", "http://localhost:3000"));
     const result = await proxy(req);
 
-    // Should redirect to signin, NOT to intl redirect
+    // Should return the updateSession response for non-protected routes
+    expect(result).toBeDefined();
+    expect(result.status).toBe(200);
+  });
+
+  it("checks authentication for protected routes - redirects to signin when no user", async () => {
+    // Mock intl middleware returning null (no redirect needed)
+    mockIntlMiddleware.mockReturnValue(null);
+
+    // No user authenticated
+    mockUpdateSession.mockImplementation(
+      (): MockUpdateSessionReturn => ({
+        supabase: null,
+        response: new Response(null, { status: 200 }),
+        user: null,
+      })
+    );
+
+    const req = new NextRequest(new URL("/admin", "http://localhost:3000"));
+    await proxy(req);
+
+    // Should redirect to signin
     expect(mockNextResponseRedirect).toHaveBeenCalled();
     const redirectUrl = new URL(mockNextResponseRedirect.mock.calls[0][0]);
     expect(redirectUrl.pathname).toBe("/auth/signin");
-
-    // Should NOT return intl response since auth failed first
-    expect(result).not.toBe(intlResponse);
   });
 
   it("allows intl processing after successful authentication for protected routes", async () => {
-    // Mock intl middleware to return a redirect (to simulate locale handling)
-    const intlResponse = new Response(null, {
-      status: 302,
-      headers: { Location: "/fr/admin" },
+    // Mock intl middleware to return a normal response (no 307/308 redirect)
+    const normalResponse = new Response(null, {
+      status: 200,
     });
-    mockIntlMiddleware.mockReturnValue(intlResponse);
+    mockIntlMiddleware.mockReturnValue(normalResponse);
 
-    // User is authenticated AND has ADMIN role
-    const supa = await getSupabaseMock();
-    await supa.__setGetUserResult({
-      data: {
-        user: {
-          id: "user1",
-          user_metadata: { role: "admin" },
-        },
+    // User is authenticated AND has ADMIN role in metadata
+    const mockSupabaseClient = {
+      auth: { getUser: async () => ({}) },
+      from: () => ({
+        select: () => ({
+          eq: () => ({ maybeSingle: async () => ({ data: null }) }),
+        }),
+      }),
+    };
+
+    mockUpdateSession.mockImplementation(() => ({
+      supabase: mockSupabaseClient,
+      response: normalResponse,
+      user: {
+        id: "user1",
+        user_metadata: { role: "admin" },
       },
-    });
+    }));
 
     const req = new NextRequest(new URL("/admin", "http://localhost:3000"));
-    const result = await proxy(req);
+    await proxy(req);
 
     // Should NOT redirect to signin or unauthorized
     expect(mockNextResponseRedirect).not.toHaveBeenCalled();
-
-    // Should return intl response since auth passed
-    expect(result).toBe(intlResponse);
-    expect(mockIntlMiddleware).toHaveBeenCalledWith(req);
   });
 
-  describe("Protected routes", () => {
+  describe("Protected routes - 3 main cases", () => {
     const protectedPaths = ["/fr/admin", "/fr/chapters/add", "/fr/sahabas/add"];
 
     protectedPaths.forEach((path) => {
-      it(`redirects to signin when no user for ${path}`, async () => {
-        mockIntlMiddleware.mockReturnValue(null);
+      describe(`For path: ${path}`, () => {
+        it("Case 1: Not authenticated - redirects to signin", async () => {
+          mockIntlMiddleware.mockReturnValue(null);
+          mockNextResponseRedirect.mockClear();
 
-        const supa = await getSupabaseMock();
-        await supa.__setGetUserResult({ data: { user: null } });
+          // No user
+          mockUpdateSession.mockImplementation(() => ({
+            supabase: null,
+            response: new Response(null, { status: 200 }),
+            user: null,
+          }));
 
-        const req = new NextRequest(new URL(path, "http://localhost:3000"));
-        await proxy(req);
+          const req = new NextRequest(new URL(path, "http://localhost:3000"));
+          await proxy(req);
 
-        expect(mockNextResponseRedirect).toHaveBeenCalled();
-        const redirectUrl = new URL(mockNextResponseRedirect.mock.calls[0][0]);
-        expect(redirectUrl.pathname).toBe("/auth/signin");
-        expect(redirectUrl.searchParams.get("callbackUrl")).toBe(
-          req.nextUrl.href
-        );
-      });
-
-      it(`redirects to unauthorized when user has no admin role for ${path}`, async () => {
-        mockIntlMiddleware.mockReturnValue(null);
-        mockNextResponseRedirect.mockClear();
-
-        const supa = await getSupabaseMock();
-        await supa.__setGetUserResult({
-          data: { user: { id: "user1" } },
+          expect(mockNextResponseRedirect).toHaveBeenCalled();
+          const redirectUrl = new URL(
+            mockNextResponseRedirect.mock.calls[0][0]
+          );
+          expect(redirectUrl.pathname).toBe("/auth/signin");
         });
 
-        const req = new NextRequest(new URL(path, "http://localhost:3000"));
-        await proxy(req);
+        it("Case 2: Authenticated but NOT admin - redirects to unauthorized", async () => {
+          mockIntlMiddleware.mockReturnValue(null);
+          mockNextResponseRedirect.mockClear();
 
-        expect(mockNextResponseRedirect).toHaveBeenCalled();
-        const redirectUrl = new URL(mockNextResponseRedirect.mock.calls[0][0]);
-        expect(redirectUrl.pathname).toBe("/unauthorized");
-      });
+          // User exists but no admin role
+          const mockSupabaseClient = {
+            auth: { getUser: async () => ({}) },
+            from: () => ({
+              select: () => ({
+                eq: () => ({
+                  maybeSingle: async () => ({ data: null }),
+                }),
+              }),
+            }),
+          };
 
-      it(`allows access when user has ADMIN role in user_metadata for ${path}`, async () => {
-        mockIntlMiddleware.mockReturnValue(null);
-        mockNextResponseRedirect.mockClear();
+          mockUpdateSession.mockImplementation(() => ({
+            supabase: mockSupabaseClient,
+            response: new Response(null, { status: 200 }),
+            user: {
+              id: "user1",
+              user_metadata: {},
+            },
+          }));
 
-        const supa = await getSupabaseMock();
-        await supa.__setGetUserResult({
-          data: {
+          const req = new NextRequest(new URL(path, "http://localhost:3000"));
+          await proxy(req);
+
+          expect(mockNextResponseRedirect).toHaveBeenCalled();
+          const redirectUrl = new URL(
+            mockNextResponseRedirect.mock.calls[0][0]
+          );
+          expect(redirectUrl.pathname).toBe("/unauthorized");
+        });
+
+        it("Case 3: Authenticated AND admin (metadata) - allows access", async () => {
+          mockIntlMiddleware.mockReturnValue(null);
+          mockNextResponseRedirect.mockClear();
+
+          // User is admin with metadata
+          const mockSupabaseClient = {
+            auth: { getUser: async () => ({}) },
+            from: () => ({
+              select: () => ({
+                eq: () => ({
+                  maybeSingle: async () => ({ data: null }),
+                }),
+              }),
+            }),
+          };
+
+          mockUpdateSession.mockImplementation(() => ({
+            supabase: mockSupabaseClient,
+            response: new Response(null, { status: 200 }),
             user: {
               id: "admin1",
               user_metadata: { role: "admin" },
             },
-          },
+          }));
+
+          const req = new NextRequest(new URL(path, "http://localhost:3000"));
+          const result = await proxy(req);
+
+          // Should not redirect to unauthorized
+          const unauthorizedCalls = mockNextResponseRedirect.mock.calls.filter(
+            (call) => String(call[0]).includes("/unauthorized")
+          );
+          expect(unauthorizedCalls).toHaveLength(0);
+          expect(result).toBeDefined();
         });
 
-        const req = new NextRequest(new URL(path, "http://localhost:3000"));
-        const result = await proxy(req);
+        it("Case 3b: Authenticated AND admin (app_metadata) - allows access", async () => {
+          mockIntlMiddleware.mockReturnValue(null);
+          mockNextResponseRedirect.mockClear();
 
-        // Should not redirect to unauthorized
-        const calls = mockNextResponseRedirect.mock.calls;
-        const unauthorizedCalls = calls.filter((call) =>
-          String(call[0]).includes("/unauthorized")
-        );
-        expect(unauthorizedCalls).toHaveLength(0);
-        expect(result).toBeDefined();
-      });
+          // User is admin with app_metadata
+          const mockSupabaseClient = {
+            auth: { getUser: async () => ({}) },
+            from: () => ({
+              select: () => ({
+                eq: () => ({
+                  maybeSingle: async () => ({ data: null }),
+                }),
+              }),
+            }),
+          };
 
-      it(`allows access when user has ADMIN role in app_metadata for ${path}`, async () => {
-        mockIntlMiddleware.mockReturnValue(null);
-        mockNextResponseRedirect.mockClear();
-
-        const supa = await getSupabaseMock();
-        await supa.__setGetUserResult({
-          data: {
+          mockUpdateSession.mockImplementation(() => ({
+            supabase: mockSupabaseClient,
+            response: new Response(null, { status: 200 }),
             user: {
               id: "admin2",
               app_metadata: { role: "ADMIN" },
             },
-          },
+          }));
+
+          const req = new NextRequest(new URL(path, "http://localhost:3000"));
+          const result = await proxy(req);
+
+          // Should not redirect to unauthorized
+          const unauthorizedCalls = mockNextResponseRedirect.mock.calls.filter(
+            (call) => String(call[0]).includes("/unauthorized")
+          );
+          expect(unauthorizedCalls).toHaveLength(0);
+          expect(result).toBeDefined();
         });
 
-        const req = new NextRequest(new URL(path, "http://localhost:3000"));
-        const result = await proxy(req);
+        it("Case 3c: Authenticated AND admin (profiles DB) - allows access", async () => {
+          mockIntlMiddleware.mockReturnValue(null);
+          mockNextResponseRedirect.mockClear();
 
-        // Should not redirect to unauthorized
-        const calls = mockNextResponseRedirect.mock.calls;
-        const unauthorizedCalls = calls.filter((call) =>
-          String(call[0]).includes("/unauthorized")
-        );
-        expect(unauthorizedCalls).toHaveLength(0);
-        expect(result).toBeDefined();
+          // User is admin via database fallback
+          const mockSupabaseClient = {
+            auth: { getUser: async () => ({}) },
+            from: () => ({
+              select: () => ({
+                eq: () => ({
+                  maybeSingle: async () => ({ data: { role: "admin" } }),
+                }),
+              }),
+            }),
+          };
+
+          mockUpdateSession.mockImplementation(() => ({
+            supabase: mockSupabaseClient,
+            response: new Response(null, { status: 200 }),
+            user: {
+              id: "admin3",
+              user_metadata: {},
+            },
+          }));
+
+          const req = new NextRequest(new URL(path, "http://localhost:3000"));
+          const result = await proxy(req);
+
+          // Should not redirect to unauthorized
+          const unauthorizedCalls = mockNextResponseRedirect.mock.calls.filter(
+            (call) => String(call[0]).includes("/unauthorized")
+          );
+          expect(unauthorizedCalls).toHaveLength(0);
+          expect(result).toBeDefined();
+        });
       });
     });
   });

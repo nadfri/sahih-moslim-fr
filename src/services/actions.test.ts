@@ -12,7 +12,7 @@ vi.mock("next/cache", () => ({
   },
 }));
 
-import { prisma } from "@/prisma/prisma";
+import prisma from "@/prisma/prisma";
 import { cleanupTestData, testDataHelpers } from "@/__tests__/test-helpers";
 import { addHadith, deleteHadith, editHadith } from "@/src/services/actions";
 import { hadithSchemaServer } from "@/src/services/hadithSchemaServer";

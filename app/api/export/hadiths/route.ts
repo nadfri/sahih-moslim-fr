@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
 import { requireAdmin } from "@/src/lib/auth/supabase/helpers";
-
-const prisma = new PrismaClient();
+import prisma from "@/prisma/prisma";
 
 export async function GET() {
   // Check admin permission

@@ -1,4 +1,4 @@
-import { prisma } from "@/prisma/prisma";
+import prisma from "@/prisma/prisma";
 import { randomUUID } from "crypto";
 
 /**
@@ -15,37 +15,12 @@ export async function cleanupTestData() {
     );
   }
 
-  // Delete in correct order to respect foreign key constraints
-  await prisma.hadithTransmitter.deleteMany({
-    where: {
-      OR: [
-        { hadith: { numero: { gte: 900000 } } }, // Test hadiths start at 900000
-        { transmitter: { slug: { startsWith: "test-" } } },
-      ],
-    },
-  });
-
-  await prisma.hadith.deleteMany({
-    where: {
-      OR: [
-        { numero: { gte: 900000 } }, // Test hadiths
-        { chapter: { slug: { startsWith: "test-" } } },
-        // { narrator: { slug: { startsWith: "test-" } } },
-      ],
-    },
-  });
-
-  await prisma.chapter.deleteMany({
-    where: { slug: { startsWith: "test-" } },
-  });
-
-  await prisma.sahaba.deleteMany({
-    where: { slug: { startsWith: "test-" } },
-  });
-
-  await prisma.transmitter.deleteMany({
-    where: { slug: { startsWith: "test-" } },
-  });
+  // Delete in strict FK order to avoid P2003 during tests
+  await prisma.hadithTransmitter.deleteMany({});
+  await prisma.hadith.deleteMany({});
+  await prisma.chapter.deleteMany({});
+  await prisma.sahaba.deleteMany({});
+  await prisma.transmitter.deleteMany({});
 
   // Clean test profiles (keep system profiles)
   await prisma.profile.deleteMany({

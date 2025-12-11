@@ -1,6 +1,6 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 
-import { prisma } from "@/prisma/prisma";
+import prisma from "@/prisma/prisma";
 import { HadithType } from "@/src/types/types";
 import { searchCache } from "./searchCache";
 

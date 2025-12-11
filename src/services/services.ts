@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { prisma } from "@/prisma/prisma";
+import prisma from "@/prisma/prisma";
 import { HadithSchema, HadithType, ItemType } from "../types/types";
 
 // Get all hadith numbers

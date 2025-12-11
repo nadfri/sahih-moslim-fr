@@ -1,3 +1,16 @@
+import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { ImportedHadithSchema } from "@/src/types/types";
+import { requireAdmin } from "@/src/lib/auth/supabase/helpers";
+import prisma from "@/prisma/prisma";
+import {
+  Chapter,
+  Sahaba,
+  Transmitter,
+  Hadith,
+} from "@/prisma/generated/prisma/client";
+
 type ImportedEntity = {
   slug?: string;
   name_fr?: string;
@@ -13,15 +26,6 @@ function resolveNameField(s: ImportedEntity): string | undefined {
   return undefined;
 }
 // Utility to resolve multilingual name field from sahaba object
-import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
-import { PrismaClient } from "@prisma/client";
-import type { Chapter, Sahaba, Transmitter, Hadith } from "@prisma/client";
-import { z } from "zod";
-import { ImportedHadithSchema } from "@/src/types/types";
-import { requireAdmin } from "@/src/lib/auth/supabase/helpers";
-
-const prisma = new PrismaClient();
 
 const HadithSchema = ImportedHadithSchema;
 

@@ -10,7 +10,7 @@ import {
 import { getHadithByNumero } from "@/src/services/services";
 import { HadithType } from "@/src/types/types";
 import { detectFilterMode, extractSearchParams } from "@/src/utils/searchUtils";
-import { prisma } from "@/prisma/prisma";
+import prisma from "@/prisma/prisma";
 
 // API result type (simplified)
 type ApiSearchResult = HadithType;

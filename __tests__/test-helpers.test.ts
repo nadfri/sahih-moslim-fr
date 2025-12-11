@@ -7,7 +7,7 @@ vi.mock("@/src/lib/auth/supabase/helpers", () => ({
   requireAdmin: mockRequireAdmin,
 }));
 
-import { prisma } from "@/prisma/prisma";
+import prisma from "@/prisma/prisma";
 import { cleanupTestData, testDataHelpers } from "@/__tests__/test-helpers";
 
 describe("Test Database Cleanup and Helpers", () => {

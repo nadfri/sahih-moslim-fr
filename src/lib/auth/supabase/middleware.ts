@@ -1,10 +1,28 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function updateSession(request: NextRequest) {
-  const supabaseResponse = NextResponse.next({
-    request,
-  });
+type AuthUser = {
+  id: string;
+  user_metadata?: Record<string, unknown>;
+  app_metadata?: Record<string, unknown>;
+};
+
+type UpdateSessionReturn = {
+  supabase: ReturnType<typeof createServerClient>;
+  response: NextResponse;
+  user: AuthUser | null;
+};
+
+export async function updateSession(
+  request: NextRequest,
+  response?: NextResponse
+): Promise<UpdateSessionReturn> {
+  // Use provided response or create a new one
+  const supabaseResponse =
+    response ??
+    NextResponse.next({
+      request,
+    });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -47,5 +65,5 @@ export async function updateSession(request: NextRequest) {
   // 2. Copy over the cookies, like so:
   //    myNewResponse.cookies.setAll(supabaseResponse.cookies.getAll())
   // 3. Change the myNewResponse object instead of the supabaseResponse object
-  return supabaseResponse;
+  return { supabase, response: supabaseResponse, user };
 }

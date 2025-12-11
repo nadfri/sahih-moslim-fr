@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeAll, afterAll } from "vitest";
-import { prisma } from "@/prisma/prisma";
+import prisma from "@/prisma/prisma";
 import { searchHadithsCombined } from "@/src/services/searchServices";
 import { testDataHelpers } from "./test-helpers";
 

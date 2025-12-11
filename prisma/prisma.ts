@@ -1,5 +1,5 @@
 import { withAccelerate } from "@prisma/extension-accelerate";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "./generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { config } from "dotenv";
 
@@ -22,7 +22,8 @@ const adapter = new PrismaPg({
 
 const client: PrismaClient = new PrismaClient({ adapter });
 
-export const prisma =
-  globalForPrisma.prisma || client.$extends(withAccelerate());
+const prisma = globalForPrisma.prisma || client.$extends(withAccelerate());
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+
+export default prisma;

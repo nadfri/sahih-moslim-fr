@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/prisma/prisma";
 import { z } from "zod";
 import { requireAdmin } from "@/src/lib/auth/supabase/helpers";
-
-const prisma = new PrismaClient();
 
 const TransmitterSchema = z.object({
   name_fr: z.string(),
