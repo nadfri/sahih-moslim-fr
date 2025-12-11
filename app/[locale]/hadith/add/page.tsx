@@ -9,6 +9,7 @@ import {
   getAllTransmitters,
   getHadithNumeros,
 } from "@/src/services/services";
+import { enforceAdminAccess } from "@/src/lib/auth/supabase/helpers";
 import { AddHadithForm } from "@/src/ui/forms/AddHadithForm";
 
 export const metadata: Metadata = {
@@ -17,6 +18,9 @@ export const metadata: Metadata = {
 };
 
 export default async function AddHadithPage() {
+  // Enforce admin access at page level
+  await enforceAdminAccess();
+
   const [initialNumeros, chaptersData, sahabasData, transmittersData] =
     await Promise.all([
       getHadithNumeros(),

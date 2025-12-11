@@ -8,6 +8,7 @@ import {
   getHadithByNumero,
   getHadithNumeros,
 } from "@/src/services/services";
+import { enforceAdminAccess } from "@/src/lib/auth/supabase/helpers";
 import { EditHadithForm } from "@/src/ui/forms/EditHadithForm";
 
 export const metadata: Metadata = {
@@ -18,6 +19,9 @@ export const metadata: Metadata = {
 type ParamsPromise = Promise<{ numero: string }>;
 
 export default async function EditPage({ params }: { params: ParamsPromise }) {
+  // Enforce admin access at page level
+  await enforceAdminAccess();
+
   const resolvedParams = await params;
   const numero = resolvedParams.numero;
 

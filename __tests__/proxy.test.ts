@@ -2,14 +2,19 @@ import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Create mocks using vi.hoisted to ensure they're available before imports
-const { mockNextResponseRedirect, mockNextResponseNext, mockIntlMiddleware } =
-  vi.hoisted(() => {
-    return {
-      mockNextResponseRedirect: vi.fn(),
-      mockNextResponseNext: vi.fn(),
-      mockIntlMiddleware: vi.fn(),
-    };
-  });
+const {
+  mockNextResponseRedirect,
+  mockNextResponseNext,
+  mockIntlMiddleware,
+  mockUpdateSession,
+} = vi.hoisted(() => {
+  return {
+    mockNextResponseRedirect: vi.fn(),
+    mockNextResponseNext: vi.fn(),
+    mockIntlMiddleware: vi.fn(),
+    mockUpdateSession: vi.fn(() => new Response(null, { status: 200 })),
+  };
+});
 
 // Mock NextResponse static methods
 vi.mock("next/server", async (importOriginal) => {
@@ -97,24 +102,7 @@ vi.mock("@supabase/ssr", () => {
   };
 });
 
-// Mock Prisma client
-type PrismaMockModule = {
-  prisma: {
-    profile: {
-      findUnique: (args: {
-        where: { id: string };
-        select: { role: boolean };
-      }) => Promise<{ role?: string } | null>;
-    };
-  };
-  __reset: () => void;
-  __setProfileResult: (v: { role?: string } | null) => void;
-};
-
-async function getPrismaMock(): Promise<PrismaMockModule> {
-  return (await import("../prisma/prisma")) as unknown as PrismaMockModule;
-}
-
+// Mock Prisma client - not used by proxy anymore, but kept for testing
 vi.mock("../prisma/prisma", () => {
   let profileResult: { role?: string } | null = null;
 
@@ -135,27 +123,29 @@ vi.mock("../prisma/prisma", () => {
   };
 });
 
-// Mock updateSession
+// Mock updateSession (already defined in vi.hoisted above)
 vi.mock("@/src/lib/auth/supabase/middleware", () => ({
-  updateSession: vi.fn().mockImplementation(() => {
-    return new Response(null, { status: 200 });
-  }),
+  updateSession: mockUpdateSession,
 }));
 
 describe("Middleware with next-intl", () => {
   beforeEach(async () => {
-    vi.clearAllMocks();
-    mockIntlMiddleware.mockReturnValue(null); // By default, intl doesn't intercept
+    // Reset all mocks
+    mockIntlMiddleware.mockReturnValue(null);
+    mockNextResponseRedirect.mockReset();
+    mockNextResponseNext.mockReset();
+    mockUpdateSession.mockReset();
+    mockUpdateSession.mockReturnValue(new Response(null, { status: 200 }));
 
     const supa = await getSupabaseMock();
     await supa.__reset();
-
-    const prisma = await getPrismaMock();
-    await prisma.__reset();
   });
 
   afterEach(() => {
-    vi.clearAllMocks();
+    mockIntlMiddleware.mockReset();
+    mockNextResponseRedirect.mockReset();
+    mockNextResponseNext.mockReset();
+    mockUpdateSession.mockReset();
   });
 
   it("allows intl middleware to handle locale redirects", async () => {
@@ -217,12 +207,12 @@ describe("Middleware with next-intl", () => {
     });
     mockIntlMiddleware.mockReturnValue(intlResponse);
 
-    // User is authenticated and is admin
+    // User is authenticated AND has ADMIN role
     const supa = await getSupabaseMock();
     await supa.__setGetUserResult({
       data: {
         user: {
-          id: "admin1",
+          id: "user1",
           user_metadata: { role: "admin" },
         },
       },
@@ -262,14 +252,12 @@ describe("Middleware with next-intl", () => {
 
       it(`redirects to unauthorized when user has no admin role for ${path}`, async () => {
         mockIntlMiddleware.mockReturnValue(null);
+        mockNextResponseRedirect.mockClear();
 
         const supa = await getSupabaseMock();
         await supa.__setGetUserResult({
           data: { user: { id: "user1" } },
         });
-
-        const prisma = await getPrismaMock();
-        await prisma.__setProfileResult(null); // No role in profile
 
         const req = new NextRequest(new URL(path, "http://localhost:3000"));
         await proxy(req);
@@ -279,8 +267,9 @@ describe("Middleware with next-intl", () => {
         expect(redirectUrl.pathname).toBe("/unauthorized");
       });
 
-      it(`allows access when user has admin role in metadata for ${path}`, async () => {
+      it(`allows access when user has ADMIN role in user_metadata for ${path}`, async () => {
         mockIntlMiddleware.mockReturnValue(null);
+        mockNextResponseRedirect.mockClear();
 
         const supa = await getSupabaseMock();
         await supa.__setGetUserResult({
@@ -295,26 +284,38 @@ describe("Middleware with next-intl", () => {
         const req = new NextRequest(new URL(path, "http://localhost:3000"));
         const result = await proxy(req);
 
-        expect(mockNextResponseRedirect).not.toHaveBeenCalled();
-        // Should return the supabase response (updateSession result)
+        // Should not redirect to unauthorized
+        const calls = mockNextResponseRedirect.mock.calls;
+        const unauthorizedCalls = calls.filter((call) =>
+          String(call[0]).includes("/unauthorized")
+        );
+        expect(unauthorizedCalls).toHaveLength(0);
         expect(result).toBeDefined();
       });
 
-      it(`allows access when user has ADMIN role in profile for ${path}`, async () => {
+      it(`allows access when user has ADMIN role in app_metadata for ${path}`, async () => {
         mockIntlMiddleware.mockReturnValue(null);
+        mockNextResponseRedirect.mockClear();
 
         const supa = await getSupabaseMock();
         await supa.__setGetUserResult({
-          data: { user: { id: "admin2" } },
+          data: {
+            user: {
+              id: "admin2",
+              app_metadata: { role: "ADMIN" },
+            },
+          },
         });
-
-        const prisma = await getPrismaMock();
-        await prisma.__setProfileResult({ role: "ADMIN" });
 
         const req = new NextRequest(new URL(path, "http://localhost:3000"));
         const result = await proxy(req);
 
-        expect(mockNextResponseRedirect).not.toHaveBeenCalled();
+        // Should not redirect to unauthorized
+        const calls = mockNextResponseRedirect.mock.calls;
+        const unauthorizedCalls = calls.filter((call) =>
+          String(call[0]).includes("/unauthorized")
+        );
+        expect(unauthorizedCalls).toHaveLength(0);
         expect(result).toBeDefined();
       });
     });

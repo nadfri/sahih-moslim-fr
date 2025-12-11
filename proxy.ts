@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { updateSession } from "@/src/lib/auth/supabase/middleware";
 import { createServerClient } from "@supabase/ssr";
-import { prisma } from "./prisma/prisma";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "./src/i18n/routing";
 
@@ -21,7 +20,7 @@ export async function proxy(req: NextRequest) {
     // Update the session (refresh tokens if needed)
     const supabaseResponse = await updateSession(req);
 
-    // Create Supabase client for checking user authentication
+    // Create Supabase client for checking user authentication and role
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -49,37 +48,19 @@ export async function proxy(req: NextRequest) {
       return NextResponse.redirect(signInUrl);
     }
 
-    const unauthUrl = new URL("/unauthorized", req.nextUrl.origin);
-
-    // Check role in Supabase user metadata first (faster, no DB query)
+    // Check admin role from Supabase metadata (fast path, no DB call)
     const rawMetaRole = user?.user_metadata?.role ?? user?.app_metadata?.role;
     const metaRole =
       typeof rawMetaRole === "string" ? rawMetaRole.toUpperCase() : undefined;
 
-    // If metadata indicates ADMIN, allow access
-    if (metaRole === "ADMIN") {
-      // Still need to handle intl routing, so continue below
-    } else {
-      // Fallback: check profiles table via Prisma for authoritative role
-      try {
-        const profile = await prisma.profile.findUnique({
-          where: { id: user!.id },
-          select: { role: true },
-        });
-
-        if (profile?.role === "ADMIN") {
-          // Still need to handle intl routing, so continue below
-        } else {
-          console.log(
-            "🚫 User does not have ADMIN role, redirecting to unauthorized"
-          );
-          return NextResponse.redirect(unauthUrl);
-        }
-      } catch {
-        // If Prisma fails, deny conservatively
-        return NextResponse.redirect(unauthUrl);
-      }
+    // Redirect to unauthorized if not admin
+    if (metaRole !== "ADMIN") {
+      const unauthorizedUrl = new URL("/unauthorized", req.nextUrl.origin);
+      return NextResponse.redirect(unauthorizedUrl);
     }
+
+    // User is authenticated and has admin role in metadata
+    // Pages still perform fallback DB check for authoritative verification
   }
 
   // Now handle internationalization routing

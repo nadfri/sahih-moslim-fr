@@ -6,6 +6,7 @@ import {
   getAllTransmitters,
   getHadithsCount,
 } from "@/src/services/services";
+import { enforceAdminAccess } from "@/src/lib/auth/supabase/helpers";
 import { AdminDashboard } from "./AdminDashboard/AdminDashboard";
 import { ItemType } from "@/src/types/types";
 
@@ -17,6 +18,9 @@ export type DatasType = {
 };
 
 export default async function AdminPage() {
+  // Enforce admin access at page level - redirects to /unauthorized if not admin
+  await enforceAdminAccess();
+
   const [chapters, sahabas, transmitters, hadithsCount] = await Promise.all([
     getAllChapters(),
     getAllSahabas(),
