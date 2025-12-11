@@ -1,5 +1,6 @@
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { config } from "dotenv";
 
 // Load test environment variables BEFORE initializing Prisma if in test mode
@@ -13,10 +14,13 @@ const globalForPrisma = global as unknown as {
   prisma: PrismaClient;
 };
 
-// Instantiate a single PrismaClient instance. In Node.js runtimes we do not
-// need a driver adapter (e.g. Neon). Accelerate will handle pooling via
-// the client extension if DATABASE_URL points to prisma://
-const client: PrismaClient = new PrismaClient();
+// In Prisma 7, adapters are required for PostgreSQL connections
+// Use DATABASE_URL (pooled connection via Supabase) for queries
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
+});
+
+const client: PrismaClient = new PrismaClient({ adapter });
 
 export const prisma =
   globalForPrisma.prisma || client.$extends(withAccelerate());

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/prisma/prisma";
 import { requireAdmin } from "@/src/lib/auth/supabase/helpers";
@@ -131,7 +131,7 @@ export async function addItem(
     console.error("AddItem server error:", error);
 
     // Prisma error type (classique)
-    if (error instanceof PrismaClientKnownRequestError) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
         const target = error.meta?.target as string[] | undefined;
         switch (true) {
@@ -280,7 +280,7 @@ export async function editItem(
     // Log serveur pour tout échec
     console.error("[editItem] Erreur lors de la modification:", error);
 
-    if (error instanceof PrismaClientKnownRequestError) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
         const target = error.meta?.target as string[] | undefined;
         switch (true) {
@@ -385,7 +385,7 @@ export async function deleteItem(
 
     const errorDetails = error instanceof Error ? error.message : String(error);
 
-    if (error instanceof PrismaClientKnownRequestError) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2025") {
         userMessage = "L'élément à supprimer n'a pas été trouvé.";
       }
