@@ -21,6 +21,36 @@
   --foreground: #f1f5f9;
 }
 
+/* Dark theme background gradient */
+[data-theme="dark"] body {
+  background: linear-gradient(
+    135deg,
+    #0f172a 0%,
+    #1a2f4a 25%,
+    #0d1f3c 50%,
+    #152542 75%,
+    #1a2f4a 100%
+  );
+  background-attachment: fixed;
+}
+
+/* Light theme background gradient */
+[data-theme="light"] body {
+  background: linear-gradient(
+    135deg,
+    #f1f5f9 0%,
+    #fef3c7 25%,
+    #f1f5f9 100%
+  );
+  background-attachment: fixed;
+}
+
+/* Simple fade/scale for both old and new views */
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: 300ms;
+}
+
 /* Amiri font for Arabic */
 html[lang="ar"] {
   font-family:
@@ -31,7 +61,6 @@ html[lang="ar"] {
 
 body {
   color: var(--foreground);
-
   scrollbar-gutter: stable both-edges;
   overflow-y: scroll;
   overflow-x: hidden;

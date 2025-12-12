@@ -14,6 +14,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { ViewTransition } from "react";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("layout");
@@ -65,15 +66,17 @@ export default async function RootLayout({
           document.documentElement.setAttribute('data-theme', 'dark');
         }
       })();
-    `,
+      `,
           }}
         />
       </head>
-      <body className="antialiased flex flex-col min-h-screen bg-linear-to-br from-stone-100 to-amber-100 dark:from-gray-900 dark:to-gray-900">
+      <body className="antialiased flex flex-col min-h-screen">
         <NextIntlClientProvider>
           <AuthProvider>
             <Header />
-            <main className=" py-4 px-2 md:px-8 flex-1">{children}</main>
+            <ViewTransition>
+              <main className="py-4 px-2 md:px-8 flex-1">{children}</main>
+            </ViewTransition>
             <Footer />
           </AuthProvider>
         </NextIntlClientProvider>
