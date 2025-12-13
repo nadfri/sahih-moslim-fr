@@ -199,7 +199,7 @@ export function SearchBar({
                   }
                   placeholder={t("placeholders.wordInput")}
                   aria-label={t("placeholders.wordInput")}
-                  className="w-full p-2 pe-10 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-600 bg-white dark:bg-gray-800 dark:text-gray-200"
+                  className="w-full p-2 ps-7 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:border-emerald-600 dark:focus:border-emerald-600 bg-white dark:bg-gray-800 dark:text-gray-200"
                   aria-invalid={
                     filterMode === "word" &&
                     query.length > 0 &&
@@ -214,7 +214,7 @@ export function SearchBar({
                   }
                   autoComplete="off"
                 />
-                <Search className="absolute end-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
+                <Search className="absolute start-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
               </div>
             )}
             {filterMode === "sahaba" && (

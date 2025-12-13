@@ -22,9 +22,6 @@ export function ListLayoutHadith({
   const { isAdmin } = useAuth();
   const t = useTranslations("hadith");
 
-  // Determine empty message based on context
-  const emptyMessage = t("noResults");
-
   return (
     <>
       {title && (
@@ -45,7 +42,7 @@ export function ListLayoutHadith({
 
       {hadiths.length === 0 && (
         <p className="text-center text-gray-500 dark:text-gray-400 mt-8">
-          {emptyMessage}
+          {t("noResults")}
         </p>
       )}
 

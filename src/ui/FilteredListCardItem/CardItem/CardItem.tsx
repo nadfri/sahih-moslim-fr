@@ -31,7 +31,7 @@ export function CardItem({ item, variant }: Props) {
           {item.index != null && <ChapterIndex index={item.index} />}
 
           {/* Chapter Name */}
-          <h2 className="text-xl font-semibold font-serif text-emerald-700 dark:text-emerald-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors grow flex items-center">
+          <h2 className="text-xl font-semibold font-serif text-emerald-700 dark:text-emerald-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors grow">
             {getLocalizedName(item, locale)}
           </h2>
         </div>

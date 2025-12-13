@@ -44,7 +44,6 @@
     "mentioned-sahabas": "{count, plural, =1 {Sahaba mentioned} other {Sahabas mentioned}}",
     "preview": "Preview",
     "from": "From ",
-
     "ActionsBtns": {
       "copied": "Copied!",
       "copy": "Copy",
@@ -154,7 +153,7 @@
     "search-transmitter": "Search for a transmitter ...",
     "see-item": "See: {item}",
     "results": "Search result",
-    "noResults": "No hadith found."
+    "noResults": "No results."
   },
   "signin": {
     "title": "Sign In",

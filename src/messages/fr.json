@@ -5,7 +5,6 @@
     "backHome": "Retour à l'accueil",
     "ifError": "Si vous pensez qu'il s'agit d'une erreur, n'hésitez pas à nous le signaler."
   },
-
   "auth": {
     "error": {
       "title": "Erreur d'authentification",
@@ -15,7 +14,6 @@
       "tryAgain": "Réessayer"
     }
   },
-
   "chapters": {
     "title": "Liste des Chapitres",
     "title-slug": "Hadiths du Chapitre",
@@ -30,7 +28,6 @@
     "title": "Sahih Moslim",
     "description": "Faciliter l'accès aux enseignements authentiques rapportés par l'Imam Moslim."
   },
-
   "form": {
     "clear": "Effacer",
     "open-list": "Ouvrir la liste",
@@ -47,13 +44,10 @@
     "see-chapter": "Voir le chapitre: {chapter}",
     "see-sahaba": "Voir le compagnon: {sahaba}",
     "see-transmitter": "Voir le transmetteur: {transmitter}",
-
     "hadith-count": "{count, plural, =0 {0 Hadith} =1 {1 Hadith} other {# Hadiths}}",
-
     "preview": "Aperçu",
     "from": "D'après ",
     "mentioned-sahabas": "{count, plural, =1 {Sahaba mentionné} other {Sahabas mentionnés}}",
-
     "ActionsBtns": {
       "copy": "Copier",
       "copied": "Copié !",
@@ -82,7 +76,6 @@
       "next": "Suivant n°{numero}"
     }
   },
-
   "header": {
     "home": "Accueil",
     "chapters": "Chapitres",
@@ -93,7 +86,6 @@
     "moslim": "Moslim",
     "logo-title": "Sahih Moslim"
   },
-
   "home": {
     "title": "Sahih Moslim",
     "descriptive": {
@@ -118,12 +110,10 @@
       }
     }
   },
-
   "layout": {
     "title": "Sahih Moslim en français",
     "description": "Une collection de hadiths authentiques."
   },
-
   "sahabas": {
     "title": "Liste des Compagnons",
     "title-slug": "Hadiths mentionnant le compagnon",
@@ -134,7 +124,6 @@
     "description-metadata": "Découvrez les compagnons de hadiths dans la collection Sahih Moslim.",
     "description-metadata-slug": "Collection de hadiths du compagnon {name} - Sahih Moslim"
   },
-
   "search": {
     "title": "Recherche de Hadiths",
     "title-metadata": "Rechercher dans Moslim",
@@ -163,17 +152,15 @@
     },
     "loading": "Recherche en cours...",
     "empty": "Aucun hadith trouvé...",
-    "noResults": "Aucun hadith trouvé.",
+    "noResults": "Aucun résultat.",
     "results": "Résultat de la recherche"
   },
-
   "signin": {
     "title": "Se connecter",
     "description": "Connectez-vous avec votre compte GitHub pour accéder aux fonctionnalités d'administration.",
     "loading": "Connexion en cours...",
     "github": "Se connecter avec GitHub"
   },
-
   "transmitters": {
     "title": "Liste des Transmetteurs",
     "title-slug": "Hadiths du transmetteur",
@@ -184,7 +171,6 @@
     "description-metadata": "Découvrez les transmetteurs de hadiths dans la collection Sahih Moslim.",
     "description-metadata-slug": "Collection de hadiths du transmetteur {name} - Sahih Moslim"
   },
-
   "unauthorized": {
     "title": "Accès non autorisé",
     "noPermission": "Vous n'avez pas les autorisations nécessaires pour accéder à cette page.",
