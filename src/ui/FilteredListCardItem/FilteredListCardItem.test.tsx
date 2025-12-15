@@ -36,13 +36,8 @@ describe("FilteredListCardItem", () => {
     const user = userEvent.setup();
     // Type "Item 2" into the search input
     const input = screen.getByPlaceholderText("Rechercher un chapitre...");
-    await user.click(input);
     await user.type(input, "Item 2");
 
-    // There should be only one Card with 'Item 2' (the filtered result)
-    const cards = screen.getAllByText("Item 2");
-    // One in the Card, one in the dropdown, so check at least one Card is present
-    expect(cards.length).toBeGreaterThanOrEqual(1);
     // The Card for 'Item 2' should be visible, the others not
     expect(screen.getByText("Item 2", { selector: "h2" })).toBeInTheDocument();
     expect(
@@ -53,7 +48,7 @@ describe("FilteredListCardItem", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("filters items when an option is selected from dropdown", async () => {
+  it("clears search and shows all items when input is cleared", async () => {
     renderWithI18n(
       <FilteredListCardItem
         items={items}
@@ -61,20 +56,21 @@ describe("FilteredListCardItem", () => {
       />
     );
     const user = userEvent.setup();
-    // Type "Item 2" into the search input
     const input = screen.getByPlaceholderText("Rechercher un chapitre...");
-    await user.click(input);
+
+    // Type to filter
     await user.type(input, "Item 2");
-    // Simulate selecting the option from the dropdown
-    const option = await screen.findByRole("option", { name: "Item 2" });
-    await user.click(option);
-    // Only the Card for 'Item 2' should be visible
     expect(screen.getByText("Item 2", { selector: "h2" })).toBeInTheDocument();
     expect(
       screen.queryByText("Item 1", { selector: "h2" })
     ).not.toBeInTheDocument();
-    expect(
-      screen.queryByText("Item 3", { selector: "h2" })
-    ).not.toBeInTheDocument();
+
+    // Clear the input
+    await user.clear(input);
+
+    // All items should be visible again
+    expect(screen.getByText("Item 1")).toBeInTheDocument();
+    expect(screen.getByText("Item 2")).toBeInTheDocument();
+    expect(screen.getByText("Item 3")).toBeInTheDocument();
   });
 });
