@@ -22,8 +22,8 @@ import { MultiSelect } from "./inputs/MultiSelect/MultiSelect";
 import { BtnAddItem } from "../hadith/BtnAddItem/BtnAddItem";
 import { AddItemFormDialog } from "./AddItemFormDialog/AddItemFormDialog";
 import {
-  createEditHadithSchema,
-  type EditHadithFormValues,
+  createHadithFormSchema,
+  type HadithFormValues,
 } from "@/src/services/hadithSchemaServer";
 
 type EditHadithFormProps = {
@@ -50,7 +50,7 @@ export function EditHadithForm({
   const [variant, setVariant] = useState<EditVariant | null>(null);
   const router = useRouter();
 
-  const hadithSchema = createEditHadithSchema(existingNumeros, hadith.numero);
+  const hadithSchema = createHadithFormSchema(existingNumeros, hadith.numero);
 
   const {
     register,
@@ -97,7 +97,7 @@ export function EditHadithForm({
   };
 
   // Handle form submission for editing
-  const onSubmit = async (data: EditHadithFormValues) => {
+  const onSubmit = async (data: HadithFormValues) => {
     setIsSubmitting(true);
 
     // Find IDs corresponding to selected names/titles using props

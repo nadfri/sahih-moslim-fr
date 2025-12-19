@@ -20,15 +20,12 @@ export const SchemaItemStructure = z.object({
 });
 export type ItemType = z.infer<typeof SchemaItemStructure>;
 
-// Permissive schema for imports/preview: exported items may not include id/slug
-export const ImportItemSchema = z.object({
-  id: z.string().optional(),
-  index: z.number().optional(),
-  name_fr: z.string(),
-  name_ar: z.string().nullable().optional(),
-  name_en: z.string().nullable().optional(),
-  slug: z.string().optional(),
-  hadithCount: z.number().optional(),
+// Permissive schema for imports/preview: id, slug, index, and hadithCount are optional
+export const ImportItemSchema = SchemaItemStructure.partial({
+  id: true,
+  slug: true,
+  index: true,
+  hadithCount: true,
 });
 export type ImportItemType = z.infer<typeof ImportItemSchema>;
 
@@ -38,14 +35,25 @@ export const ChapterImportSchema = ImportItemSchema.extend({
 });
 export type ChapterImportType = z.infer<typeof ChapterImportSchema>;
 
-export type ItemFormValues = Omit<ItemType, "id" | "slug" | "hadithCount">;
+// Form values schema using Zod .omit() instead of TypeScript Omit
+export const ItemFormValuesSchema = SchemaItemStructure.omit({
+  id: true,
+  slug: true,
+  hadithCount: true,
+});
+export type ItemFormValues = z.infer<typeof ItemFormValuesSchema>;
 
-export const HadithSchema = z.object({
-  id: z.string(),
+// Base schema for hadith content (shared across all hadith schemas)
+export const BaseHadithContentSchema = z.object({
   numero: z.number(),
   matn_fr: z.string(),
   matn_ar: z.string(),
   matn_en: z.string().optional(),
+});
+
+// Complete hadith schema for display/internal use
+export const HadithSchema = BaseHadithContentSchema.extend({
+  id: z.string(),
   chapter: SchemaItemStructure,
   mentionedSahabas: z.array(SchemaItemStructure),
   isnadTransmitters: z.array(SchemaItemStructure),
@@ -54,11 +62,7 @@ export const HadithSchema = z.object({
 export type HadithType = z.infer<typeof HadithSchema>;
 
 // Schema for exported hadiths (what the export route emits)
-export const ExportedHadithSchema = z.object({
-  numero: z.number(),
-  matn_fr: z.string(),
-  matn_ar: z.string(),
-  matn_en: z.string().optional(),
+export const ExportedHadithSchema = BaseHadithContentSchema.extend({
   chapterIndex: z.number().optional(),
   chapterName: z.string().optional(),
   mentionedSahabas: z.array(z.string()).optional(),
@@ -68,11 +72,7 @@ export const ExportedHadithSchema = z.object({
 export type ExportedHadithType = z.infer<typeof ExportedHadithSchema>;
 
 // Schema for imported hadiths (what the import route expects)
-export const ImportedHadithSchema = z.object({
-  numero: z.number(),
-  matn_fr: z.string(),
-  matn_ar: z.string(),
-  matn_en: z.string().optional(),
+export const ImportedHadithSchema = BaseHadithContentSchema.extend({
   // chapter can be identified either by slug or by index
   chapter: z
     .object({
