@@ -1,7 +1,7 @@
 "use client";
 
 import { VariantType, ItemType } from "@/src/types/types";
-import { AddItemForm } from "@/src/ui/forms/AddItemForm/AddItemForm";
+import { AddItemForm } from "@/src/ui/forms/item-forms/AddItemForm/AddItemForm";
 import { useState } from "react";
 import { DataManagement } from "../DataManagement/DataManagement";
 import { FilteredCardsEdit } from "../FilteredCardsEdit/FilteredCardsEdit";

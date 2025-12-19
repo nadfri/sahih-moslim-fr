@@ -67,4 +67,35 @@ describe("Input", () => {
     // The value prop is still "", so input value should be ""
     expect((input as HTMLInputElement).value).toBe("");
   });
+
+  it("renders component prop overlay", () => {
+    render(
+      <Input
+        id="overlay-input"
+        label="With Component"
+        value=""
+        onChange={() => {}}
+        component={<div data-testid="overlay">Overlay Content</div>}
+      />
+    );
+    expect(screen.getByTestId("overlay")).toBeInTheDocument();
+    expect(screen.getByText("Overlay Content")).toBeInTheDocument();
+  });
+
+  it("renders error and component prop together", () => {
+    render(
+      <Input
+        id="error-and-component"
+        label="Error with Component"
+        value=""
+        onChange={() => {}}
+        error={true}
+        errorMessage="This is an error"
+        component={<div data-testid="status">Available</div>}
+      />
+    );
+    expect(screen.getByText("This is an error")).toBeInTheDocument();
+    expect(screen.getByTestId("status")).toBeInTheDocument();
+    expect(screen.getByText("Available")).toBeInTheDocument();
+  });
 });

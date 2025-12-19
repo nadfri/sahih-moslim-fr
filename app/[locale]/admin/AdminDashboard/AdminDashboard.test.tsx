@@ -14,7 +14,7 @@ vi.mock("../FilteredCardsEdit/FilteredCardsEdit", () => ({
   )),
 }));
 
-vi.mock("@/src/ui/forms/AddItemForm/AddItemForm", () => ({
+vi.mock("@/src/ui/forms/item-forms/AddItemForm/AddItemForm", () => ({
   AddItemForm: vi.fn(({ items, variant }) => (
     <div data-testid="add-item-form">
       AddItemForm - {variant} - {items.length} items

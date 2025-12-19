@@ -15,9 +15,9 @@ vi.mock("next/cache", () => ({
 import prisma from "@/prisma/prisma";
 import { cleanupTestData, testDataHelpers } from "@/__tests__/test-helpers";
 import { addHadith, deleteHadith, editHadith } from "@/src/services/actions";
-import { hadithSchemaServer } from "@/src/services/hadithSchemaServer";
+import { ValidateHadithDataSchema } from "@/src/services/hadithSchemaServer";
 import type { z } from "zod";
-type HadithInput = z.infer<typeof hadithSchemaServer>;
+type HadithInput = z.infer<typeof ValidateHadithDataSchema>;
 
 describe("Actions (hadith) - robust", () => {
   // Keep a targeted cleanup before each test to ensure isolation. We avoid

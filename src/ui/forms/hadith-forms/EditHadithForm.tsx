@@ -8,7 +8,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
-import { deleteHadith, editHadith } from "@/src/services/actions";
+import {
+  checkNumeroAvailability,
+  deleteHadith,
+  editHadith,
+} from "@/src/services/actions";
+import { useDebounce } from "@/src/hooks/useDebounce";
 import { HadithType, ItemType, VariantType } from "@/src/types/types";
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { Input } from "@/src/ui/forms/inputs/Input/Input";
@@ -17,18 +22,18 @@ import { MultiSelectDragNDrop } from "@/src/ui/forms/inputs/MultiSelectDragNDrop
 import { Select } from "@/src/ui/forms/inputs/Select/Select";
 import { cleanArabicText } from "@/src/utils/cleanArabicText";
 import { wrapProphetNames } from "@/src/utils/wrapProphetNames";
-import { ConfirmDeleteModal } from "./ConfirmDeleteModal/ConfirmDeleteModal";
-import { MultiSelect } from "./inputs/MultiSelect/MultiSelect";
-import { BtnAddItem } from "../hadith/BtnAddItem/BtnAddItem";
-import { AddItemFormDialog } from "./AddItemFormDialog/AddItemFormDialog";
+import { ConfirmDeleteModal } from "../ConfirmDeleteModal/ConfirmDeleteModal";
+import { MultiSelect } from "../inputs/MultiSelect/MultiSelect";
+import { BtnAddItem } from "../../hadith/BtnAddItem/BtnAddItem";
+import { AddItemFormDialog } from "../item-forms/AddItemFormDialog/AddItemFormDialog";
 import {
-  createHadithFormSchema,
+  ValidateHadithFormSchema,
   type HadithFormValues,
 } from "@/src/services/hadithSchemaServer";
+import { NumeroStatus } from "./NumeroStatus";
 
 type EditHadithFormProps = {
   hadith: HadithType;
-  existingNumeros: number[];
   chaptersData: ItemType[];
   sahabasData: ItemType[];
   transmittersData: ItemType[];
@@ -36,7 +41,6 @@ type EditHadithFormProps = {
 
 export function EditHadithForm({
   hadith,
-  existingNumeros,
   chaptersData,
   // narratorsData,
   sahabasData,
@@ -48,9 +52,12 @@ export function EditHadithForm({
   const [isDeleting, setIsDeleting] = useState(false);
   const [isOpenDialog, setIsOpenDialog] = useState(false);
   const [variant, setVariant] = useState<EditVariant | null>(null);
+  const [numeroStatus, setNumeroStatus] = useState<
+    "checking" | "available" | "taken" | null
+  >(null);
   const router = useRouter();
 
-  const hadithSchema = createHadithFormSchema(existingNumeros, hadith.numero);
+  const hadithSchema = ValidateHadithFormSchema();
 
   const {
     register,
@@ -74,6 +81,17 @@ export function EditHadithForm({
   });
 
   const formValues = watch();
+
+  // Check numero availability with debounce (250ms)
+  const checkNumero = useDebounce(async (value: number) => {
+    if (value === hadith.numero) {
+      setNumeroStatus(null); // Same as original, no check needed
+      return;
+    }
+    setNumeroStatus("checking");
+    const result = await checkNumeroAvailability(value, hadith.id);
+    setNumeroStatus(result.available ? "available" : "taken");
+  }, 250);
 
   const chapterOptions = chaptersData.map((chapter) => chapter.name_fr);
   const sahabaOptions = sahabasData.map((s) => s.name_fr);
@@ -211,10 +229,21 @@ export function EditHadithForm({
             label="Numero*"
             type="number"
             min={1}
-            error={!!errors.numero}
-            errorMessage={errors.numero?.message}
-            register={register("numero")}
+            error={!!errors.numero || numeroStatus === "taken"}
+            errorMessage={
+              numeroStatus === "taken"
+                ? "Ce numéro est déjà utilisé"
+                : errors.numero?.message
+            }
+            register={register("numero", {
+              onChange: (e) => {
+                const val = parseInt(e.target.value);
+                if (!isNaN(val)) checkNumero(val);
+              },
+            })}
+            component={<NumeroStatus status={numeroStatus} />}
           />
+
           {/* Chapter */}
           <Controller
             name="chapter"

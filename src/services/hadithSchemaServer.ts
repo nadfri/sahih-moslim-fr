@@ -7,7 +7,7 @@ import { BaseHadithContentSchema } from "../types/types";
 // =============================================================================
 
 // Schéma pour les hadiths (côté serveur) dérivé du schéma partagé
-export const hadithSchemaServer = BaseHadithContentSchema.extend({
+export const ValidateHadithDataSchema = BaseHadithContentSchema.extend({
   numero: BaseHadithContentSchema.shape.numero.int().positive(),
   matn_fr: BaseHadithContentSchema.shape.matn_fr.min(
     1,
@@ -23,24 +23,13 @@ export const hadithSchemaServer = BaseHadithContentSchema.extend({
 });
 
 // Unified schema for both creation and edition (with coerce for numero)
-export const createHadithFormSchema = (
-  existingNumeros: number[],
-  initialNumero?: number
-) => {
+// Uniqueness validation is now handled server-side in actions
+export const ValidateHadithFormSchema = () => {
   return BaseHadithContentSchema.extend({
     numero: z.coerce
       .number()
       .int({ message: "Le numéro doit être un nombre entier" })
-      .positive({ message: "Le numéro doit être un nombre positif" })
-      .refine(
-        (numero) =>
-          initialNumero !== undefined
-            ? numero === initialNumero || !existingNumeros.includes(numero)
-            : !existingNumeros.includes(numero),
-        {
-          message: "Ce numéro existe déjà. Veuillez en choisir un autre.",
-        }
-      ),
+      .positive({ message: "Le numéro doit être un nombre positif" }),
     matn_fr: z.string().min(1, "Le texte du hadith est requis"),
     matn_ar: z.string().min(1, "Le texte arabe est requis"),
     matn_en: z.string().min(1, "Le texte anglais est requis"),
@@ -51,5 +40,5 @@ export const createHadithFormSchema = (
 };
 
 export type HadithFormValues = z.infer<
-  ReturnType<typeof createHadithFormSchema>
+  ReturnType<typeof ValidateHadithFormSchema>
 >;

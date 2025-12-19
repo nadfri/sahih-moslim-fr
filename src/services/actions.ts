@@ -7,7 +7,7 @@ import { requireAdmin } from "@/src/lib/auth/supabase/helpers";
 import { getItemFormSchema } from "@/src/ui/forms/schemas/getItemFormSchema";
 import { slugify } from "@/src/utils/slugify";
 import { ItemFormValues, ItemType, VariantType } from "../types/types";
-import { hadithSchemaServer } from "./hadithSchemaServer";
+import { ValidateHadithDataSchema } from "./hadithSchemaServer";
 import prisma from "@/prisma/prisma";
 import { Prisma } from "@/prisma/generated/prisma/client";
 export type ActionResponse = {
@@ -17,6 +17,20 @@ export type ActionResponse = {
   data?: unknown;
   affectedHadiths?: number;
 };
+
+// Check if a hadith numero is available
+export async function checkNumeroAvailability(
+  numero: number,
+  excludeId?: string
+): Promise<{ available: boolean }> {
+  const existing = await prisma.hadith.findFirst({
+    where: {
+      numero,
+      ...(excludeId && { NOT: { id: excludeId } }),
+    },
+  });
+  return { available: !existing };
+}
 
 async function getItems(variant: VariantType): Promise<ItemType[]> {
   switch (variant) {
@@ -409,14 +423,14 @@ export async function deleteItem(
 
 /* ADD HADITH */
 export async function addHadith(
-  data: z.infer<typeof hadithSchemaServer>
+  data: z.infer<typeof ValidateHadithDataSchema>
 ): Promise<ActionResponse> {
   // Check admin permission
   const adminCheck = await requireAdmin();
   if (adminCheck !== true) return adminCheck;
 
   // Validate data
-  const parseResult = hadithSchemaServer.safeParse(data);
+  const parseResult = ValidateHadithDataSchema.safeParse(data);
   if (!parseResult.success) {
     return {
       success: false,
@@ -543,14 +557,14 @@ export async function addHadith(
 /* EDIT HADITH */
 export async function editHadith(
   hadithId: string,
-  data: z.infer<typeof hadithSchemaServer>
+  data: z.infer<typeof ValidateHadithDataSchema>
 ): Promise<ActionResponse> {
   // Check admin permission
   const adminCheck = await requireAdmin();
   if (adminCheck !== true) return adminCheck;
 
   // Validate data
-  const parseResult = hadithSchemaServer.safeParse(data);
+  const parseResult = ValidateHadithDataSchema.safeParse(data);
   if (!parseResult.success) {
     return {
       success: false,

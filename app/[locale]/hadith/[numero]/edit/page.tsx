@@ -6,10 +6,9 @@ import {
   getAllSahabas,
   getAllTransmitters,
   getHadithByNumero,
-  getHadithNumeros,
 } from "@/src/services/services";
 import { enforceAdminAccess } from "@/src/lib/auth/supabase/helpers";
-import { EditHadithForm } from "@/src/ui/forms/EditHadithForm";
+import { EditHadithForm } from "@/src/ui/forms/hadith-forms/EditHadithForm";
 
 export const metadata: Metadata = {
   title: "Modifier un hadith",
@@ -25,10 +24,9 @@ export default async function EditPage({ params }: { params: ParamsPromise }) {
   const resolvedParams = await params;
   const numero = resolvedParams.numero;
 
-  const [hadith, existingNumeros, chaptersData, sahabasData, transmittersData] =
+  const [hadith, chaptersData, sahabasData, transmittersData] =
     await Promise.all([
       getHadithByNumero(numero),
-      getHadithNumeros(),
       getAllChapters(),
       getAllSahabas(),
       getAllTransmitters(),
@@ -37,8 +35,6 @@ export default async function EditPage({ params }: { params: ParamsPromise }) {
   if (!hadith) {
     notFound();
   }
-
-  const otherNumeros = existingNumeros.filter((n) => n !== hadith.numero);
 
   return (
     <>
@@ -51,7 +47,6 @@ export default async function EditPage({ params }: { params: ParamsPromise }) {
 
       <EditHadithForm
         hadith={hadith}
-        existingNumeros={otherNumeros}
         chaptersData={chaptersData}
         sahabasData={sahabasData}
         transmittersData={transmittersData}

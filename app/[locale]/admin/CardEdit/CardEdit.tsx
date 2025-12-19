@@ -7,7 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { deleteItem } from "@/src/services/actions";
 import { ItemType, VariantType } from "@/src/types/types";
 import { ConfirmDeleteModal } from "@/src/ui/forms/ConfirmDeleteModal/ConfirmDeleteModal";
-import { EditItemFormDialog } from "@/src/ui/forms/EditItemFormDialog/EditItemFormDialog";
+import { EditItemFormDialog } from "@/src/ui/forms/item-forms/EditItemFormDialog/EditItemFormDialog";
 import { BadgeNumberOfHadith } from "@/src/ui/hadith/BadgeNumberOfHadith/BadgeNumberOfHadith";
 
 type Props = {

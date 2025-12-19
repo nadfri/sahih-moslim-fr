@@ -8,10 +8,11 @@ import { createPortal } from "react-dom"; // Import createPortal
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
-import { addHadith } from "@/src/services/actions";
+import { addHadith, checkNumeroAvailability } from "@/src/services/actions";
+import { useDebounce } from "@/src/hooks/useDebounce";
 import { HadithType, ItemType, VariantType } from "@/src/types/types";
 import {
-  createHadithFormSchema,
+  ValidateHadithFormSchema,
   type HadithFormValues,
 } from "@/src/services/hadithSchemaServer";
 /*UI*/
@@ -22,32 +23,40 @@ import { Select } from "@/src/ui/forms/inputs/Select/Select";
 /*Utils*/
 import { cleanArabicText } from "@/src/utils/cleanArabicText";
 import { wrapProphetNames } from "@/src/utils/wrapProphetNames";
-import { BtnAddItem } from "../hadith/BtnAddItem/BtnAddItem";
-import { MultiSelect } from "./inputs/MultiSelect/MultiSelect";
-import { MultiSelectDragNDrop } from "./inputs/MultiSelectDragNDrop/MultiSelectDragNDrop";
-import { AddItemFormDialog } from "./AddItemFormDialog/AddItemFormDialog";
+import { BtnAddItem } from "../../hadith/BtnAddItem/BtnAddItem";
+import { MultiSelect } from "../inputs/MultiSelect/MultiSelect";
+import { MultiSelectDragNDrop } from "../inputs/MultiSelectDragNDrop/MultiSelectDragNDrop";
+import { AddItemFormDialog } from "../item-forms/AddItemFormDialog/AddItemFormDialog";
+import { NumeroStatus } from "./NumeroStatus";
 
 type Props = {
-  initialNumeros: number[];
+  initialNumero: number;
   chaptersData: ItemType[];
   sahabasData: ItemType[];
   transmittersData: ItemType[];
 };
 
 export function AddHadithForm({
-  initialNumeros,
+  initialNumero,
   chaptersData,
   sahabasData,
   transmittersData,
 }: Props) {
-  const [existingNumeros, setExistingNumeros] =
-    useState<number[]>(initialNumeros);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOpenDialog, setIsOpenDialog] = useState(false);
   const [variant, setVariant] = useState<VariantType | null>(null);
+  const [numeroStatus, setNumeroStatus] = useState<
+    "checking" | "available" | "taken" | null
+  >(null);
 
-  const hadithSchema = createHadithFormSchema(existingNumeros);
+  const hadithSchema = ValidateHadithFormSchema();
+
+  // Check numero availability with debounce (250ms)
+  const checkNumero = useDebounce(async (value: number) => {
+    setNumeroStatus("checking");
+    const result = await checkNumeroAvailability(value);
+    setNumeroStatus(result.available ? "available" : "taken");
+  }, 250);
 
   const {
     register,
@@ -61,7 +70,7 @@ export function AddHadithForm({
     resolver: zodResolver(hadithSchema),
     mode: "onChange",
     defaultValues: {
-      numero: initialNumeros.length > 0 ? Math.max(...initialNumeros) + 1 : 1,
+      numero: initialNumero,
       chapter: "La Foi",
       mentionedSahabas: [],
       isnadTransmitters: [],
@@ -128,14 +137,9 @@ export function AddHadithForm({
       if (result.success) {
         toast.success("Hadith ajouté avec succès!");
 
-        // Update local state and reset form
-        const newNumero = data.numero;
-        // Important: Update the state used for schema validation *before* resetting
-        const updatedNumeros = [...existingNumeros, newNumero];
-        setExistingNumeros(updatedNumeros); // Update the list of existing numbers
-
+        // Reset form with next numero (current + 1)
         reset({
-          numero: Math.max(...updatedNumeros) + 1,
+          numero: data.numero + 1,
           chapter: "La Foi",
           mentionedSahabas: [],
           isnadTransmitters: [],
@@ -200,10 +204,22 @@ export function AddHadithForm({
             label="Numero*"
             type="number"
             min={1}
-            error={!!errors.numero}
-            errorMessage={errors.numero?.message}
-            register={register("numero")}
+            helperText=""
+            error={!!errors.numero || numeroStatus === "taken"}
+            errorMessage={
+              numeroStatus === "taken"
+                ? "Ce numéro est déjà utilisé"
+                : errors.numero?.message
+            }
+            register={register("numero", {
+              onChange: (e) => {
+                const val = parseInt(e.target.value);
+                if (!isNaN(val)) checkNumero(val);
+              },
+            })}
+            component={<NumeroStatus status={numeroStatus} />}
           />
+
           {/* Chapter */}
           <div className="flex justify-between items-end gap-1">
             <Controller

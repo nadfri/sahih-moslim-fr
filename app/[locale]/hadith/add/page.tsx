@@ -7,10 +7,10 @@ import {
   getAllChapters,
   getAllSahabas,
   getAllTransmitters,
-  getHadithNumeros,
 } from "@/src/services/services";
 import { enforceAdminAccess } from "@/src/lib/auth/supabase/helpers";
-import { AddHadithForm } from "@/src/ui/forms/AddHadithForm";
+import { AddHadithForm } from "@/src/ui/forms/hadith-forms/AddHadithForm";
+import prisma from "@/prisma/prisma";
 
 export const metadata: Metadata = {
   title: "Ajouter un hadith",
@@ -21,19 +21,24 @@ export default async function AddHadithPage() {
   // Enforce admin access at page level
   await enforceAdminAccess();
 
-  const [initialNumeros, chaptersData, sahabasData, transmittersData] =
-    await Promise.all([
-      getHadithNumeros(),
-      getAllChapters(),
-      getAllSahabas(),
-      getAllTransmitters(),
-    ]);
+  // Calculate next numero server-side
+  const maxHadith = await prisma.hadith.findFirst({
+    orderBy: { numero: "desc" },
+    select: { numero: true },
+  });
+  const nextNumero = (maxHadith?.numero ?? 0) + 1;
+
+  const [chaptersData, sahabasData, transmittersData] = await Promise.all([
+    getAllChapters(),
+    getAllSahabas(),
+    getAllTransmitters(),
+  ]);
 
   return (
     <>
       <h1 className="title">Ajouter un nouveau hadith</h1>
       <AddHadithForm
-        initialNumeros={initialNumeros}
+        initialNumero={nextNumero}
         chaptersData={chaptersData}
         sahabasData={sahabasData}
         transmittersData={transmittersData}

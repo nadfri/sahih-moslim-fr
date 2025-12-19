@@ -33,17 +33,20 @@ vi.mock("@/src/ui/ConfirmDeleteModal/ConfirmDeleteModal", () => ({
   ),
 }));
 
-vi.mock("@/src/ui/forms/EditItemFormDialog/EditItemFormDialog", () => ({
-  EditItemFormDialog: vi.fn(({ open, onCancel, item, variant }) =>
-    open ? (
-      <div data-testid="edit-item-dialog">
-        <h2>Edit {variant}</h2>
-        <p>Item: {item.name_fr}</p>
-        <button onClick={onCancel}>Annuler</button>
-      </div>
-    ) : null
-  ),
-}));
+vi.mock(
+  "@/src/ui/forms/item-forms/EditItemFormDialog/EditItemFormDialog",
+  () => ({
+    EditItemFormDialog: vi.fn(({ open, onCancel, item, variant }) =>
+      open ? (
+        <div data-testid="edit-item-dialog">
+          <h2>Edit {variant}</h2>
+          <p>Item: {item.name_fr}</p>
+          <button onClick={onCancel}>Annuler</button>
+        </div>
+      ) : null
+    ),
+  })
+);
 
 vi.mock("@/src/ui/hadith/BadgeNumberOfHadith/BadgeNumberOfHadith", () => ({
   BadgeNumberOfHadith: vi.fn(({ count }) => (

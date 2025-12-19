@@ -11,7 +11,7 @@ import { addItem } from "@/src/services/actions";
 import { ItemType, VariantType } from "@/src/types/types";
 import { Input } from "@/src/ui/forms/inputs/Input/Input";
 import { nextAvailableIndex } from "@/src/utils/nextAvailableIndex";
-import { getItemFormSchema } from "../schemas/getItemFormSchema";
+import { getItemFormSchema } from "../../schemas/getItemFormSchema";
 
 type Props = {
   items: ItemType[];

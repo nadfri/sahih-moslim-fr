@@ -24,6 +24,7 @@ type InputProps = {
   register?: unknown; // For react-hook-form
   helperText?: string;
   readOnly?: boolean;
+  component?: React.ReactNode;
 };
 
 export function Input({
@@ -46,6 +47,7 @@ export function Input({
   register,
   helperText,
   readOnly,
+  component,
 }: InputProps) {
   const inputClasses = `w-full p-2 border rounded-md ${
     error
@@ -107,6 +109,8 @@ export function Input({
           {errorMessage}
         </p>
       )}
+
+      {component}
     </div>
   );
 }

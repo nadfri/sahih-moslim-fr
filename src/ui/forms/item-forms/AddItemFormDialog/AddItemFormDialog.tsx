@@ -6,25 +6,25 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "react-toastify";
 
-import { editItem } from "@/src/services/actions";
+import { addItem } from "@/src/services/actions";
 import { ItemType, VariantType } from "@/src/types/types";
 import { getItemFormSchema } from "@/src/ui/forms/schemas/getItemFormSchema";
 import { Input } from "@/src/ui/forms/inputs/Input/Input";
-import { Dialog } from "../Dialog/Dialog";
+import { nextAvailableIndex } from "@/src/utils/nextAvailableIndex";
+import { Dialog } from "../../Dialog/Dialog";
 
 type Props = {
   open: boolean;
   onCancel: () => void;
-  item: ItemType;
   items: ItemType[];
   variant: VariantType;
 };
 
 const placeholderText = {
   title: {
-    chapters: "Éditer le chapitre",
-    sahabas: "Éditer le compagnon",
-    transmitters: "Éditer le transmetteur",
+    chapters: "Ajouter un chapitre",
+    sahabas: "Ajouter un compagnon",
+    transmitters: "Ajouter un transmetteur",
   },
 
   name: {
@@ -34,61 +34,43 @@ const placeholderText = {
   },
 };
 
-export function EditItemFormDialog({
-  open,
-  onCancel,
-  item,
-  items,
-  variant,
-}: Props) {
+export function AddItemFormDialog({ open, onCancel, items, variant }: Props) {
   const [isPending, startTransition] = useTransition();
 
-  const ItemEditSchema = getItemFormSchema(items, variant, item.id);
+  const ItemAddSchema = getItemFormSchema(items, variant);
 
   const {
     register,
     handleSubmit: handleFormSubmit,
     formState: { errors },
+    reset,
   } = useForm({
-    resolver: zodResolver(ItemEditSchema),
+    resolver: zodResolver(ItemAddSchema),
     mode: "onChange",
-    defaultValues: item,
+    defaultValues: {
+      name_fr: "",
+      name_ar: "",
+      name_en: "",
+      index: nextAvailableIndex(items, variant),
+    },
   });
 
-  function editItemSubmit(formData: z.infer<typeof ItemEditSchema>) {
+  function addItemSubmit(formData: z.infer<typeof ItemAddSchema>) {
     startTransition(async () => {
       try {
-        const response = await editItem(variant, { ...formData, id: item.id });
+        const response = await addItem(variant, formData);
 
         if (response.success) {
           toast.success(response.message);
-          onCancel(); // Only call onCancel on success
+          reset();
+          onCancel();
         } else {
           toast.error(response.message);
+          // onCancel(); // DO NOT CALL onCancel if submission failed
         }
       } catch (error) {
-        toast.error("Erreur inconnue lors de la modification.");
-
-        if (error instanceof Error) {
-          console.error(
-            "[EditItemFormDialog] Erreur lors de la modification:",
-            error.message,
-            error.stack
-          );
-        } else {
-          console.error("[EditItemFormDialog] Erreur inconnue:", error);
-        }
-
-        if (
-          typeof error === "object" &&
-          error !== null &&
-          "response" in error
-        ) {
-          console.error(
-            "[EditItemFormDialog] Réponse serveur:",
-            error.response
-          );
-        }
+        toast.error("Erreur inconnue lors de l'ajout.");
+        console.error("[AddItemFormDialog] Erreur lors de l'ajout:", error);
       }
     });
   }
@@ -100,13 +82,13 @@ export function EditItemFormDialog({
       title={placeholderText.title[variant]}
     >
       <form
-        onSubmit={handleFormSubmit(editItemSubmit)}
+        onSubmit={handleFormSubmit(addItemSubmit)}
         className="flex flex-col gap-6"
       >
         {/* Index Field */}
         {variant === "chapters" && (
           <Input
-            id="edit-index"
+            id="add-index"
             label="Index*"
             type="number"
             placeholder="Index"
@@ -119,7 +101,7 @@ export function EditItemFormDialog({
 
         {/* Name Field */}
         <Input
-          id="edit-name_fr"
+          id="add-name_fr"
           label={placeholderText.name[variant] + "*"}
           type="text"
           placeholder={placeholderText.name[variant]}
@@ -128,7 +110,7 @@ export function EditItemFormDialog({
           register={register("name_fr")}
         />
         <Input
-          id="edit-name_ar"
+          id="add-name_ar"
           label="Nom en arabe (optionnel)"
           type="text"
           placeholder="Nom en arabe"
@@ -138,11 +120,12 @@ export function EditItemFormDialog({
           dir="rtl"
         />
 
+        {/* English Name Field */}
         <Input
-          id="edit-name_en"
+          id="add-name_en"
           label="Nom en anglais (optionnel)"
           type="text"
-          placeholder="Nom en anglais"
+          placeholder="Name in English"
           error={!!errors.name_en}
           errorMessage={errors.name_en?.message}
           register={register("name_en")}
@@ -162,7 +145,7 @@ export function EditItemFormDialog({
             className="px-4 py-2 rounded-lg bg-emerald-600 dark:bg-emerald-500 text-white dark:text-gray-900 hover:bg-emerald-700 dark:hover:bg-emerald-600 disabled:opacity-70 disabled:cursor-not-allowed"
             disabled={isPending}
           >
-            {isPending ? "En cours..." : "Enregistrer"}
+            {isPending ? "En cours..." : "Ajouter"}
           </button>
         </div>
       </form>
