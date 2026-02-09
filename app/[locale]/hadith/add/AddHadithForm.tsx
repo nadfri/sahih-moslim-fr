@@ -16,7 +16,7 @@ import {
   type HadithFormValues,
 } from "@/src/services/hadithSchemaServer";
 /*UI*/
-import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
+import { HadithPreviewAll } from "@/src/ui/hadith/Hadith/HadithPreviewAll";
 import { Input } from "@/src/ui/forms/inputs/Input/Input";
 import { MdTextArea } from "@/src/ui/forms/inputs/MdTextArea/MdTextArea";
 import { Select } from "@/src/ui/forms/inputs/Select/Select";
@@ -164,26 +164,45 @@ export function AddHadithForm({
     transmitters: transmittersData,
   };
 
+  const getItemByName = (items: ItemType[], name: string) =>
+    items.find((item) => item.name_fr === name);
+
   // Construct preview object matching HadithType exactly
+  const selectedChapter = formValues.chapter
+    ? getItemByName(chaptersData, formValues.chapter)
+    : undefined;
+
   const previewHadith: HadithType = {
     id: "preview-id",
     numero: (formValues.numero as number) || 0,
     chapter: {
-      id: "preview-chapter-id",
-      name_fr: formValues.chapter || "Sélectionnez un chapitre...",
-      slug: "preview-chapter-slug",
+      id: selectedChapter?.id ?? "preview-chapter-id",
+      name_fr: selectedChapter?.name_fr ?? formValues.chapter ?? "",
+      name_en: selectedChapter?.name_en,
+      name_ar: selectedChapter?.name_ar,
+      slug: selectedChapter?.slug ?? "preview-chapter-slug",
     },
-    mentionedSahabas: (formValues.mentionedSahabas || []).map((name, i) => ({
-      id: `preview-sahaba-id-${i}`,
-      name_fr: name,
-      slug: `preview-sahaba-slug-${i}`,
-    })),
+    mentionedSahabas: (formValues.mentionedSahabas || []).map((name, i) => {
+      const sahaba = getItemByName(sahabasData, name);
+      return {
+        id: sahaba?.id ?? `preview-sahaba-id-${i}`,
+        name_fr: sahaba?.name_fr ?? name,
+        name_en: sahaba?.name_en,
+        name_ar: sahaba?.name_ar,
+        slug: sahaba?.slug ?? `preview-sahaba-slug-${i}`,
+      };
+    }),
     isnadTransmitters: (formValues.isnadTransmitters || []).map(
-      (name: string, i: number) => ({
-        id: `preview-transmitter-id-${i}`,
-        name_fr: name,
-        slug: `preview-transmitter-slug-${i}`,
-      })
+      (name: string, i: number) => {
+        const transmitter = getItemByName(transmittersData, name);
+        return {
+          id: transmitter?.id ?? `preview-transmitter-id-${i}`,
+          name_fr: transmitter?.name_fr ?? name,
+          name_en: transmitter?.name_en,
+          name_ar: transmitter?.name_ar,
+          slug: transmitter?.slug ?? `preview-transmitter-slug-${i}`,
+        };
+      }
     ),
     matn_fr: formValues.matn_fr || "...",
     matn_ar: formValues.matn_ar || "...",
@@ -337,15 +356,9 @@ export function AddHadithForm({
           </button>
         </form>
       </div>
-
       {/* Live Preview */}
-      <div>
-        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
-          Aperçu
-        </h2>
-        <Hadith hadith={previewHadith} />
-      </div>
 
+      <HadithPreviewAll hadith={previewHadith} />
       {/* 🔴 Use createPortal for Add Item Dialog */}
       {typeof document !== "undefined" &&
         createPortal(

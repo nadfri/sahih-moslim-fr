@@ -3,7 +3,7 @@ import { ActionsBtns } from "../ActionBtns/ActionsBtns";
 import { ChapterName } from "../ChapterName/ChapterName";
 import { Isnad } from "../Isnad/Isnad";
 import { ListOfSahabas } from "../ListOfSahabas/ListOfSahabas";
-import { Matn_ar } from "../matns/Matn_ar/Matn_ar";
+import { Matn } from "../matns/Matn/Matn";
 import { LocalizedMatn } from "../matns/LocalizedMatn/LocalizedMatn";
 import { Preview } from "../Preview";
 import { useLocale } from "next-intl";
@@ -35,24 +35,23 @@ export function Hadith({ hadith, edit, highlight }: HadithProps) {
         </div>
 
         {/* Matn */}
-
         <LocalizedMatn
           hadith={hadith}
           highlight={highlight}
-          edit={edit}
         />
+
+        {/* Show Arabic with toggle for non-Arabic locales */}
+        {locale !== "ar" && (
+          <Matn
+            matn={hadith.matn_ar}
+            lang="ar"
+            highlight={highlight}
+            showToggle={true}
+          />
+        )}
 
         {/* Sahabas */}
         <ListOfSahabas sahabas={hadith.mentionedSahabas} />
-
-        {/* Matn_ar */}
-        {locale !== "ar" && (
-          <Matn_ar
-            matn={hadith.matn_ar}
-            highlight={highlight}
-            edit={edit}
-          />
-        )}
 
         {/* Action buttons section */}
         {edit ? <Preview /> : <ActionsBtns hadith={hadith} />}

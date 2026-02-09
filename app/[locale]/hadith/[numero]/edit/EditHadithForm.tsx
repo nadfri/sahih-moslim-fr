@@ -15,7 +15,7 @@ import {
 } from "@/src/services/actions";
 import { useDebounce } from "../../../../../src/hooks/useDebounce";
 import { HadithType, ItemType, VariantType } from "@/src/types/types";
-import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
+import { HadithPreviewAll } from "@/src/ui/hadith/Hadith/HadithPreviewAll";
 import { Input } from "@/src/ui/forms/inputs/Input/Input";
 import { MdTextArea } from "@/src/ui/forms/inputs/MdTextArea/MdTextArea";
 import { MultiSelectDragNDrop } from "@/src/ui/forms/inputs/MultiSelectDragNDrop/MultiSelectDragNDrop";
@@ -189,26 +189,56 @@ export function EditHadithForm({
     }
   };
 
+  const getItemByName = (items: ItemType[], name: string) =>
+    items.find((item) => item.name_fr === name);
+
   // Construct preview object for live preview
+  const selectedChapter = formValues.chapter
+    ? getItemByName(chaptersData, formValues.chapter)
+    : undefined;
+
   const previewHadith: HadithType = {
     ...hadith,
     numero: (formValues.numero as number) || hadith.numero,
     chapter: {
       ...hadith.chapter,
-      name_fr: formValues.chapter || hadith.chapter.name_fr,
-      slug: hadith.chapter.slug || "preview-chapter-slug",
+      id: selectedChapter?.id ?? hadith.chapter.id,
+      name_fr: selectedChapter?.name_fr ?? formValues.chapter ?? "",
+      name_en: selectedChapter?.name_en ?? hadith.chapter.name_en,
+      name_ar: selectedChapter?.name_ar ?? hadith.chapter.name_ar,
+      slug:
+        selectedChapter?.slug ?? hadith.chapter.slug ?? "preview-chapter-slug",
     },
-    mentionedSahabas: (formValues.mentionedSahabas || []).map((name_fr, i) => ({
-      id: `preview-sahaba-id-${i}`,
-      name_fr,
-      slug: `preview-sahaba-slug-${i}`,
-    })),
+    mentionedSahabas: (formValues.mentionedSahabas || []).map((name_fr, i) => {
+      const sahaba = getItemByName(sahabasData, name_fr);
+      const fallback = hadith.mentionedSahabas.find(
+        (item) => item.name_fr === name_fr
+      );
+      return {
+        id: sahaba?.id ?? fallback?.id ?? `preview-sahaba-id-${i}`,
+        name_fr: sahaba?.name_fr ?? name_fr,
+        name_en: sahaba?.name_en ?? fallback?.name_en,
+        name_ar: sahaba?.name_ar ?? fallback?.name_ar,
+        slug: sahaba?.slug ?? fallback?.slug ?? `preview-sahaba-slug-${i}`,
+      };
+    }),
     isnadTransmitters: (formValues.isnadTransmitters || []).map(
-      (name_fr: string, i: number) => ({
-        id: `preview-transmitter-id-${i}`,
-        name_fr,
-        slug: `preview-transmitter-slug-${i}`,
-      })
+      (name_fr: string, i: number) => {
+        const transmitter = getItemByName(transmittersData, name_fr);
+        const fallback = hadith.isnadTransmitters.find(
+          (item) => item.name_fr === name_fr
+        );
+        return {
+          id: transmitter?.id ?? fallback?.id ?? `preview-transmitter-id-${i}`,
+          name_fr: transmitter?.name_fr ?? name_fr,
+          name_en: transmitter?.name_en ?? fallback?.name_en,
+          name_ar: transmitter?.name_ar ?? fallback?.name_ar,
+          slug:
+            transmitter?.slug ??
+            fallback?.slug ??
+            `preview-transmitter-slug-${i}`,
+        };
+      }
     ),
     matn_fr: formValues.matn_fr || "...",
     matn_ar: formValues.matn_ar || "...",
@@ -384,12 +414,7 @@ export function EditHadithForm({
       </div>
       {/* Preview Section */}
       <div className="rounded-xl">
-        <div className="bg-gray-100 dark:bg-gray-900 rounded-lg p-1">
-          <Hadith
-            hadith={previewHadith}
-            edit
-          />
-        </div>
+        <HadithPreviewAll hadith={previewHadith} />
       </div>
       {/* AddItemFormDialog Portal */}
       {isOpenDialog &&
