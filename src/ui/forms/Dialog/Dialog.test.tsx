@@ -62,21 +62,21 @@ describe("Dialog Component", () => {
     ); // Timeout should be greater than animation time (200ms)
   });
 
-  it(\"clears timeout on unmount\", async () => {
-    const clearTimeoutSpy = vi.spyOn(global, \"clearTimeout\");
+  it("clears timeout on unmount", async () => {
+    const clearTimeoutSpy = vi.spyOn(global, "clearTimeout");
     const user = userEvent.setup();
     const { unmount } = render(
       <Dialog
         open={true}
         onClose={() => {}}
-        title=\"Test\"
+        title="Test"
       >
         <div>Content</div>
       </Dialog>
     );
 
     // Trigger close to set the timeout
-    const closeButton = screen.getByLabelText(\"Fermer\");
+    const closeButton = screen.getByLabelText("Fermer");
     await user.click(closeButton);
 
     unmount();

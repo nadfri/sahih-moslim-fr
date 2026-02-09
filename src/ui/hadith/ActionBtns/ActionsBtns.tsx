@@ -11,14 +11,10 @@ import { deleteHadith } from "@/src/services/actions";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { useTranslations } from "next-intl";
+import { useAuth } from "@/src/hooks/useAuth";
 
-export function ActionsBtns({
-  hadith,
-  isAdmin,
-}: {
-  hadith: HadithType;
-  isAdmin: boolean;
-}) {
+export function ActionsBtns({ hadith }: { hadith: HadithType }) {
+  const { isAdmin } = useAuth();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();

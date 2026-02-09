@@ -1,5 +1,4 @@
 "use client";
-import { useAuth } from "@/src/hooks/useAuth";
 import { HadithType } from "@/src/types/types";
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
 import { BadgeNumberOfHadith } from "@/src/ui/hadith/BadgeNumberOfHadith/BadgeNumberOfHadith";
@@ -19,7 +18,6 @@ export function ListLayoutHadith({
   hadiths,
   highlight = "",
 }: ListLayoutHadithProps) {
-  const { isAdmin } = useAuth();
   const t = useTranslations("hadith");
 
   return (
@@ -53,7 +51,6 @@ export function ListLayoutHadith({
               key={hadith.id}
               hadith={hadith}
               highlight={highlight}
-              isAdmin={isAdmin}
             />
           ))}
         </div>

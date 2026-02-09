@@ -2,11 +2,12 @@
 
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 import { getHadithByNumero } from "@/src/services/services";
 import { Hadith } from "@/src/ui/hadith/Hadith/Hadith";
+import { HadithSkeleton } from "@/src/ui/hadith/Hadith/HadithSkeleton";
 import { getNarratorName } from "@/src/utils/getNarratorName";
-import { requireAdmin } from "@/src/lib/auth/supabase/helpers";
 import { ParamsNumero } from "@/src/types/types";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getLocalizedMatn } from "../utils/getLocalizedMatn";
@@ -24,20 +25,17 @@ export default async function PageByNumero({
 
   const t = await getTranslations("hadith");
 
-  const adminCheck = await requireAdmin();
+  // Parallel data fetching for better performance
+  const [hadith, navData] = await Promise.all([
+    getHadithByNumero(numero),
+    getHadithNavigation(parseInt(numero)),
+  ]);
 
-  const isAdmin = adminCheck === true;
-
-  const hadith = await getHadithByNumero(numero);
+  const { previousNumero, nextNumero } = navData;
 
   if (!hadith) {
     return notFound();
   }
-
-  // Get navigation data for previous/next buttons
-  const { previousNumero, nextNumero } = await getHadithNavigation(
-    parseInt(numero)
-  );
 
   return (
     <>
@@ -48,10 +46,10 @@ export default async function PageByNumero({
         })}
       </h1>
 
-      <Hadith
-        hadith={hadith}
-        isAdmin={isAdmin}
-      />
+      {/* Suspense boundary for hadith content with skeleton fallback */}
+      <Suspense fallback={<HadithSkeleton />}>
+        <Hadith hadith={hadith} />
+      </Suspense>
 
       <HadithNavigation
         previousNumero={previousNumero}

@@ -10,17 +10,11 @@ import { useLocale } from "next-intl";
 
 type HadithProps = {
   hadith: HadithType;
-  isAdmin?: boolean;
   edit?: boolean;
   highlight?: string;
 };
 
-export function Hadith({
-  hadith,
-  edit,
-  highlight,
-  isAdmin = false,
-}: HadithProps) {
+export function Hadith({ hadith, edit, highlight }: HadithProps) {
   const locale = useLocale();
 
   return (
@@ -61,14 +55,7 @@ export function Hadith({
         )}
 
         {/* Action buttons section */}
-        {edit ? (
-          <Preview />
-        ) : (
-          <ActionsBtns
-            hadith={hadith}
-            isAdmin={isAdmin}
-          />
-        )}
+        {edit ? <Preview /> : <ActionsBtns hadith={hadith} />}
       </div>
     </div>
   );
