@@ -1,5 +1,5 @@
 import { Locale } from "next-intl";
-import { HadithType } from "../types/types";
+import { HadithType } from "@/src/types/types";
 
 export function getNarratorName(
   hadith: HadithType,

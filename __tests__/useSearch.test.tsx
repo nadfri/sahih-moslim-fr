@@ -2,7 +2,10 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { act } from "react";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 
-import { useSearch, type UseSearchProps } from "@/src/hooks/useSearch";
+import {
+  useSearch,
+  type UseSearchProps,
+} from "@/app/[locale]/search/useSearch";
 import type { HadithType } from "@/src/types/types";
 
 function TestConsumer(props: UseSearchProps) {

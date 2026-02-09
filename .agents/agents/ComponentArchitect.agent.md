@@ -30,6 +30,22 @@ Invoke when designing or refactoring:
 
 ## Component Architecture Framework
 
+**⚠️ Skill Loading Strategy:**
+
+For composition patterns, use:
+
+- `.agents/skills/vercel-composition-patterns/SKILL.md` for compound components, state patterns
+- `.agents/skills/vercel-composition-patterns/rules/` for specific patterns
+
+For performance considerations when refactoring:
+
+- `.agents/skills/vercel-react-best-practices/QUICK-REFERENCE.md` (~200 lines)
+- Only load relevant category if performance is a concern:
+  - Re-render issues → `categories/05-rerender.md` (~527 lines)
+  - Bundle size → `categories/02-bundle.md` (~150 lines)
+
+**DO NOT load full AGENTS.md files** - they waste context!
+
 ### 1. Eliminate Boolean Props (HIGH PRIORITY)
 
 **Problem**: Components with `disabled`, `loading`, `isSelected`, `variant`, etc.

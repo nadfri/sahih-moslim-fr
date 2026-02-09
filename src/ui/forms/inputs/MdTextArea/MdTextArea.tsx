@@ -14,6 +14,7 @@ type MdTextAreaProps<T extends FieldValues> = {
   height?: number;
   placeholder?: string;
   onValueChange?: (value: string) => string;
+  dir?: "ltr" | "rtl";
 };
 
 export function MdTextArea<T extends FieldValues>({
@@ -26,6 +27,7 @@ export function MdTextArea<T extends FieldValues>({
   height = 200,
   placeholder,
   onValueChange,
+  dir = "ltr",
 }: MdTextAreaProps<T>) {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -63,6 +65,7 @@ export function MdTextArea<T extends FieldValues>({
                 height={height}
                 textareaProps={{
                   placeholder,
+                  dir,
                   onFocus: () => setIsFocused(true),
                   onBlur: () => setIsFocused(false),
                 }}

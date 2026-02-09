@@ -4,7 +4,7 @@ import { Route, type Metadata } from "next";
 import { ParamsLocale } from "@/src/types/types";
 import { redirect } from "next/navigation";
 import { getServerUser } from "@/src/lib/auth/supabase/helpers";
-import { ButtonGithub } from "@/src/ui/SignButtons/ButtonGithub";
+import { ButtonGithub } from "@/src/ui/Header/SignButtons/ButtonGithub";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 export default async function SignInPage(props: {

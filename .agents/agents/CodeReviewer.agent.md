@@ -29,7 +29,18 @@ Invoke this agent when you need a full-scope review:
 
 ### 1. Performance Analysis
 
-Using vercel-react-best-practices skill:
+**⚠️ Context-Efficient Approach:**
+
+- Start with `.agents/skills/vercel-react-best-practices/QUICK-REFERENCE.md` (~200 lines)
+- Load ONLY relevant category files based on detected issues:
+  - **Waterfalls detected?** → Load `categories/01-waterfalls.md` (~287 lines)
+  - **Large bundle/slow imports?** → Load `categories/02-bundle.md` (~150 lines)
+  - **Server-side issues?** → Load `categories/03-server.md` (~449 lines)
+  - **Re-render problems?** → Load `categories/05-rerender.md` (~527 lines)
+  - **Rendering issues?** → Load `categories/06-rendering.md` (~387 lines)
+- **DO NOT load AGENTS.md (2935 lines)** - it wastes context!
+
+Performance checks:
 
 - Check for waterfalls in data fetching
 - Verify bundle size optimization (dynamic imports, barrel imports)

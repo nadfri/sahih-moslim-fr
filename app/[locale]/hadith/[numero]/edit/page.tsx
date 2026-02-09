@@ -8,7 +8,7 @@ import {
   getHadithByNumero,
 } from "@/src/services/services";
 import { enforceAdminAccess } from "@/src/lib/auth/supabase/helpers";
-import { EditHadithForm } from "@/src/ui/forms/hadith-forms/EditHadithForm";
+import { EditHadithForm } from "./EditHadithForm";
 
 export const metadata: Metadata = {
   title: "Modifier un hadith",

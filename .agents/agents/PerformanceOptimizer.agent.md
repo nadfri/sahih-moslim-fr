@@ -29,6 +29,24 @@ Invoke when focusing on performance:
 
 ## Performance Optimization Framework
 
+**⚠️ Context-Efficient Loading Strategy:**
+
+1. **ALWAYS start** with `.agents/skills/vercel-react-best-practices/QUICK-REFERENCE.md` (~200 lines)
+2. **Identify issue category** from code analysis
+3. **Load ONLY the relevant category file** (saves 85-90% context):
+
+| Issue Detected               | File to Load                  | Lines |
+| ---------------------------- | ----------------------------- | ----- |
+| Sequential async, waterfalls | `categories/01-waterfalls.md` | ~287  |
+| Large bundle, slow imports   | `categories/02-bundle.md`     | ~150  |
+| Server caching, RSC issues   | `categories/03-server.md`     | ~449  |
+| Client fetching, events      | `categories/04-client.md`     | ~241  |
+| Re-render problems           | `categories/05-rerender.md`   | ~527  |
+| Hydration, rendering         | `categories/06-rendering.md`  | ~387  |
+| JavaScript micro-opts        | `categories/07-javascript.md` | ~615  |
+
+**DO NOT load AGENTS.md (2935 lines)** - it wastes context!
+
 ### Priority 1: Eliminating Waterfalls (CRITICAL)
 
 - Identify sequential async operations that could run in parallel

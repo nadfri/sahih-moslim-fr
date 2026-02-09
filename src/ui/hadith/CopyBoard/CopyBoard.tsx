@@ -5,7 +5,7 @@ import { Check, Files, LinkIcon } from "lucide-react";
 
 import { useClickOutside } from "@/src/hooks/useClickOutside";
 import { HadithType } from "@/src/types/types";
-import { getNarratorName } from "@/src/utils/getNarratorName";
+import { getNarratorName } from "../../../utils/getNarratorName";
 import { useLocale, useTranslations } from "next-intl";
 import { getLocalizedName } from "@/src/utils/getLocalizedName";
 

@@ -9,9 +9,9 @@ import { getNarratorName } from "@/src/utils/getNarratorName";
 import { requireAdmin } from "@/src/lib/auth/supabase/helpers";
 import { ParamsNumero } from "@/src/types/types";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { getLocalizedMatn } from "@/src/utils/getLocalizedMatn";
-import { HadithNavigation } from "@/src/ui/hadith/HadithNavigation/HadithNavigation";
-import { getHadithNavigation } from "@/src/services/getHadithNavigation";
+import { getLocalizedMatn } from "../utils/getLocalizedMatn";
+import { HadithNavigation } from "./HadithNavigation";
+import { getHadithNavigation } from "../utils/getHadithNavigation";
 
 export default async function PageByNumero({
   params,

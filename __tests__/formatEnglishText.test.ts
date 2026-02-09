@@ -4,7 +4,7 @@ import {
   formatHadithNarration,
   splitIntoParagraphs,
   containsEnglish,
-} from "../src/utils/formatEnglishText";
+} from "../src/ui/hadith/matns/utils/formatEnglishText";
 
 describe("formatEnglishText", () => {
   it("should format basic English text with proper spacing", () => {

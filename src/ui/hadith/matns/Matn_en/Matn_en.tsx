@@ -2,7 +2,7 @@ import { MarkdownHighlighter } from "@/src/ui/hadith/MarkdownHighlighter/Markdow
 import {
   formatHadithNarration,
   splitIntoParagraphs,
-} from "@/src/utils/formatEnglishText";
+} from "../utils/formatEnglishText";
 import { wrapEnglishProphetNames } from "@/src/utils/wrapProphetNamesMultilingual";
 
 type Props = {

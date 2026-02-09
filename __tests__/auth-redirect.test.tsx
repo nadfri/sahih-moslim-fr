@@ -51,7 +51,8 @@ describe("Authentication Flow - Redirect After Login", () => {
   });
 
   it("should call signInWithOAuth with correct redirect URL when callbackUrl is provided", async () => {
-    const { ButtonGithub } = await import("@/src/ui/SignButtons/ButtonGithub");
+    const { ButtonGithub } =
+      await import("@/src/ui/Header/SignButtons/ButtonGithub");
     render(
       <NextIntlClientProvider
         locale="fr"
@@ -78,7 +79,8 @@ describe("Authentication Flow - Redirect After Login", () => {
   });
 
   it("should show loading state during sign-in process", async () => {
-    const { ButtonGithub } = await import("@/src/ui/SignButtons/ButtonGithub");
+    const { ButtonGithub } =
+      await import("@/src/ui/Header/SignButtons/ButtonGithub");
     render(
       <NextIntlClientProvider
         locale="fr"
@@ -99,7 +101,8 @@ describe("Authentication Flow - Redirect After Login", () => {
 
   it("should use default redirect when no callbackUrl", async () => {
     mockGet.mockReturnValue(null);
-    const { ButtonGithub } = await import("@/src/ui/SignButtons/ButtonGithub");
+    const { ButtonGithub } =
+      await import("@/src/ui/Header/SignButtons/ButtonGithub");
     render(
       <NextIntlClientProvider
         locale="fr"

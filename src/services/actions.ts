@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { requireAdmin } from "@/src/lib/auth/supabase/helpers";
-import { getItemFormSchema } from "@/src/ui/forms/schemas/getItemFormSchema";
+import { getItemFormSchema } from "@/src/types/getItemFormSchema";
 import { slugify } from "@/src/utils/slugify";
 import { ItemFormValues, ItemType, VariantType } from "../types/types";
 import { ValidateHadithDataSchema } from "./hadithSchemaServer";

@@ -7,7 +7,7 @@ import {
   getHadithsCount,
 } from "@/src/services/services";
 import { enforceAdminAccess } from "@/src/lib/auth/supabase/helpers";
-import { AdminDashboard } from "./AdminDashboard/AdminDashboard";
+import { AdminDashboard } from "./components/AdminDashboard/AdminDashboard";
 import { ItemType } from "@/src/types/types";
 
 export type DatasType = {

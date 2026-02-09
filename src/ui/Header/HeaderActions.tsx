@@ -1,8 +1,8 @@
 import { Hamburger } from "./Hamburger";
-import { SignButtons } from "../SignButtons/SignButtons";
-import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
+import { SignButtons } from "./SignButtons/SignButtons";
+import { ThemeToggle } from "./ThemeToggle/ThemeToggle";
 import { LinkAddHadith } from "./LinkAddHadith";
-import { LocaleToggleSuspense } from "../LocaleToggle/LocaleToggle";
+import { LocaleToggleSuspense } from "./LocaleToggle/LocaleToggle";
 
 export function HeaderActions() {
   return (

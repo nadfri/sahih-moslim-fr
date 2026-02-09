@@ -14,6 +14,7 @@ Comprehensive performance optimization guide for React and Next.js applications,
 ## When to Apply
 
 Reference these guidelines when:
+
 - Writing new React components or Next.js pages
 - Implementing data fetching (client or server-side)
 - Reviewing code for performance issues
@@ -22,16 +23,16 @@ Reference these guidelines when:
 
 ## Rule Categories by Priority
 
-| Priority | Category | Impact | Prefix |
-|----------|----------|--------|--------|
-| 1 | Eliminating Waterfalls | CRITICAL | `async-` |
-| 2 | Bundle Size Optimization | CRITICAL | `bundle-` |
-| 3 | Server-Side Performance | HIGH | `server-` |
-| 4 | Client-Side Data Fetching | MEDIUM-HIGH | `client-` |
-| 5 | Re-render Optimization | MEDIUM | `rerender-` |
-| 6 | Rendering Performance | MEDIUM | `rendering-` |
-| 7 | JavaScript Performance | LOW-MEDIUM | `js-` |
-| 8 | Advanced Patterns | LOW | `advanced-` |
+| Priority | Category                  | Impact      | Prefix       |
+| -------- | ------------------------- | ----------- | ------------ |
+| 1        | Eliminating Waterfalls    | CRITICAL    | `async-`     |
+| 2        | Bundle Size Optimization  | CRITICAL    | `bundle-`    |
+| 3        | Server-Side Performance   | HIGH        | `server-`    |
+| 4        | Client-Side Data Fetching | MEDIUM-HIGH | `client-`    |
+| 5        | Re-render Optimization    | MEDIUM      | `rerender-`  |
+| 6        | Rendering Performance     | MEDIUM      | `rendering-` |
+| 7        | JavaScript Performance    | LOW-MEDIUM  | `js-`        |
+| 8        | Advanced Patterns         | LOW         | `advanced-`  |
 
 ## Quick Reference
 
@@ -116,21 +117,82 @@ Reference these guidelines when:
 - `advanced-init-once` - Initialize app once per app load
 - `advanced-use-latest` - useLatest for stable callback refs
 
-## How to Use
+## How to Use This Skill
 
-Read individual rule files for detailed explanations and code examples:
+**⚠️ IMPORTANT: DO NOT load AGENTS.md (2935 lines) - it consumes too much context!**
+
+Instead, use this efficient loading strategy:
+
+### 1. Start with Quick Reference (~200 lines)
+
+For overview and quick lookup:
+
+```
+QUICK-REFERENCE.md
+```
+
+### 2. Load Only Relevant Category (~200-600 lines)
+
+Based on the issue type, load the specific category file:
+
+| Issue Type                         | File to Load                  | Lines | Impact      |
+| ---------------------------------- | ----------------------------- | ----- | ----------- |
+| Slow data fetching, waterfalls     | `categories/01-waterfalls.md` | ~287  | CRITICAL    |
+| Large bundle size, slow imports    | `categories/02-bundle.md`     | ~150  | CRITICAL    |
+| Server-side performance, auth      | `categories/03-server.md`     | ~449  | HIGH        |
+| Client-side fetching, events       | `categories/04-client.md`     | ~241  | MEDIUM-HIGH |
+| Re-render issues, state management | `categories/05-rerender.md`   | ~527  | MEDIUM      |
+| Rendering performance, hydration   | `categories/06-rendering.md`  | ~387  | MEDIUM      |
+| JavaScript micro-optimizations     | `categories/07-javascript.md` | ~615  | LOW-MEDIUM  |
+| Advanced patterns, edge cases      | `categories/08-advanced.md`   | ~127  | LOW         |
+
+### 3. Load Individual Rules (Optional)
+
+For specific guidance, read individual rule files:
 
 ```
 rules/async-parallel.md
 rules/bundle-barrel-imports.md
 ```
 
-Each rule file contains:
-- Brief explanation of why it matters
-- Incorrect code example with explanation
-- Correct code example with explanation
-- Additional context and references
+### Workflow for Agents
 
-## Full Compiled Document
+```
+1. Identify issue category (e.g., "component re-renders too often")
+2. Load QUICK-REFERENCE.md to confirm category (→ Re-render Optimization)
+3. Load categories/05-rerender.md (~527 lines vs 2935 for full AGENTS.md)
+4. Apply relevant rules
+5. (Optional) Load specific rule file if more detail needed
+```
 
-For the complete guide with all rules expanded: `AGENTS.md`
+**Context savings: ~90% reduction** (300-600 lines vs 2935 lines)
+
+## File Structure
+
+```
+vercel-react-best-practices/
+├── SKILL.md                 # This file (index + usage guide)
+├── QUICK-REFERENCE.md       # Condensed overview (~200 lines)
+├── AGENTS.md                # Full document (⚠️ 2935 lines - avoid loading!)
+├── categories/              # Category-specific files
+│   ├── 01-waterfalls.md     # Eliminating Waterfalls (CRITICAL)
+│   ├── 02-bundle.md         # Bundle Size Optimization (CRITICAL)
+│   ├── 03-server.md         # Server-Side Performance (HIGH)
+│   ├── 04-client.md         # Client-Side Data Fetching (MEDIUM-HIGH)
+│   ├── 05-rerender.md       # Re-render Optimization (MEDIUM)
+│   ├── 06-rendering.md      # Rendering Performance (MEDIUM)
+│   ├── 07-javascript.md     # JavaScript Performance (LOW-MEDIUM)
+│   └── 08-advanced.md       # Advanced Patterns (LOW)
+└── rules/                   # Individual rule files (granular detail)
+```
+
+## Priority Guide
+
+When optimizing code, follow this order:
+
+1. **CRITICAL** (categories 1-2): Waterfalls, bundle size → 2-10× improvement
+2. **HIGH** (category 3): Server-side performance → reduces load time, security
+3. **MEDIUM-HIGH** (category 4): Client-side fetching → better UX
+4. **MEDIUM** (categories 5-6): Re-renders, rendering → improves responsiveness
+5. **LOW-MEDIUM** (category 7): JavaScript optimizations → cumulative gains
+6. **LOW** (category 8): Advanced patterns → specific edge cases

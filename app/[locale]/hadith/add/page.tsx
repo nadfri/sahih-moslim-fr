@@ -9,7 +9,7 @@ import {
   getAllTransmitters,
 } from "@/src/services/services";
 import { enforceAdminAccess } from "@/src/lib/auth/supabase/helpers";
-import { AddHadithForm } from "@/src/ui/forms/hadith-forms/AddHadithForm";
+import { AddHadithForm } from "./AddHadithForm";
 import prisma from "@/prisma/prisma";
 
 export const metadata: Metadata = {

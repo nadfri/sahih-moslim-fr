@@ -1,6 +1,6 @@
 /*  🕋 بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ 🕋*/
 import { Metadata } from "next";
-import { SearchContainer } from "./SearchContainer";
+import { SearchContainer } from "./components/SearchContainer";
 import { getSahabaNames, getTransmitterNames } from "@/src/services/services";
 import { ParamsLocale } from "@/src/types/types";
 import { getTranslations, setRequestLocale } from "next-intl/server";
