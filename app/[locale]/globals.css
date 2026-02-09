@@ -36,12 +36,7 @@
 
 /* Light theme background gradient */
 [data-theme="light"] body {
-  background: linear-gradient(
-    135deg,
-    #f1f5f9 0%,
-    #fef3c7 25%,
-    #f1f5f9 100%
-  );
+  background: linear-gradient(135deg, #f1f5f9 0%, #fef3c7 25%, #f1f5f9 100%);
   background-attachment: fixed;
 }
 

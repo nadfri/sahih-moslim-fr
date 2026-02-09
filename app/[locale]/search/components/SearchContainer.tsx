@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { SearchBar } from "../SearchBar";
+import { SearchBar } from "./SearchBar";
 import { ListLayoutHadith } from "@/src/ui/hadith/ListLayoutHadith/ListLayoutHadith";
 import { HadithType } from "@/src/types/types";
 
