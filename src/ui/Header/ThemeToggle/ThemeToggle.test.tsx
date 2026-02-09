@@ -27,31 +27,25 @@ describe("ThemeToggle (standalone)", () => {
     expect(btn).toHaveAttribute("aria-label", expect.stringContaining("dark"));
   });
 
-  it("toggles theme from light to dark and updates documentElement and localStorage", async () => {
+  it("toggles theme between light and dark, updating documentElement and localStorage", async () => {
     render(<ThemeToggle />);
 
     const btn = screen.getByRole("button");
-    await userEvent.click(btn);
 
+    // Light to dark toggle
+    await userEvent.click(btn);
     expect(getHtmlTheme()).toBe("dark");
     expect(localStorage.getItem("theme")).toBe("dark");
     expect(btn).toHaveAttribute("aria-label", expect.stringContaining("light"));
-  });
 
-  it("toggles theme from dark to light and updates documentElement and localStorage", async () => {
-    setHtmlTheme("dark");
-
-    render(<ThemeToggle />);
-
-    const btn = screen.getByRole("button");
+    // Dark to light toggle
     await userEvent.click(btn);
-
     expect(getHtmlTheme()).toBe("light");
     expect(localStorage.getItem("theme")).toBe("light");
     expect(btn).toHaveAttribute("aria-label", expect.stringContaining("dark"));
   });
 
-  it("provider initialise le thème par défaut à 'dark' si data-theme absent", async () => {
+  it("initializes theme as 'dark' when data-theme attribute is missing", async () => {
     document.documentElement.removeAttribute("data-theme");
 
     render(<ThemeToggle />);

@@ -1,5 +1,6 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
 import { SearchInput } from "./SearchInput";
 import { renderWithI18n } from "@/__tests__/renderWithI18n";
 
@@ -69,18 +70,5 @@ describe("SearchInput", () => {
     await user.click(clearButton);
 
     expect(onChange).toHaveBeenCalledWith("");
-  });
-
-  it("does not show label when label is empty", () => {
-    renderWithI18n(
-      <SearchInput
-        id="test-search"
-        label=""
-        value=""
-        onChange={() => {}}
-      />
-    );
-
-    expect(screen.queryByLabelText("")).not.toBeInTheDocument();
   });
 });

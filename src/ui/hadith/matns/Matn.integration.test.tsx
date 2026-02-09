@@ -1,4 +1,5 @@
-import { fireEvent, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { renderWithI18n } from "@/__tests__/renderWithI18n";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Matn_ar } from "./Matn_ar/Matn_ar";
@@ -117,7 +118,8 @@ describe("Matn Components Integration", () => {
     expect(markElements[0]).toHaveTextContent(frenchTerm);
   });
 
-  it("should maintain independent state between components", () => {
+  it("should maintain independent state between components", async () => {
+    const user = userEvent.setup();
     renderWithI18n(
       <div>
         <Matn_fr matn={mockHadith.matn_fr} />
@@ -132,12 +134,12 @@ describe("Matn Components Integration", () => {
     expect(arabicContainer).toHaveClass("grid-rows-[0fr]", "opacity-0");
 
     // Show Arabic
-    fireEvent.click(toggleButton);
+    await user.click(toggleButton);
     expect(arabicContainer).toHaveClass("grid-rows-[1fr]", "opacity-100");
     expect(toggleButton).toHaveTextContent("Masquer la version arabe");
 
     // Hide Arabic
-    fireEvent.click(toggleButton);
+    await user.click(toggleButton);
     expect(arabicContainer).toHaveClass("grid-rows-[0fr]", "opacity-0");
     expect(toggleButton).toHaveTextContent("Voir la version arabe");
 
@@ -210,7 +212,8 @@ describe("Matn Components Integration", () => {
     expect(markElements).toHaveLength(0);
   });
 
-  it("should preserve accessibility features", () => {
+  it("should preserve accessibility features", async () => {
+    const user = userEvent.setup();
     renderWithI18n(
       <div>
         <Matn_fr matn={mockHadith.matn_fr} />
@@ -225,7 +228,7 @@ describe("Matn Components Integration", () => {
     expect(toggleButton).toHaveAttribute("aria-controls");
 
     // Click to expand
-    fireEvent.click(toggleButton);
+    await user.click(toggleButton);
     expect(toggleButton).toHaveAttribute("aria-expanded", "true");
   });
 });
