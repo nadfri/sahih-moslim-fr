@@ -3,7 +3,7 @@ import { ActionsBtns } from "../ActionBtns/ActionsBtns";
 import { ChapterName } from "../ChapterName/ChapterName";
 import { Isnad } from "../Isnad/Isnad";
 import { ListOfSahabas } from "../ListOfSahabas/ListOfSahabas";
-import { Matn } from "../matns/Matn/Matn";
+import { Matn_ar } from "../matns/Matn_ar/Matn_ar";
 import { LocalizedMatn } from "../matns/LocalizedMatn/LocalizedMatn";
 import { Preview } from "../Preview";
 import { useLocale } from "next-intl";
@@ -42,9 +42,8 @@ export function Hadith({ hadith, edit, highlight }: HadithProps) {
 
         {/* Show Arabic with toggle for non-Arabic locales */}
         {locale !== "ar" && (
-          <Matn
+          <Matn_ar
             matn={hadith.matn_ar}
-            lang="ar"
             highlight={highlight}
             showToggle={true}
           />

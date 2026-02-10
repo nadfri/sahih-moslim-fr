@@ -6,8 +6,8 @@ import { mockHadith } from "@/__tests__/mocks/mockHadith";
 import { renderWithI18n } from "@/__tests__/renderWithI18n";
 
 // Mock the individual Matn components
-vi.mock("@/src/ui/hadith/Matn/Matn", () => ({
-  Matn: ({ matn, highlight }: { matn: string; highlight?: string }) => (
+vi.mock("@/src/ui/hadith/matns/Matn_fr/Matn_fr", () => ({
+  Matn_fr: ({ matn, highlight }: { matn: string; highlight?: string }) => (
     <div data-testid="matn-fr">
       {highlight && <mark>{highlight}</mark>}
       {matn}
@@ -15,19 +15,19 @@ vi.mock("@/src/ui/hadith/Matn/Matn", () => ({
   ),
 }));
 
-vi.mock("@/src/ui/hadith/Matn_ar/Matn_ar", () => ({
+vi.mock("@/src/ui/hadith/matns/Matn_ar/Matn_ar", () => ({
   Matn_ar: ({
     matn,
     highlight,
-    edit,
+    showToggle,
   }: {
     matn: string;
     highlight?: string;
-    edit?: boolean;
+    showToggle?: boolean;
   }) => (
     <div
       data-testid="matn-ar"
-      data-edit={edit}
+      data-show-toggle={showToggle}
     >
       {highlight && <mark>{highlight}</mark>}
       {matn}
@@ -35,7 +35,7 @@ vi.mock("@/src/ui/hadith/Matn_ar/Matn_ar", () => ({
   ),
 }));
 
-vi.mock("@/src/ui/hadith/Matn_en/Matn_en", () => ({
+vi.mock("@/src/ui/hadith/matns/Matn_en/Matn_en", () => ({
   Matn_en: ({ matn, highlight }: { matn: string; highlight?: string }) => (
     <div data-testid="matn-en">
       {highlight && <mark>{highlight}</mark>}
@@ -69,15 +69,14 @@ describe("LocalizedMatn Component", () => {
       <LocalizedMatn
         hadith={mockHadith}
         highlight="test"
-        edit={true}
       />,
       { locale: "ar" }
     );
 
     // Test that Arabic content is rendered
     expect(screen.getByText(mockHadith.matn_ar)).toBeInTheDocument();
-    // Test that the Arabic component structure is present (border-t class from Matn_ar)
-    expect(document.querySelector(".border-t")).toBeInTheDocument();
+    // Test that the Arabic component is rendered (using test id)
+    expect(screen.getByTestId("matn-ar")).toBeInTheDocument();
   });
 
   it("should render English Matn component when locale is 'en' and matn_en exists", () => {
@@ -101,8 +100,8 @@ describe("LocalizedMatn Component", () => {
     ).toBeInTheDocument();
     // Test that the highlight is working
     expect(screen.getByText("English")).toBeInTheDocument();
-    // Test that the English component structure is present (space-y-4 class)
-    expect(document.querySelector(".space-y-4")).toBeInTheDocument();
+    // Test that the English component is used
+    expect(screen.getByTestId("matn-en")).toBeInTheDocument();
   });
 
   it("should fallback to French when Arabic locale is used but no matn_ar exists", () => {
@@ -152,19 +151,13 @@ describe("LocalizedMatn Component", () => {
     expect(screen.getByText(highlightTerm)).toBeInTheDocument();
   });
 
-  it("should pass edit prop to Arabic component", () => {
-    renderWithI18n(
-      <LocalizedMatn
-        hadith={mockHadith}
-        edit={true}
-      />,
-      { locale: "ar" }
-    );
+  it("should handle Arabic component when Arabic locale is selected", () => {
+    renderWithI18n(<LocalizedMatn hadith={mockHadith} />, { locale: "ar" });
 
-    // Test that Arabic content is rendered with edit mode
+    // Test that Arabic content is rendered
     expect(screen.getByText(mockHadith.matn_ar)).toBeInTheDocument();
-    // Test that the Arabic component structure is present (border-t class from Matn_ar)
-    expect(document.querySelector(".border-t")).toBeInTheDocument();
+    // Test that the Arabic component is used
+    expect(screen.getByTestId("matn-ar")).toBeInTheDocument();
   });
 
   it("should handle missing hadith data gracefully", () => {
@@ -177,8 +170,7 @@ describe("LocalizedMatn Component", () => {
 
     renderWithI18n(<LocalizedMatn hadith={emptyHadith} />);
 
-    // Should still render the French component even with empty text
-    // Test that MarkdownHighlighter is rendered (even with empty content)
-    expect(document.querySelector(".markdown-content")).toBeInTheDocument();
+    // Test that the French component is still rendered even with empty text
+    expect(screen.getByTestId("matn-fr")).toBeInTheDocument();
   });
 });

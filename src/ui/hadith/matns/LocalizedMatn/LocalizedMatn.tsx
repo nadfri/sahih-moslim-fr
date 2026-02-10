@@ -1,5 +1,7 @@
 import { useLocale } from "next-intl";
-import { Matn } from "@/src/ui/hadith/matns/Matn/Matn";
+import { Matn_ar } from "@/src/ui/hadith/matns/Matn_ar/Matn_ar";
+import { Matn_en } from "@/src/ui/hadith/matns/Matn_en/Matn_en";
+import { Matn_fr } from "@/src/ui/hadith/matns/Matn_fr/Matn_fr";
 import { HadithType } from "@/src/types/types";
 
 type Props = {
@@ -13,9 +15,8 @@ export function LocalizedMatn({ hadith, highlight }: Props) {
   // Choose the appropriate text and language based on locale
   if (locale === "ar" && hadith.matn_ar) {
     return (
-      <Matn
+      <Matn_ar
         matn={hadith.matn_ar}
-        lang="ar"
         highlight={highlight}
         showToggle={false}
       />
@@ -24,9 +25,8 @@ export function LocalizedMatn({ hadith, highlight }: Props) {
 
   if (locale === "en" && hadith.matn_en) {
     return (
-      <Matn
+      <Matn_en
         matn={hadith.matn_en}
-        lang="en"
         highlight={highlight}
       />
     );
@@ -34,9 +34,8 @@ export function LocalizedMatn({ hadith, highlight }: Props) {
 
   // Default to French
   return (
-    <Matn
+    <Matn_fr
       matn={hadith.matn_fr}
-      lang="fr"
       highlight={highlight}
     />
   );

@@ -6,30 +6,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockHadith } from "@/__tests__/mocks/mockHadith";
 import type { HadithType } from "@/src/types/types";
 import { Hadith } from "./Hadith";
+import { useAuth } from "@/src/hooks/useAuth";
 
-// Mock Next.js Link component
-vi.mock("next/link", () => ({
-  __esModule: true,
-  default: ({
-    href,
-    className,
-    children,
-  }: {
-    href: string;
-    className?: string;
-    children: React.ReactNode;
-  }) => (
-    <a
-      href={href}
-      className={className}
-      data-testid="mock-link"
-    >
-      {children}
-    </a>
-  ),
+// Mock useAuth hook
+vi.mock("@/src/hooks/useAuth", () => ({
+  useAuth: vi.fn(() => ({ isAdmin: false })),
 }));
 
-// Mock the environment variables
+// Mock Next.js Link component
 vi.mock("next/link", () => ({
   __esModule: true,
   default: ({
@@ -64,15 +48,12 @@ describe("Hadith", () => {
   beforeEach(() => {
     // Clear mock calls before each test
     vi.clearAllMocks();
+    // Reset useAuth mock to default (non-admin)
+    vi.mocked(useAuth).mockReturnValue({ isAdmin: false });
   });
 
   it("renders the hadith basic information correctly", () => {
-    renderWithI18n(
-      <Hadith
-        hadith={mockHadith}
-        isAdmin={false}
-      />
-    );
+    renderWithI18n(<Hadith hadith={mockHadith} />);
 
     // Check chapter title
     expect(screen.getByText("Test Chapter")).toBeInTheDocument();
@@ -92,12 +73,7 @@ describe("Hadith", () => {
 
   it("toggles Arabic text visibility when button is clicked", async () => {
     const user = userEvent.setup();
-    renderWithI18n(
-      <Hadith
-        hadith={mockHadith}
-        isAdmin={false}
-      />
-    );
+    renderWithI18n(<Hadith hadith={mockHadith} />);
 
     // Initially, Arabic should be hidden — check aria-expanded and opacity class
     const toggleButton = screen.getByRole("button", {
@@ -129,7 +105,6 @@ describe("Hadith", () => {
       <Hadith
         hadith={mockHadith}
         highlight="test"
-        isAdmin={false}
       />
     );
 
@@ -149,7 +124,6 @@ describe("Hadith", () => {
       <Hadith
         hadith={mockHadith}
         edit={true}
-        isAdmin={false}
       />
     );
 
@@ -158,12 +132,10 @@ describe("Hadith", () => {
   });
 
   it("shows edit link for admin users", () => {
-    renderWithI18n(
-      <Hadith
-        hadith={mockHadith}
-        isAdmin={true}
-      />
-    );
+    // Mock useAuth to return isAdmin: true for this test
+    vi.mocked(useAuth).mockReturnValue({ isAdmin: true });
+
+    renderWithI18n(<Hadith hadith={mockHadith} />);
 
     // Edit link should be visible (use data-testid to locate links)
     const links = screen.getAllByTestId("mock-link");
@@ -174,12 +146,7 @@ describe("Hadith", () => {
   });
 
   it("doesn't show edit link for non-admin users", () => {
-    renderWithI18n(
-      <Hadith
-        hadith={mockHadith}
-        isAdmin={false}
-      />
-    );
+    renderWithI18n(<Hadith hadith={mockHadith} />);
 
     // Edit link should not be visible
     const links = screen.getAllByTestId("mock-link");
@@ -195,12 +162,7 @@ describe("Hadith", () => {
       matn_fr: "Normal text with **bold text** and *italic block quote*",
     };
 
-    renderWithI18n(
-      <Hadith
-        hadith={hadithWithMarkdown}
-        isAdmin={false}
-      />
-    );
+    renderWithI18n(<Hadith hadith={hadithWithMarkdown} />);
 
     // Check strong tag styling
     const strongElement = screen.getByText("bold text");
@@ -213,12 +175,7 @@ describe("Hadith", () => {
 
   it("renders the report button", async () => {
     const user = userEvent.setup();
-    renderWithI18n(
-      <Hadith
-        hadith={mockHadith}
-        isAdmin={false}
-      />
-    );
+    renderWithI18n(<Hadith hadith={mockHadith} />);
 
     const reportButton = screen.getByText("Signaler");
     expect(reportButton).toBeInTheDocument();
